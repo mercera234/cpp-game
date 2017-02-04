@@ -15,6 +15,8 @@
 #include "DataPkg.h"
 #include <fstream>
 #include "Palette.h"
+#include "TextLabel.h"
+
 
 void mockFightTest()
 {
@@ -150,7 +152,7 @@ void panelTest()
 	getch();
 }
 
-MenuResponse* menuDriver(int input, Menu* m)
+MenuResponse* menuDriver2(int input, Menu* m)
 {
 	MenuResponse* resp = new MenuResponse;
 	resp->itemChosen = false;
@@ -180,6 +182,34 @@ MenuResponse* menuDriver(int input, Menu* m)
 	return resp;
 }
 
+MenuItem* menuDriver(int input, Menu* m)
+{
+	MenuItem* item = NULL;
+	//MenuResponse* resp = new MenuResponse;
+	//resp->itemChosen = false;
+	int retval = -1;
+	switch (input)
+	{
+	case KEY_DOWN: retval = m->driver(REQ_DOWN_ITEM); break;
+	case KEY_UP: retval = m->driver(REQ_UP_ITEM); break;
+	case KEY_LEFT: retval = m->driver(REQ_LEFT_ITEM); break;
+	case KEY_RIGHT: retval = m->driver(REQ_RIGHT_ITEM); break;
+	case 'q':
+	case 'Q':
+		retval = -2;
+		break;
+	case '\n':
+	case '\r':
+	case KEY_ENTER:
+		item = m->getSelectedItem();
+		//item->itemChosen = true;
+		break;
+	default: break;
+	}
+
+	return item;
+}
+
 int confirmDriver(int input, Menu* m)
 {
 	int retval = -1;
@@ -199,79 +229,13 @@ int confirmDriver(int input, Menu* m)
 	return retval;
 }
 
-//void menuTest()
-//{
-//	WINDOW* mainWin = newwin(8, 20, 3, 20);
-//	WINDOW* subWin = derwin(mainWin, 5, 18, 2, 1);
-//
-//	Menu menu(mainWin, subWin, 5, 1);
-//	/*Menu menu(5, 1,
-//		8, 20, 3, 20,
-//		5, 18, 2, 1);*/
-//
-//	menu.setTitle("TEXT AND VIOLENCE");
-//	
-//	menu.setItem("New Game", "", 0, 'N');
-//	menu.setItem("Load Game", "", 1, 'L');
-//	menu.setItem("Quit Game", "", 2, 'Q');
-//	menu.setItem("Test Game", "", 3, 'T');
-//	menu.setItem("sdfjkldfs Game", "", 4, '?');
-//	//menu.setSelectedIndex(2);
-//	bool usingMenu = true;
-//	bool firstTime = true;
-//	while (usingMenu)
-//	{
-//		menu.draw();
-//		doupdate();
-//		int input = getch();
-//
-//		int result = menuDriver(input, &menu);
-//
-//
-//		switch(result)
-//		{
-//
-//		case -2:
-//			usingMenu = false;
-//			break;
-//
-//		default: 
-//
-//			mvaddch(1, 30, (char)result);
-//			break;
-//		}	
-//	}
-//}
-
-int newMenuDriver(int input, NewMenu* m)
+void menuTest()
 {
-	int retval = -1;
-	switch (input)
-	{
-	case KEY_DOWN: retval = m->driver(REQ_DOWN_ITEM); break;
-	case KEY_UP: retval = m->driver(REQ_UP_ITEM); break;
-	case KEY_LEFT: retval = m->driver(REQ_LEFT_ITEM); break;
-	case KEY_RIGHT: retval = m->driver(REQ_RIGHT_ITEM); break;
-	case 'q':
-	case 'Q':
-		retval = -2;
-		break;
-	case '\n':
-	case '\r':
-	case KEY_ENTER:
-		retval = m->getCrossRefIndex();
-		break;
-	default: break;
-	}
-	return retval;
-}
+	WINDOW* mainWin = newwin(8, 20, 3, 20);
+	WINDOW* subWin = derwin(mainWin, 5, 18, 2, 1);
+	
+	Menu menu(subWin, 5, 1);
 
-void newMenuTest()
-{
-	WINDOW* win = newwin(5, 18, 2, 1);
-	
-	NewMenu menu(win, 5, 1);
-	
 	menu.setItem("New Game", "", 0, 'N');
 	menu.setItem("Load Game", "", 1, 'L');
 	menu.setItem("Quit Game", "", 2, 'Q');
@@ -283,60 +247,30 @@ void newMenuTest()
 	while (usingMenu)
 	{
 		menu.draw();
-		wnoutrefresh(win);
 		doupdate();
 		int input = getch();
 
-		int result = newMenuDriver(input, &menu);
+		MenuItem* item = menuDriver(input, &menu);
 
+		if (item == NULL)
+		{
+			continue;
+		}
 
-		switch (result)
+		switch(item->index)
 		{
 
 		case -2:
 			usingMenu = false;
 			break;
 
-		default:
+		default: 
 
-			mvaddch(1, 30, (char)result);
+			mvaddch(1, 30, (chtype)item->index);
 			break;
-		}
+		}	
 	}
 }
-
-//
-//void largeMenuTest()
-//{
-//	Menu menu(3, 2,
-//		5, 40, 3, 20,
-//		3, 38, 1, 1);
-//
-//	menu.setTitle("TEXT AND VIOLENCE");
-//	menu.setMarkSide(RIGHT_MARK);
-//
-//	menu.setItem("Cigarette", "", 0, 0);
-//	menu.setItem("Liquor", "", 1, 1);
-//	menu.setItem("Beer", "", 2, 2);
-//	menu.setItem("Screwdriver", "", 3, 3);
-//	menu.setItem("Courtyard Key", "", 4, 4);
-//	menu.setItem("Katana", "", 5, 5);
-//
-//	bool usingMenu = true;
-//	//keypad(stdscr, true);
-//	bool firstTime = true;
-//	while (usingMenu)
-//	{
-//		menu.draw();
-//		doupdate();
-//		int input = getch();
-//
-//		int result = menuDriver(input, &menu);
-//
-//		if (result == -2)
-//			usingMenu = false;
-//	}
-//}
 
 
 void resizeTest()
@@ -373,132 +307,132 @@ void mapEditorTest()
 }
 
 
-void mainMenuTest()
-{
-	short totalRows = 23;
-	short totalCols = 51;
-	resize_term(totalRows, totalCols);
-	init_pair(2, COLOR_WHITE, COLOR_BLUE);
-	
-	//setup character panel
-	WINDOW* frame = newwin(totalRows, 26, 0, 0);
-	WINDOW* charDisplay = derwin(frame, totalRows - 2, 24, 1, 1);
-
-	//setup main menu
-	int mainWidth = 11;
-
-	WINDOW* menuFrame = newwin(10, mainWidth, 0, totalCols - mainWidth);
-	WINDOW* menuWin = derwin(menuFrame, 8, 8, 1, 1);
-
-	Menu* main = new Menu(menuWin, 8, 1);
-
-	main->setColor(2);
-
-	main->setItem("Item", "", 0, 0);
-	main->setItem("Equip", "", 1, 1);
-	main->setItem("Status", "", 2, 2);
-	main->setItem("Skill", "", 3, 3);
-	main->setItem("Config", "", 4, 4);
-	main->setItem("Map", "", 5, 5);
-	main->setItem("Save", "", 6, 6);
-	main->setItem("Quit", "", 7, 7);
-
-	//create hidden confirmation window
-	int confirmFrameRows = 4;
-	int confirmFrameCols = 24;
-	WINDOW* confirmFrame = newwin(confirmFrameRows, confirmFrameCols, (totalRows - confirmFrameRows) / 2, (totalCols - confirmFrameCols) / 2);
-	string confirmMsg = "Quit - are you sure?";
-	WINDOW* confirmMenuWin = derwin(confirmFrame, 1, confirmFrameCols - 2, 2, 1);
-
-	Menu* confirmMenu = new Menu(confirmMenuWin, 1, 2);
-
-	confirmMenu->setColor(2);
-	confirmMenu->setMaxNameLength(6);
-	confirmMenu->setItem("No", "", 0, 2);
-	confirmMenu->setItem("Yes", "", 1, 3);
-	
-
-
-	bool inMenu = true;
-
-	bool displayConfirm = false;
-
-	while (inMenu)
-	{
-		//draw charDisplay
-		wattron(frame, COLOR_PAIR(2));
-		box(frame, 0, 0);
-		wbkgd(frame, ' ' | COLOR_PAIR(2));
-		wattron(charDisplay, COLOR_PAIR(2));
-		string fakeCharStr = "abcdeabcdeabcde";
-		string lvStr = "Level 14";
-		string hpStr = "HP 200/225";
-		string mpStr = "MP 45/50";
-		for (int i = 0; i < 4; i++)
-		{
-			int row = i * 5;
-			mvwaddstr(charDisplay, row, 0, fakeCharStr.c_str());
-			mvwaddstr(charDisplay, row + 1, 0, lvStr.c_str());
-			mvwaddstr(charDisplay, row + 2, 0, hpStr.c_str());
-			mvwaddstr(charDisplay, row + 3, 0, mpStr.c_str());
-		}
-
-		wnoutrefresh(frame);
-		wnoutrefresh(charDisplay);
-
-		//draw menu
-		box(menuFrame, 0, 0);
-		wnoutrefresh(menuFrame);
-		main->draw();
-
-		//if Confirmation Dialog is here then draw it
-		if(displayConfirm)
-		{
-			box(confirmFrame, 0, 0);
-			mvwaddstr(confirmFrame, 1, 1, confirmMsg.c_str());
-			wnoutrefresh(confirmFrame);
-			confirmMenu->draw();
-		}
-
-		doupdate();
-		int c = getch();
-
-		//handle input
-		MenuResponse* resp;
-		if (displayConfirm)
-		{
-			resp = menuDriver(c, confirmMenu);
-
-			if(resp->itemChosen)
-			{
-				switch (resp->crossref)
-				{
-				case 2: displayConfirm = false;  break; //no
-				case 3: inMenu = false; break; //yes
-				}
-			}
-		}
-		else
-		{
-			resp = menuDriver(c, main);
-			if (resp->itemChosen)
-			{
-				switch (resp->index)
-				{
-				case -2: inMenu = false; break;
-				case 7: displayConfirm = true;  break;
-				}
-			}
-		}
-
-		
-
-
-		
-	}
-
-	
-}
+//void mainMenuTest()
+//{
+//	short totalRows = 23;
+//	short totalCols = 51;
+//	resize_term(totalRows, totalCols);
+//	init_pair(2, COLOR_WHITE, COLOR_BLUE);
+//	
+//	//setup character panel
+//	WINDOW* frame = newwin(totalRows, 26, 0, 0);
+//	WINDOW* charDisplay = derwin(frame, totalRows - 2, 24, 1, 1);
+//
+//	//setup main menu
+//	int mainWidth = 11;
+//
+//	WINDOW* menuFrame = newwin(10, mainWidth, 0, totalCols - mainWidth);
+//	WINDOW* menuWin = derwin(menuFrame, 8, 8, 1, 1);
+//
+//	Menu* main = new Menu(menuWin, 8, 1);
+//
+//	main->setColor(2);
+//
+//	main->setItem("Item", "", 0, 0);
+//	main->setItem("Equip", "", 1, 1);
+//	main->setItem("Status", "", 2, 2);
+//	main->setItem("Skill", "", 3, 3);
+//	main->setItem("Config", "", 4, 4);
+//	main->setItem("Map", "", 5, 5);
+//	main->setItem("Save", "", 6, 6);
+//	main->setItem("Quit", "", 7, 7);
+//
+//	//create hidden confirmation window
+//	int confirmFrameRows = 4;
+//	int confirmFrameCols = 24;
+//	WINDOW* confirmFrame = newwin(confirmFrameRows, confirmFrameCols, (totalRows - confirmFrameRows) / 2, (totalCols - confirmFrameCols) / 2);
+//	string confirmMsg = "Quit - are you sure?";
+//	WINDOW* confirmMenuWin = derwin(confirmFrame, 1, confirmFrameCols - 2, 2, 1);
+//
+//	Menu* confirmMenu = new Menu(confirmMenuWin, 1, 2);
+//
+//	confirmMenu->setColor(2);
+//	confirmMenu->setMaxNameLength(6);
+//	confirmMenu->setItem("No", "", 0, 2);
+//	confirmMenu->setItem("Yes", "", 1, 3);
+//	
+//
+//
+//	bool inMenu = true;
+//
+//	bool displayConfirm = false;
+//
+//	while (inMenu)
+//	{
+//		//draw charDisplay
+//		wattron(frame, COLOR_PAIR(2));
+//		box(frame, 0, 0);
+//		wbkgd(frame, ' ' | COLOR_PAIR(2));
+//		wattron(charDisplay, COLOR_PAIR(2));
+//		string fakeCharStr = "abcdeabcdeabcde";
+//		string lvStr = "Level 14";
+//		string hpStr = "HP 200/225";
+//		string mpStr = "MP 45/50";
+//		for (int i = 0; i < 4; i++)
+//		{
+//			int row = i * 5;
+//			mvwaddstr(charDisplay, row, 0, fakeCharStr.c_str());
+//			mvwaddstr(charDisplay, row + 1, 0, lvStr.c_str());
+//			mvwaddstr(charDisplay, row + 2, 0, hpStr.c_str());
+//			mvwaddstr(charDisplay, row + 3, 0, mpStr.c_str());
+//		}
+//
+//		wnoutrefresh(frame);
+//		wnoutrefresh(charDisplay);
+//
+//		//draw menu
+//		box(menuFrame, 0, 0);
+//		wnoutrefresh(menuFrame);
+//		main->draw();
+//
+//		//if Confirmation Dialog is here then draw it
+//		if(displayConfirm)
+//		{
+//			box(confirmFrame, 0, 0);
+//			mvwaddstr(confirmFrame, 1, 1, confirmMsg.c_str());
+//			wnoutrefresh(confirmFrame);
+//			confirmMenu->draw();
+//		}
+//
+//		doupdate();
+//		int c = getch();
+//
+//		//handle input
+//		MenuResponse* resp;
+//		if (displayConfirm)
+//		{
+//			resp = menuDriver(c, confirmMenu);
+//
+//			if(resp->itemChosen)
+//			{
+//				switch (resp->crossref)
+//				{
+//				case 2: displayConfirm = false;  break; //no
+//				case 3: inMenu = false; break; //yes
+//				}
+//			}
+//		}
+//		else
+//		{
+//			resp = menuDriver(c, main);
+//			if (resp->itemChosen)
+//			{
+//				switch (resp->index)
+//				{
+//				case -2: inMenu = false; break;
+//				case 7: displayConfirm = true;  break;
+//				}
+//			}
+//		}
+//
+//		
+//
+//
+//		
+//	}
+//
+//	
+//}
 
 
 void testPanel()
@@ -655,96 +589,91 @@ void testPanel()
 //	delwin(subWin3);
 //}
 
-void panelTest3()
-{
-	const int YES = 3;
-	const int NO = 2;
-
-	//setup first menu
-	WINDOW* win = newwin(4, 40, 1, 1);
-	WINDOW* menuWin = derwin(win, 1, 38, 2, 1);
-
-	NewMenu* menu = new NewMenu(menuWin, 1, 2);
-	menu->setItem("No", "", 0, NO);
-	menu->setItem("Yes", "", 1, YES);
-
-	//setup second menu
-	WINDOW* win2 = newwin(4, 40, 2, 10);
-	WINDOW* menuWin2 = derwin(win2, 1, 38, 2, 1);
-
-	NewMenu* menu2 = new NewMenu(menuWin2, 1, 2);
-	menu2->setItem("No", "", 0, NO);
-	menu2->setItem("Yes", "", 1, YES);
-
-
-	PANEL* pan = new_panel(win);
-	PANEL* pan2 = new_panel(win2);
-	hide_panel(pan2);
-
-	bool inMenu = true;
-	NewMenu* activeMenu = menu;
-	PANEL* topPanel = pan;
-	while (inMenu)
-	{
-		//all panels get the opportunity to be drawn if they are on the stack
-		if (panel_hidden(pan))
-		{
-			box(win, 0, 0);
-			mvwaddstr(win, 1, 2, "Are you sure you want to quit?");
-			menu->draw();
-		}
-
-		if (panel_hidden(pan2))
-		{
-			box(win2, 0, 0);
-			mvwaddstr(win2, 1, 2, "Are you really sure you want to quit?");
-			menu2->draw();
-		}
-		
-		update_panels(); //to display panels in proper stacking order
-		doupdate();
-		int c = getch();
-
-		//menu driver handles the activemenu (although this could be redone to use a different driver based on what the active menu is)
-		int retval = newMenuDriver(c, activeMenu);
-
-		if (retval == YES)
-		{
-			if (activeMenu == menu)
-			{
-				activeMenu = menu2;
-				show_panel(pan2);
-			}
-			else if (activeMenu == menu2)
-			{
-				inMenu = false;
-			}
-		}
-		else if (retval == NO)
-		{
-			if (activeMenu == menu)
-			{
-				inMenu = false;
-			}
-			else if (activeMenu == menu2)
-			{
-				activeMenu = menu;
-				hide_panel(pan2);
-			}
-		}
-		
-			
-
-
-
-	}
-	
-}
-
-void panelTest4()
-{
-	//on hold
-}
+//void panelTest3()
+//{
+//	const int YES = 3;
+//	const int NO = 2;
+//
+//	//setup first menu
+//	WINDOW* win = newwin(4, 40, 1, 1);
+//	WINDOW* menuWin = derwin(win, 1, 38, 2, 1);
+//
+//	NewMenu* menu = new NewMenu(menuWin, 1, 2);
+//	menu->setItem("No", "", 0, NO);
+//	menu->setItem("Yes", "", 1, YES);
+//
+//	//setup second menu
+//	WINDOW* win2 = newwin(4, 40, 2, 10);
+//	WINDOW* menuWin2 = derwin(win2, 1, 38, 2, 1);
+//
+//	NewMenu* menu2 = new NewMenu(menuWin2, 1, 2);
+//	menu2->setItem("No", "", 0, NO);
+//	menu2->setItem("Yes", "", 1, YES);
+//
+//
+//	PANEL* pan = new_panel(win);
+//	PANEL* pan2 = new_panel(win2);
+//	hide_panel(pan2);
+//
+//	bool inMenu = true;
+//	NewMenu* activeMenu = menu;
+//	PANEL* topPanel = pan;
+//	while (inMenu)
+//	{
+//		//all panels get the opportunity to be drawn if they are on the stack
+//		if (panel_hidden(pan))
+//		{
+//			box(win, 0, 0);
+//			mvwaddstr(win, 1, 2, "Are you sure you want to quit?");
+//			menu->draw();
+//		}
+//
+//		if (panel_hidden(pan2))
+//		{
+//			box(win2, 0, 0);
+//			mvwaddstr(win2, 1, 2, "Are you really sure you want to quit?");
+//			menu2->draw();
+//		}
+//		
+//		update_panels(); //to display panels in proper stacking order
+//		doupdate();
+//		int c = getch();
+//
+//		//menu driver handles the activemenu (although this could be redone to use a different driver based on what the active menu is)
+//		int retval = newMenuDriver(c, activeMenu);
+//
+//		if (retval == YES)
+//		{
+//			if (activeMenu == menu)
+//			{
+//				activeMenu = menu2;
+//				show_panel(pan2);
+//			}
+//			else if (activeMenu == menu2)
+//			{
+//				inMenu = false;
+//			}
+//		}
+//		else if (retval == NO)
+//		{
+//			if (activeMenu == menu)
+//			{
+//				inMenu = false;
+//			}
+//			else if (activeMenu == menu2)
+//			{
+//				activeMenu = menu;
+//				hide_panel(pan2);
+//			}
+//		}
+//		
+//			
+//
+//
+//
+//	}
+//	
+//}
 
 
 void RGBMenuDriver(Menu* menu, int input)
@@ -1345,47 +1274,140 @@ MenuResponse* m2Driver(int input, Menu* m)
 	return NULL;
 }
 
-void controllableTest()
+void modalCallback(void* ptr, int input)
 {
-	ControlManager* cm = new ControlManager();
+	Menu* m = (Menu*)ptr;
 
+	switch (input)
+	{
+	case KEY_LEFT: m->driver(REQ_LEFT_ITEM);  break;
+	case KEY_RIGHT: m->driver(REQ_RIGHT_ITEM);  break;
+		//case KEY_UP: m->driver(REQ_UP_ITEM);  break;
+		//case KEY_DOWN: m->driver(REQ_DOWN_ITEM);  break;
+	case '\r': m->driver(REQ_TOGGLE_ITEM); break;
+	}
+
+	MenuItem* item = m->getSelectedItem();
+	if (item != NULL)
+	{
+		ControlManager* cm = m->getControlManager();
+		if (item->index == 0) //YES
+		{
+			//exit(0); //works, but probably not good to use in a game with multiple states
+			cm->prepareForShutdown();
+		}
+		else if (item->index == 1) //no remove modal window
+		{
+			cm = m->getControlManager();
+			cm->popControl();
+		}
+	}
+
+}
+
+
+void callBackTest(void* ptr, int input)
+{
+	Menu* m = (Menu*)ptr;
+
+	switch (input)
+	{
+	case KEY_LEFT: m->driver(REQ_LEFT_ITEM);  break;
+	case KEY_RIGHT: m->driver(REQ_RIGHT_ITEM);  break;
+	case KEY_UP: m->driver(REQ_UP_ITEM);  break;
+	case KEY_DOWN: m->driver(REQ_DOWN_ITEM);  break;
+	case '\r': m->driver(REQ_TOGGLE_ITEM); break;
+	}
+
+	MenuItem* item = m->getSelectedItem();
+	if (item != NULL)
+	{
+		if (item->index == 0) //YES
+		{
+			//create modal menu
+
+			WINDOW* win = newwin(1, 40, 6, 40);
+			Menu* modal = new Menu(win, 1, 2);
+			modal->setModal(true);
+			modal->setItem("Yes", "", 0, 0);
+			modal->setItem("No", "", 1, 1);
+
+			ControlManager* cm = m->getControlManager();
+			cm->registerControl(modal, KEY_LISTENER, modalCallback);
+			cm->setFocus(modal);
+			
+		}
+		item->itemChosen = false;
+	}
+
+}
+
+
+
+void callBackTest2(void* ptr, int input)
+{
+	Palette* p = (Palette*)ptr;
+	int colorY, colorX;
+	MEVENT event;
+	nc_getmouse(&event);
+	p->translateCoords(event.y, event.x, colorY, colorX);
+	//PaletteItem* item = 
+		p->pickItem(colorY, colorX);
+
+
+}
+
+void newCallback(void* ptr, int input)
+{
+	mvaddstr(25, 25, "new callback called");
+}
+
+void quitCallback(void* ptr, int input)
+{
+	ControlManager* cm = (ControlManager*)ptr;
+	cm->prepareForShutdown();
+}
+
+void controlManagerTest()
+{
 	WINDOW* win = newwin(2, 20, 1, 1);
 	Menu* m1 = new Menu(win, 2, 1);
 
-	m1->setItem("Item A", "", 0, 5);
-	m1->setItem("Item B", "", 1, 7);
-	cm->registerControl(m1);
+	m1->setItem("Yes", "", 0, 0);
+	m1->setItem("No", "", 1, 1);
 
-	WINDOW* win2 = newwin(2, 20, 5, 1);
-	Menu* m2 = new Menu(win2, 2, 1);
+	int rows;
+	int cols;
+	rows = cols = 4;
+	Palette* palette = new Palette(rows, cols, 7, 1);
+	for (int i = 0; i < TOTAL_COLORS; i++)
+	{
+		chtype c = ' ' | (i << 28) & A_COLOR;
+		int x = i % cols;
+		int y = i / cols;
+		palette->setItem(TUI::colorNames[i], c, y, x);
+	}
 
-	m2->setItem("Item C", "", 0, 5);
-	m2->setItem("Item D", "", 1, 7);
+
+	ControlManager* cm = new ControlManager();
+	cm->registerControl(m1, MOUSE_LISTENER | KEY_LISTENER, callBackTest);
+	cm->registerControl(palette, MOUSE_LISTENER, callBackTest2);
+	cm->registerShortcutKey(CTRL_N, newCallback);
+	cm->registerShortcutKey(CTRL_Q, quitCallback);
 
 	bool inMenus = true;
 	while (inMenus)
 	{
-		m1->draw();
-		m2->draw();
+	//	clear();
+		refresh();
+		cm->draw();
+		
+		
 		doupdate();
 		int c = getch();
 
-		//route input to the menu that has focus
-		if (cm->getFocus() == m1)
-		{
-			if (c == KEY_RIGHT)
-
-				menuDriver(c, m1);
-		}
-		else if (cm->getFocus() == m2)
-		{
-			menuDriver(c, m2);
-		}
-
+		inMenus = cm->handleInput(c);
 	}
-
-
-
 
 }
 
@@ -1926,20 +1948,131 @@ void dataPkgTest()
 	saveActorDef("Actor.bin", def);
 }
 
+void textLabelTest()
+{
+	WINDOW* win = newwin(1, 10, 2, 2);
+	TextLabel* label = new TextLabel(win, "12345678901");
+
+	label->draw();
+	doupdate();
+	getch();
+}
+
+Menu* m1driver(Menu* m, int input) //simulated callback for menu
+{
+	WINDOW* win2 = newwin(1, 40, 1, 1);
+	Menu* m2 = new Menu(win2, 1, 2);
+
+	m2->setItem("Yes2", "", 0, 0);
+	m2->setItem("No2", "", 1, 1);
+	return m2;
+}
+
+void m2driver(Menu* m, int input) //simulated callback for menu
+{
+
+
+}
+
+
+void menuTest2()
+{
+	WINDOW* win1 = newwin(1, 40, 1, 1);
+	Menu* m1 = new Menu(win1, 1, 2);
+
+	m1->setItem("Yes", "", 0, 0);
+	m1->setItem("No", "", 1, 1);
+
+	Menu* menus[2];
+	menus[0] = m1;
+	int totalMenus = 1;
+	Menu* activeMenu = m1;
+
+	bool playing = true;
+
+	while (playing)
+	{
+		for (int i = 0; i < totalMenus; i++)
+		{
+			menus[i]->draw(); //draw all potential objects
+		}
+		doupdate();
+		int c = getch();
+
+		if (activeMenu == m1) //this section should be the callback! We call a specific routine based on what the Controllable object is
+		{
+			switch (c)
+			{
+			case KEY_LEFT: activeMenu->driver(REQ_LEFT_ITEM); break;
+			case KEY_RIGHT: activeMenu->driver(REQ_RIGHT_ITEM); break;
+			case '\r': activeMenu->driver(REQ_TOGGLE_ITEM); break;
+			}
+			
+			MenuItem* mi = activeMenu->getSelectedItem();
+			if(mi != NULL)
+			{
+				switch (mi->index)
+				{
+				case 0: //create pop-up window
+					activeMenu = m1driver(activeMenu, c);
+					menus[1] = activeMenu;
+					totalMenus++;
+					mi->itemChosen = false; 
+					break;
+				case 1: playing = false; //quit on no
+					break;
+				}
+			}
+			
+		}
+		else //callback for second method
+		{
+			switch (c)
+			{
+			case KEY_LEFT: activeMenu->driver(REQ_LEFT_ITEM); break;
+			case KEY_RIGHT: activeMenu->driver(REQ_RIGHT_ITEM); break;
+			case '\r': activeMenu->driver(REQ_TOGGLE_ITEM); break;
+			}
+
+			MenuItem* mi = activeMenu->getSelectedItem();
+			if (mi != NULL)
+			{
+				switch (mi->index)
+				{
+				case 0: //quit on yes
+					playing = false;
+					break;
+				case 1:   //backout on no (the callback that handles this portion can deallocate the memory)
+					delete activeMenu;
+					activeMenu = menus[0];
+					totalMenus--;
+					break;
+				}			
+			}
+		}
+
+		
+	}
+
+
+}
+
+
 int main()
 {
-	//TUI tui;
-	TUI* tui;
-	tui = new TUI;
+	TUI* tui = new TUI();
 	tui->init();
 	//curs_set(0);
 	//simpleFightTest();
-	
-//	dataPkgTest();
+	//menuTest();
+	//xtLabelTest();
+	//dataPkgTest();
 	//colorPaletteTest();
 	//filterPaletteTest();
 	//textFieldtest();
-
+	//controllableTest();
+	
+	//controlManagerTest();
 	mapEditorTest();
 	//simpleActorTest();
 	//realMapTest();

@@ -14,7 +14,6 @@ struct PaletteItem
 class Palette : public Controllable
 {
 private:
-	WINDOW* win;
 	char mark;
 	short selectedItem;
 	unsigned short rows, cols;
@@ -29,5 +28,4 @@ public:
 	~Palette();
 	//chtype pickItem(int y, int x);
 	PaletteItem* pickItem(int y, int x);
-	WINDOW* getWindow();
 };

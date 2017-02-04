@@ -1,7 +1,9 @@
 #pragma once
 #include "Controllable.h"
-#include "MenuItem.h"
+//#include "MenuItem.h"
 #include "curses.h"
+#include <iostream>
+using namespace std;
 
 #define CANCEL -1
 #define NOTHING -2
@@ -39,12 +41,7 @@
 
 
 
-struct MenuResponse
-{
-	short index;
-	short crossref;
-	bool itemChosen;
-};
+
 
 
 /*
@@ -62,15 +59,29 @@ rowmajor: row * menuCols + col
 colmajor: col * menuRows + row
 
 */
+struct MenuResponse
+{
+	short index;
+	short crossref;
+	bool itemChosen;
+};
+
+struct MenuItem
+{
+	unsigned short index;
+	short crossref;
+	bool itemChosen;
+	string name;
+	int selectable;
+};
+
 
 class Menu : public Controllable
 {
 private:
 	unsigned short itemCount; //the current # of items the menu has
 	MenuItem* items;
-	//WINDOW* win; //the outer frame window
-	WINDOW* win; //the containing window of the menu
-	//string title;
+
 	/*
 	the maximum # of items the menu can have
 	capacity should always = menuRows * menuCols
@@ -111,19 +122,13 @@ private:
 
 	void setDefaults();
 
-	//void drawOuterWin();
 	void drawMenu();
 	void drawItem(int row, int col);
 
 	int getElement(int row, int col);
 public:
-	/*Menu(int rows, int cols, 
-		int winRows, int winCols, int winY, int winX,
-		int subWinRows, int subWinCols, int subWinY, int subWinX);*/
-	
 	Menu(WINDOW* win, int rows, int cols);
 
-	//void setTitle(string title);
 	void setMaxNameLength(int length);
 	void setKeypad(bool set);
 	void setMajorOrder(bool majorOrder);
@@ -134,9 +139,10 @@ public:
 	void setMarkSide(bool markSide);
 	void setWrapAround(bool wrap);
 	void setColor(int colorPair);
-
 	void draw(); //overridden
 	int driver(int input);
+	MenuItem* getSelectedItem();
+	MenuItem* getItem(int y, int x);
 	virtual ~Menu();
 };
 

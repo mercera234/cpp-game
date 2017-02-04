@@ -24,7 +24,6 @@ private:
 	//overlays
 
 	short ulY, ulX; //the upper left coordinate to be displayed in window
-	WINDOW* win; //the window containing the visible portion of the map to be drawn
 
 	void drawTileChar(
 		int row, int col, //position in viewport to render char
@@ -43,6 +42,7 @@ public:
 	void setDisplayChar(int y, int x, chtype c);
 	chtype getDisplayChar(int y, int x);
 	string getName() { return name; }
+	//WINDOW* getWindow() { return win; };
 
 	bool save();
 	bool load(string fileName);

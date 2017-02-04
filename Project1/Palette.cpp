@@ -68,10 +68,10 @@ PaletteItem* Palette::pickItem(int y, int x) //returns the raw color and sets th
 	return &items[selectedItem];
 }
 
-WINDOW* Palette::getWindow()
-{
-	return win;
-}
+//WINDOW* Palette::getWindow()
+//{
+//	return win;
+//}
 
 
 

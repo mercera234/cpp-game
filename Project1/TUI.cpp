@@ -53,6 +53,8 @@ void TUI::init()
 			}
 		}
 	}
+
+	mousemask(ALL_MOUSE_EVENTS, NULL); //allow mouse usage
 	refresh();//do this once so that first call to getch doesn't do this
 }
 

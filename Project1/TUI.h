@@ -67,7 +67,7 @@ using namespace std;
 #define COLOR_YELLOW_BOLD 14
 #define COLOR_WHITE_BOLD 15
 #define COLOR_GRAY_BOLD 16 //doesn't work
-
+#define TOTAL_COLORS 16
 
 
 class TUI

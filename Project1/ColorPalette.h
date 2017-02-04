@@ -2,7 +2,7 @@
 #include "curses.h"
 #include "Controllable.h"
 
-#define TOTAL_COLORS 16
+
 class ColorPalette : public Controllable
 {
 private:

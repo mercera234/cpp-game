@@ -116,26 +116,25 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ColorPalette.cpp" />
+    <ClCompile Include="Controllable.cpp" />
     <ClCompile Include="ControlManager.cpp" />
     <ClCompile Include="CursesAttributeController.cpp" />
     <ClCompile Include="DataPkg.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="MapEditor.cpp" />
     <ClCompile Include="Menu.cpp" />
-    <ClCompile Include="MenuItem.cpp" />
     <ClCompile Include="CursesPanel.cpp" />
     <ClCompile Include="MouseHelper.cpp" />
-    <ClCompile Include="NewMenu.cpp" />
     <ClCompile Include="Palette.cpp" />
     <ClCompile Include="pdcursetest.cpp" />
     <ClCompile Include="RGBControl.cpp" />
+    <ClCompile Include="stateManager.cpp" />
     <ClCompile Include="TextField.cpp" />
+    <ClCompile Include="TextLabel.cpp" />
     <ClCompile Include="TUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor.h" />
-    <ClInclude Include="ColorPalette.h" />
     <ClInclude Include="Controllable.h" />
     <ClInclude Include="ControlManager.h" />
     <ClInclude Include="CursesAttributeController.h" />
@@ -143,13 +142,13 @@
     <ClInclude Include="Map.h" />
     <ClInclude Include="MapEditor.h" />
     <ClInclude Include="Menu.h" />
-    <ClInclude Include="MenuItem.h" />
     <ClInclude Include="CursesPanel.h" />
     <ClInclude Include="MouseHelper.h" />
-    <ClInclude Include="NewMenu.h" />
     <ClInclude Include="Palette.h" />
     <ClInclude Include="RGBControl.h" />
+    <ClInclude Include="stateManager.h" />
     <ClInclude Include="TextField.h" />
+    <ClInclude Include="TextLabel.h" />
     <ClInclude Include="TUI.h" />
   </ItemGroup>
   <ItemGroup>

@@ -29,6 +29,7 @@ Menu::Menu(WINDOW* win, int rows, int cols)
 
 	items = new MenuItem[capacity];
 
+	focusable = true; //all menus accept key input
 	setDefaults();
 }
 
@@ -100,13 +101,15 @@ setItem will set the item at the element specified. If element has already been 
 */
 bool Menu::setItem(string name, string itemDesc, int element, int crossRefNdx)
 {
+	items[element].index = element;
+	items[element].itemChosen = false;
 	crossRef[element] = crossRefNdx;//unused crossrefs will be -1 by default
 	int padAmount = maxNameLength - name.length();
 
 	if (padAmount > 0)
 	{
 		name.append(padAmount, pad);
-		items[element].setName(name);	
+		items[element].name = name;	
 	}
 	//else
 	//	items[element].setName("ERROR");
@@ -174,11 +177,11 @@ void Menu::drawItem(int row, int col)
 	if (markSide == LEFT_MARK)
 	{
 		mvwaddstr(win, row, col * colWidth, mark); //print blot mark
-		mvwaddstr(win, row, col * colWidth + 2, items[element].getName().c_str()); //get item name
+		mvwaddstr(win, row, col * colWidth + 2, items[element].name.c_str()); //get item name
 	}
 	else //markSide == RIGHT_MARK
 	{
-		mvwaddstr(win, row, col * colWidth, items[element].getName().c_str()); //get item name
+		mvwaddstr(win, row, col * colWidth, items[element].name.c_str()); //get item name
 		mvwaddstr(win, row, col * colWidth + maxNameLength, mark); //print blot mark
 	}
 
@@ -262,6 +265,8 @@ int Menu::driver(int input)
 	switch (input)
 	{
 	case REQ_DOWN_ITEM:
+		if (testIndex >= capacity - 1)
+			return currentIndex;
 		//ignore wraparound for right now and do this for one column menus to start with
 		if (majorOrder == ROW_MAJOR)
 			testIndex += menuCols;
@@ -269,8 +274,13 @@ int Menu::driver(int input)
 			testIndex++;
 		break;
 	case REQ_UP_ITEM:
+		if (testIndex <= 0)
+			return currentIndex;
+
 		if (majorOrder == ROW_MAJOR)
-			testIndex -= menuCols;
+		{ 
+			testIndex -= menuCols;	
+		}
 		else
 			testIndex--;
 		break;
@@ -286,6 +296,10 @@ int Menu::driver(int input)
 		else
 			testIndex += menuRows;
 		break;
+	case REQ_TOGGLE_ITEM:
+		items[currentIndex].itemChosen = true;
+		break;
+
 	default: break;
 	}
 	currentIndex = testIndex;
@@ -304,6 +318,22 @@ int Menu::getCrossRefIndex()
 int Menu::getCurrentIndex()
 {
 	return currentIndex;
+}
+
+MenuItem* Menu::getSelectedItem()
+{
+	MenuItem* item = &items[currentIndex];
+
+	//currentIndex = row * menuCols + col;
+	return item->itemChosen ? item : NULL;
+}
+
+MenuItem* Menu::getItem(int y, int x)
+{
+	int row = y;
+	int col = x / 3;
+	currentIndex = row * menuCols + col;
+	return &items[currentIndex];
 }
 
 Menu::~Menu()
