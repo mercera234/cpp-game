@@ -293,7 +293,7 @@ void mapEditorTest()
 	MapEditor me;
 	//me.loadMap();
 
-	mousemask(ALL_MOUSE_EVENTS, NULL);
+	mousemask(ALL_MOUSE_EVENTS | REPORT_MOUSE_POSITION, NULL);
 	bool editing = true;
 	while (editing) //simulate input/process/update loop
 	{
@@ -1274,7 +1274,7 @@ MenuResponse* m2Driver(int input, Menu* m)
 	return NULL;
 }
 
-void modalCallback(void* ptr, int input)
+void modalCallback(void* caller, void* ptr, int input)
 {
 	Menu* m = (Menu*)ptr;
 
@@ -1306,7 +1306,7 @@ void modalCallback(void* ptr, int input)
 }
 
 
-void callBackTest(void* ptr, int input)
+void callBackTest(void* caller, void* ptr, int input)
 {
 	Menu* m = (Menu*)ptr;
 
@@ -1344,7 +1344,7 @@ void callBackTest(void* ptr, int input)
 
 
 
-void callBackTest2(void* ptr, int input)
+void callBackTest2(void* caller, void* ptr, int input)
 {
 	Palette* p = (Palette*)ptr;
 	int colorY, colorX;
@@ -1357,12 +1357,12 @@ void callBackTest2(void* ptr, int input)
 
 }
 
-void newCallback(void* ptr, int input)
+void newCallback(void* caller, void* ptr, int input)
 {
 	mvaddstr(25, 25, "new callback called");
 }
 
-void quitCallback(void* ptr, int input)
+void quitCallback(void* caller, void* ptr, int input)
 {
 	ControlManager* cm = (ControlManager*)ptr;
 	cm->prepareForShutdown();
@@ -1389,7 +1389,7 @@ void controlManagerTest()
 	}
 
 
-	ControlManager* cm = new ControlManager();
+	ControlManager* cm = new ControlManager(NULL);
 	cm->registerControl(m1, MOUSE_LISTENER | KEY_LISTENER, callBackTest);
 	cm->registerControl(palette, MOUSE_LISTENER, callBackTest2);
 	cm->registerShortcutKey(CTRL_N, newCallback);
@@ -1879,7 +1879,7 @@ void textFieldtest()
 	WINDOW* textWin = newwin(1, 15, 1, 1);
 	TextField field(textWin);
 	field.setText("Default text");
-
+	
 	bool playing = true;
 	while (playing)
 	{
@@ -2063,15 +2063,7 @@ int main()
 	TUI* tui = new TUI();
 	tui->init();
 	//curs_set(0);
-	//simpleFightTest();
-	//menuTest();
-	//xtLabelTest();
-	//dataPkgTest();
-	//colorPaletteTest();
-	//filterPaletteTest();
-	//textFieldtest();
-	//controllableTest();
-	
+	//newColorTest();
 	//controlManagerTest();
 	mapEditorTest();
 	//simpleActorTest();

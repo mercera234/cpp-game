@@ -1,11 +1,13 @@
 #pragma once
 #include "curses.h"
 #include "Menu.h"
-#include "ColorPalette.h"
+//#include "ColorPalette.h"
 #include "Palette.h"
-#include "TextField.h"
+//#include "TextField.h"
+#include "TextLabel.h"
 #include <iostream>
 using namespace std;
+#include "ControlManager.h"
 
 #include "Map.h"
 
@@ -15,10 +17,17 @@ using namespace std;
 #define MAP_EDIT 2
 #define MAP_NAME 3
 
+#define DOT 0
+#define FILL 1
+
+#define DEF_FILENAME "Untitled.map" //will add open/close arrows later
 //#define 
 class MapEditor
 {
 private:
+
+	ControlManager* cm;
+
 	/*Map space*/
 	int canvasRows; //!!!these vars are deprecated and should be used from map object
 	int canvasCols;
@@ -39,35 +48,55 @@ private:
 	int x;
 	int y;
 
-	//stub!! a fake map variable, will replace with a real one later
-	//chtype** map;
 	Map* map;
 
-	//map name editor
-	TextField* mapName;
+	char drawChar;
 
+	//Labels
+	TextLabel* mapName;
+	TextLabel* topRuler;
+	TextLabel* sideRuler;
+	TextLabel* textTitle;
+	TextLabel* bkgdTitle;
+	TextLabel* filterTitle;
+	TextLabel* toolTitle;
+
+	//what is this for?
 	short layer;
 
 	/*Palette*/
 	Palette* textPalette;
 	Palette* bkgdPalette;
+	Palette* toolPalette;
 	Palette* filterPalette;
+	
 	
 	int paletteLeftEdge; //
 	int textColor;
 	int bkgdColor;
+	short tool;
 	int filter;
 
 	/*global*/
 	int state;
-	bool unsavedChanges;
+	bool modified;
 	string fileName;
 
-
 	void setupPalettes();
-	void drawRulers();
+	void setupRulers();
+//	void drawRulers();
 	bool processMapInput(int input);
 	void processMouseInput(int input);
+
+	void processPaletteInput(Palette* p, int input);
+	void processGlobalInput(int input);
+	void confirmDialogDriver(Controllable* dialog, int input);
+
+	void setupControlManager();
+
+	void applyTool(int y, int x);
+	void newMap();
+	void fill(int sourceRow, int sourceCol);
 public:
 
 	
@@ -76,5 +105,8 @@ public:
 	void loadMap();
 	void draw();
 
-
+	static void paletteCallback(void*, void*, int);
+	static void mapCallback(void* caller, void* ptr, int input); //static
+	static void globalCallback(void* caller, void* ptr, int input);
+	static void dialogCallback(void* caller, void* ptr, int input); //static
 };

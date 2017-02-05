@@ -3,7 +3,7 @@
 #include "MouseHelper.h"
 #include <iterator>
 
-void ControlManager::registerControl(Controllable* c, char listeners, void(*callback) (void*, int))
+void ControlManager::registerControl(Controllable* c, char listeners, void(*callback) (void*, void*, int))
 {
 	Registration* r = new Registration();
 
@@ -14,7 +14,7 @@ void ControlManager::registerControl(Controllable* c, char listeners, void(*call
 	controls.push_back(r);
 }
 
-void ControlManager::registerShortcutKey(int key, void(*callback) (void*, int))
+void ControlManager::registerShortcutKey(int key, void(*callback) (void*, void*, int))
 {
 	KeyAccelerator* shortcut = new KeyAccelerator();
 	shortcut->key = key;
@@ -58,7 +58,7 @@ bool ControlManager::handleInput(int input)
 
 		if (input == k->key)
 		{
-			k->callback(this, input);
+			k->callback(caller, this, input);
 
 			if (shutdown)
 			{
@@ -82,14 +82,14 @@ bool ControlManager::handleInput(int input)
 			MEVENT event;
 			nc_getmouse(&event);
 
-			if (c->isInWindow(event.y, event.x)) //determine if mouse event occurred inside this Controllable component
+			if(wenclose(c->getWindow(), event.y, event.x))
 			{
 				if (c->isFocusable())
 					focus = c;
 
 				if (r->callback != NULL)
 				{
-					r->callback(c, input);
+					r->callback(caller, c, input);
 					break;
 				}
 					
@@ -104,7 +104,7 @@ bool ControlManager::handleInput(int input)
 			{
 				if (r->callback != NULL)
 				{
-					r->callback(c, input);
+					r->callback(caller, c, input);
 				}
 			}			
 			break;

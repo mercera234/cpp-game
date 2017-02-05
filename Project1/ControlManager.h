@@ -9,7 +9,7 @@ using namespace std;
 struct Registration
 {
 	Controllable* c;
-	void(*callback) (void*, int);
+	void(*callback) (void*, void*, int);
 	char listen_map = 0; //bit map of all listeners
 	Registration() {};
 };
@@ -17,7 +17,7 @@ struct Registration
 struct KeyAccelerator
 {
 	int key;
-	void(*callback) (void*, int);
+	void(*callback) (void*, void*, int);
 };
 
 class ControlManager
@@ -31,15 +31,15 @@ private:
 	//list<Registration*> keyList;
 	Controllable* focus; //the item with focus
 	bool shutdown = false; //if true then marks the CM for shutting down
+	void* caller; //the type of class that utilizes the Control Manager
 
 public:
 
-	void registerControl(Controllable* c, char listeners, void(*callback) (void*, int));
-	void registerShortcutKey(int key, void(*callback) (void*, int));
+	void registerControl(Controllable* c, char listeners, void(*callback) (void*, void*, int));
+	void registerShortcutKey(int key, void(*callback) (void*, void*, int));
 	void popControl();
-	//void registerMouseListener(Controllable* c, void (*callback) (void*, int));
-	//void registerKeyListener(Controllable* c, void(*callback) (void*, int));
-
+	
+	ControlManager(void* caller) { this->caller = caller; }
 	Controllable* getFocus();
 	void setFocus(Controllable* c) { focus = c; }
 	//void cycleFocus();

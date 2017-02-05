@@ -18,6 +18,7 @@ Map::Map(string name, int rows, int cols, WINDOW* win)
 
 	ulY = 0;
 	ulX = 0;
+	filterMask = 0xffffffff;
 }
 
 void Map::reset()
@@ -26,10 +27,10 @@ void Map::reset()
 	{
 		for (int col = 0; col < cols; col++)
 		{
-			chtype c = (chtype)(row % NULL_MARKER_SPACING == 0 && 
-							    col % NULL_MARKER_SPACING == 0) ? '!' : ' ';
+		/*	chtype c = (chtype)(row % NULL_MARKER_SPACING == 0 && 
+							    col % NULL_MARKER_SPACING == 0) ? '!' : ' ';*/
 			int element = row * cols + col;
-			displayLayer[element] = c; //fill display with null template
+			displayLayer[element] = ' '; //fill display with null template
 
 			effectsLayer[element] = 0; //zero out effects layer
 		}
@@ -100,7 +101,7 @@ void Map::drawTileChar(int row, int col, int mapY, int mapX)
 		c = getOutOfBoundsTile(mapY, mapX);
 	}
 
-	mvwaddch(win, row, col, c);
+	mvwaddch(win, row, col, c & filterMask);
 }
 
 

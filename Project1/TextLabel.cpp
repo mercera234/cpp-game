@@ -8,6 +8,8 @@ TextLabel::TextLabel(WINDOW* win, string text)
 
 void TextLabel::draw()
 {
+	wclear(win);
 	mvwaddstr(win, 0, 0, text.c_str()); //this will truncate any characters that would fall outside of the text label box
 	wnoutrefresh(win);
 }
+

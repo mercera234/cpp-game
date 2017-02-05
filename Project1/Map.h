@@ -23,6 +23,7 @@ private:
 	short* effectsLayer;
 	//overlays
 
+	
 	short ulY, ulX; //the upper left coordinate to be displayed in window
 
 	void drawTileChar(
@@ -30,7 +31,8 @@ private:
 		int mapY, int mapX); //coords of char in map array to draw
 	chtype getOutOfBoundsTile(int mapX, int mapY); //a boundary drawn around the edges of the map within the viewport
 public:
-	
+	chtype filterMask;//a mask that causes the map to be drawn without certain attributes (so we can draw a black and white map if we want)
+
 	Map(string name, int rows, int cols, WINDOW* win);
 
 	void draw();
@@ -42,7 +44,8 @@ public:
 	void setDisplayChar(int y, int x, chtype c);
 	chtype getDisplayChar(int y, int x);
 	string getName() { return name; }
-	//WINDOW* getWindow() { return win; };
+	unsigned short getHeight() { return rows; }
+	unsigned short getWidth() { return cols; }
 
 	bool save();
 	bool load(string fileName);
