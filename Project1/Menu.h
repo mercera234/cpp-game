@@ -89,13 +89,14 @@ private:
 	unsigned short capacity; 
 	unsigned short menuRows;
 	unsigned short menuCols;
-	unsigned short colWidth; //full width of column = maxNameLength + 2 (mark length) + 1(divider)
+	unsigned short dividerLen;
+	unsigned short colWidth; //full width of column = maxNameLength + 2 (mark length) + dividerLen
 	//the maximum length to use for all names, can be used to set a menu with a uniform column width
 	//if not set, then there is no limit
 	unsigned short maxNameLength;
 	
 	int* crossRef; //a cross reference array so that menu selections can return a more desired value
-
+	
 	/*row major order = true
 	1 2 3
 	4 5 6
@@ -109,15 +110,16 @@ private:
 	unsigned short visibleRows;
 	unsigned short visibleCols;
 	
-	unsigned short topRow; //the top menu item that is visible
-	unsigned short currentIndex; //the currently selected item
+	unsigned short topRow; //the top menu row that is visible
+	unsigned short leftCol; //the left most col that is visible
+	short currentIndex; //the currently selected item
 	unsigned char pad; 
 	char mark[2];
 	bool markSide; //true = left; false = right
 	int colorPair;
+	bool wrapAround;
 
 	//unimplemented properties
-	bool wrapAround;
 	unsigned short justification;
 
 	void setDefaults();
@@ -126,11 +128,13 @@ private:
 	void drawItem(int row, int col);
 
 	int getElement(int row, int col);
+
+	int rowMajorDriver(int input);
 public:
 	Menu(WINDOW* win, int rows, int cols);
 
 	void setMaxNameLength(int length);
-	void setKeypad(bool set);
+	//void setKeypad(bool set);
 	void setMajorOrder(bool majorOrder);
 	bool setItem(string name, string itemDesc, int element, int crossRefNdx);
 	void setSelectedIndex(int index);
@@ -140,6 +144,7 @@ public:
 	void setWrapAround(bool wrap);
 	void setColor(int colorPair);
 	void draw(); //overridden
+	
 	int driver(int input);
 	MenuItem* getSelectedItem();
 	MenuItem* getItem(int y, int x);

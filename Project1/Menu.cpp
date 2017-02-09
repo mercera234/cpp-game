@@ -17,10 +17,11 @@ Menu::Menu(WINDOW* win, int rows, int cols)
 
 	capacity = rows * cols;
 
+	
 	//by default visible menuRows/menuCols will be big enough to display entire menu without scrolling
-	visibleRows = rows;
-	visibleCols = cols;
-
+	//visibleRows = rows;
+	//visibleCols = cols;
+	
 	crossRef = new int[capacity];
 	for (int i = 0; i < capacity; i++)
 	{
@@ -31,6 +32,10 @@ Menu::Menu(WINDOW* win, int rows, int cols)
 
 	focusable = true; //all menus accept key input
 	setDefaults();
+
+	visibleRows = getmaxy(win); //as many rows that can fit in the window being used
+	visibleCols = getmaxx(win) / colWidth;
+
 }
 
 
@@ -40,6 +45,7 @@ void Menu::setDefaults()
 	majorOrder = ROW_MAJOR; //default
 
 	topRow = 0; //the top menu item that is visible
+	leftCol = 0;
 	currentIndex = 0; //default index will be top left item
 
 	
@@ -49,6 +55,7 @@ void Menu::setDefaults()
 	mark[1] = '>';
 	markSide = LEFT_MARK;
 
+	dividerLen = 1;
 	setMaxNameLength(15); //default is 15
 
 	colorPair = 0;//use default color pair
@@ -65,10 +72,10 @@ void Menu::setMajorOrder(bool majorOrder)
 	this->majorOrder = majorOrder;
 }
 
-void Menu::setKeypad(bool set)
-{
-	keypad(win, set);
-}
+//void Menu::setKeypad(bool set)
+//{
+//	keypad(win, set);
+//}
 
 void Menu::setMarkSide(bool markSide)
 {
@@ -104,29 +111,9 @@ bool Menu::setItem(string name, string itemDesc, int element, int crossRefNdx)
 	items[element].index = element;
 	items[element].itemChosen = false;
 	crossRef[element] = crossRefNdx;//unused crossrefs will be -1 by default
-	int padAmount = maxNameLength - name.length();
-
-	if (padAmount > 0)
-	{
-		name.append(padAmount, pad);
-		items[element].name = name;	
-	}
-	//else
-	//	items[element].setName("ERROR");
-	
+	items[element].name = name;	
 	return true;
 }
-
-//void Menu::drawOuterWin()
-//{
-//	wattron(win, COLOR_PAIR(colorPair));
-//	//draw border
-//	box(win, 0, 0);
-//	wbkgd(win, ' ' | COLOR_PAIR(colorPair));
-//
-//	//draw title (by default, put one space to left of window)
-//	mvwaddstr(win, 0, 1, title.c_str());
-//}
 
 void Menu::drawMenu()
 { 
@@ -137,9 +124,9 @@ void Menu::drawMenu()
 	//render each item
 	if (majorOrder == ROW_MAJOR)
 	{
-		for (int row = 0; row < menuRows; row++)
+		for (int row = topRow; row < topRow + visibleRows; row++)
 		{
-			for (int col = 0; col < menuCols; col++)
+			for (int col = leftCol; col < leftCol + visibleCols; col++)
 			{
 				drawItem(row, col);
 			}
@@ -162,33 +149,22 @@ void Menu::drawMenu()
 void Menu::drawItem(int row, int col)
 {
 	int element = getElement(row, col);
-	char* mark;
-
-	//choose correct mark and attribute if item is highlighted
-	if (element == currentIndex)
-	{
-	//	wattron(subWin, A_REVERSE);
-		mark = this->mark;
-	}
-	else
-		mark = "  ";
+	if (element >= capacity) //can't draw a null item
+		return;
 
 	//print mark and name in correct order
 	if (markSide == LEFT_MARK)
 	{
-		mvwaddstr(win, row, col * colWidth, mark); //print blot mark
-		mvwaddstr(win, row, col * colWidth + 2, items[element].name.c_str()); //get item name
+		if(element == currentIndex)
+			mvwaddstr(win, row - topRow, (col - leftCol) * colWidth, mark); //print blot mark
+		mvwaddnstr(win, row - topRow, (col - leftCol) * colWidth + 2, items[element].name.c_str(), maxNameLength); //get item name
 	}
 	else //markSide == RIGHT_MARK
 	{
-		mvwaddstr(win, row, col * colWidth, items[element].name.c_str()); //get item name
-		mvwaddstr(win, row, col * colWidth + maxNameLength, mark); //print blot mark
-	}
+		mvwaddnstr(win, row - topRow, (col - leftCol) * colWidth, items[element].name.c_str(), maxNameLength); //get item name
 
-	//turn off highlight attribute if turned on earlier
-	if (element == currentIndex)
-	{
-	//	wattroff(subWin, A_REVERSE);
+		if (element == currentIndex)
+			mvwaddstr(win, row - topRow, (col - leftCol) * colWidth + maxNameLength, mark); //print blot mark
 	}
 }
 
@@ -210,99 +186,206 @@ int Menu::getElement(int row, int col)
 
 void Menu::draw()
 {
-	//drawOuterWin();
 	drawMenu();
-	//wnoutrefresh(win);
 	wnoutrefresh(win);
 }
 
-//int Menu::driver(int input)
-//{
-//	int testIndex = currentIndex;
-//	switch (input)
-//	{
-//	case REQ_DOWN_ITEM:
-//		//ignore wraparound for right now and do this for one column menus to start with
-//		if (majorOrder == ROW_MAJOR)
-//			testIndex += menuCols;
-//		else
-//			testIndex++;
-//		break;
-//	case REQ_UP_ITEM:
-//		if (majorOrder == ROW_MAJOR)
-//			testIndex -= menuCols;
-//		else
-//			testIndex--;
-//		break;
-//	case REQ_LEFT_ITEM: 
-//		if (majorOrder == ROW_MAJOR)
-//			testIndex--;
-//		else
-//			testIndex -= menuRows;
-//		break;
-//	case REQ_RIGHT_ITEM: 
-//		if (majorOrder == ROW_MAJOR)
-//			testIndex++;
-//		else
-//			testIndex += menuRows;
-//		break; 
-//	default: break;
-//	}
-//	currentIndex = testIndex;
-//	return currentIndex;
-//}
 
 void Menu::setMaxNameLength(int length)
 {
 	maxNameLength = length;
-	colWidth = maxNameLength + 2 + 1;
+	colWidth = maxNameLength + 2 + dividerLen; //the 2 is the mark length
 }
 
-
-int Menu::driver(int input)
+int Menu::rowMajorDriver(int input)
 {
-	int testIndex = currentIndex;
 	switch (input)
 	{
 	case REQ_DOWN_ITEM:
-		if (testIndex >= capacity - 1)
-			return currentIndex;
-		//ignore wraparound for right now and do this for one column menus to start with
-		if (majorOrder == ROW_MAJOR)
-			testIndex += menuCols;
-		else
-			testIndex++;
+		currentIndex += menuCols;
+		//handle wraparound
+		if (currentIndex >= capacity)
+		{
+			if (wrapAround)
+			{
+				currentIndex %= menuCols;
+				topRow = 0;
+			}
+			else
+				currentIndex -= menuCols;
+		}
+
+		{
+			//reset toprow if necessary
+			int currRow = currentIndex / menuCols;
+			if (currRow >= visibleRows)
+			{
+				topRow = currRow + 1 - visibleRows;
+			}
+		}
+		
 		break;
 	case REQ_UP_ITEM:
-		if (testIndex <= 0)
-			return currentIndex;
-
-		if (majorOrder == ROW_MAJOR)
-		{ 
-			testIndex -= menuCols;	
+		//calculate next position
+		currentIndex -= menuCols;
+		//handle wraparound
+		if (currentIndex < 0)
+		{
+			if (wrapAround)
+			{
+				currentIndex += capacity; //yay for this working!
+				topRow = menuRows - visibleRows;
+			}
+			else
+				currentIndex += menuCols;
 		}
-		else
-			testIndex--;
+		//reset toprow if necessary
+		{
+			int currRow = currentIndex / menuCols;
+			if (currRow < topRow)
+			{
+				topRow = currRow;
+			}
+		}
+		
 		break;
 	case REQ_LEFT_ITEM:
-		if (majorOrder == ROW_MAJOR)
-			testIndex--;
-		else
-			testIndex -= menuRows;
+		//calculate next position
+		currentIndex--;
+		//handle wraparound
+		if ((currentIndex + 1) % menuCols == 0)
+		{
+			if (wrapAround)
+			{
+				currentIndex += menuCols;
+				leftCol = (currentIndex + 1 - visibleCols) % menuCols;
+			}
+			else
+				currentIndex++;
+		}
+		//reset leftCol if necessary
+		{
+			int currCol = currentIndex % menuCols;
+			if (currCol < leftCol)
+			{
+				leftCol = currCol;
+			}
+		}
 		break;
 	case REQ_RIGHT_ITEM:
-		if (majorOrder == ROW_MAJOR)
-			testIndex++;
-		else
-			testIndex += menuRows;
+		//calculate next position
+		currentIndex++;
+		//handle wraparound
+		if (currentIndex % menuCols == 0)
+		{
+			if (wrapAround)
+			{
+				currentIndex -= menuCols;
+				leftCol = currentIndex % menuCols;
+			}
+			else
+				currentIndex--;
+		}
+		//reset leftCol if necessary
+		{
+			int currCol = currentIndex % menuCols;
+			if (currCol >= visibleCols)
+			{
+				leftCol = currCol + 1 - visibleCols;
+			}
+		}
 		break;
+	}
+
+	return currentIndex;
+}
+
+/*
+colMajorDriver(int input)
+{
+//switch (input)
+//{
+//case REQ_DOWN_ITEM:
+//	//calculate next position
+//	
+//		currentIndex++;
+//		//handle wraparound
+//		if (currentIndex % menuRows == 0) //pressing down shouldn't lead to these values
+//		{
+//			if (wrapAround)
+//			{
+//				currentIndex -= menuRows;
+//			}
+//			else
+//				currentIndex--;
+//		}
+
+//	break;
+//case REQ_UP_ITEM:
+//	//calculate next position
+//	
+//		currentIndex--;
+//		//handle wraparound
+//		if ((currentIndex + 1) % menuRows == 0) //pressing down shouldn't lead to these values
+//		{
+//			if (wrapAround)
+//			{
+//				currentIndex += menuRows;
+//			}
+//			else
+//				currentIndex++;
+//		}
+//	break;
+//case REQ_LEFT_ITEM:
+//	//calculate next position
+//		currentIndex -= menuRows;
+//		//handle wraparound
+//		if (currentIndex < 0) //pressing down shouldn't lead to these values
+//		{
+//			if (wrapAround)
+//			{
+//				currentIndex += capacity;
+//			}
+//			else
+//				currentIndex += menuRows;
+//		}
+//	break;
+//case REQ_RIGHT_ITEM:
+//	//calculate next position
+//		currentIndex += menuRows;
+//		//handle wraparound
+//		if (currentIndex >= capacity) //pressing down shouldn't lead to these values
+//		{
+//			if (wrapAround)
+//			{
+//				currentIndex -= capacity;
+//			}
+//			else
+//				currentIndex -= menuRows;
+//		}
+//	break;
+	}
+}
+*/
+
+int Menu::driver(int input)
+{
+	if (majorOrder == ROW_MAJOR)
+	{
+		rowMajorDriver(input); //not returning a value right now
+	}
+	//else colMajorDriver(input)
+
+	
+	switch(input)
+	{
 	case REQ_TOGGLE_ITEM:
 		items[currentIndex].itemChosen = true;
 		break;
 
 	default: break;
 	}
-	currentIndex = testIndex;
+
 	return currentIndex;
 }
 

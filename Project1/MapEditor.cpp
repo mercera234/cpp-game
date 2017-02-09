@@ -1,6 +1,7 @@
 #include "MapEditor.h"
 #include "TUI.h"
-#include "MouseHelper.h"
+//#include "MouseHelper.h"
+#include "Frame.h"
 
 MapEditor::MapEditor()
 {
@@ -176,14 +177,21 @@ void MapEditor::processGlobalInput(int input)
 		{
 			//create confirmation dialog
 			string confirmMsg = "Are you sure? You have unsaved changes.";
-			WINDOW* cdWin = newwin(2, confirmMsg.length(), 3, 3);
+
+			int width, height;  getmaxyx(stdscr, height, width);
+			WINDOW* fWin = newwin(4, confirmMsg.length() + 2, (height - 4) / 2, (width - 40) / 2);
+			WINDOW* cdWin = derwin(fWin, 1, confirmMsg.length(), 2, 1);
 			Menu* cdMenu = new Menu(cdWin, 1, 2);
-			cdMenu->setModal(true);
+			//cdMenu->setModal(true);
 			cdMenu->setItem("No", "", 0, 0);
 			cdMenu->setItem("Yes", "", 1, 1);
 
-			cm->registerControl(cdMenu, KEY_LISTENER, dialogCallback);
-			cm->setFocus(cdMenu);
+			Frame* f = new Frame(fWin, cdMenu);
+			f->setText(confirmMsg, 1, 1);
+			f->setModal(true);
+
+			cm->registerControl(f, KEY_LISTENER, dialogCallback);
+			cm->setFocus(f);
 		}
 		else
 		{
@@ -234,7 +242,8 @@ void MapEditor::dialogCallback(void* caller, void* ptr, int input) //static
 
 void MapEditor::confirmDialogDriver(Controllable* c, int input)
 {
-	Menu* dialog = (Menu*)c;
+	Frame* f = (Frame*)c;
+	Menu* dialog = (Menu*)f->getControl();
 
 	switch (input)
 	{
@@ -249,7 +258,6 @@ void MapEditor::confirmDialogDriver(Controllable* c, int input)
 		switch (mi->index)
 		{
 		case 0: //no
-			//mi->itemChosen = false;
 			cm->popControl();
 			cm->setFocus(map);
 			break;
@@ -457,6 +465,7 @@ void MapEditor::loadMap()
 
 void MapEditor::draw()
 {
+	wclear(stdscr);
 	mvaddch(topRulerRow, sideRulerCol, '+');
 	for (int i = 0; i <= visibleRows; i++)
 	{
@@ -467,6 +476,8 @@ void MapEditor::draw()
 	int bottom = getmaxy(frame);
 	mvprintw(bottom + topRulerRow + 1, sideRulerCol + 1, "x: %+4d  y: %+4d", x, y); //%+4d always render sign, 4 char field, int
 
+	
+	wnoutrefresh(stdscr);
 	wnoutrefresh(frame);
 	cm->draw();
 
@@ -475,55 +486,5 @@ void MapEditor::draw()
 	wnoutrefresh(viewport);
 }
 
-
-	//mapName->draw();
-	//drawRulers();
-
-	//box(frame, 0, 0);
-	//mvaddstr(topRulerRow, paletteLeftEdge, "TEXT");
-	//mvaddstr(topRulerRow + 7, paletteLeftEdge, "BKGD");
-	//mvaddstr(topRulerRow + 14, paletteLeftEdge, "FILTER");
-
-	////draw the x y coordinates
-	//int bottom = getmaxy(frame);
-	//mvprintw(bottom + topRulerRow + 1, sideRulerCol + 1, "x: %+4d  y: %+4d", x, y); //%+4d always render sign, 4 char field, int
-
-	//map->draw();
-
-	///*The center cursor is done by retrieving the center character and then redrawing it with the A_REVERSE attr on*/
-	//wattron(viewport, A_REVERSE);
-	//char cursorChar = mvwinch(viewport, centerY, centerX);
-	//waddch(viewport, cursorChar);
-	//wattroff(viewport, A_REVERSE);
-
-	//wnoutrefresh(stdscr);
-	//wnoutrefresh(frame);
-	//
-	//textPalette->draw();
-	//bkgdPalette->draw();
-	//filterPalette->draw();
-	
-	/*if(state == MAP_NAME)
-		mapName->setFocus();*/
-//}
-
-
-//void MapEditor::drawRulers()
-//{
-//	
-//	//draw top ruler
-//	for (int i = 0; i <= visibleCols; i++)
-//	{
-//		int digit = i % 10;
-//		mvprintw(topRulerRow, sideRulerCol + 1 + i, "%d", digit);
-//	}
-//
-//	//draw side ruler
-//	for (int i = 0; i <= visibleRows; i++)
-//	{
-//		int digit = i % 10;
-//		mvprintw(topRulerRow + 1 + i, sideRulerCol, "%d", digit);
-//	}
-//}
 
 

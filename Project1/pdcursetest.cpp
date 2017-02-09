@@ -16,7 +16,10 @@
 #include <fstream>
 #include "Palette.h"
 #include "TextLabel.h"
-
+#include "Frame.h"
+#include <experimental\filesystem>
+#include <filesystem>
+using namespace std::experimental::filesystem::v1; //namespace with file system objects
 
 void mockFightTest()
 {
@@ -185,8 +188,6 @@ MenuResponse* menuDriver2(int input, Menu* m)
 MenuItem* menuDriver(int input, Menu* m)
 {
 	MenuItem* item = NULL;
-	//MenuResponse* resp = new MenuResponse;
-	//resp->itemChosen = false;
 	int retval = -1;
 	switch (input)
 	{
@@ -194,19 +195,15 @@ MenuItem* menuDriver(int input, Menu* m)
 	case KEY_UP: retval = m->driver(REQ_UP_ITEM); break;
 	case KEY_LEFT: retval = m->driver(REQ_LEFT_ITEM); break;
 	case KEY_RIGHT: retval = m->driver(REQ_RIGHT_ITEM); break;
-	case 'q':
-	case 'Q':
-		retval = -2;
-		break;
 	case '\n':
 	case '\r':
 	case KEY_ENTER:
-		item = m->getSelectedItem();
-		//item->itemChosen = true;
+		m->driver(REQ_TOGGLE_ITEM); break;	
 		break;
 	default: break;
 	}
 
+	item = m->getSelectedItem();
 	return item;
 }
 
@@ -231,19 +228,28 @@ int confirmDriver(int input, Menu* m)
 
 void menuTest()
 {
-	WINDOW* mainWin = newwin(8, 20, 3, 20);
-	WINDOW* subWin = derwin(mainWin, 5, 18, 2, 1);
-	
-	Menu menu(subWin, 5, 1);
+	int rows = 12;
+	int cols = 1;
+//	WINDOW* win = newwin(rows, cols * 18, 1, 1);
+	WINDOW* win = newwin(rows - 1, (cols) * 18, 1, 1);
 
-	menu.setItem("New Game", "", 0, 'N');
-	menu.setItem("Load Game", "", 1, 'L');
-	menu.setItem("Quit Game", "", 2, 'Q');
-	menu.setItem("Test Game", "", 3, 'T');
-	menu.setItem("sdfjkldfs Game", "", 4, '?');
-	
+	Menu menu(win, rows, cols);
+	menu.setItem("012345678901234", "", 0, 'N');
+	menu.setItem("11234567890123456", "", 1, 'L');
+	menu.setItem("2123456789", "", 2, 'Q');
+	//menu.setItem("3123456789012345", "", 3, 'T');
+	menu.setItem("4123456789012345", "", 4, '?');
+	menu.setItem("5123456789012345", "", 5, 'N');
+	menu.setItem("6123456789012345", "", 6, 'L');
+	menu.setItem("7123456789012345", "", 7, 'Q');
+	menu.setItem("8123456789012345", "", 8, 'T');
+	menu.setItem("9123456789012345", "", 9, '?');
+	menu.setItem("a123456789012345", "", 10, 'N');
+	menu.setItem("b123456789012345", "", 11, 'L');
+
+	menu.setMarkSide(RIGHT_MARK);
+
 	bool usingMenu = true;
-	bool firstTime = true;
 	while (usingMenu)
 	{
 		menu.draw();
@@ -260,15 +266,18 @@ void menuTest()
 		switch(item->index)
 		{
 
-		case -2:
+		case 2:
 			usingMenu = false;
 			break;
+		case 1:
+			menu.setWrapAround(false); break;
 
 		default: 
 
-			mvaddch(1, 30, (chtype)item->index);
+			mvaddch(7, 30, (chtype)item->index);
 			break;
-		}	
+		}
+		item->itemChosen = false;
 	}
 }
 
@@ -1276,7 +1285,8 @@ MenuResponse* m2Driver(int input, Menu* m)
 
 void modalCallback(void* caller, void* ptr, int input)
 {
-	Menu* m = (Menu*)ptr;
+	Frame* f = (Frame*)ptr;
+	Menu* m = (Menu*)f->getControl();
 
 	switch (input)
 	{
@@ -1290,7 +1300,7 @@ void modalCallback(void* caller, void* ptr, int input)
 	MenuItem* item = m->getSelectedItem();
 	if (item != NULL)
 	{
-		ControlManager* cm = m->getControlManager();
+		ControlManager* cm = f->getControlManager();
 		if (item->index == 0) //YES
 		{
 			//exit(0); //works, but probably not good to use in a game with multiple states
@@ -1298,7 +1308,7 @@ void modalCallback(void* caller, void* ptr, int input)
 		}
 		else if (item->index == 1) //no remove modal window
 		{
-			cm = m->getControlManager();
+			//cm = m->getControlManager();
 			cm->popControl();
 		}
 	}
@@ -1326,15 +1336,18 @@ void callBackTest(void* caller, void* ptr, int input)
 		{
 			//create modal menu
 
-			WINDOW* win = newwin(1, 40, 6, 40);
-			Menu* modal = new Menu(win, 1, 2);
+			WINDOW* win = newwin(4, 40, 6, 40);
+			WINDOW* dWin = derwin(win, 1, 38, 2, 1);
+			Menu* modal = new Menu(dWin, 1, 2);
 			modal->setModal(true);
 			modal->setItem("Yes", "", 0, 0);
 			modal->setItem("No", "", 1, 1);
-
+			
+			Frame* f = new Frame(win, modal);
+			f->setText("Are you sure you want to quit?", 1, 1);
 			ControlManager* cm = m->getControlManager();
-			cm->registerControl(modal, KEY_LISTENER, modalCallback);
-			cm->setFocus(modal);
+			cm->registerControl(f, KEY_LISTENER, modalCallback);
+			cm->setFocus(f);
 			
 		}
 		item->itemChosen = false;
@@ -1351,10 +1364,7 @@ void callBackTest2(void* caller, void* ptr, int input)
 	MEVENT event;
 	nc_getmouse(&event);
 	p->translateCoords(event.y, event.x, colorY, colorX);
-	//PaletteItem* item = 
-		p->pickItem(colorY, colorX);
-
-
+	p->pickItem(colorY, colorX);
 }
 
 void newCallback(void* caller, void* ptr, int input)
@@ -1398,8 +1408,8 @@ void controlManagerTest()
 	bool inMenus = true;
 	while (inMenus)
 	{
-	//	clear();
-		refresh();
+		clear();
+		wnoutrefresh(stdscr);
 		cm->draw();
 		
 		
@@ -1753,12 +1763,14 @@ void simpleFightTest()
 
 	//build display window
 	WINDOW* subPanel = newwin(6, totalCols, totalRows - 6, 0);
-	WINDOW* subWin = derwin(subPanel, 4, totalCols - 2, 1, 1);
+	WINDOW* subWin = derwin(subPanel, 2, 18, 1, 1);
 
-	Menu* fightMenu = new Menu(subWin, 4, 1);
+	Menu* fightMenu = new Menu(subWin, 2, 1);
+	Frame* mFrame = new Frame(subPanel, fightMenu);
 
 	fightMenu->setItem("Attack", "", 0, 0);
 	fightMenu->setItem("Run", "", 1, 1);
+
 
 	//setup additional vars
 	int startRow = 1;
@@ -1788,12 +1800,6 @@ void simpleFightTest()
 
 		startRow += 4;
 
-
-		/*mvwaddstr(frame, 1, partyIndent + 16, "<-");
-		mvwaddstr(frame, 5, partyIndent + 16, "-1234");
-
-		mvwaddstr(frame, 1, enemyIndent + 16, "<-");
-		mvwaddstr(frame, 5, enemyIndent + 16, "+2000");*/
 		box(subPanel, 0, 0);
 
 		wnoutrefresh(frame);
@@ -2057,6 +2063,38 @@ void menuTest2()
 
 }
 
+void frameTest()
+{
+	WINDOW* w = newwin(4, 40, 1, 1);
+	WINDOW* dw = derwin(w, 1, 38, 2, 1);
+	Menu* m = new Menu(dw, 1, 2);
+	m->setItem("Yes", "", 0, 0);
+	m->setItem("No", "", 1, 1);
+
+	Frame* f = new Frame(w, m);
+	mvwaddstr(w, 1, 1, "Are you sure you want to quit?");
+
+	f->draw();
+	doupdate();
+	getch();
+
+	f->setBorder(BORDER_NONE);
+	f->draw();
+	doupdate();
+	getch();
+}
+
+void directoryTest()
+{
+	path p = current_path();
+	p /= "data";
+	//p.c_str();
+	string s = p.string();
+	mvaddstr(1, 1, s.c_str());
+	wnoutrefresh(stdscr);
+	doupdate();
+	getch();
+}
 
 int main()
 {
@@ -2065,7 +2103,13 @@ int main()
 	//curs_set(0);
 	//newColorTest();
 	//controlManagerTest();
-	mapEditorTest();
+	//mapEditorTest();
+	
+//	menuTest();
+	//menuTest2();
+	//directoryTest();
+	//frameTest();
+	simpleFightTest();
 	//simpleActorTest();
 	//realMapTest();
 
