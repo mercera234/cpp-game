@@ -130,6 +130,7 @@
     <ClCompile Include="pdcursetest.cpp" />
     <ClCompile Include="RGBControl.cpp" />
     <ClCompile Include="stateManager.cpp" />
+    <ClCompile Include="Table.cpp" />
     <ClCompile Include="TextField.cpp" />
     <ClCompile Include="TextLabel.cpp" />
     <ClCompile Include="TUI.cpp" />
@@ -149,6 +150,7 @@
     <ClInclude Include="Palette.h" />
     <ClInclude Include="RGBControl.h" />
     <ClInclude Include="stateManager.h" />
+    <ClInclude Include="Table.h" />
     <ClInclude Include="TextField.h" />
     <ClInclude Include="TextLabel.h" />
     <ClInclude Include="TUI.h" />

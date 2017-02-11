@@ -1,4 +1,5 @@
 #include "Controllable.H"
+#include "curses.h"
 
 bool Controllable::isInWindow(int y, int x)
 {
@@ -18,4 +19,9 @@ void Controllable::translateCoords(int inY, int inX, int &outY, int &outX)
 
 	outY = inY - begY;
 	outX = inX - begX;
+}
+
+void Controllable::move(int y, int x)
+{
+	mvwin(win, y, x);
 }

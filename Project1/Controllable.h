@@ -19,6 +19,7 @@ protected:
 	ControlManager* cm;
 public:
 	virtual void draw() = 0;
+	virtual void move(int y, int x);
 	WINDOW* getWindow() { return win; };
 	bool isInWindow(int y, int x);
 	void translateCoords(int inY, int inX, int &outY, int &outX);

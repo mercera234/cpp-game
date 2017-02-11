@@ -20,6 +20,8 @@
 #include <experimental\filesystem>
 #include <filesystem>
 using namespace std::experimental::filesystem::v1; //namespace with file system objects
+#include "Table.h"
+#include <sstream>
 
 void mockFightTest()
 {
@@ -1753,13 +1755,59 @@ void simpleFightTest()
 	WINDOW* frame = newwin(totalRows, totalCols, 0, 0);
 	string ruler = "1234567890123456789012345678901234567890123456789012345678901234567890";
 	char* hpDispTemplate = "HP %+4u/%-4u";
-	int partyIndent = 1;
-	int enemyIndent = partyIndent + 16 + 5 + 4;
 
-
+	
 	//setup actors
 	Actor* p1 = createActor();
 	Actor* e1 = createEnemyActor();
+
+	//setup player display
+	TextLabel* playerName = new TextLabel(newwin(1, 15, 0, 0), p1->def->name);
+	
+	ostringstream oss; 
+	oss << "HP " << p1->currHp << '/' << p1->def->maxHp;
+	TextLabel* playerHP = new TextLabel(newwin(1, 15, 0, 0), oss.str());
+	
+	Controllable** pCells = new Controllable*[3];
+	pCells[0] = playerName;
+	pCells[1] = playerHP;
+	pCells[2] = NULL;
+
+	Table* playerStats = new Table(3, 1, 0, 0, pCells);
+
+	//setup enemy display
+	TextLabel* enemyName = new TextLabel(newwin(1, 15, 0, 0), e1->def->name);
+	
+	ostringstream oss2;
+	oss2 << "HP " << e1->currHp << '/' << e1->def->maxHp;
+	TextLabel* enemyHP = new TextLabel(newwin(1, 15, 0, 0), oss2.str());
+
+	Controllable** eCells = new Controllable*[3];
+	eCells[0] = enemyName;
+	eCells[1] = enemyHP;
+	eCells[2] = NULL;
+
+	Table* enemyStats = new Table(3, 1, 0, 0, eCells);
+
+	//set up final table
+	Controllable** cells = new Controllable*[8];
+	for (int i = 0; i < 8; i++)
+	{
+		cells[i] = NULL;
+	}
+	cells[2] = playerStats;
+	cells[3] = enemyStats;
+
+	Table* fightGrid = new Table(4, 2, 1, 1, cells);
+	for (int i = 0; i < 4; i++)
+	{
+		fightGrid->setRowHeight(i, 4);
+	}
+	for (int i = 0; i < 2; i++)
+	{
+		fightGrid->setColWidth(i, 25);
+	}
+	
 
 	//build display window
 	WINDOW* subPanel = newwin(6, totalCols, totalRows - 6, 0);
@@ -1782,27 +1830,14 @@ void simpleFightTest()
 		//draw
 		//render
 		startRow = 1;
-		wclear(frame);
+		//wclear(frame);
 		mvwaddnstr(frame, 0, 0, ruler.c_str(), totalCols);
-
-		//draw actor data
-		mvwaddstr(frame, startRow, partyIndent, p1->def->name.c_str());
-		mvwprintw(frame, startRow + 1, partyIndent, hpDispTemplate, p1->currHp, p1->def->maxHp);
-		//mvwprintw(frame, startRow + 2, partyIndent, mpStats.c_str());
-
-		startRow += 4;
-
-
-		startRow = 1;
-
-		mvwaddstr(frame, startRow, enemyIndent, e1->def->name.c_str());
-		mvwprintw(frame, startRow + 1, enemyIndent, hpDispTemplate, e1->currHp, e1->def->maxHp);
-
-		startRow += 4;
 
 		box(subPanel, 0, 0);
 
 		wnoutrefresh(frame);
+		fightGrid->draw();
+
 		wnoutrefresh(subPanel);
 		fightMenu->draw();
 		doupdate();
@@ -1826,6 +1861,10 @@ void simpleFightTest()
 				e1->currHp -= damage;
 				if (e1->currHp < 0)
 					e1->currHp = 0;
+
+				ostringstream oss2;
+				oss2 << "HP " << e1->currHp << '/' << e1->def->maxHp;
+				enemyHP->setText(oss2.str());
 			}
 			else if (retval == 1)
 			{
@@ -2096,6 +2135,112 @@ void directoryTest()
 	getch();
 }
 
+
+void tableTest()
+{
+	//make subtable
+	TextLabel* t1 = new TextLabel(newwin(1, 10, 0, 0), "Hero");
+	TextLabel* t2 = new TextLabel(newwin(1, 10, 0, 0), "HP 0/255");
+	TextLabel* t3 = new TextLabel(newwin(1, 10, 0, 0), "MP 20/25");
+	Controllable** c1 = new Controllable*[3];
+	c1[0] = t1;
+	c1[1] = t2;
+	c1[2] = t3;
+	Table* subtbl = new Table(3, 1, 0, 0, c1);
+
+	TextLabel* tl1 = new TextLabel(newwin(1, 5, 0, 0), "(0,0)");
+	Menu* menu = new Menu(newwin(3, 18, 0, 0), 3, 1);
+	menu->setItem("012345678901234", "", 0, 'N');
+	menu->setItem("11234567890123456", "", 1, 'L');
+	menu->setItem("2123456789", "", 2, 'Q');
+	TextLabel* tl2 = new TextLabel(newwin(1, 10, 0, 0), "(0,1)");
+	//TextLabel* tl3 = new TextLabel(newwin(1, 15, 0, 0), "(1,0)");
+	TextLabel* tl4 = new TextLabel(newwin(1, 8, 0, 0), "(1,1)");
+
+	Controllable** c = new Controllable*[8];
+	c[0] = tl1;
+	c[1] = menu;
+	//c[2] = tl3;
+	c[2] = NULL;
+	c[3] = NULL;
+	c[4] = subtbl;
+	c[5] = tl4;
+	c[6] = NULL;
+	c[7] = NULL;
+
+	int y = 1; 
+	int x = 1;
+	Table* tbl = new Table(4, 2, y, x, c);
+
+	tbl->setRowHeight(1, 2);
+	tbl->setRowHeight(3, 4);
+	tbl->setColWidth(0, 25);
+
+	bool playing = true;
+	while (playing)
+	{
+		clear();
+		wnoutrefresh(stdscr);
+		tbl->draw();
+		//subtbl->draw();
+		doupdate();
+		int c = getch();
+
+		
+		switch (c)
+		{
+		case KEY_UP: y--;  break;
+		case KEY_DOWN: y++;  break;
+		case KEY_LEFT: x--; break;
+		case KEY_RIGHT: x++; break;
+		case 'q': playing = false; break;
+		}
+		
+		tbl->move(y, x);
+	}
+}
+
+void derWinTest()
+{
+	WINDOW* win = newwin(6, 24, 1, 1);
+
+	int y = 2;
+	int x = 8;
+	WINDOW* dWin = derwin(win, 2, 8, y, x);
+
+	
+	bool playing = true;
+	while (playing)
+	{
+		//clear();
+		//wnoutrefresh(stdscr);
+
+		mvwaddstr(win, 0, 0, "MAIN WINDOW");
+		mvwaddstr(dWin, 0, 0, "SUBSUBSUB");
+		//wbkgd(dWin, 'd' | 0x20000000); //why does this work when the derived window is set before the main window?!
+		//wbkgd(win, 'w' | 0x40000000);
+
+		wnoutrefresh(win);
+		//wnoutrefresh(dWin); //draw and refresh subwin first?!
+				
+		doupdate();
+		//keypad(win, true);
+		//keypad(dWin, true);
+		int c = getch(win);
+
+		switch (c)
+		{
+		case KEY_UP: y--;  break;
+		case KEY_DOWN: y++;  break;
+		case KEY_LEFT: x--; break;
+		case KEY_RIGHT: x++; break;
+		case 'q': playing = false; break;
+		}
+		int d = mvderwin(dWin, 1, 1);
+		int e = 5;
+	}
+}
+
 int main()
 {
 	TUI* tui = new TUI();
@@ -2103,13 +2248,15 @@ int main()
 	//curs_set(0);
 	//newColorTest();
 	//controlManagerTest();
-	//mapEditorTest();
-	
+	mapEditorTest();
+//	tableTest();
+
+	//derWinTest(); //test sucked
 //	menuTest();
 	//menuTest2();
 	//directoryTest();
 	//frameTest();
-	simpleFightTest();
+	//simpleFightTest();
 	//simpleActorTest();
 	//realMapTest();
 
