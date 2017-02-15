@@ -47,7 +47,7 @@ public:
 	unsigned short getHeight() { return rows; }
 	unsigned short getWidth() { return cols; }
 
-	bool save();
+	bool save(string fileName);
 	bool load(string fileName);
 	~Map();
 };

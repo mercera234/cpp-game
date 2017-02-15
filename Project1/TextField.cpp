@@ -74,18 +74,11 @@ bool TextField::inputChar(int c)
 		if (c < ' ' || c > '~')
 			return false;
 
-		//if (cursorPos == length - 1) //if editing last character
-		//{
-		//	*textPtr = c;
-		//}
-		//else { //if editing any other position
-		//	
-			moveSize = length - cursorPos - 1;
-			memcpy_s(textPtr + sizeof(char), moveSize, textPtr, moveSize);
+		moveSize = length - cursorPos - 1;
+		memcpy_s(textPtr + sizeof(char), moveSize, textPtr, moveSize);
 
-			*textPtr++ = c; 
-			cursorPos++;
-		//}
+		*textPtr++ = c; 
+		cursorPos++;
 		
 		break;
 	}
@@ -95,8 +88,21 @@ bool TextField::inputChar(int c)
 
 void TextField::setText(string text)
 {
+	memset(this->text, BLANK_SPACE, length);
 	const char* t = text.c_str();
 	memcpy_s(this->text, text.length(), t, text.length());
+	cursorPos = text.length();
+	textPtr = this->text + cursorPos;
+}
+
+string TextField::getText()
+{
+	string t = text;
+
+	//trim algorithm
+	t.erase(0, t.find_first_not_of(' '));       //prefixing spaces
+	t.erase(t.find_last_not_of(' ') + 1);         //surfixing spaces
+	return t;
 }
 
 WINDOW* TextField::getWindow()
@@ -106,7 +112,7 @@ WINDOW* TextField::getWindow()
 
 void TextField::draw()
 {
-	//waddstr(win, text);
+	wclear(win);
 	mvwaddstr(win, 0, 0, text);
 	wnoutrefresh(win);
 }

@@ -147,11 +147,11 @@ chtype Map::getOutOfBoundsTile(int mapY, int mapX)
 	return borderChar;
 }
 
-//!!!stub!!!
-bool Map::save()
+
+bool Map::save(string fileName)
 {
 	ofstream gFile;
-	gFile.open(name, ios::trunc | ios::binary);
+	gFile.open(fileName, ios::trunc | ios::binary);
 	if (gFile.is_open() == false)
 		return false;
 

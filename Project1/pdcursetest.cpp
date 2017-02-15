@@ -1,13 +1,11 @@
 #include "TUI.h"
 #include "CursesPanel.h"
 #include "Menu.h"
-#include "NewMenu.h"
 #include "MapEditor.h"
 #include "CursesAttributeController.h"
 #include "RGBControl.h"
 #include <list>
 #include "ControlManager.h"
-#include "ColorPalette.h"
 #include "MouseHelper.h"
 #include "Actor.h"
 #include "Map.h"
@@ -17,11 +15,14 @@
 #include "Palette.h"
 #include "TextLabel.h"
 #include "Frame.h"
-#include <experimental\filesystem>
-#include <filesystem>
-using namespace std::experimental::filesystem::v1; //namespace with file system objects
+//#include <experimental\filesystem>
+//#include <filesystem>
+//using namespace std::experimental::filesystem::v1; //namespace with file system objects
 #include "Table.h"
 #include <sstream>
+#include <dirent.h>
+#include "FileChooser.h"
+#include "ScrollBar.h"
 
 void mockFightTest()
 {
@@ -157,35 +158,6 @@ void panelTest()
 	getch();
 }
 
-MenuResponse* menuDriver2(int input, Menu* m)
-{
-	MenuResponse* resp = new MenuResponse;
-	resp->itemChosen = false;
-	int retval = -1;
-	switch (input)
-	{
-	case KEY_DOWN: retval = m->driver(REQ_DOWN_ITEM); break;
-	case KEY_UP: retval = m->driver(REQ_UP_ITEM); break;
-	case KEY_LEFT: retval = m->driver(REQ_LEFT_ITEM); break;
-	case KEY_RIGHT: retval = m->driver(REQ_RIGHT_ITEM); break;
-	case 'q':
-	case 'Q':
-		retval = -2;
-		break;
-	case '\n':
-	case '\r':
-	case KEY_ENTER:
-		resp->itemChosen = true;
-		break;
-	default: break;
-	}
-	
-	resp->crossref = m->getCrossRefIndex();
-	resp->index = m->getCurrentIndex();
-	
-
-	return resp;
-}
 
 MenuItem* menuDriver(int input, Menu* m)
 {
@@ -233,15 +205,15 @@ void menuTest()
 	int rows = 12;
 	int cols = 1;
 //	WINDOW* win = newwin(rows, cols * 18, 1, 1);
-	WINDOW* win = newwin(rows - 1, (cols) * 18, 1, 1);
+	WINDOW* win = newwin(4, (cols) * 18, 1, 1);
 
 	Menu menu(win, rows, cols);
 	menu.setItem("012345678901234", "", 0, 'N');
-	menu.setItem("11234567890123456", "", 1, 'L');
-	menu.setItem("2123456789", "", 2, 'Q');
+	menu.setItem("TOGGLE WRAP", "", 1, 'L');
+	menu.setItem("QUIT", "", 2, 'Q');
 	//menu.setItem("3123456789012345", "", 3, 'T');
 	menu.setItem("4123456789012345", "", 4, '?');
-	menu.setItem("5123456789012345", "", 5, 'N');
+	menu.setItem("Clear", "", 5, 'N');
 	menu.setItem("6123456789012345", "", 6, 'L');
 	menu.setItem("7123456789012345", "", 7, 'Q');
 	menu.setItem("8123456789012345", "", 8, 'T');
@@ -249,7 +221,9 @@ void menuTest()
 	menu.setItem("a123456789012345", "", 10, 'N');
 	menu.setItem("b123456789012345", "", 11, 'L');
 
+	menu.disableItem(8, 0);
 	menu.setMarkSide(RIGHT_MARK);
+	bool wrap = true;
 
 	bool usingMenu = true;
 	while (usingMenu)
@@ -272,11 +246,13 @@ void menuTest()
 			usingMenu = false;
 			break;
 		case 1:
-			menu.setWrapAround(false); break;
-
+			menu.setWrapAround(wrap = !wrap); break;
+		case 5:
+			menu.clear();
+			break;
 		default: 
 
-			mvaddch(7, 30, (chtype)item->index);
+			mvaddch(7, 30, (chtype)item->crossref);
 			break;
 		}
 		item->itemChosen = false;
@@ -1253,38 +1229,6 @@ void colorPairTest()
 	}
 }
 
-MenuResponse* m1Driver(int input, Menu* m)
-{
-	MenuResponse* resp = new MenuResponse;
-	resp->itemChosen = false;
-	int retval = -1;
-	switch (input)
-	{
-	case KEY_DOWN: retval = m->driver(REQ_DOWN_ITEM); break;
-	case KEY_UP: retval = m->driver(REQ_UP_ITEM); break;
-	case 'q':
-	case 'Q':
-		retval = -2;
-		break;
-	case '\n':
-	case '\r':
-	case KEY_ENTER:
-resp->itemChosen = true;
-break;
-	default: break;
-	}
-
-	resp->crossref = m->getCrossRefIndex();
-	resp->index = m->getCurrentIndex();
-
-	return resp;
-}
-
-MenuResponse* m2Driver(int input, Menu* m)
-{
-	return NULL;
-}
-
 void modalCallback(void* caller, void* ptr, int input)
 {
 	Frame* f = (Frame*)ptr;
@@ -2123,18 +2067,252 @@ void frameTest()
 	getch();
 }
 
-void directoryTest()
+/*
+Deprecated test method that uses the incomplete <filesystem> header
+*/
+//void openFileTest()
+//{
+//	path fullPath = current_path();
+//	fullPath.make_preferred();
+//	
+//	string openPathStr = fullPath.string();
+//
+//	TextLabel* openFile = new TextLabel(newwin(1, 10, 0, 0), "Open from:");
+//
+//	int openPathSpace = 30;
+//	TextLabel* openPath = new TextLabel(newwin(1, openPathSpace, 0, 11), openPathStr);
+//	
+//
+//	Menu* diskNavigator = new Menu(newwin(8, 40, 2, 0), 255, 1);
+//	diskNavigator->setMaxNameLength(40);
+//	
+//	bool playing = true;
+//	bool newDir = true;
+//
+//	while (playing)
+//	{
+//		if (newDir)
+//		{
+//			diskNavigator->clear();
+//			diskNavigator->setItem("..", "", 0, 0);
+//
+//			//get list of files in current dir to display in Menu
+//			int currElement = 1;
+//			for (directory_iterator it(fullPath), end; it != end; it++)
+//			{
+//				directory_entry entry = *it;
+//				path entryPath = entry.path();
+//				diskNavigator->setItem(entryPath.filename().string(), "", currElement++, currElement);
+//			}
+//			
+//			//truncate path name so we can see as much of the end as possible
+//			openPathStr = fullPath.string();
+//			if (openPathStr.length() > openPathSpace)
+//			{
+//				ostringstream oss;
+//				oss << "..." << openPathStr.substr(openPathStr.length() - openPathSpace + 3);
+//				openPathStr = oss.str();
+//			}
+//			openPath->setText(openPathStr);
+//
+//			newDir = false;
+//		}
+//	
+//		
+//		mvaddnstr(1, 0, "--------------------------------------------------------------------", 40);
+//
+//
+//		openFile->draw();
+//		openPath->draw();
+//		diskNavigator->draw();
+//		doupdate();
+//		int c = getch();
+//
+//		switch (c)
+//		{
+//		case KEY_DOWN: diskNavigator->driver(REQ_DOWN_ITEM);   break;
+//		case KEY_UP: diskNavigator->driver(REQ_UP_ITEM); break;
+//		case 'q': playing = false; break;
+//		case '\r':
+//			diskNavigator->driver(REQ_TOGGLE_ITEM);
+//			break;
+//		}
+//
+//		MenuItem* choice = diskNavigator->getSelectedItem();
+//
+//		if (choice != NULL)
+//		{
+//			if (choice->name.compare("..") == 0)
+//			{
+//				//navigate up one dir
+//				fullPath = fullPath.parent_path();
+//				newDir = true;
+//			}
+//			else
+//			{
+//			/*	ostringstream oss;
+//				string name = choice->name;
+//				oss << fullPath << '\\' << name << ends;
+//
+//*/
+//
+//				//directory_entry entry(oss.str());
+//				directory_entry entry(fullPath /= choice->name);
+//				file_status fs = entry.status();
+//				
+//				if (is_directory(fs))
+//				{
+//					fullPath.append(choice->name);
+//					newDir = true;
+//				}
+//				
+//			}
+//
+//
+//		}
+//	}
+//}
+
+void openFileTest()
 {
-	path p = current_path();
-	p /= "data";
-	//p.c_str();
-	string s = p.string();
-	mvaddstr(1, 1, s.c_str());
+	char buf[256];
+	GetFullPathName(".", 256, buf, NULL);
+	string fullPath(buf);
+	
+	TextLabel* openFile = new TextLabel(newwin(1, 10, 0, 0), "Open from:");
+
+	int openPathSpace = 30;
+	TextLabel* openPath = new TextLabel(newwin(1, openPathSpace, 0, 11), fullPath);
+
+
+	Menu* diskNavigator = new Menu(newwin(8, 40, 2, 0), 255, 1);
+	diskNavigator->setMaxNameLength(40);
+
+	bool playing = true;
+	bool newDir = true;
+
+	while (playing)
+	{
+		if (newDir)
+		{
+			diskNavigator->clear();
+
+			//get list of files in current dir to display in Menu
+			int currElement = 0;
+
+			DIR* dir = opendir(fullPath.c_str());
+			dirent* entry;
+			while ((entry = readdir(dir)) != NULL)
+			{				
+				diskNavigator->setItem(entry->d_name, "", currElement++, entry->d_type);
+			}
+
+
+			//truncate path name so we can see as much of the end as possible
+			string openPathStr;
+			openPathStr.assign(fullPath);
+
+			if (openPathStr.length() > openPathSpace)
+			{
+				ostringstream oss;
+				oss << "..." << openPathStr.substr(openPathStr.length() - openPathSpace + 3);
+				openPathStr = oss.str();
+			}
+			openPath->setText(openPathStr);
+
+			newDir = false;
+		}
+
+
+		mvaddnstr(1, 0, "--------------------------------------------------------------------", 40);
+
+
+		openFile->draw();
+		openPath->draw();
+		diskNavigator->draw();
+		doupdate();
+		int c = getch();
+
+		switch (c)
+		{
+		case KEY_DOWN: diskNavigator->driver(REQ_DOWN_ITEM);   break;
+		case KEY_UP: diskNavigator->driver(REQ_UP_ITEM); break;
+		case 'q': playing = false; break;
+		case '\r':
+			diskNavigator->driver(REQ_TOGGLE_ITEM);
+			break;
+		}
+
+		MenuItem* choice = diskNavigator->getSelectedItem();
+
+		if (choice != NULL)
+		{
+			if (choice->name.compare("..") == 0)
+			{
+				//navigate up one dir
+				int pos = fullPath.find_last_of('\\');
+				fullPath = fullPath.substr(0, pos);
+				newDir = true;
+			}
+			else //check if directory was chosen
+			{
+				if (choice->crossref == DT_DIR) //dir was chosen
+				{
+					fullPath.append(1, '\\');
+					fullPath.append(choice->name);
+					newDir = true;
+				}
+			}
+		}
+	}
+}
+
+void wdirectoryTest()
+{
+	DIR* dir = opendir(".");
+	
+	//DIR* dir = opendir("F:\\Users\\Alex Mercer\\Documents\\Visual Studio 2015\\Projects\\Project1\\Project1");
+	WDIR* wDir = dir->wdirp;
+	
+	mvaddwstr(1, 1, wDir->patt);
+	
 	wnoutrefresh(stdscr);
 	doupdate();
 	getch();
+
+	wdirent* entry;
+	while ((entry = wreaddir(wDir)) != NULL)
+	{
+		clear();
+		mvaddwstr(1, 1, entry->d_name);
+		wnoutrefresh(stdscr);
+		doupdate();
+		getch();
+	}
+	
+
+
 }
 
+void directoryTest()
+{
+	DIR* dir = opendir(".");
+
+	//DIR* dir = opendir("F:\\Users\\Alex Mercer\\Documents\\Visual Studio 2015\\Projects\\Project1\\Project1");
+
+	dirent* entry;
+
+	char buf[256];
+	
+	while ((entry = readdir(dir)) != NULL)
+	{
+		clear();
+		mvaddstr(1, 1, entry->d_name);
+		wnoutrefresh(stdscr);
+		doupdate();
+		getch();
+	}
+}
 
 void tableTest()
 {
@@ -2241,19 +2419,172 @@ void derWinTest()
 	}
 }
 
+void wideTest()
+{
+	int c = sizeof(char);
+	int w = sizeof(wchar_t);
+
+	
+	wchar_t wc2 = 256;
+	wchar_t wc3 = 0xffff;
+
+	int rows = getmaxy(stdscr);
+	int currRow = 0;
+	for (int i = 0; i <= 65535; i++)
+	{
+		wchar_t wc = i;
+		
+		mvwprintw(stdscr, currRow, 0,"%d) %d c:%c s:%hc w:%lc", i, wc, wc, wc, wc);
+
+		currRow++;
+		if (currRow > rows)
+		{
+			wnoutrefresh(stdscr);
+			doupdate();
+			getch();
+			clear();
+			currRow = 0;
+		}
+	}
+
+
+
+	int x;
+}
+
+
+void fileDialogTest(int dialogType)
+{
+	char buf[256];
+	GetFullPathName(".", 256, buf, NULL);
+	string fullPath(buf);
+
+	int height = 14; //height required is a minimum of 7 for enclosing FileChooser, which requires minimum of 5
+	int width = 42; //min of 15 required
+
+	WINDOW* main = newwin(height, width, (getmaxy(stdscr) - height) / 2, (getmaxx(stdscr) - width) / 2);
+	WINDOW* sub = derwin(main, height - 2, width - 2, 1, 1);
+
+	FileChooser* fd = new FileChooser(sub, fullPath, dialogType, ".map");
+
+	Frame* f = new Frame(main, fd);
+	string fileChosen;
+	bool playing = true;
+	while (playing)
+	{
+		f->draw();
+		doupdate();
+
+		int c = getch();
+
+		//driver here
+		switch (c)
+		{
+		case KEY_DOWN: fd->driver(REQ_DOWN_ITEM);   break;
+		case KEY_UP: fd->driver(REQ_UP_ITEM); break;
+		case CTRL_Q: playing = false; break;
+		case '\r':
+			fileChosen = fd->driver(REQ_TOGGLE_ITEM);
+			break;
+		default:
+			fd->driver(c);
+			break;
+		}
+
+		if (fileChosen.empty() == false)
+		{
+			//success!
+			mvaddstr(0, 0, fileChosen.c_str());
+		}
+
+	}
+}
+
+void saveDialogTest()
+{
+	fileDialogTest(SAVE_DIALOG);
+}
+
+void openDialogTest()
+{
+	fileDialogTest(OPEN_DIALOG);
+}
+
+void scrollTest()
+{
+	int rows = 12;
+	int cols = 1;
+	WINDOW* win = newwin(4, (cols) * 18, 1, 1);
+
+	Menu menu(win, rows, cols);
+	menu.setItem("012345678901234", "", 0, 'N');
+	menu.setItem("TOGGLE WRAP", "", 1, 'L');
+	menu.setItem("QUIT", "", 2, 'Q');
+	//menu.setItem("3123456789012345", "", 3, 'T');
+	menu.setItem("4123456789012345", "", 4, '?');
+	menu.setItem("Clear", "", 5, 'N');
+	menu.setItem("6123456789012345", "", 6, 'L');
+	menu.setItem("7123456789012345", "", 7, 'Q');
+	menu.setItem("8123456789012345", "", 8, 'T');
+	menu.setItem("9123456789012345", "", 9, '?');
+	menu.setItem("a123456789012345", "", 10, 'N');
+	menu.setItem("b123456789012345", "", 11, 'L');
+
+	menu.disableItem(8, 0);
+	menu.setMarkSide(RIGHT_MARK);
+	bool wrap = true;
+
+	bool usingMenu = true;
+	
+	ScrollBar* sb = new ScrollBar(&menu);
+	
+	while (usingMenu)
+	{
+		//menu.draw();
+		sb->draw();
+		doupdate();
+		int input = getch();
+
+		MenuItem* item = menuDriver(input, &menu);
+
+		if (item == NULL)
+		{
+			continue;
+		}
+
+		switch (item->index)
+		{
+
+		case 2:
+			usingMenu = false;
+			break;
+		case 1:
+			menu.setWrapAround(wrap = !wrap); break;
+		case 5:
+			menu.clear();
+			break;
+		default:
+
+			mvaddch(7, 30, (chtype)item->crossref);
+			break;
+		}
+		item->itemChosen = false;
+	}
+}
+
 int main()
 {
 	TUI* tui = new TUI();
 	tui->init();
 	//curs_set(0);
-	//newColorTest();
-	//controlManagerTest();
-	mapEditorTest();
-//	tableTest();
-
-	//derWinTest(); //test sucked
-//	menuTest();
+	//menuTest();
 	//menuTest2();
+	//fileDialogTest();
+	//scrollTest();
+	mapEditorTest();
+	//saveDialogTest();
+	//openDialogTest();
+	//textFieldtest();
 	//directoryTest();
 	//frameTest();
 	//simpleFightTest();

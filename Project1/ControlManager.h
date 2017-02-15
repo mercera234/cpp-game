@@ -45,5 +45,6 @@ public:
 	//void cycleFocus();
 	void prepareForShutdown() { shutdown = true; }
 	bool handleInput(int input);
+	bool handleGlobalInput(int input);
 	void draw();
 };

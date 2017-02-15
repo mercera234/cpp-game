@@ -59,20 +59,27 @@ rowmajor: row * menuCols + col
 colmajor: col * menuRows + row
 
 */
-struct MenuResponse
-{
-	short index;
-	short crossref;
-	bool itemChosen;
-};
-
 struct MenuItem
 {
-	unsigned short index;
-	short crossref;
+	short index;
+	int crossref;
 	bool itemChosen;
 	string name;
-	int selectable;
+	bool selectable; //not tested yet
+
+	MenuItem()
+	{
+		clear();
+	}
+
+	void clear()
+	{
+		name = "";
+		selectable = false;
+		itemChosen = false;
+		crossref = -1;
+		index = -1;
+	}
 };
 
 
@@ -110,11 +117,10 @@ private:
 	unsigned short visibleRows;
 	unsigned short visibleCols;
 	
-	unsigned short topRow; //the top menu row that is visible
-	unsigned short leftCol; //the left most col that is visible
 	short currentIndex; //the currently selected item
 	unsigned char pad; 
-	char mark[2];
+	char mark[3];
+	char disabledMark[3];
 	bool markSide; //true = left; false = right
 	int colorPair;
 	bool wrapAround;
@@ -134,7 +140,6 @@ public:
 	Menu(WINDOW* win, int rows, int cols);
 
 	void setMaxNameLength(int length);
-	//void setKeypad(bool set);
 	void setMajorOrder(bool majorOrder);
 	bool setItem(string name, string itemDesc, int element, int crossRefNdx);
 	void setSelectedIndex(int index);
@@ -143,11 +148,15 @@ public:
 	void setMarkSide(bool markSide);
 	void setWrapAround(bool wrap);
 	void setColor(int colorPair);
+	void disableItem(int y, int x);
 	void draw(); //overridden
+
+	void clear();
 	
 	int driver(int input);
 	MenuItem* getSelectedItem();
 	MenuItem* getItem(int y, int x);
+	MenuItem* getCurrentItem();
 	virtual ~Menu();
 };
 

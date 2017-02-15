@@ -120,6 +120,7 @@
     <ClCompile Include="ControlManager.cpp" />
     <ClCompile Include="CursesAttributeController.cpp" />
     <ClCompile Include="DataPkg.cpp" />
+    <ClCompile Include="FileChooser.cpp" />
     <ClCompile Include="Frame.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="MapEditor.cpp" />
@@ -129,6 +130,7 @@
     <ClCompile Include="Palette.cpp" />
     <ClCompile Include="pdcursetest.cpp" />
     <ClCompile Include="RGBControl.cpp" />
+    <ClCompile Include="ScrollBar.cpp" />
     <ClCompile Include="stateManager.cpp" />
     <ClCompile Include="Table.cpp" />
     <ClCompile Include="TextField.cpp" />
@@ -137,10 +139,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor.h" />
+    <ClInclude Include="ControlDecorator.h" />
     <ClInclude Include="Controllable.h" />
     <ClInclude Include="ControlManager.h" />
     <ClInclude Include="CursesAttributeController.h" />
     <ClInclude Include="DataPkg.h" />
+    <ClInclude Include="FileChooser.h" />
     <ClInclude Include="Frame.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="MapEditor.h" />
@@ -149,6 +153,7 @@
     <ClInclude Include="MouseHelper.h" />
     <ClInclude Include="Palette.h" />
     <ClInclude Include="RGBControl.h" />
+    <ClInclude Include="ScrollBar.h" />
     <ClInclude Include="stateManager.h" />
     <ClInclude Include="Table.h" />
     <ClInclude Include="TextField.h" />

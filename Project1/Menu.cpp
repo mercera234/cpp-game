@@ -12,16 +12,11 @@ Menu::Menu(WINDOW* win, int rows, int cols)
 	this->menuCols = cols;
 
 	//we're assuming here for now that null windows will not be passed into this constructor!
-	//win = mainWin;
 	this->win = win;
 
 	capacity = rows * cols;
-
 	
-	//by default visible menuRows/menuCols will be big enough to display entire menu without scrolling
-	//visibleRows = rows;
-	//visibleCols = cols;
-	
+	//this array may be deprecated! crossref is now in menuitem
 	crossRef = new int[capacity];
 	for (int i = 0; i < capacity; i++)
 	{
@@ -36,6 +31,8 @@ Menu::Menu(WINDOW* win, int rows, int cols)
 	visibleRows = getmaxy(win); //as many rows that can fit in the window being used
 	visibleCols = getmaxx(win) / colWidth;
 
+	totalRows = menuRows;
+	totalCols = menuCols * colWidth;
 }
 
 
@@ -53,7 +50,11 @@ void Menu::setDefaults()
 
 	mark[0] = '-';//set default mark to ->
 	mark[1] = '>';
+	mark[2] = 0;
 	markSide = LEFT_MARK;
+
+	disabledMark[0] = disabledMark[1] = 'X';
+	disabledMark[2] = 0;
 
 	dividerLen = 1;
 	setMaxNameLength(15); //default is 15
@@ -72,10 +73,6 @@ void Menu::setMajorOrder(bool majorOrder)
 	this->majorOrder = majorOrder;
 }
 
-//void Menu::setKeypad(bool set)
-//{
-//	keypad(win, set);
-//}
 
 void Menu::setMarkSide(bool markSide)
 {
@@ -110,8 +107,13 @@ bool Menu::setItem(string name, string itemDesc, int element, int crossRefNdx)
 {
 	items[element].index = element;
 	items[element].itemChosen = false;
+	items[element].crossref = crossRefNdx;
+	items[element].name = name;
+	items[element].selectable = true;
+
+	//next line may be deprecated
 	crossRef[element] = crossRefNdx;//unused crossrefs will be -1 by default
-	items[element].name = name;	
+	
 	return true;
 }
 
@@ -152,11 +154,19 @@ void Menu::drawItem(int row, int col)
 	if (element >= capacity) //can't draw a null item
 		return;
 
+	char* usedMark;
+
+	usedMark = mark;
+	if (items[element].selectable == false && items[element].name.compare("") != 0)
+	{
+		usedMark = disabledMark;
+	}
+
 	//print mark and name in correct order
 	if (markSide == LEFT_MARK)
 	{
 		if(element == currentIndex)
-			mvwaddstr(win, row - topRow, (col - leftCol) * colWidth, mark); //print blot mark
+			mvwaddstr(win, row - topRow, (col - leftCol) * colWidth, usedMark); //print blot mark
 		mvwaddnstr(win, row - topRow, (col - leftCol) * colWidth + 2, items[element].name.c_str(), maxNameLength); //get item name
 	}
 	else //markSide == RIGHT_MARK
@@ -164,8 +174,10 @@ void Menu::drawItem(int row, int col)
 		mvwaddnstr(win, row - topRow, (col - leftCol) * colWidth, items[element].name.c_str(), maxNameLength); //get item name
 
 		if (element == currentIndex)
-			mvwaddstr(win, row - topRow, (col - leftCol) * colWidth + maxNameLength, mark); //print blot mark
+			mvwaddstr(win, row - topRow, (col - leftCol) * colWidth + maxNameLength, usedMark); //print blot mark
 	}
+
+	wattroff(win, A_BLINK);
 }
 
 /*Get element from row and col
@@ -218,7 +230,7 @@ int Menu::rowMajorDriver(int input)
 		{
 			//reset toprow if necessary
 			int currRow = currentIndex / menuCols;
-			if (currRow >= visibleRows)
+			if (currRow >= topRow + visibleRows)
 			{
 				topRow = currRow + 1 - visibleRows;
 			}
@@ -380,6 +392,9 @@ int Menu::driver(int input)
 	switch(input)
 	{
 	case REQ_TOGGLE_ITEM:
+		if (items[currentIndex].selectable == false)
+			break;
+
 		items[currentIndex].itemChosen = true;
 		break;
 
@@ -415,8 +430,31 @@ MenuItem* Menu::getItem(int y, int x)
 {
 	int row = y;
 	int col = x / 3;
-	currentIndex = row * menuCols + col;
+	int element = row * menuCols + col;
+	return &items[element];
+}
+
+MenuItem* Menu::getCurrentItem()
+{
 	return &items[currentIndex];
+}
+
+void Menu::disableItem(int y, int x)
+{
+	MenuItem* mi = getItem(y, x);
+	mi->selectable = false;
+}
+
+void Menu::clear()
+{
+	for (int i = 0; i < capacity; i++)
+	{
+		MenuItem* item = &items[i];
+		item->clear();
+	}	
+	currentIndex = 0;
+	topRow = 0;
+	leftCol = 0;
 }
 
 Menu::~Menu()

@@ -1,17 +1,18 @@
 #pragma once
 #include "curses.h"
 #include "Menu.h"
-//#include "ColorPalette.h"
 #include "Palette.h"
 //#include "TextField.h"
 #include "TextLabel.h"
 #include <iostream>
 using namespace std;
 #include "ControlManager.h"
-
+#include "Frame.h"
 #include "Map.h"
 
-
+#define NEW_MAP 0
+#define OPEN_MAP 1
+#define SAVE_MAP 2
 
 #define MAP_CHOOSE 1
 #define MAP_EDIT 2
@@ -20,6 +21,7 @@ using namespace std;
 #define DOT 0
 #define FILL 1
 
+#define DEF_MAP_EXTENSION ".map"
 #define DEF_FILENAME "Untitled.map" //will add open/close arrows later
 //#define 
 class MapEditor
@@ -90,12 +92,16 @@ private:
 
 	void processPaletteInput(Palette* p, int input);
 	void processGlobalInput(int input);
-	void confirmDialogDriver(Controllable* dialog, int input);
+	
+	Frame* createConfirmDialog();
+	void confirmDialogDriver(Controllable* dialog, int input, int confirmMethod);
+	void fileDialogDriver(Controllable* dialog, int input);
 
 	void setupControlManager();
 
 	void applyTool(int y, int x);
 	void newMap();
+	void setupFileDialog(int dialogType);
 	void fill(int sourceRow, int sourceCol);
 public:
 
@@ -105,8 +111,11 @@ public:
 	void loadMap();
 	void draw();
 
+	//static callback methods
 	static void paletteCallback(void*, void*, int);
-	static void mapCallback(void* caller, void* ptr, int input); //static
+	static void mapCallback(void* caller, void* ptr, int input); 
 	static void globalCallback(void* caller, void* ptr, int input);
-	static void dialogCallback(void* caller, void* ptr, int input); //static
+	static void confirmNewCallback(void* caller, void* ptr, int input); 
+	static void confirmOpenCallback(void* caller, void* ptr, int input);
+	static void fileDialogCallback(void* caller, void* ptr, int input);
 };

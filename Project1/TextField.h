@@ -11,8 +11,11 @@ private:
 	char* text;
 	unsigned short fullLength; //length of string plus one for null term
 	unsigned short length;
+
+	//these 2 vars must be adjusted in tandem
 	char* textPtr;
 	unsigned short cursorPos;
+	
 	WINDOW* win;
 	short y, x; //beg y and x of window. Used for the move routine due to the issue with wmove
 
@@ -22,6 +25,7 @@ public:
 	void setFocus();
 	bool inputChar(int c);
 	void setText(string text);
+	string getText();
 	WINDOW* getWindow();
 	void draw();
 

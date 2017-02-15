@@ -46,15 +46,13 @@ Controllable* ControlManager::getFocus()
 	return focus;
 }
 
-
-
-bool ControlManager::handleInput(int input)
+bool ControlManager::handleGlobalInput(int input)
 {
 	//process global input for non-modal controls
-	list<KeyAccelerator*>::iterator it2;
-	for(it2 = shortcuts.begin(); it2 != shortcuts.end(); it2++)//having this here suggests that global inputs cannot ever be used in local components
+	list<KeyAccelerator*>::iterator it;
+	for (it = shortcuts.begin(); it != shortcuts.end(); it++)//having this here suggests that global inputs cannot ever be used in local components
 	{
-		KeyAccelerator* k = *it2;
+		KeyAccelerator* k = *it;
 
 		if (input == k->key)
 		{
@@ -69,7 +67,18 @@ bool ControlManager::handleInput(int input)
 			return true;
 		}
 	}
+	return true;
+}
 
+bool ControlManager::handleInput(int input)
+{
+	//process global inputs if the focused control is not modal
+	if (focus->isModal() == false)
+	{
+		bool status = handleGlobalInput(input);
+		if (status == false)
+			return status;
+	}
 
 	list<Registration*>::reverse_iterator it;
 	for (it = controls.rbegin(); it != controls.rend(); it++) //we start from the end, so modal windows are always processed first

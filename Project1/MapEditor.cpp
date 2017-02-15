@@ -1,7 +1,8 @@
 #include "MapEditor.h"
 #include "TUI.h"
+#include "FileChooser.h"
+#include <dirent.h>
 //#include "MouseHelper.h"
-#include "Frame.h"
 
 MapEditor::MapEditor()
 {
@@ -175,22 +176,9 @@ void MapEditor::processGlobalInput(int input)
 	case CTRL_N: 
 		if (modified)
 		{
-			//create confirmation dialog
-			string confirmMsg = "Are you sure? You have unsaved changes.";
-
-			int width, height;  getmaxyx(stdscr, height, width);
-			WINDOW* fWin = newwin(4, confirmMsg.length() + 2, (height - 4) / 2, (width - 40) / 2);
-			WINDOW* cdWin = derwin(fWin, 1, confirmMsg.length(), 2, 1);
-			Menu* cdMenu = new Menu(cdWin, 1, 2);
-			//cdMenu->setModal(true);
-			cdMenu->setItem("No", "", 0, 0);
-			cdMenu->setItem("Yes", "", 1, 1);
-
-			Frame* f = new Frame(fWin, cdMenu);
-			f->setText(confirmMsg, 1, 1);
-			f->setModal(true);
-
-			cm->registerControl(f, KEY_LISTENER, dialogCallback);
+			Frame* f = createConfirmDialog();
+			
+			cm->registerControl(f, KEY_LISTENER, confirmNewCallback);
 			cm->setFocus(f);
 		}
 		else
@@ -199,12 +187,44 @@ void MapEditor::processGlobalInput(int input)
 		}
 		break;
 	case CTRL_O:
-		map->load("Untitled.map");
+		if (modified)
+		{
+			Frame* f = createConfirmDialog();
+
+			cm->registerControl(f, KEY_LISTENER, confirmOpenCallback);
+			cm->setFocus(f);
+		}
+		else
+		{
+			setupFileDialog(OPEN_DIALOG);
+		}
+		
 		break;
 	case CTRL_S: 
-		map->save();
+		if (modified == false) break; //don't save when there aren't any changes
+		{
+			setupFileDialog(SAVE_DIALOG);
+		}
 		break;
 	}
+}
+
+Frame* MapEditor::createConfirmDialog()
+{
+	//create confirmation dialog
+	string confirmMsg = "Are you sure? You have unsaved changes.";
+
+	int width, height;  getmaxyx(stdscr, height, width);
+	WINDOW* fWin = newwin(4, confirmMsg.length() + 2, (height - 4) / 2, (width - 40) / 2);
+	WINDOW* cdWin = derwin(fWin, 1, confirmMsg.length(), 2, 1);
+	Menu* cdMenu = new Menu(cdWin, 1, 2);
+	cdMenu->setItem("No", "", 0, 0);
+	cdMenu->setItem("Yes", "", 1, 1);
+
+	Frame* f = new Frame(fWin, cdMenu);
+	f->setText(confirmMsg, 1, 1);
+	f->setModal(true);
+	return f;
 }
 
 
@@ -213,6 +233,30 @@ void MapEditor::newMap()
 	map->reset();
 	modified = false;
 	mapName->setText(DEF_FILENAME);
+}
+
+
+
+
+void MapEditor::setupFileDialog(int dialogType)
+{
+	//open file dialog
+	char buf[256];
+	GetFullPathName(".", 256, buf, NULL);
+	string fullPath(buf);
+
+	int height = 12;
+	int width = 42;
+	WINDOW* main = newwin(height, width, (getmaxy(stdscr) - height) / 2, (getmaxx(stdscr) - width) / 2);
+	WINDOW* w = derwin(main, height - 2, width - 2, 1, 1);
+
+	FileChooser* fd = new FileChooser(w, fullPath, dialogType, DEF_MAP_EXTENSION);
+
+	Frame* f = new Frame(main, fd);
+	f->setModal(true);
+
+	cm->registerControl(f, KEY_LISTENER, fileDialogCallback);
+	cm->setFocus(f);
 }
 
 void MapEditor::globalCallback(void* caller, void* ptr, int input) //static
@@ -233,14 +277,62 @@ void MapEditor::mapCallback(void* caller, void* ptr, int input) //static
 	me->processMapInput(input);
 }
 
-void MapEditor::dialogCallback(void* caller, void* ptr, int input) //static
+void MapEditor::confirmNewCallback(void* caller, void* ptr, int input) //static
 {
 	MapEditor* me = (MapEditor*)caller;
-	me->confirmDialogDriver((Controllable*)ptr, input);
+	me->confirmDialogDriver((Controllable*)ptr, input, NEW_MAP);
 }
 
+void MapEditor::confirmOpenCallback(void* caller, void* ptr, int input) //static
+{
+	MapEditor* me = (MapEditor*)caller;
+	me->confirmDialogDriver((Controllable*)ptr, input, OPEN_MAP);
+}
 
-void MapEditor::confirmDialogDriver(Controllable* c, int input)
+void MapEditor::fileDialogCallback(void* caller, void* ptr, int input) //static
+{
+	MapEditor* me = (MapEditor*)caller;
+	me->fileDialogDriver((Controllable*)ptr, input);
+}
+
+void MapEditor::fileDialogDriver(Controllable* dialog, int input)
+{
+	Frame* f = (Frame*)dialog;
+	FileChooser* fd = (FileChooser*) f->getControl();
+
+	string fileChosen;
+	switch (input)
+	{
+	case KEY_DOWN: fd->driver(REQ_DOWN_ITEM);   break;
+	case KEY_UP: fd->driver(REQ_UP_ITEM); break;
+	case CTRL_Q: cm->popControl(); cm->setFocus(map); break;
+	case '\r':
+		fileChosen = fd->driver(REQ_TOGGLE_ITEM);
+		break;
+	default:
+		fd->driver(input);
+		break;
+	}
+
+	if (fileChosen.empty() == false)
+	{
+		switch (fd->getType())
+		{
+		case OPEN_DIALOG: map->load(fileChosen); break;
+		case SAVE_DIALOG: map->save(fileChosen); break;
+		}
+		modified = false;
+
+		int pos = fileChosen.find_last_of('\\');
+		fileName = fileChosen.substr(pos + 1, fileChosen.length());
+
+		mapName->setText(fileName);
+		cm->popControl(); 
+		cm->setFocus(map);
+	}
+}
+
+void MapEditor::confirmDialogDriver(Controllable* c, int input, int confirmMethod)
 {
 	Frame* f = (Frame*)c;
 	Menu* dialog = (Menu*)f->getControl();
@@ -262,13 +354,18 @@ void MapEditor::confirmDialogDriver(Controllable* c, int input)
 			cm->setFocus(map);
 			break;
 		case 1: //yes
-			newMap();
 			cm->popControl();
-			cm->setFocus(map);
+			switch (confirmMethod)
+			{
+			case NEW_MAP: newMap(); cm->setFocus(map); break;
+			case OPEN_MAP: setupFileDialog(OPEN_DIALOG); break;
+			}
+			
 			break;
 		}
 	}
 }
+
 
 
 void MapEditor::processPaletteInput(Palette* p, int input)
