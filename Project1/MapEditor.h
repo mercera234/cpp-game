@@ -2,7 +2,7 @@
 #include "curses.h"
 #include "Menu.h"
 #include "Palette.h"
-//#include "TextField.h"
+#include "TextField.h"
 #include "TextLabel.h"
 #include <iostream>
 using namespace std;
@@ -20,6 +20,7 @@ using namespace std;
 
 #define DOT 0
 #define FILL 1
+#define BRUSH 2
 
 #define DEF_MAP_EXTENSION ".map"
 #define DEF_FILENAME "Untitled.map" //will add open/close arrows later
@@ -55,13 +56,21 @@ private:
 	char drawChar;
 
 	//Labels
-	TextLabel* mapName;
+	TextLabel* fileNameLbl;
 	TextLabel* topRuler;
 	TextLabel* sideRuler;
 	TextLabel* textTitle;
 	TextLabel* bkgdTitle;
 	TextLabel* filterTitle;
 	TextLabel* toolTitle;
+	TextLabel* xyLbl;
+	
+	TextLabel* hLbl;
+	TextLabel* wLbl;
+
+	//Canvas dimension fields
+	TextField* canvasRowsInput;
+	TextField* canvasColsInput;
 
 	//what is this for?
 	short layer;
@@ -89,6 +98,8 @@ private:
 //	void drawRulers();
 	bool processMapInput(int input);
 	void processMouseInput(int input);
+	void processDirectionalInput(int input);
+
 
 	void processPaletteInput(Palette* p, int input);
 	void processGlobalInput(int input);
@@ -96,7 +107,7 @@ private:
 	Frame* createConfirmDialog();
 	void confirmDialogDriver(Controllable* dialog, int input, int confirmMethod);
 	void fileDialogDriver(Controllable* dialog, int input);
-
+	void canvasInputDriver(TextField* field, int input);
 	void setupControlManager();
 
 	void applyTool(int y, int x);
@@ -118,4 +129,5 @@ public:
 	static void confirmNewCallback(void* caller, void* ptr, int input); 
 	static void confirmOpenCallback(void* caller, void* ptr, int input);
 	static void fileDialogCallback(void* caller, void* ptr, int input);
+	static void canvasInputCallback(void* caller, void* ptr, int input);
 };

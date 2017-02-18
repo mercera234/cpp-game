@@ -1,7 +1,10 @@
 #include "TextField.h"
+#include <sstream>
 
 TextField::TextField(WINDOW* win)
 {
+	focusable = true;
+
 	this->win = win;
 	getbegyx(win, y, x);
 	
@@ -93,6 +96,13 @@ void TextField::setText(string text)
 	memcpy_s(this->text, text.length(), t, text.length());
 	cursorPos = text.length();
 	textPtr = this->text + cursorPos;
+}
+
+void TextField::setText(int value)
+{
+	ostringstream oss;
+	oss << value;
+	setText(oss.str());
 }
 
 string TextField::getText()

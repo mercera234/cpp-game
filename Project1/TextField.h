@@ -16,7 +16,7 @@ private:
 	char* textPtr;
 	unsigned short cursorPos;
 	
-	WINDOW* win;
+//	WINDOW* win;
 	short y, x; //beg y and x of window. Used for the move routine due to the issue with wmove
 
 
@@ -25,6 +25,7 @@ public:
 	void setFocus();
 	bool inputChar(int c);
 	void setText(string text);
+	void setText(int value);
 	string getText();
 	WINDOW* getWindow();
 	void draw();

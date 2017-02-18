@@ -114,9 +114,10 @@ bool ControlManager::handleInput(int input)
 				if (r->callback != NULL)
 				{
 					r->callback(caller, c, input);
+					break;
 				}
 			}			
-			break;
+		
 		}
 	}
 

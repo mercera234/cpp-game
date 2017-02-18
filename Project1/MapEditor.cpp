@@ -23,15 +23,12 @@ MapEditor::MapEditor()
 	frame = newwin(visibleRows + 2, visibleCols + 2, topRulerRow + 1, sideRulerCol + 1);
 	viewport = derwin(frame, visibleRows, visibleCols, 1, 1);
 
-	
 	/*set center of viewport*/
 	centerY = visibleRows / 2;
 	centerX = visibleCols / 2;
 
 	y = centerY; //center the map position to start with
 	x = centerX;
-	
-	
 	
 	setupPalettes();
 
@@ -44,10 +41,27 @@ MapEditor::MapEditor()
 	//setup filename
 	fileName = DEF_FILENAME;
 	WINDOW* textWin = newwin(1, 15, 0, 1);
-	mapName = new TextLabel(textWin, fileName);
+	fileNameLbl = new TextLabel(textWin, fileName);
 	
 	
 	map = new Map(fileName, canvasRows, canvasCols, viewport);
+
+	int bottomRow = visibleRows + 2 + topRulerRow + 1;
+
+	//mvprintw(bottom + topRulerRow + 1, sideRulerCol + 1, "x: %+4d  y: %+4d", x, y); //%+4d always render sign, 4 char field, int
+	xyLbl = new TextLabel(newwin(1, 16, bottomRow, sideRulerCol + 1), "");
+
+	int hLeftEdge = sideRulerCol + 1 + 25;
+	hLbl = new TextLabel(newwin(1, 2, bottomRow, hLeftEdge), "H:");
+	canvasRowsInput = new TextField(newwin(1, 3, bottomRow, hLeftEdge + 3));
+	canvasRowsInput->setText(canvasRows);
+	
+
+	wLbl = new TextLabel(newwin(1, 2, bottomRow, hLeftEdge + 10), "W:");
+	canvasColsInput = new TextField(newwin(1, 3, bottomRow, hLeftEdge + 13));
+	canvasColsInput->setText(canvasCols);
+
+
 
 	setupControlManager();
 }
@@ -59,15 +73,20 @@ void MapEditor::setupControlManager()
 	cm->registerControl(bkgdPalette, MOUSE_LISTENER, paletteCallback);
 	cm->registerControl(toolPalette, MOUSE_LISTENER, paletteCallback);
 	cm->registerControl(filterPalette, MOUSE_LISTENER, paletteCallback);
+	cm->registerControl(canvasRowsInput, KEY_LISTENER | MOUSE_LISTENER, canvasInputCallback);
+	cm->registerControl(canvasColsInput, KEY_LISTENER | MOUSE_LISTENER, canvasInputCallback);
 	cm->registerControl(map, KEY_LISTENER | MOUSE_LISTENER, mapCallback);
 	cm->setFocus(map);
-	cm->registerControl(mapName, 0, 0);
+	cm->registerControl(fileNameLbl, 0, 0);
 	cm->registerControl(topRuler, 0, 0);
 	cm->registerControl(textTitle, 0, 0);
 	cm->registerControl(bkgdTitle, 0, 0);
 	cm->registerControl(toolTitle, 0, 0);
 	cm->registerControl(filterTitle, 0, 0);
-
+	cm->registerControl(xyLbl, 0, 0);
+	cm->registerControl(hLbl, 0, 0);
+	cm->registerControl(wLbl, 0, 0);
+	
 	cm->registerShortcutKey(CTRL_Q, globalCallback);
 	cm->registerShortcutKey(CTRL_N, globalCallback);
 	cm->registerShortcutKey(CTRL_S, globalCallback);
@@ -112,9 +131,10 @@ void MapEditor::setupPalettes()
 	bkgdColor = 0; //blank out the color(white)
 
 	//setup tool palette
-	toolPalette = new Palette(1, 2, topRulerRow + 15, paletteLeftEdge);
-	toolPalette->setItem("Dot", 'B', 0, 0);
+	toolPalette = new Palette(1, 3, topRulerRow + 15, paletteLeftEdge);
+	toolPalette->setItem("Dot", '.', 0, 0);
 	toolPalette->setItem("Fill", 'F', 0, 1);
+	toolPalette->setItem("Brush", 'B', 0, 2);
 	tool = DOT;
 
 	//setup filter palette
@@ -232,7 +252,8 @@ void MapEditor::newMap()
 {
 	map->reset();
 	modified = false;
-	mapName->setText(DEF_FILENAME);
+	fileName = DEF_FILENAME;
+	fileNameLbl->setText(fileName);
 }
 
 
@@ -295,6 +316,32 @@ void MapEditor::fileDialogCallback(void* caller, void* ptr, int input) //static
 	me->fileDialogDriver((Controllable*)ptr, input);
 }
 
+void MapEditor::canvasInputCallback(void* caller, void* ptr, int input) //static
+{
+	MapEditor* me = (MapEditor*)caller;
+	me->canvasInputDriver((TextField*)ptr, input);
+}
+
+void MapEditor::canvasInputDriver(TextField* field, int input)
+{
+	switch (input)
+	{
+	case KEY_MOUSE: //cm->setFocus(field); 
+		break;
+	case '\t': 
+		//reset dimensions on map !!!this may just be a stub, I may want to add a button to update later
+
+		cm->setFocus(map); //switch focus back to map
+		break;
+	default: 
+		field->inputChar(input);
+		break;
+	}
+
+
+
+}
+
 void MapEditor::fileDialogDriver(Controllable* dialog, int input)
 {
 	Frame* f = (Frame*)dialog;
@@ -326,7 +373,7 @@ void MapEditor::fileDialogDriver(Controllable* dialog, int input)
 		int pos = fileChosen.find_last_of('\\');
 		fileName = fileChosen.substr(pos + 1, fileChosen.length());
 
-		mapName->setText(fileName);
+		fileNameLbl->setText(fileName);
 		cm->popControl(); 
 		cm->setFocus(map);
 	}
@@ -413,6 +460,7 @@ void MapEditor::applyTool(int y, int x)
 {
 	switch (tool)
 	{
+	case BRUSH:
 	case DOT:
 	{
 		chtype c = (chtype)drawChar;
@@ -425,40 +473,69 @@ void MapEditor::applyTool(int y, int x)
 		break;
 	}
 	modified = true;
-	mapName->setText(fileName + "*");
+	fileNameLbl->setText(fileName + "*");
 }
+
+
+void MapEditor::processDirectionalInput(int input)
+{
+	int* axis = NULL;
+	int border;
+	int magnitude;
+	int leftSide;
+	int rightSide;
+
+	switch (input)
+	{
+	case KEY_UP:
+		axis = &y;
+		border = -1;
+		magnitude = -1;
+		leftSide = *axis - 1;
+		rightSide = border;
+		break;
+	case KEY_DOWN:
+		axis = &y;
+		border = canvasRows;
+		magnitude = 1;
+		leftSide = border;
+		rightSide = *axis + 1;
+		break;
+	case KEY_LEFT:
+		axis = &x;
+		border = -1;
+		magnitude = -1;
+		leftSide = *axis - 1;
+		rightSide = border;
+		break;
+	case KEY_RIGHT:
+		axis = &x;
+		border = canvasCols;
+		magnitude = 1;
+		leftSide = border;
+		rightSide = *axis + 1;
+		break;
+	}
+
+	if (leftSide > rightSide)
+	{
+		*axis += magnitude;
+		axis == &y ? map->shiftVert(magnitude) : map->shiftHor(magnitude);
+		
+		if (tool == BRUSH)
+			applyTool(y, x);
+	}	
+}
+
 
 bool MapEditor::processMapInput(int input)
 {
 	switch (input)
 	{
 	case KEY_UP:
-		if (y - 1 >= 0)
-		{
-			y--;
-			map->shiftVert(-1);
-		}
-		break;
 	case KEY_DOWN:
-		if (y + 1 < canvasRows)
-		{
-			y++;
-			map->shiftVert(1);
-		}
-		break;
 	case KEY_LEFT:
-		if (x - 1 >= 0)
-		{
-			x--;
-			map->shiftHor(-1);
-		}
-		break;
-	case KEY_RIGHT:
-		if (x + 1 < canvasCols)
-		{
-			x++;
-			map->shiftHor(1);
-		}			
+	case KEY_RIGHT: processDirectionalInput(input);
 		break;
 	case KEY_BACKSPACE:
 	case KEY_DC:
@@ -571,15 +648,63 @@ void MapEditor::draw()
 	}
 	box(frame, 0, 0);
 	int bottom = getmaxy(frame);
-	mvprintw(bottom + topRulerRow + 1, sideRulerCol + 1, "x: %+4d  y: %+4d", x, y); //%+4d always render sign, 4 char field, int
-
+	
+	char buf[20];
+	sprintf_s(buf, "x: %+4d  y: %+4d", x, y);
+	xyLbl->setText(buf);
+	
+	
+	//mvprintw(bottom + topRulerRow + 1, sideRulerCol + 25, "H:", map->getTotalRows());
+	//mvprintw(bottom + topRulerRow + 1, sideRulerCol + 35, "W:", map->getTotalCols());
 	
 	wnoutrefresh(stdscr);
 	wnoutrefresh(frame);
+
 	cm->draw();
+
+
+	//add filter to map
+	//for (int row = 0; row < visibleRows; row++)
+	//{
+	//	for (int col = 0; col < visibleCols; col++)
+	//	{
+
+
+	//		chtype c = mvwinch(viewport, row, col); //colorless filter
+
+	//		//get color values
+	//		int textC = c & 0x0f000000;
+	//		int bkgdC = c & 0xf0000000;
+
+	//		//translate to filters
+	//		int fTextC;
+	//		int fBkgdC;
+
+	//		if (bkgdC == 0x00000000)
+	//		{
+	//			fBkgdC = bkgdC;
+	//			fTextC = 0x00000000; //black text -> goes to white with black bkgd!
+	//		}
+	//		else if ((bkgdC & 0x80000000) != 0) //any bold color
+	//		{
+	//			fBkgdC = 0xf0000000; //white bkgd
+	//			fTextC = 0x00000000; //black text
+	//		}
+	//		else //pair with regular bkgd color
+	//		{
+	//			fBkgdC = 0x80000000;//set to gray bkgd
+	//			fTextC = 0x00000000; //black text
+	//		}
+
+	//		c &= 0x0000ffff; //remove all color
+	//		waddch(viewport, c | fTextC | fBkgdC); //reapply filtered colors
+	//	}
+	//}
+
 
 	chtype cursorChar = mvwinch(viewport, centerY, centerX);
 	waddch(viewport, cursorChar | A_REVERSE);
+
 	wnoutrefresh(viewport);
 }
 
