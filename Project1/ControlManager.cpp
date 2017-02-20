@@ -14,6 +14,18 @@ void ControlManager::registerControl(Controllable* c, char listeners, void(*call
 	controls.push_back(r);
 }
 
+void ControlManager::registerControl(Controllable* c, char listeners, Command* cmd)
+{
+	Registration* r = new Registration();
+
+	r->c = c;
+	c->setControlManager(this);
+	//r->callback = callback;
+	r->cmd = cmd;
+	r->listen_map = listeners;
+	controls.push_back(r);
+}
+
 void ControlManager::registerShortcutKey(int key, void(*callback) (void*, void*, int))
 {
 	KeyAccelerator* shortcut = new KeyAccelerator();
@@ -114,6 +126,11 @@ bool ControlManager::handleInput(int input)
 				if (r->callback != NULL)
 				{
 					r->callback(caller, c, input);
+					break;
+				}
+				else if(r->cmd != NULL) //implement command if setup
+				{
+					r->cmd->execute();
 					break;
 				}
 			}			

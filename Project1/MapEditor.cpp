@@ -2,7 +2,7 @@
 #include "TUI.h"
 #include "FileChooser.h"
 #include <dirent.h>
-//#include "MouseHelper.h"
+
 
 MapEditor::MapEditor()
 {
@@ -27,8 +27,8 @@ MapEditor::MapEditor()
 	centerY = visibleRows / 2;
 	centerX = visibleCols / 2;
 
-	y = centerY; //center the map position to start with
-	x = centerX;
+	curY = centerY; //center the map position to start with
+	curX = centerX;
 	
 	setupPalettes();
 
@@ -61,7 +61,9 @@ MapEditor::MapEditor()
 	canvasColsInput = new TextField(newwin(1, 3, bottomRow, hLeftEdge + 13));
 	canvasColsInput->setText(canvasCols);
 
-
+	
+	//hl = new Highlighter(map->getWindow(), map->getDisplayLayer(), &centerY, &centerX); //map->getMapY(), map->getMapX());
+	hl = new Highlighter(map, &curY, &curX);
 
 	setupControlManager();
 }
@@ -77,17 +79,17 @@ void MapEditor::setupControlManager()
 	cm->registerControl(canvasColsInput, KEY_LISTENER | MOUSE_LISTENER, canvasInputCallback);
 	cm->registerControl(map, KEY_LISTENER | MOUSE_LISTENER, mapCallback);
 	cm->setFocus(map);
-	cm->registerControl(fileNameLbl, 0, 0);
-	cm->registerControl(topRuler, 0, 0);
-	cm->registerControl(textTitle, 0, 0);
-	cm->registerControl(bkgdTitle, 0, 0);
-	cm->registerControl(toolTitle, 0, 0);
-	cm->registerControl(filterTitle, 0, 0);
-	cm->registerControl(xyLbl, 0, 0);
-	cm->registerControl(hLbl, 0, 0);
-	cm->registerControl(wLbl, 0, 0);
+	cm->registerControl(fileNameLbl, 0, (Command*) 0);
+	cm->registerControl(topRuler, 0, (Command*)0);
+	cm->registerControl(textTitle, 0, (Command*)0);
+	cm->registerControl(bkgdTitle, 0, (Command*)0);
+	cm->registerControl(toolTitle, 0, (Command*)0);
+	cm->registerControl(filterTitle, 0, (Command*)0);
+	cm->registerControl(xyLbl, 0, (Command*)0);
+	cm->registerControl(hLbl, 0, (Command*)0);
+	cm->registerControl(wLbl, 0, (Command*)0);
 	
-	cm->registerShortcutKey(CTRL_Q, globalCallback);
+	cm->registerShortcutKey(KEY_ESC, globalCallback);
 	cm->registerShortcutKey(CTRL_N, globalCallback);
 	cm->registerShortcutKey(CTRL_S, globalCallback);
 	cm->registerShortcutKey(CTRL_O, globalCallback);
@@ -190,8 +192,18 @@ void MapEditor::processGlobalInput(int input)
 	//handle preliminary input
 	switch (input)
 	{
-	case CTRL_Q: //use to quit, will add more logic eventually to prevent user from quitting without saving
-		cm->prepareForShutdown();
+	case KEY_ESC: //quit
+		if (modified)
+		{
+			Frame* f = createConfirmDialog();
+
+			cm->registerControl(f, KEY_LISTENER, confirmQuitCallback);
+			cm->setFocus(f);
+		}
+		else
+		{
+			cm->prepareForShutdown();
+		}
 		break;
 	case CTRL_N: 
 		if (modified)
@@ -221,10 +233,8 @@ void MapEditor::processGlobalInput(int input)
 		
 		break;
 	case CTRL_S: 
-		if (modified == false) break; //don't save when there aren't any changes
-		{
+		if (modified) //save only if there are changes
 			setupFileDialog(SAVE_DIALOG);
-		}
 		break;
 	}
 }
@@ -308,6 +318,12 @@ void MapEditor::confirmOpenCallback(void* caller, void* ptr, int input) //static
 {
 	MapEditor* me = (MapEditor*)caller;
 	me->confirmDialogDriver((Controllable*)ptr, input, OPEN_MAP);
+}
+
+void MapEditor::confirmQuitCallback(void* caller, void* ptr, int input) //static
+{
+	MapEditor* me = (MapEditor*)caller;
+	me->confirmDialogDriver((Controllable*)ptr, input, QUIT_MAP);
 }
 
 void MapEditor::fileDialogCallback(void* caller, void* ptr, int input) //static
@@ -406,6 +422,10 @@ void MapEditor::confirmDialogDriver(Controllable* c, int input, int confirmMetho
 			{
 			case NEW_MAP: newMap(); cm->setFocus(map); break;
 			case OPEN_MAP: setupFileDialog(OPEN_DIALOG); break;
+			case QUIT_MAP: 
+				cm->popControl();
+				cm->prepareForShutdown(); 
+				break;
 			}
 			
 			break;
@@ -451,7 +471,7 @@ void MapEditor::processMouseInput(int input)
 		int pY, pX;
 		map->translateCoords(event.y, event.x, pY, pX);
 
-		applyTool(y - centerY + pY, x - centerX + pX);
+		applyTool(curY - centerY + pY, curX - centerX + pX);
 	}
 }
 
@@ -472,59 +492,140 @@ void MapEditor::applyTool(int y, int x)
 		fill(y, x);
 		break;
 	}
+	markModified();
+}
+
+void MapEditor::markModified()
+{
 	modified = true;
 	fileNameLbl->setText(fileName + "*");
 }
 
-
-void MapEditor::processDirectionalInput(int input)
+void MapEditor::processMovementInput(int input)
 {
-	int* axis = NULL;
-	int border;
-	int magnitude;
-	int leftSide;
-	int rightSide;
-
 	switch (input)
 	{
+	case CTL_HOME: //use two movements to upper left corner
+		processDirectionalInput(DIR_LEFT, canvasCols);
+		processDirectionalInput(DIR_UP, canvasRows);
+		break;
+	case CTL_END: //use two movements to lower right corner
+		processDirectionalInput(DIR_RIGHT, canvasCols);
+		processDirectionalInput(DIR_DOWN, canvasRows);
+		break;
+	default:
+		int dir = getDirectionFromKey(input);
+		int magnitude = getMoveMagnitudeFromKey(input);
+		processDirectionalInput(dir, magnitude);
+		break;
+	}
+}
+
+int MapEditor::getMoveMagnitudeFromKey(int key)
+{
+	int magnitude = 0;
+	switch (key)
+	{
 	case KEY_UP:
-		axis = &y;
-		border = -1;
-		magnitude = -1;
-		leftSide = *axis - 1;
-		rightSide = border;
-		break;
 	case KEY_DOWN:
-		axis = &y;
-		border = canvasRows;
-		magnitude = 1;
-		leftSide = border;
-		rightSide = *axis + 1;
-		break;
 	case KEY_LEFT:
-		axis = &x;
-		border = -1;
-		magnitude = -1;
-		leftSide = *axis - 1;
-		rightSide = border;
+	case KEY_RIGHT: magnitude = 1;
 		break;
-	case KEY_RIGHT:
-		axis = &x;
-		border = canvasCols;
-		magnitude = 1;
-		leftSide = border;
-		rightSide = *axis + 1;
+	case KEY_PGUP://up down paging
+	case KEY_PGDN: magnitude = visibleRows;
+		break;
+	case CTL_PGUP://left right paging
+	case CTL_PGDN: magnitude = visibleCols;
+		break;
+
+	case KEY_HOME: 
+	case KEY_END: magnitude = canvasCols;
+		break;
+	}
+	return magnitude;
+}
+
+int MapEditor::getDirectionFromKey(int key)
+{
+	int dir;
+	switch (key)
+	{
+	case KEY_PGUP:
+	case KEY_UP: dir = DIR_UP; 
+		break;
+	case KEY_PGDN:
+	case KEY_DOWN: dir = DIR_DOWN; 
+		break;
+	case KEY_HOME:
+	case CTL_PGUP:
+	case KEY_LEFT: dir = DIR_LEFT; 
+		break;
+	case KEY_END:
+	case CTL_PGDN:
+	case KEY_RIGHT: dir = DIR_RIGHT; 
+		break;
+	default:
+		dir = DIR_ERR;
+	}
+	return dir;
+}
+
+void MapEditor::processDirectionalInput(int dirInput, int magnitude)
+{
+	short* axis = NULL;
+	int step = 1;
+
+	switch (dirInput)
+	{
+	case DIR_UP:
+		axis = &curY;
+		step = -step;
+		break;
+	case DIR_DOWN:
+		axis = &curY;
+		break;
+	case DIR_LEFT:
+		axis = &curX;
+		step = -step;
+		break;
+	case DIR_RIGHT:
+		axis = &curX;
 		break;
 	}
 
-	if (leftSide > rightSide)
+	for (int i = 0; i < magnitude; i++) //take repeated steps until move is over
 	{
-		*axis += magnitude;
-		axis == &y ? map->shiftVert(magnitude) : map->shiftHor(magnitude);
+		//move the cursor
+		*axis += step;
+
+		//verify that cursor is within bounds
+		if (curX < 0 || curY < 0 || curX >= canvasCols || curY >= canvasRows)
+		{
+			*axis -= step; break;//reverse step and quit
+		}
 		
+		//shift map
+		axis == &curY ? map->shift(step, 0) : map->shift(0, step);
+
+		//apply brush if necessary
 		if (tool == BRUSH)
-			applyTool(y, x);
-	}	
+			applyTool(curY, curX);
+	}
+}
+
+
+void MapEditor::processShiftDirectionalInput(int input)
+{
+	hl->setHighlighting(true);
+	switch (input)
+	{
+	case KEY_SUP: input = KEY_UP; break;
+	case KEY_SDOWN: input = KEY_DOWN; break;
+	case KEY_SLEFT: input = KEY_LEFT; break;
+	case KEY_SRIGHT: input = KEY_RIGHT; break;
+	}
+
+	processMovementInput(input);
 }
 
 
@@ -535,11 +636,47 @@ bool MapEditor::processMapInput(int input)
 	case KEY_UP:
 	case KEY_DOWN:
 	case KEY_LEFT:
-	case KEY_RIGHT: processDirectionalInput(input);
+	case KEY_RIGHT: 
+	case KEY_PGUP://up down paging
+	case KEY_PGDN:
+	case CTL_PGUP://left right paging
+	case CTL_PGDN:
+	case KEY_HOME://all the way left
+	case KEY_END: //all the way right
+	case CTL_HOME://upper left corner
+	case CTL_END: //lower right corner
+		hl->setHighlighting(false);
+		processMovementInput(input);
 		break;
+
+	case KEY_SUP: 
+	case KEY_SDOWN:
+	case KEY_SLEFT:
+	case KEY_SRIGHT: 
+		processShiftDirectionalInput(input);
+		break;
+
 	case KEY_BACKSPACE:
 	case KEY_DC:
-		map->setDisplayChar(y, x, ' ');
+		map->setDisplayChar(curY, curX, ' ');
+		break;
+	case CTRL_C:
+		hl->copy(); 
+		hl->setHighlighting(false); 
+		break;
+	case CTRL_V:
+		hl->paste(); 
+		markModified();
+		break;
+	case CTL_UP:
+	case CTL_DOWN:
+		hl->flip(HL_VER);
+		markModified();
+		break;
+	case CTL_LEFT:
+	case CTL_RIGHT:
+		hl->flip(HL_HOR);
+		markModified();
 		break;
 	case KEY_MOUSE:
 		processMouseInput(input);
@@ -548,7 +685,11 @@ bool MapEditor::processMapInput(int input)
 	 	if (input >= ' ' && input <= '~')
 		{
 			drawChar = input;
-			applyTool(y,x);
+
+			if (hl->isHighlighting())
+				hl->fill(drawChar);
+			
+			applyTool(curY, curX);
 		}
 		
 		break;
@@ -631,12 +772,6 @@ void MapEditor::fill(int sourceRow, int sourceCol)
 	fillPoints.clear();
 }
 
-
-void MapEditor::loadMap()
-{
-	
-}
-
 void MapEditor::draw()
 {
 	wclear(stdscr);
@@ -650,7 +785,7 @@ void MapEditor::draw()
 	int bottom = getmaxy(frame);
 	
 	char buf[20];
-	sprintf_s(buf, "x: %+4d  y: %+4d", x, y);
+	sprintf_s(buf, "x: %+4d  y: %+4d", curX, curY);
 	xyLbl->setText(buf);
 	
 	
@@ -661,7 +796,7 @@ void MapEditor::draw()
 	wnoutrefresh(frame);
 
 	cm->draw();
-
+	
 
 	//add filter to map
 	//for (int row = 0; row < visibleRows; row++)
@@ -704,7 +839,7 @@ void MapEditor::draw()
 
 	chtype cursorChar = mvwinch(viewport, centerY, centerX);
 	waddch(viewport, cursorChar | A_REVERSE);
-
+	hl->draw();
 	wnoutrefresh(viewport);
 }
 

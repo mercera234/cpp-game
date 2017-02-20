@@ -9,10 +9,12 @@ using namespace std;
 #include "ControlManager.h"
 #include "Frame.h"
 #include "Map.h"
+#include "Highlighter.h"
 
 #define NEW_MAP 0
 #define OPEN_MAP 1
 #define SAVE_MAP 2
+#define QUIT_MAP 3
 
 #define MAP_CHOOSE 1
 #define MAP_EDIT 2
@@ -45,11 +47,11 @@ private:
 	int visibleCols;
 
 	/*The cursor position in the viewport*/
-	int centerX, centerY;
-	
-	/*The position in the map the cursor is over*/
-	int x;
-	int y;
+	short centerX, centerY;
+
+	//The position of the cursor in the map
+	short curX; 
+	short curY;
 
 	Map* map;
 
@@ -89,6 +91,8 @@ private:
 	int filter;
 
 	/*global*/
+	Highlighter* hl;
+
 	int state;
 	bool modified;
 	string fileName;
@@ -98,8 +102,12 @@ private:
 //	void drawRulers();
 	bool processMapInput(int input);
 	void processMouseInput(int input);
-	void processDirectionalInput(int input);
 
+	void processMovementInput(int input);
+	int  getMoveMagnitudeFromKey(int key);
+	int  getDirectionFromKey(int key);
+	void processDirectionalInput(int input, int magnitude);
+	void processShiftDirectionalInput(int input);
 
 	void processPaletteInput(Palette* p, int input);
 	void processGlobalInput(int input);
@@ -110,6 +118,8 @@ private:
 	void canvasInputDriver(TextField* field, int input);
 	void setupControlManager();
 
+	void markModified(); //all routines to perform when current map has been modified from original state
+
 	void applyTool(int y, int x);
 	void newMap();
 	void setupFileDialog(int dialogType);
@@ -119,7 +129,6 @@ public:
 	
 	MapEditor();
 	bool processInput(int input);
-	void loadMap();
 	void draw();
 
 	//static callback methods
@@ -128,6 +137,7 @@ public:
 	static void globalCallback(void* caller, void* ptr, int input);
 	static void confirmNewCallback(void* caller, void* ptr, int input); 
 	static void confirmOpenCallback(void* caller, void* ptr, int input);
+	static void confirmQuitCallback(void* caller, void* ptr, int input);
 	static void fileDialogCallback(void* caller, void* ptr, int input);
 	static void canvasInputCallback(void* caller, void* ptr, int input);
 };

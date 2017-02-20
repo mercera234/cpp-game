@@ -23,6 +23,8 @@
 #include <dirent.h>
 #include "FileChooser.h"
 #include "ScrollBar.h"
+#include "Highlighter.h"
+//#include "Clipboard.h"
 
 void mockFightTest()
 {
@@ -1367,6 +1369,52 @@ void controlManagerTest()
 
 }
 
+
+void commandTest()
+{
+	WINDOW* win = newwin(2, 20, 1, 1);
+	Menu* m1 = new Menu(win, 2, 1);
+
+	m1->setItem("Yes", "", 0, 0);
+	m1->setItem("No", "", 1, 1);
+
+	int rows;
+	int cols;
+	rows = cols = 4;
+	Palette* palette = new Palette(rows, cols, 7, 1);
+	for (int i = 0; i < TOTAL_COLORS; i++)
+	{
+		chtype c = ' ' | (i << 28) & A_COLOR;
+		int x = i % cols;
+		int y = i / cols;
+		palette->setItem(TUI::colorNames[i], c, y, x);
+	}
+
+
+	ControlManager* cm = new ControlManager(NULL);
+	cm->registerControl(m1, MOUSE_LISTENER | KEY_LISTENER, callBackTest);
+	cm->registerControl(palette, MOUSE_LISTENER, callBackTest2);
+	cm->registerShortcutKey(CTRL_N, newCallback);
+	cm->registerShortcutKey(CTRL_Q, quitCallback);
+
+	bool inMenus = true;
+	while (inMenus)
+	{
+		clear();
+		wnoutrefresh(stdscr);
+		cm->draw();
+
+
+		doupdate();
+		int c = getch();
+
+		inMenus = cm->handleInput(c);
+	}
+
+}
+
+
+
 void templateTest()
 {
 
@@ -1430,7 +1478,7 @@ void mouseTest()
 void colorPaletteTest()
 {
 	//setup color palette
-	int rows;
+	/*int rows;
 	int cols;
 	rows = cols = 4;
 	Palette palette(rows, cols, 1, 1);
@@ -1475,14 +1523,14 @@ void colorPaletteTest()
 			break;
 		}
 		wnoutrefresh(stdscr);
-	}
+	}*/
 }
 
 
 void filterPaletteTest()
 {
 	//setup color palette
-	int rows = 2;
+	/*int rows = 2;
 	int cols = 4;
 	
 	Palette palette(rows, cols, 1, 1);
@@ -1528,7 +1576,7 @@ void filterPaletteTest()
 			break;
 		}
 		wnoutrefresh(stdscr);
-	}
+	}*/
 }
 
 
@@ -1827,7 +1875,7 @@ void simpleFightTest()
 
 void realMapTest()
 {
-	int rows = 8;
+	/*int rows = 8;
 	int cols = 8;
 
 	WINDOW* frame = newwin(rows + 2, cols + 2, 1, 1);
@@ -1860,7 +1908,7 @@ void realMapTest()
 		m.setPosition(y, x);
 	}
 
-	
+	*/
 }
 
 void textFieldtest()
@@ -2572,6 +2620,182 @@ void scrollTest()
 	}
 }
 
+void highlighterTest()
+{
+	//int height = getmaxy(stdscr);
+	//int width = getmaxx(stdscr);
+
+	//short y, x;
+	//y = height / 2;
+	//x = width / 2;
+
+	//int totalTiles = height * width;
+	//chtype* testMap = new chtype[totalTiles];
+	//char asciiStart = ' ';
+	//char asciiEnd = '~';
+	//char asciiPtr = asciiStart;
+	//for (int i = 0; i < totalTiles; i++)
+	//{
+	//	testMap[i] = (chtype)asciiPtr++;
+
+	//	if (asciiPtr >= asciiEnd)
+	//		asciiPtr = asciiStart;
+	//}
+
+	//Highlighter* hl = new Highlighter(stdscr, testMap, &y, &x);
+
+	//bool playing = true;
+	//
+	//while (playing)
+	//{
+	//	clear();
+
+	//	for (int i = 0; i < totalTiles; i++)
+	//	{
+	//		int tileY = i / width;
+	//		int tileX = i % width;
+	//		chtype c = testMap[i];
+	//		
+	//		mvaddch(tileY, tileX, c);
+	//	
+	//	}
+
+	//	mvaddch(y, x, '@');
+	//	wnoutrefresh(stdscr);
+	//	hl->draw();
+
+	//	doupdate();
+	//	int input = getch();
+	//	
+	//	switch(input)
+	//	{
+	//	case KEY_LEFT: x--;	
+	//		hl->setHighlighting(false);
+	//		break;
+	//	case KEY_RIGHT: x++; hl->setHighlighting(false); break;
+	//	case KEY_UP: y--; hl->setHighlighting(false); break;
+	//	case KEY_DOWN: y++; hl->setHighlighting(false); break;
+	//	case KEY_ESC: playing = false; break;
+	//	case KEY_SLEFT: hl->setHighlighting(true); x--; break;
+	//	case KEY_SRIGHT: hl->setHighlighting(true); x++; break;
+	//	case KEY_SUP: hl->setHighlighting(true); y--; break;
+	//	case KEY_SDOWN: hl->setHighlighting(true); y++; break;
+	//	case CTRL_C: 
+	//		hl->copy();
+	//		hl->setHighlighting(false);	
+	//		break;
+	//	case CTRL_V:
+	//		hl->paste(y, x);
+	//		break;
+	//	case KEY_DC: //delete highlit region			
+	//		hl->erase();
+	//		break;
+	//	default: //fill with printable character
+	//		hl->fill(input);
+	//		break;
+	//	}
+
+
+
+
+	//}
+
+
+
+}
+
+void mapTest()
+{
+	WINDOW* viewport = dupwin(stdscr);
+		//newwin(10, 15, 1, 1);
+	Map* map = new Map("test", 10, 30, viewport);
+	
+	chtype* layer = map->getDisplayLayer();
+	
+	short centerY = getmaxy(viewport) / 2;
+	short centerX = getmaxx(viewport) / 2;
+	short y = -centerY;
+	short x = -centerX;
+	short curY = 0;
+	short curX = 0;
+
+	map->setPosition(y, x);
+	
+	char asciiStart = ' ';
+	char asciiEnd = '~';
+	char asciiPtr = asciiStart;
+	int totalTiles = 10 * 30;
+	for (int i = 0; i < totalTiles; i++)
+	{
+		layer[i] = (chtype)asciiPtr++;
+
+		if (asciiPtr >= asciiEnd)
+			asciiPtr = asciiStart;
+	}
+
+	//Highlighter* hl = new Highlighter(viewport, layer, &curY, &curX);
+	Highlighter* hl = new Highlighter(map, &curY, &curX);
+
+	//hl->setOffset(map->getUlYPtr(), map->getUlXPtr());
+
+	
+	bool playing = true;
+	while (playing)
+	{
+		/*clear();
+		wnoutrefresh(stdscr);*/
+		wclear(viewport);
+		wbkgd(viewport, '%');
+		wnoutrefresh(viewport);
+		map->draw();
+		hl->draw();
+		mvwaddch(viewport, centerY, centerX, '@' | 0x0f000000);
+		wnoutrefresh(viewport);
+		doupdate();
+		int input = getch();
+
+
+		switch (input)
+		{
+		case KEY_UP: y--; curY--; hl->setHighlighting(false); break;
+		case KEY_DOWN: y++; curY++; hl->setHighlighting(false); break;
+		case KEY_LEFT: x--; curX--; hl->setHighlighting(false); break;
+		case KEY_RIGHT: x++; curX++; hl->setHighlighting(false); break;
+		case KEY_SLEFT: hl->setHighlighting(true); x--; curX--; break;
+		case KEY_SRIGHT: hl->setHighlighting(true); x++; curX++; break;
+		case KEY_SUP: hl->setHighlighting(true); y--; curY--; break;
+		case KEY_SDOWN: hl->setHighlighting(true); y++; curY++; break;
+		case KEY_ESC: playing = false; break;
+		case CTRL_C:
+			hl->copy();
+			hl->setHighlighting(false);
+			break;
+		case CTRL_V:
+			hl->paste();
+			break;
+		case KEY_DC: //delete highlit region			
+			hl->erase();
+			break;
+		case CTL_UP:
+		case CTL_DOWN:
+			hl->flip(HL_VER);
+			break;
+		case CTL_LEFT:
+		case CTL_RIGHT:
+			hl->flip(HL_HOR);
+			break;
+		default: //fill with printable character
+			hl->fill(input);
+			break;
+		}
+
+		map->setPosition(y, x);
+	}
+
+
+}
+
+
 int main()
 {
 	TUI* tui = new TUI();
@@ -2582,15 +2806,9 @@ int main()
 	//fileDialogTest();
 	//scrollTest();
 	mapEditorTest();
-	//saveDialogTest();
-	//openDialogTest();
-	//textFieldtest();
-	//directoryTest();
-	//frameTest();
-	//simpleFightTest();
-	//simpleActorTest();
-	//realMapTest();
-
+//	tableTest();
+	//mapTest();
+	//highlighterTest();
 	tui->shutdown();
 	delete tui;
 	return 0;

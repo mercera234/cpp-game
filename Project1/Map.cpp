@@ -14,12 +14,18 @@ Map::Map(string name, int rows, int cols, WINDOW* win)
 	reset();
 
 	this->win = win;
+	
 	getmaxyx(win, visibleRows, visibleCols);
+
 
 	ulY = 0;
 	ulX = 0;
+	mapY = 0; 
+	mapX = 0;
+	
 	filterMask = 0xffffffff;
 }
+
 
 void Map::reset()
 {
@@ -41,17 +47,16 @@ void Map::setPosition(int y, int x)
 {
 	ulY = y;
 	ulX = x;
+
+	mapY = -y;
+	mapX = -x;
 }
 
-void Map::shiftVert(int magnitude)
+void Map::shift(int y, int x)
 {
-	ulY += magnitude;
+	setPosition(ulY + y, ulX + x);
 }
 
-void Map::shiftHor(int magnitude)
-{
-	ulX += magnitude;
-}
 
 void Map::setDisplayChar(int y, int x, chtype c)
 {
@@ -69,9 +74,6 @@ chtype Map::getDisplayChar(int y, int x)
 void Map::draw()
 {
 	//get position of upper left corner of map
-	/*int ulY = y - centerY;
-	int ulX = x - centerX;*/
-
 	/*
 	row and col are the position within the viewport
 	mapY and mapX are where we are positioned in the map array

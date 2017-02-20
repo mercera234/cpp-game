@@ -242,3 +242,4 @@ ModelManifest.xml
 .fake/
 /Project1/spaceship.map
 *.map
+/Project1/Command.h

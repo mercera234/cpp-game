@@ -2,6 +2,7 @@
 #include "Controllable.h"
 #include <list>
 using namespace std;
+#include "Command.h"
 
 #define KEY_LISTENER 0x0001
 #define MOUSE_LISTENER 0x0002
@@ -9,6 +10,7 @@ using namespace std;
 struct Registration
 {
 	Controllable* c;
+	Command* cmd;
 	void(*callback) (void*, void*, int);
 	char listen_map = 0; //bit map of all listeners
 	Registration() {};
@@ -36,6 +38,7 @@ private:
 public:
 
 	void registerControl(Controllable* c, char listeners, void(*callback) (void*, void*, int));
+	void registerControl(Controllable* c, char listeners, Command* cmd);
 	void registerShortcutKey(int key, void(*callback) (void*, void*, int));
 	void popControl();
 	

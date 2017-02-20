@@ -36,6 +36,7 @@ using namespace std;
 #define CTRL_X 0x18
 #define CTRL_Y 0x19
 #define CTRL_Z 0x1A
+#define KEY_ESC 0x1B
 #define CTRL_LEFT_BRACKET 0x1B
 #define CTRL_BACKSLASH 0x1C
 #define CTRL_RIGHT_BRACKET 0x1D
@@ -44,7 +45,8 @@ using namespace std;
 //0X20 - 0X7E are printable characters (punc, alpha, numbers)
 #define CTRL_QUESTION 0x7F
 #define KEY_DEL 0x7F
-
+#define KEY_PGUP KEY_PPAGE
+#define KEY_PGDN KEY_NPAGE
 
 #define MAX_ROWS 16
 #define MAX_COLS 64
@@ -52,6 +54,7 @@ using namespace std;
 #define BORDER_OFFSET 0 //extra space needed when performing window operations with a border
 
 //directions
+#define DIR_ERR -1
 #define DIR_UP 0
 #define DIR_DOWN 1
 #define DIR_LEFT 2

@@ -36,9 +36,6 @@
     <ClCompile Include="ControlManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MouseHelper.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Map.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -52,9 +49,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="stateManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Controllable.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TextLabel.cpp">
@@ -75,6 +69,12 @@
     <ClCompile Include="FileChooser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Highlighter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Controllable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TUI.h">
@@ -92,13 +92,7 @@
     <ClInclude Include="CursesAttributeController.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Controllable.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ControlManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MouseHelper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Actor.h">
@@ -138,6 +132,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FileChooser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Highlighter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rectangle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Controllable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
