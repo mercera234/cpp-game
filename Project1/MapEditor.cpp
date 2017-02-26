@@ -2,7 +2,7 @@
 #include "TUI.h"
 #include "FileChooser.h"
 #include <dirent.h>
-
+#include <string>
 
 MapEditor::MapEditor()
 {
@@ -64,6 +64,8 @@ MapEditor::MapEditor()
 	
 	//hl = new Highlighter(map->getWindow(), map->getDisplayLayer(), &centerY, &centerX); //map->getMapY(), map->getMapX());
 	hl = new Highlighter(map, &curY, &curX);
+	mapEffectFilterPattern = new MapEffectFilterPattern(map);
+	mapEffectFilterPattern->setEnabled(false);
 
 	setupControlManager();
 }
@@ -79,6 +81,8 @@ void MapEditor::setupControlManager()
 	cm->registerControl(canvasColsInput, KEY_LISTENER | MOUSE_LISTENER, canvasInputCallback);
 	cm->registerControl(map, KEY_LISTENER | MOUSE_LISTENER, mapCallback);
 	cm->setFocus(map);
+	cm->registerControl(mapEffectFilterPattern, 0, (Command*)0);
+	cm->registerControl(hl, 0, (Command*)0);
 	cm->registerControl(fileNameLbl, 0, (Command*) 0);
 	cm->registerControl(topRuler, 0, (Command*)0);
 	cm->registerControl(textTitle, 0, (Command*)0);
@@ -142,14 +146,14 @@ void MapEditor::setupPalettes()
 	//setup filter palette
 	filterPalette = new Palette(2, 4, topRulerRow + 19, paletteLeftEdge);
 
-	filterPalette->setItem("<no filter>", '-', 0, 0);
-	filterPalette->setItem("Obstr", 'O', 0, 1);
-	filterPalette->setItem("Jumpable", 'J', 0, 2);
-	filterPalette->setItem("Const Dmg", 'd', 0, 3);
-	filterPalette->setItem("Inc Dmg", 'D', 1, 0);
-	filterPalette->setItem("Ailment", 'A', 1, 1);
-	filterPalette->setItem("Save", 'S', 1, 2);
-	filterPalette->setItem("Exit", 'E', 1, 3);
+	filterPalette->setItem("<no filter>", F_NO_FILTER, 0, 0);
+	filterPalette->setItem("Obstr", F_OBSTR | COLOR_PAIR(COLOR_RED_BOLD) , 0, 1);
+	filterPalette->setItem("Jumpable", F_JUMPABLE | COLOR_PAIR(COLOR_CYAN_BOLD), 0, 2);
+	filterPalette->setItem("Const Dmg", F_DMG_CONST | COLOR_PAIR(COLOR_MAGENTA), 0, 3);
+	filterPalette->setItem("Inc Dmg", F_DMG_INC | COLOR_PAIR(COLOR_MAGENTA_BOLD), 1, 0);
+	filterPalette->setItem("Ailment", F_AILMENT | COLOR_PAIR(COLOR_YELLOW), 1, 1);
+	filterPalette->setItem("Save", F_SAVEABLE | COLOR_PAIR(COLOR_BLUE_BOLD), 1, 2);
+	filterPalette->setItem("Exit", F_EXIT | COLOR_PAIR(COLOR_GREEN_BOLD), 1, 3);
 }
 
 
@@ -346,6 +350,9 @@ void MapEditor::canvasInputDriver(TextField* field, int input)
 		break;
 	case '\t': 
 		//reset dimensions on map !!!this may just be a stub, I may want to add a button to update later
+		canvasRows = stoi(canvasRowsInput->getText());
+		canvasCols = stoi(canvasColsInput->getText());
+		map->resize(canvasRows, canvasCols);
 
 		cm->setFocus(map); //switch focus back to map
 		break;
@@ -458,9 +465,32 @@ void MapEditor::processPaletteInput(Palette* p, int input)
 	}
 	else if (p == filterPalette)
 	{
-		filter = item->index; 
+		filter = item->index; //do I need this?
+		processFilterPaletteInput(item->icon);
 	}
 }
+
+
+void MapEditor::processFilterPaletteInput(chtype icon)
+{
+	int color = (icon & 0x0f000000) >> 24;
+	int filter = 0;
+	int symbol = icon & 0x0000ffff;
+	switch (symbol)
+	{
+	case F_NO_FILTER: mapEffectFilterPattern->setEnabled(false); return; break;
+	case F_OBSTR: filter = E_OBSTR; break;
+	case F_JUMPABLE: filter = E_JUMPABLE; break;
+	case F_DMG_CONST: filter = E_DMG_CONST; break;
+	case F_DMG_INC: filter = E_DMG_INC; break;
+	case F_AILMENT: filter = E_AILMENT; break;
+	case F_SAVEABLE: filter = E_SAVEABLE; break;
+	case F_EXIT: filter = E_EXIT; break;
+	}
+	mapEffectFilterPattern->setEnabled(true);
+	mapEffectFilterPattern->setEffectColorPair(color, filter);
+}
+
 
 void MapEditor::processMouseInput(int input)
 {
@@ -483,8 +513,15 @@ void MapEditor::applyTool(int y, int x)
 	case BRUSH:
 	case DOT:
 	{
-		chtype c = (chtype)drawChar;
-		map->setDisplayChar(y, x, c | textColor | bkgdColor);
+		if (mapEffectFilterPattern->isEnabled())
+		{
+			map->setEffect(y, x, mapEffectFilterPattern->getEffect());
+		}
+		else
+		{
+			chtype c = (chtype)drawChar;
+			map->setDisplayChar(y, x, c | textColor | bkgdColor);
+		}
 	}
 	break;
 
@@ -658,7 +695,17 @@ bool MapEditor::processMapInput(int input)
 
 	case KEY_BACKSPACE:
 	case KEY_DC:
-		map->setDisplayChar(curY, curX, ' ');
+		if (hl->isHighlighting())
+			hl->erase();
+		else
+		{
+			if (mapEffectFilterPattern->isEnabled())
+			{
+				map->removeEffect(curY, curX, mapEffectFilterPattern->getEffect());
+			}
+			else
+				map->setDisplayChar(curY, curX, ' ');
+		}
 		break;
 	case CTRL_C:
 		hl->copy(); 
@@ -687,7 +734,7 @@ bool MapEditor::processMapInput(int input)
 			drawChar = input;
 
 			if (hl->isHighlighting())
-				hl->fill(drawChar);
+				hl->fill(drawChar | bkgdColor | textColor);
 			
 			applyTool(curY, curX);
 		}
@@ -795,51 +842,15 @@ void MapEditor::draw()
 	wnoutrefresh(stdscr);
 	wnoutrefresh(frame);
 
+	
 	cm->draw();
 	
 
-	//add filter to map
-	//for (int row = 0; row < visibleRows; row++)
-	//{
-	//	for (int col = 0; col < visibleCols; col++)
-	//	{
-
-
-	//		chtype c = mvwinch(viewport, row, col); //colorless filter
-
-	//		//get color values
-	//		int textC = c & 0x0f000000;
-	//		int bkgdC = c & 0xf0000000;
-
-	//		//translate to filters
-	//		int fTextC;
-	//		int fBkgdC;
-
-	//		if (bkgdC == 0x00000000)
-	//		{
-	//			fBkgdC = bkgdC;
-	//			fTextC = 0x00000000; //black text -> goes to white with black bkgd!
-	//		}
-	//		else if ((bkgdC & 0x80000000) != 0) //any bold color
-	//		{
-	//			fBkgdC = 0xf0000000; //white bkgd
-	//			fTextC = 0x00000000; //black text
-	//		}
-	//		else //pair with regular bkgd color
-	//		{
-	//			fBkgdC = 0x80000000;//set to gray bkgd
-	//			fTextC = 0x00000000; //black text
-	//		}
-
-	//		c &= 0x0000ffff; //remove all color
-	//		waddch(viewport, c | fTextC | fBkgdC); //reapply filtered colors
-	//	}
-	//}
+	
 
 
 	chtype cursorChar = mvwinch(viewport, centerY, centerX);
 	waddch(viewport, cursorChar | A_REVERSE);
-	hl->draw();
 	wnoutrefresh(viewport);
 }
 

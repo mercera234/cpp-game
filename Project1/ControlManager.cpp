@@ -1,6 +1,5 @@
 #include "ControlManager.h"
 #include "curses.h"
-#include "MouseHelper.h"
 #include <iterator>
 
 void ControlManager::registerControl(Controllable* c, char listeners, void(*callback) (void*, void*, int))

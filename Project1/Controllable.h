@@ -14,8 +14,8 @@ protected:
 	
 	Rect* r; //A rectangle to save the true dimensions of the window in case it should go off screen
 	
-	unsigned short topRow; //the top row that is visible
-	unsigned short leftCol; //the left most col that is visible
+	int ulY; //the top row that is visible
+	int ulX; //the left most col that is visible
 
 	unsigned int totalRows; //total rows control has whether visible or not
 	unsigned int totalCols; //total cols control has whether visible or not
@@ -39,8 +39,8 @@ public:
 	bool isModal() { return modal; }
 	void setControlManager(ControlManager* cm) { this->cm = cm; }
 	ControlManager* getControlManager() { return cm; }
-	unsigned short getTopRow() { return topRow; }
-	unsigned short getLeftCol() { return leftCol; }
+	int getUlY() { return ulY; }
+	int getUlX() { return ulX; }
 	unsigned short getTotalRows() { return totalRows; }
 	unsigned short getTotalCols() { return totalCols; }
 };

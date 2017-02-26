@@ -48,7 +48,6 @@ public:
 	~Highlighter();
 	void setHighlighting(bool status);
 	void pushPin(int y, int x);
-	//void setOffset(short* y, short* x);
 	bool isHighlighting(){return highlighting;}
 	void draw();
 	void erase();

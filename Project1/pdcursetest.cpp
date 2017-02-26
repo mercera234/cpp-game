@@ -6,7 +6,6 @@
 #include "RGBControl.h"
 #include <list>
 #include "ControlManager.h"
-#include "MouseHelper.h"
 #include "Actor.h"
 #include "Map.h"
 #include "TextField.h"
@@ -15,16 +14,17 @@
 #include "Palette.h"
 #include "TextLabel.h"
 #include "Frame.h"
-//#include <experimental\filesystem>
-//#include <filesystem>
-//using namespace std::experimental::filesystem::v1; //namespace with file system objects
 #include "Table.h"
 #include <sstream>
 #include <dirent.h>
 #include "FileChooser.h"
 #include "ScrollBar.h"
 #include "Highlighter.h"
-//#include "Clipboard.h"
+#include <ctime>
+#include "BWFilter.h"
+#include "MapEffectFilterPattern.h"
+#include "2DStorage.h"
+
 
 void mockFightTest()
 {
@@ -1593,8 +1593,8 @@ Actor* createActor()
 	def->strength = 8;
 	def->defense = 5;
 	def->agility = 4;
-	def->accuracy = .9;
-	def->luck = .05;
+	def->accuracy = .9f;
+	def->luck = .05f;
 
 	Actor* actor = new Actor();
 	actor->def = def;
@@ -1621,8 +1621,8 @@ Actor* createNPCActor()
 	def->strength = 1;
 	def->defense = 1;
 	def->agility = 1;
-	def->accuracy = .9;
-	def->luck = .05;
+	def->accuracy = .9f;
+	def->luck = .05f;
 
 	Actor* actor = new Actor();
 	actor->def = def;
@@ -1649,8 +1649,8 @@ Actor* createEnemyActor()
 	def->strength = 1;
 	def->defense = 1;
 	def->agility = 2;
-	def->accuracy = .9;
-	def->luck = .01;
+	def->accuracy = .9f;
+	def->luck = .01f;
 
 	Actor* actor = new Actor();
 	actor->def = def;
@@ -1975,8 +1975,8 @@ void dataPkgTest()
 	def->strength = 8;
 	def->defense = 5;
 	def->agility = 4;
-	def->accuracy = .9;
-	def->luck = .05;
+	def->accuracy = .9f;
+	def->luck = .05f;
 	
 //	pkg.save("Testpkg.bin");
 
@@ -2452,7 +2452,7 @@ void derWinTest()
 		doupdate();
 		//keypad(win, true);
 		//keypad(dWin, true);
-		int c = getch(win);
+		int c = getch();
 
 		switch (c)
 		{
@@ -2495,9 +2495,6 @@ void wideTest()
 		}
 	}
 
-
-
-	int x;
 }
 
 
@@ -2796,6 +2793,182 @@ void mapTest()
 }
 
 
+void getRandomColor()
+{
+	srand(time(NULL));
+
+
+
+}
+
+
+void filterTest()
+{
+	WINDOW* viewport = dupwin(stdscr);
+	
+	Map* map = new Map("test", 10, 30, viewport);
+
+	chtype* layer = map->getDisplayLayer();
+
+	short centerY = getmaxy(viewport) / 2;
+	short centerX = getmaxx(viewport) / 2;
+	short y = -centerY;
+	short x = -centerX;
+	short curY = 0;
+	short curX = 0;
+
+	map->setPosition(y, x);
+
+	char asciiStart = ' ';
+	char asciiEnd = '~';
+	char asciiPtr = asciiStart;
+	int totalTiles = 10 * 30;
+	for (int i = 0; i < totalTiles; i++)
+	{
+		layer[i] = (chtype)asciiPtr++ | COLOR_PAIR(COLOR_YELLOW);
+
+		if (asciiPtr >= asciiEnd)
+			asciiPtr = asciiStart;
+	}
+
+	FilterPattern* f = new BWFilter(map);
+
+	bool playing = true;
+	bool filterStatus = false;
+	while (playing)
+	{
+		wclear(viewport);
+		wbkgd(viewport, '%');
+		wnoutrefresh(viewport);
+		f->draw();
+		
+		mvwaddch(viewport, centerY, centerX, '@' | 0x0f000000);
+		wnoutrefresh(viewport);
+		doupdate();
+		int input = getch();
+
+
+		switch (input)
+		{
+		case KEY_UP: y--; curY--; break;
+		case KEY_DOWN: y++; curY++; break;
+		case KEY_LEFT: x--; curX--; break;
+		case KEY_RIGHT: x++; curX++; break;
+		case KEY_ESC: playing = false; break;
+		default: //fill with printable character
+			//toggle filter
+			f->setEnabled(filterStatus = !filterStatus);
+			break;
+		}
+
+		map->setPosition(y, x);
+	}
+
+
+}
+
+
+void mapEffectFilterTest()
+{
+	WINDOW* viewport = dupwin(stdscr);
+
+	Map* map = new Map("test", 10, 30, viewport);
+
+	chtype* layer = map->getDisplayLayer();
+	short* eLayer = map->getEffectsLayer();
+
+	short centerY = getmaxy(viewport) / 2;
+	short centerX = getmaxx(viewport) / 2;
+	short y = -centerY;
+	short x = -centerX;
+	short curY = 0;
+	short curX = 0;
+
+	map->setPosition(y, x);
+
+	char asciiStart = ' ';
+	char asciiEnd = '~';
+	char asciiPtr = asciiStart;
+	int totalTiles = 10 * 30;
+	for (int i = 0; i < totalTiles; i++)
+	{
+		int y = i / map->getWidth();
+		int x = i % map->getWidth();
+
+		if (x < 10)
+			layer[i] = (chtype)asciiPtr++ | COLOR_PAIR(COLOR_YELLOW);
+		else if(x >= 10 && x < 20)
+			layer[i] = (chtype)asciiPtr++ | (COLOR_YELLOW << 28); //yellow background
+		else if(x < 30)
+			layer[i] = (chtype)asciiPtr++ | (COLOR_YELLOW_BOLD << 28); //yellow background
+
+		if (asciiPtr >= asciiEnd)
+			asciiPtr = asciiStart;
+
+		//give frame obstructed effect
+		if (y == 0 || x == 0 || y == map->getHeight() - 1 || x == map->getWidth() - 1)
+			eLayer[i] = E_OBSTR;
+	}
+
+	MapEffectFilterPattern* f = new MapEffectFilterPattern(map);
+	f->setEffectColorPair(COLOR_CYAN, E_OBSTR);
+
+	bool playing = true;
+	bool filterStatus = false;
+	while (playing)
+	{
+		wclear(viewport);
+		wbkgd(viewport, '%');
+		wnoutrefresh(viewport);
+		f->draw();
+
+		mvwaddch(viewport, centerY, centerX, '@' | 0x0f000000);
+		wnoutrefresh(viewport);
+		doupdate();
+		int input = getch();
+
+
+		switch (input)
+		{
+		case KEY_UP: y--; curY--; break;
+		case KEY_DOWN: y++; curY++; break;
+		case KEY_LEFT: x--; curX--; break;
+		case KEY_RIGHT: x++; curX++; break;
+		case KEY_ESC: playing = false; break;
+		default: //fill with printable character
+				 //toggle filter
+			f->setEnabled(filterStatus = !filterStatus);
+			break;
+		}
+
+		map->setPosition(y, x);
+	}
+
+
+}
+
+void storageTest()
+{
+	_2DStorage<int>* displayData = new _2DStorage<int>(5, 3);
+
+	displayData->setDatum(0, 8);
+	displayData->setDatum(3, 1, 9);
+
+
+	int a = displayData->getDatum(3, 1);
+
+	int* b = displayData->getData();
+
+	system("pause");
+}
+
+
+void simpleMapTest()
+{
+
+}
+
+
 int main()
 {
 	TUI* tui = new TUI();
@@ -2805,7 +2978,10 @@ int main()
 	//menuTest2();
 	//fileDialogTest();
 	//scrollTest();
-	mapEditorTest();
+	storageTest();
+	//mapEditorTest();
+//	filterTest();
+	//mapEffectFilterTest();
 //	tableTest();
 	//mapTest();
 	//highlighterTest();

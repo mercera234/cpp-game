@@ -12,6 +12,9 @@ bool Controllable::isInWindow(int y, int x)
 	return (y >= begY && y < endY && x >= begX && x < endX); //clicked in text palette
 }
 
+/*
+Translates window specific coordinates to terminal specific coordinates (may be a curses version of this method)
+*/
 void Controllable::translateCoords(int inY, int inX, int &outY, int &outX)
 {
 	int begX, begY;

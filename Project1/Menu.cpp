@@ -41,8 +41,8 @@ void Menu::setDefaults()
 	itemCount = 0;
 	majorOrder = ROW_MAJOR; //default
 
-	topRow = 0; //the top menu item that is visible
-	leftCol = 0;
+	ulY = 0; //the top menu item that is visible
+	ulX = 0;
 	currentIndex = 0; //default index will be top left item
 
 	
@@ -126,9 +126,9 @@ void Menu::drawMenu()
 	//render each item
 	if (majorOrder == ROW_MAJOR)
 	{
-		for (int row = topRow; row < topRow + visibleRows; row++)
+		for (int row = ulY; row < ulY + visibleRows; row++)
 		{
-			for (int col = leftCol; col < leftCol + visibleCols; col++)
+			for (int col = ulX; col < ulX + visibleCols; col++)
 			{
 				drawItem(row, col);
 			}
@@ -166,15 +166,15 @@ void Menu::drawItem(int row, int col)
 	if (markSide == LEFT_MARK)
 	{
 		if(element == currentIndex)
-			mvwaddstr(win, row - topRow, (col - leftCol) * colWidth, usedMark); //print blot mark
-		mvwaddnstr(win, row - topRow, (col - leftCol) * colWidth + 2, items[element].name.c_str(), maxNameLength); //get item name
+			mvwaddstr(win, row - ulY, (col - ulX) * colWidth, usedMark); //print blot mark
+		mvwaddnstr(win, row - ulY, (col - ulX) * colWidth + 2, items[element].name.c_str(), maxNameLength); //get item name
 	}
 	else //markSide == RIGHT_MARK
 	{
-		mvwaddnstr(win, row - topRow, (col - leftCol) * colWidth, items[element].name.c_str(), maxNameLength); //get item name
+		mvwaddnstr(win, row - ulY, (col - ulX) * colWidth, items[element].name.c_str(), maxNameLength); //get item name
 
 		if (element == currentIndex)
-			mvwaddstr(win, row - topRow, (col - leftCol) * colWidth + maxNameLength, usedMark); //print blot mark
+			mvwaddstr(win, row - ulY, (col - ulX) * colWidth + maxNameLength, usedMark); //print blot mark
 	}
 
 	wattroff(win, A_BLINK);
@@ -221,7 +221,7 @@ int Menu::rowMajorDriver(int input)
 			if (wrapAround)
 			{
 				currentIndex %= menuCols;
-				topRow = 0;
+				ulY = 0;
 			}
 			else
 				currentIndex -= menuCols;
@@ -230,9 +230,9 @@ int Menu::rowMajorDriver(int input)
 		{
 			//reset toprow if necessary
 			int currRow = currentIndex / menuCols;
-			if (currRow >= topRow + visibleRows)
+			if (currRow >= ulY + visibleRows)
 			{
-				topRow = currRow + 1 - visibleRows;
+				ulY = currRow + 1 - visibleRows;
 			}
 		}
 		
@@ -246,7 +246,7 @@ int Menu::rowMajorDriver(int input)
 			if (wrapAround)
 			{
 				currentIndex += capacity; //yay for this working!
-				topRow = menuRows - visibleRows;
+				ulY = menuRows - visibleRows;
 			}
 			else
 				currentIndex += menuCols;
@@ -254,9 +254,9 @@ int Menu::rowMajorDriver(int input)
 		//reset toprow if necessary
 		{
 			int currRow = currentIndex / menuCols;
-			if (currRow < topRow)
+			if (currRow < ulY)
 			{
-				topRow = currRow;
+				ulY = currRow;
 			}
 		}
 		
@@ -270,17 +270,17 @@ int Menu::rowMajorDriver(int input)
 			if (wrapAround)
 			{
 				currentIndex += menuCols;
-				leftCol = (currentIndex + 1 - visibleCols) % menuCols;
+				ulX = (currentIndex + 1 - visibleCols) % menuCols;
 			}
 			else
 				currentIndex++;
 		}
-		//reset leftCol if necessary
+		//reset ulX if necessary
 		{
 			int currCol = currentIndex % menuCols;
-			if (currCol < leftCol)
+			if (currCol < ulX)
 			{
-				leftCol = currCol;
+				ulX = currCol;
 			}
 		}
 		break;
@@ -293,17 +293,17 @@ int Menu::rowMajorDriver(int input)
 			if (wrapAround)
 			{
 				currentIndex -= menuCols;
-				leftCol = currentIndex % menuCols;
+				ulX = currentIndex % menuCols;
 			}
 			else
 				currentIndex--;
 		}
-		//reset leftCol if necessary
+		//reset ulX if necessary
 		{
 			int currCol = currentIndex % menuCols;
 			if (currCol >= visibleCols)
 			{
-				leftCol = currCol + 1 - visibleCols;
+				ulX = currCol + 1 - visibleCols;
 			}
 		}
 		break;
@@ -453,8 +453,8 @@ void Menu::clear()
 		item->clear();
 	}	
 	currentIndex = 0;
-	topRow = 0;
-	leftCol = 0;
+	ulY = 0;
+	ulX = 0;
 }
 
 Menu::~Menu()

@@ -16,6 +16,7 @@ Map::Map(string name, int rows, int cols, WINDOW* win)
 	this->win = win;
 	
 	getmaxyx(win, visibleRows, visibleCols);
+	getmaxyx(win, totalRows, totalCols);
 
 
 	ulY = 0;
@@ -70,6 +71,23 @@ chtype Map::getDisplayChar(int y, int x)
 	return displayLayer[element];
 }
 
+void Map::setEffect(int y, int x, short effect)
+{
+	int element = y * cols + x;
+	effectsLayer[element] |= effect;
+}
+
+void Map::removeEffect(int y, int x, short effect)
+{
+	int element = y * cols + x;
+	effectsLayer[element] &= ~effect;
+}
+
+short Map::getEffects(int y, int x)
+{
+	int element = y * cols + x;
+	return effectsLayer[element];
+}
 
 void Map::draw()
 {
@@ -186,6 +204,55 @@ bool Map::load(string fileName)
 
 	gFile.close();
 }
+
+/*
+Works, 
+and resizing to fixed sizes instead of exactly what we specify
+	The map object will need to modify to account for this as well
+*/
+void Map::resize(int rows, int cols)
+{
+	this->rows = rows;
+	this->cols = cols;
+
+	int prevTotalTiles = totalTiles;
+	totalTiles = rows * cols;
+
+	//for now we will resize to the preferred size, but later on we will only do dynamic resizing to particular sizes
+	chtype* newDisplayLayer = new chtype[totalTiles];
+	short* newEffectsLayer = new short[totalTiles];
+
+	for (int i = 0; i < totalTiles; i++)
+	{
+		newDisplayLayer[i] = ' ';
+		newEffectsLayer[i] = 0; //zero out effects layer
+	}
+
+	chtype* oldArray = displayLayer;
+	short* oldEffects = effectsLayer;
+
+	chtype* dlOut = newDisplayLayer;
+	chtype* dlIn = displayLayer;
+	short* elOut = newEffectsLayer;
+	short* elIn = effectsLayer;
+
+	//use the smaller of the two sizes
+	int tilesToCopy = prevTotalTiles < totalTiles ? prevTotalTiles : totalTiles;
+
+	for (int i = 0; i < tilesToCopy; i++)
+	{
+		*dlOut++ = *dlIn++;
+		*elOut++ = *elIn++;
+	}
+
+	displayLayer = newDisplayLayer;
+	effectsLayer = newEffectsLayer;
+
+	delete oldArray;
+	delete oldEffects;
+}
+
+
 
 Map::~Map()
 {

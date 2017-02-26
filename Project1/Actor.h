@@ -33,9 +33,9 @@
 #define REVEALED 1
 
 //effect results
-#define ESCAPE_FIGHT 0
-#define SUCCESS 1
-#define FAILED 2
+#define F_ESCAPE_FIGHT 0
+#define F_SUCCESS 1
+#define F_FAILED 2
 
 //attributes - (these can now be used in the script, although we're likely to only use hp and exp)
 enum 

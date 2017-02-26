@@ -14,13 +14,6 @@ Highlighter::Highlighter(Map* mapIn, short* y, short* x)
 	curX = x;
 }
 
-
-//void Highlighter::setOffset(short* y, short* x)
-//{
-//	offY = y;
-//	offX = x;
-//}
-
 void Highlighter::setHighlighting(bool status)
 {
 	highlighting = status;
@@ -172,6 +165,7 @@ void Highlighter::draw()
 		{
 			mvwchgat(win, minY, minX, cols + 1, A_STANDOUT, 0, NULL);
 		}
+		wnoutrefresh(win);
 	}
 }
 

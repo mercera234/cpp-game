@@ -10,6 +10,7 @@ using namespace std;
 #include "Frame.h"
 #include "Map.h"
 #include "Highlighter.h"
+#include "MapEffectFilterPattern.h"
 
 #define NEW_MAP 0
 #define OPEN_MAP 1
@@ -23,6 +24,16 @@ using namespace std;
 #define DOT 0
 #define FILL 1
 #define BRUSH 2
+
+//filter choices
+#define F_NO_FILTER '-'
+#define F_OBSTR 'O'
+#define F_JUMPABLE 'J'
+#define F_DMG_CONST 'd'
+#define F_DMG_INC 'D'
+#define F_AILMENT 'A'
+#define F_SAVEABLE 'S'
+#define F_EXIT 'E'
 
 #define DEF_MAP_EXTENSION ".map"
 #define DEF_FILENAME "Untitled.map" //will add open/close arrows later
@@ -91,6 +102,7 @@ private:
 	int filter;
 
 	/*global*/
+	MapEffectFilterPattern* mapEffectFilterPattern;
 	Highlighter* hl;
 
 	int state;
@@ -110,6 +122,7 @@ private:
 	void processShiftDirectionalInput(int input);
 
 	void processPaletteInput(Palette* p, int input);
+	void processFilterPaletteInput(chtype icon);
 	void processGlobalInput(int input);
 	
 	Frame* createConfirmDialog();

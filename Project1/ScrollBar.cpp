@@ -25,7 +25,7 @@ void ScrollBar::draw()
 		mvwaddch(win, row, 0, ACS_VLINE);
 	}
 	
-	vPos = c->getTopRow();
+	vPos = c->getUlY();
 	int cTotalRows = c->getTotalRows();
 	if (cTotalRows > visibleRows)
 	{
