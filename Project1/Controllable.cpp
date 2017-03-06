@@ -1,6 +1,16 @@
 #include "Controllable.H"
 #include "curses.h"
 
+void Controllable::setWindow(WINDOW* win)
+{
+	this->win = win;
+	getmaxyx(win, visibleRows, visibleCols);
+
+	ulY = 0;
+	ulX = 0;
+}
+
+
 bool Controllable::isInWindow(int y, int x)
 {
 	int begX, begY;
@@ -95,4 +105,15 @@ void Controllable::move(int y, int x)
 		mvwin(win, y, x);
 		getbegyx(win, r->y, r->x);
 	}
+}
+
+void Controllable::setPosition(int y, int x)
+{
+	ulY = y;
+	ulX = x;
+}
+
+void Controllable::shift(int y, int x)
+{
+	setPosition(ulY + y, ulX + x);
 }

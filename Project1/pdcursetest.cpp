@@ -24,7 +24,9 @@
 #include "BWFilter.h"
 #include "MapEffectFilterPattern.h"
 #include "2DStorage.h"
-
+#include "Tile.h"
+#include "MovementProcessor.h"
+#include "Image.h"
 
 void mockFightTest()
 {
@@ -2701,13 +2703,15 @@ void highlighterTest()
 
 }
 
-void mapTest()
+void mapHighlighterTest()
 {
 	WINDOW* viewport = dupwin(stdscr);
 		//newwin(10, 15, 1, 1);
 	Map* map = new Map("test", 10, 30, viewport);
-	
-	chtype* layer = map->getDisplayLayer();
+	Image* img = map->getDisplay();
+
+	_2DStorage<chtype>* tileMap = img->getTileMap();
+	//chtype* layer = map->getDisplayLayer();
 	
 	short centerY = getmaxy(viewport) / 2;
 	short centerX = getmaxx(viewport) / 2;
@@ -2724,14 +2728,15 @@ void mapTest()
 	int totalTiles = 10 * 30;
 	for (int i = 0; i < totalTiles; i++)
 	{
-		layer[i] = (chtype)asciiPtr++;
+		tileMap->setDatum(i, (chtype)asciiPtr++);
+		//layer[i] = (chtype)asciiPtr++;
 
 		if (asciiPtr >= asciiEnd)
 			asciiPtr = asciiStart;
 	}
 
 	//Highlighter* hl = new Highlighter(viewport, layer, &curY, &curX);
-	Highlighter* hl = new Highlighter(map, &curY, &curX);
+	Highlighter* hl = new Highlighter(img, &curY, &curX);
 
 	//hl->setOffset(map->getUlYPtr(), map->getUlXPtr());
 
@@ -2786,7 +2791,7 @@ void mapTest()
 			break;
 		}
 
-		map->setPosition(y, x);
+		img->setPosition(y, x);
 	}
 
 
@@ -2804,65 +2809,65 @@ void getRandomColor()
 
 void filterTest()
 {
-	WINDOW* viewport = dupwin(stdscr);
-	
-	Map* map = new Map("test", 10, 30, viewport);
+	//WINDOW* viewport = dupwin(stdscr);
+	//
+	//Map* map = new Map("test", 10, 30, viewport);
 
-	chtype* layer = map->getDisplayLayer();
+	//chtype* layer = map->getDisplayLayer();
 
-	short centerY = getmaxy(viewport) / 2;
-	short centerX = getmaxx(viewport) / 2;
-	short y = -centerY;
-	short x = -centerX;
-	short curY = 0;
-	short curX = 0;
+	//short centerY = getmaxy(viewport) / 2;
+	//short centerX = getmaxx(viewport) / 2;
+	//short y = -centerY;
+	//short x = -centerX;
+	//short curY = 0;
+	//short curX = 0;
 
-	map->setPosition(y, x);
+	//map->setPosition(y, x);
 
-	char asciiStart = ' ';
-	char asciiEnd = '~';
-	char asciiPtr = asciiStart;
-	int totalTiles = 10 * 30;
-	for (int i = 0; i < totalTiles; i++)
-	{
-		layer[i] = (chtype)asciiPtr++ | COLOR_PAIR(COLOR_YELLOW);
+	//char asciiStart = ' ';
+	//char asciiEnd = '~';
+	//char asciiPtr = asciiStart;
+	//int totalTiles = 10 * 30;
+	//for (int i = 0; i < totalTiles; i++)
+	//{
+	//	layer[i] = (chtype)asciiPtr++ | COLOR_PAIR(COLOR_YELLOW);
 
-		if (asciiPtr >= asciiEnd)
-			asciiPtr = asciiStart;
-	}
+	//	if (asciiPtr >= asciiEnd)
+	//		asciiPtr = asciiStart;
+	//}
 
-	FilterPattern* f = new BWFilter(map);
+	//FilterPattern* f = new BWFilter(map);
 
-	bool playing = true;
-	bool filterStatus = false;
-	while (playing)
-	{
-		wclear(viewport);
-		wbkgd(viewport, '%');
-		wnoutrefresh(viewport);
-		f->draw();
-		
-		mvwaddch(viewport, centerY, centerX, '@' | 0x0f000000);
-		wnoutrefresh(viewport);
-		doupdate();
-		int input = getch();
+	//bool playing = true;
+	//bool filterStatus = false;
+	//while (playing)
+	//{
+	//	wclear(viewport);
+	//	wbkgd(viewport, '%');
+	//	wnoutrefresh(viewport);
+	//	f->draw();
+	//	
+	//	mvwaddch(viewport, centerY, centerX, '@' | 0x0f000000);
+	//	wnoutrefresh(viewport);
+	//	doupdate();
+	//	int input = getch();
 
 
-		switch (input)
-		{
-		case KEY_UP: y--; curY--; break;
-		case KEY_DOWN: y++; curY++; break;
-		case KEY_LEFT: x--; curX--; break;
-		case KEY_RIGHT: x++; curX++; break;
-		case KEY_ESC: playing = false; break;
-		default: //fill with printable character
-			//toggle filter
-			f->setEnabled(filterStatus = !filterStatus);
-			break;
-		}
+	//	switch (input)
+	//	{
+	//	case KEY_UP: y--; curY--; break;
+	//	case KEY_DOWN: y++; curY++; break;
+	//	case KEY_LEFT: x--; curX--; break;
+	//	case KEY_RIGHT: x++; curX++; break;
+	//	case KEY_ESC: playing = false; break;
+	//	default: //fill with printable character
+	//		//toggle filter
+	//		f->setEnabled(filterStatus = !filterStatus);
+	//		break;
+	//	}
 
-		map->setPosition(y, x);
-	}
+	//	map->setPosition(y, x);
+	//}
 
 
 }
@@ -2870,79 +2875,106 @@ void filterTest()
 
 void mapEffectFilterTest()
 {
-	WINDOW* viewport = dupwin(stdscr);
+	//WINDOW* viewport = dupwin(stdscr);
 
-	Map* map = new Map("test", 10, 30, viewport);
+	//Map* map = new Map("test", 10, 30, viewport);
 
-	chtype* layer = map->getDisplayLayer();
-	short* eLayer = map->getEffectsLayer();
+	///*chtype* layer = map->getDisplayLayer();
+	//short* eLayer = map->getEffectsLayer();*/
+	//_2DStorage<int>* dLayer = map->getLayer(LAYER_DISPLAY);
+	//_2DStorage<int>* eLayer = map->getLayer(LAYER_EFFECT);
 
-	short centerY = getmaxy(viewport) / 2;
-	short centerX = getmaxx(viewport) / 2;
-	short y = -centerY;
-	short x = -centerX;
-	short curY = 0;
-	short curX = 0;
+	//short centerY = getmaxy(viewport) / 2;
+	//short centerX = getmaxx(viewport) / 2;
+	//short y = -centerY;
+	//short x = -centerX;
+	//short curY = 0;
+	//short curX = 0;
 
-	map->setPosition(y, x);
+	//map->setPosition(y, x);
 
-	char asciiStart = ' ';
-	char asciiEnd = '~';
-	char asciiPtr = asciiStart;
-	int totalTiles = 10 * 30;
-	for (int i = 0; i < totalTiles; i++)
-	{
-		int y = i / map->getWidth();
-		int x = i % map->getWidth();
+	//char asciiStart = ' ';
+	//char asciiEnd = '~';
+	//char asciiPtr = asciiStart;
+	//int totalTiles = 10 * 30;
+	//for (int i = 0; i < totalTiles; i++)
+	//{
+	//	int y = i / map->getWidth();
+	//	int x = i % map->getWidth();
 
-		if (x < 10)
-			layer[i] = (chtype)asciiPtr++ | COLOR_PAIR(COLOR_YELLOW);
-		else if(x >= 10 && x < 20)
-			layer[i] = (chtype)asciiPtr++ | (COLOR_YELLOW << 28); //yellow background
-		else if(x < 30)
-			layer[i] = (chtype)asciiPtr++ | (COLOR_YELLOW_BOLD << 28); //yellow background
+	//	if (x < 10)
+	//		dLayer->setDatum(i, (chtype)asciiPtr++ | COLOR_PAIR(COLOR_YELLOW));
+	//	else if (x >= 10 && x < 20)
+	//		dLayer->setDatum(i, (chtype)asciiPtr++ | (COLOR_YELLOW << 28)); //yellow background
+	//	else if (x < 30)
+	//		dLayer->setDatum(i, (chtype)asciiPtr++ | (COLOR_YELLOW_BOLD << 28)); //yellow background
 
-		if (asciiPtr >= asciiEnd)
-			asciiPtr = asciiStart;
+	//	if (asciiPtr >= asciiEnd)
+	//		asciiPtr = asciiStart;
 
-		//give frame obstructed effect
-		if (y == 0 || x == 0 || y == map->getHeight() - 1 || x == map->getWidth() - 1)
-			eLayer[i] = E_OBSTR;
-	}
+	//	//give frame obstructed effect
+	//	if (y == 0 || x == 0 || y == map->getHeight() - 1 || x == map->getWidth() - 1)
+	//		eLayer->setDatum(i, E_OBSTR);
 
-	MapEffectFilterPattern* f = new MapEffectFilterPattern(map);
-	f->setEffectColorPair(COLOR_CYAN, E_OBSTR);
+	//	//make one line jumpable
+	//	if (x == 15)
+	//		eLayer->setDatum(i, E_JUMPABLE);
 
-	bool playing = true;
-	bool filterStatus = false;
-	while (playing)
-	{
-		wclear(viewport);
-		wbkgd(viewport, '%');
-		wnoutrefresh(viewport);
-		f->draw();
+	//		
+	//}
 
-		mvwaddch(viewport, centerY, centerX, '@' | 0x0f000000);
-		wnoutrefresh(viewport);
-		doupdate();
-		int input = getch();
+	//MapEffectFilterPattern* f = new MapEffectFilterPattern(map);
+
+	//bool playing = true;
+	//bool filterStatus = false;
+	//while (playing)
+	//{
+	//	wclear(viewport);
+	//	wbkgd(viewport, '%');
+	//	wnoutrefresh(viewport);
+	//	f->draw();
+
+	//	mvwaddch(viewport, centerY, centerX, '@' | 0x0f000000);
+	//	wnoutrefresh(viewport);
+	//	doupdate();
+	//	int input = getch();
 
 
-		switch (input)
-		{
-		case KEY_UP: y--; curY--; break;
-		case KEY_DOWN: y++; curY++; break;
-		case KEY_LEFT: x--; curX--; break;
-		case KEY_RIGHT: x++; curX++; break;
-		case KEY_ESC: playing = false; break;
-		default: //fill with printable character
-				 //toggle filter
-			f->setEnabled(filterStatus = !filterStatus);
-			break;
-		}
+	//	switch (input)
+	//	{
+	//	case KEY_UP: y--; curY--;
+	//	{
+	//		//check the eLayer to see if the step can be taken
+	//		int e = eLayer->getDatum(curY, curX);
+	//		if (e == E_OBSTR)
+	//		{
+	//			y++; curY++; //reverse movement
+	//		}		
+	//	}			
+	//		break;
+	//	case KEY_DOWN: y++; curY++; break;
+	//	case KEY_LEFT: x--; curX--; break;
+	//	case KEY_RIGHT: x++; curX++; 
+	//	{
+	//		//check the eLayer to see if jumpable
+	//		int e = eLayer->getDatum(curY, curX);
+	//		if (e == E_JUMPABLE)
+	//		{
+	//			x++; curX++; //increment an additional step
+	//		}
+	//	}
+	//		
+	//		
+	//		break;
+	//	case KEY_ESC: playing = false; break;
+	//	default: //fill with printable character
+	//			 //toggle filter
+	//		f->setEnabled(filterStatus = !filterStatus);
+	//		break;
+	//	}
 
-		map->setPosition(y, x);
-	}
+	//	map->setPosition(y, x);
+	//}
 
 
 }
@@ -2965,9 +2997,339 @@ void storageTest()
 
 void simpleMapTest()
 {
+	WINDOW* viewport = dupwin(stdscr);
+
+	int height = 10;
+	int width = 30;
+	Map* map = new Map("test", height, width, viewport);
+
+	Image* display = map->getDisplay();
+
+	short centerY = getmaxy(viewport) / 2;
+	short centerX = getmaxx(viewport) / 2;
+	short y = -centerY;
+	short x = -centerX;
+	short curY = 1;
+	short curX = 1;
+
+	display->setPosition(y, x);
+
+	char asciiStart = ' ';
+	char asciiEnd = '~';
+	char asciiPtr = asciiStart;
+	int totalTiles = height * width;
+
+	_2DStorage<chtype>* data = display->getTileMap();
+
+	for (int i = 0; i < totalTiles; i++)
+	{
+		int y = i / width;
+		int x = i % width;
+
+		chtype c;
+		if (x < 10)
+			c = (chtype)asciiPtr++ | COLOR_PAIR(COLOR_YELLOW);
+		else if (x >= 10 && x < 20)
+			c = (chtype)asciiPtr++ | (COLOR_YELLOW << 28); //yellow background
+		else if (x < 30)
+			c = (chtype)asciiPtr++ | (COLOR_YELLOW_BOLD << 28); //yellow background
+
+		data->setDatum(i, c);
+		
+		if (asciiPtr >= asciiEnd)
+			asciiPtr = asciiStart;
+
+	}
+
+	bool playing = true;
+	bool filterStatus = false;
+	while (playing)
+	{
+		wclear(viewport);
+		wbkgd(viewport, '%');
+		wnoutrefresh(viewport);
+		
+		map->draw();
+		mvwaddch(viewport, centerY + 1, centerX + 1, '@' | 0x0f000000);
+		wnoutrefresh(viewport);
+		doupdate();
+		int input = getch();
+
+
+		switch (input)
+		{
+		case KEY_UP: y--; curY--; 
+			break;
+		case KEY_DOWN: y++; curY++; break;
+		case KEY_LEFT: x--; curX--; break;
+		case KEY_RIGHT: x++; curX++; break;
+		case KEY_ESC: playing = false; break;
+		default: //fill with printable character
+				 //toggle filter
+			break;
+		}
+
+		display->setPosition(y, x);
+	}
+}
+
+void tileTest()
+{
+	_2DStorage<Tile>* tileMap = new _2DStorage<Tile>(3, 2);
+
+	Tile t('%');
+
+	Tile t2('$' | COLOR_PAIR(COLOR_YELLOW_BOLD));
+
+	mvaddch(3, 3, t.getDisplay());
+	mvaddch(6, 6, t2.getDisplay());
+
+	tileMap->setDatum(0, t);
+	tileMap->setDatum(1, t2);
+	tileMap->setDatum(2, t);
+	tileMap->setDatum(3, t2);
+	tileMap->setDatum(4, t);
+	tileMap->setDatum(5, t2);
+
+	for (int i = 0; i < 6; i++)
+	{
+		Tile* tiles = tileMap->getData();
+		
+		mvaddch(0, i, tiles[i].getDisplay());
+	}
+	wnoutrefresh(stdscr);
+	doupdate();
+	getch();
+
+	//Tile** newTiles = new Tile*[6];
+	////for (int i = 0; i < 6; i++)
+	//	newTiles[0] = new Tile('m');
+
+	////newTiles[0]->setDisplay('m');
+	//newTiles[1] = newTiles[0];
+
+	//mvaddch(5, 0, newTiles[0]->getDisplay());
+	//mvaddch(5, 1, newTiles[1]->getDisplay());
+
+	//wnoutrefresh(stdscr);
+	//doupdate();
+	//getch();
 
 }
 
+void tileMapTest()
+{
+	WINDOW* viewport = dupwin(stdscr);
+
+	int height = 10;
+	int width = 30;
+	_2DStorage<Tile>* tileMap = new _2DStorage<Tile>(height, width);
+
+	short centerY = getmaxy(viewport) / 2;
+	short centerX = getmaxx(viewport) / 2;
+	short y = -centerY;
+	short x = -centerX;
+	short curY = 1;
+	short curX = 1;
+
+	char asciiStart = ' ';
+	char asciiEnd = '~';
+	char asciiPtr = asciiStart;
+	int totalTiles = height * width;
+
+	Tile* tiles = tileMap->getData();
+	for (int i = 0; i < totalTiles; i++)
+	{
+		int y = i / width;
+		int x = i % width;
+
+
+		if (x < 10)
+			tiles[i].setDisplay((chtype)asciiPtr++ | COLOR_PAIR(COLOR_YELLOW));
+		else if (x >= 10 && x < 20)
+			tiles[i].setDisplay((chtype)asciiPtr++ | (COLOR_YELLOW << 28));
+		else if (x < 30)
+			tiles[i].setDisplay((chtype)asciiPtr++ | (COLOR_YELLOW_BOLD << 28));
+
+		if (asciiPtr >= asciiEnd)
+			asciiPtr = asciiStart;
+
+		//give frame obstructed effect
+		if (y == 0 || x == 0 || y == height - 1 || x == width - 1)
+			tiles[i].setEffectType(E_OBSTR);		
+
+		if (x == 15)
+			tiles[i].setEffectType(E_JUMPABLE);
+
+		if (x == 17)
+		{
+			tiles[i].setEffectType(E_HP_ALT_CONST);
+			tiles[i].setEffectValue(-5);
+		}
+
+		if (y == height - 2 && x == width - 2)
+			tiles[i].setEffectType(E_EXIT);
+			
+	}
+
+	bool playing = true;
+	bool filterStatus = false;
+
+	int hp = 200;
+	while (playing)
+	{
+		wclear(viewport);
+		wbkgd(viewport, ' ');
+		wnoutrefresh(viewport);
+
+		for (int i = 0; i < totalTiles; i++)
+		{
+			int y = i / width;
+			int x = i % width;
+			mvwaddch(viewport, y, x, tiles[i].getDisplay());
+		}
+
+		mvwaddch(viewport, curY, curX, '@' | 0x0f000000);
+
+		char buf[20];
+		
+		_itoa_s(hp, buf, 10);
+		mvwaddstr(viewport, 0, width + 2, buf);
+		
+		wnoutrefresh(viewport);
+		doupdate();
+		int input = getch();
+
+		switch (input)
+		{
+		case KEY_UP: y--; curY--;
+		{
+			//check the eLayer to see if the step can be taken
+			Tile t = tileMap->getDatum(curY, curX);
+			int e = t.getEffect()->type;
+			int val = t.getEffect()->value;
+			switch(e)
+			{
+			case E_OBSTR: y++; curY++; break; //reverse movement 
+			case E_JUMPABLE: y--; curY--; break; //take additional step
+			case E_HP_ALT_CONST: hp += val; break; //take additional step
+			case E_EXIT: playing = false; break; //quit
+			}
+		}
+
+
+		break;
+		case KEY_DOWN: y++; curY++; break;
+		case KEY_LEFT: x--; curX--; break;
+		case KEY_RIGHT: x++; curX++; 
+		{
+			Tile t = tileMap->getDatum(curY, curX);
+			int e = t.getEffect()->type;
+			int val = t.getEffect()->value;
+			switch (e)
+			{
+			case E_OBSTR: x--; curX--; break; //reverse movement 
+			case E_JUMPABLE: x++; curX++; break; //take additional step
+			case E_HP_ALT_CONST: hp += val; break; //alter hp
+			case E_EXIT: playing = false; break; //quit
+			}
+		}			
+			break;
+		case KEY_ESC: playing = false; break;
+		default: //fill with printable character
+				 //toggle filter
+			break;
+		}
+	}
+}
+
+void movementProcessorTest()
+{
+	int height = 5;
+	int width = 7;
+	resize_term(height, width);
+	WINDOW* viewport = dupwin(stdscr);
+
+	int mapHeight = 9; //height + (height / 2);
+	int mapWidth = 11;//width + (width / 2);
+	//Map* map = new Map("test", mapHeight, mapWidth, viewport);
+	Image* map = new Image(mapHeight, mapWidth, viewport);
+	_2DStorage<chtype>* tileMap = map->getTileMap();
+	
+	short centerY = getmaxy(viewport) / 2;
+	short centerX = getmaxx(viewport) / 2;
+	short y = -centerY;
+	short x = -centerX;
+	short curY = 1;
+	short curX = 1;
+
+	tileMap->setDatum(0, 0, '1'); //upper left
+	tileMap->setDatum(0, mapWidth - 1, '2'); //upper right
+	tileMap->setDatum(mapHeight - 1, 0, '3'); //lower left
+	tileMap->setDatum(mapHeight - 1, mapWidth - 1, '4'); //lower right
+
+	map->setPosition(0, 0);
+
+	MovementProcessor* mp = new MovementProcessor(map, &curY, &curX);
+
+	bool playing = true;
+	bool bounded = true;
+	bool cursorType = true;
+	while (playing)
+	{
+		map->draw();
+
+		//mvwaddch(viewport, centerY + 1, centerX + 1, '@' | 0x0f000000); //for always drawing cursor in center of screen
+		mvwaddch(viewport, curY - map->getUlY(), curX - map->getUlX(), '@' | 0x0f000000); //for always drawing cursor in center of screen
+		wnoutrefresh(viewport);
+		doupdate();
+		int input = getch();
+
+
+
+
+		switch (input)
+		{
+		case KEY_UP:
+		case KEY_DOWN:
+		case KEY_LEFT:
+		case KEY_RIGHT:
+		case KEY_PGUP://up down paging
+		case KEY_PGDN:
+		case CTL_PGUP://left right paging
+		case CTL_PGDN:
+		case KEY_HOME://all the way left
+		case KEY_END: //all the way right
+		case CTL_HOME://upper left corner
+		case CTL_END: //lower right corner
+			mp->processMovementInput(input); break;
+		case KEY_ESC: playing = false; break;
+
+		case 'b': mp->setBounded(bounded = !bounded); break;
+		case 'd': mp->setViewMode(VM_DYNAMIC); break;
+		case 'l': mp->setViewMode(VM_LOCK); break;
+		case 'c': mp->setViewMode(VM_CENTER); break;
+		}
+
+		
+	}
+	
+}
+
+
+void imageTest()
+{
+	//Image* img = new Image("test", 64, 64, stdscr);
+	Image* img = new Image(stdscr);
+
+	//TODO fix use of load method here
+//	img->load("data\\volcano.map");
+	//img->filterMask = 0x00ffffff;
+	img->draw();
+
+	doupdate();
+	getch();
+}
 
 int main()
 {
@@ -2978,8 +3340,14 @@ int main()
 	//menuTest2();
 	//fileDialogTest();
 	//scrollTest();
-	storageTest();
-	//mapEditorTest();
+	//storageTest();
+	//simpleMapTest();
+//	tileMapTest();
+	//imageTest();
+	mapEditorTest();
+	//movementProcessorTest();
+//	mapHighlighterTest();
+	//tileTest();
 //	filterTest();
 	//mapEffectFilterTest();
 //	tableTest();

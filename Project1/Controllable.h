@@ -17,8 +17,12 @@ protected:
 	int ulY; //the top row that is visible
 	int ulX; //the left most col that is visible
 
+	//The window dimensions are like the viewport on the screen
+	//These are for holding the true dimensions of the control, useful for maps, menus, anything that contains more data that can actually be shown at a time
 	unsigned int totalRows; //total rows control has whether visible or not
 	unsigned int totalCols; //total cols control has whether visible or not
+	unsigned short visibleRows; //total rows that can be displayed on screen
+	unsigned short visibleCols; //total cols that can be displayed on screen
 
 
 	/*
@@ -29,6 +33,7 @@ protected:
 	ControlManager* cm;
 	void setWindow(Rect* bounds);
 public:
+	void setWindow(WINDOW* win);
 	virtual void draw() = 0;
 	virtual void move(int y, int x);
 	WINDOW* getWindow() { return win; };
@@ -43,5 +48,7 @@ public:
 	int getUlX() { return ulX; }
 	unsigned short getTotalRows() { return totalRows; }
 	unsigned short getTotalCols() { return totalCols; }
+	void setPosition(int y, int x);
+	void shift(int y, int x);
 };
 

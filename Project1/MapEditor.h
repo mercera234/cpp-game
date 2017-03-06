@@ -11,6 +11,7 @@ using namespace std;
 #include "Map.h"
 #include "Highlighter.h"
 #include "MapEffectFilterPattern.h"
+#include "MovementProcessor.h"
 
 #define NEW_MAP 0
 #define OPEN_MAP 1
@@ -64,7 +65,11 @@ private:
 	short curX; 
 	short curY;
 
+	MovementProcessor* mp;
+
 	Map* map;
+	Image* image;
+	_2DStorage<chtype>* tileMap;
 
 	char drawChar;
 

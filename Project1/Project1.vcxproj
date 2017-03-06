@@ -127,11 +127,13 @@
     <ClCompile Include="DataPkg.cpp" />
     <ClCompile Include="FileChooser.cpp" />
     <ClCompile Include="Frame.cpp" />
+    <ClCompile Include="Image.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="MapEditor.cpp" />
     <ClCompile Include="MapEffectFilterPattern.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="CursesPanel.cpp" />
+    <ClCompile Include="MovementProcessor.cpp" />
     <ClCompile Include="Palette.cpp" />
     <ClCompile Include="pdcursetest.cpp" />
     <ClCompile Include="RGBControl.cpp" />
@@ -156,11 +158,13 @@
     <ClInclude Include="DataPkg.h" />
     <ClInclude Include="FileChooser.h" />
     <ClInclude Include="Frame.h" />
+    <ClInclude Include="Image.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="MapEditor.h" />
     <ClInclude Include="MapEffectFilterPattern.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="CursesPanel.h" />
+    <ClInclude Include="MovementProcessor.h" />
     <ClInclude Include="Palette.h" />
     <ClInclude Include="Rectangle.h" />
     <ClInclude Include="RGBControl.h" />
@@ -169,6 +173,7 @@
     <ClInclude Include="Table.h" />
     <ClInclude Include="TextField.h" />
     <ClInclude Include="TextLabel.h" />
+    <ClInclude Include="Tile.h" />
     <ClInclude Include="TUI.h" />
   </ItemGroup>
   <ItemGroup>

@@ -3,6 +3,7 @@
 #include "FileChooser.h"
 #include <dirent.h>
 #include <string>
+#include "2DStorage.h"
 
 MapEditor::MapEditor()
 {
@@ -45,7 +46,10 @@ MapEditor::MapEditor()
 	
 	
 	map = new Map(fileName, canvasRows, canvasCols, viewport);
+	image = map->getDisplay();
+	tileMap = image->getTileMap();
 
+	mp = new MovementProcessor(image, &curY, &curX);
 	int bottomRow = visibleRows + 2 + topRulerRow + 1;
 
 	//mvprintw(bottom + topRulerRow + 1, sideRulerCol + 1, "x: %+4d  y: %+4d", x, y); //%+4d always render sign, 4 char field, int
@@ -63,7 +67,7 @@ MapEditor::MapEditor()
 
 	
 	//hl = new Highlighter(map->getWindow(), map->getDisplayLayer(), &centerY, &centerX); //map->getMapY(), map->getMapX());
-	hl = new Highlighter(map, &curY, &curX);
+	hl = new Highlighter(image, &curY, &curX);
 	mapEffectFilterPattern = new MapEffectFilterPattern(map);
 	mapEffectFilterPattern->setEnabled(false);
 
@@ -481,14 +485,14 @@ void MapEditor::processFilterPaletteInput(chtype icon)
 	case F_NO_FILTER: mapEffectFilterPattern->setEnabled(false); return; break;
 	case F_OBSTR: filter = E_OBSTR; break;
 	case F_JUMPABLE: filter = E_JUMPABLE; break;
-	case F_DMG_CONST: filter = E_DMG_CONST; break;
-	case F_DMG_INC: filter = E_DMG_INC; break;
-	case F_AILMENT: filter = E_AILMENT; break;
-	case F_SAVEABLE: filter = E_SAVEABLE; break;
+	case F_DMG_CONST: filter = E_HP_ALT_CONST; break;
+//	case F_DMG_INC: filter = E_HP_ALT_INC; break;
+	//case F_AILMENT: filter = E_AILMENT; break;
+	//case F_SAVEABLE: filter = E_SAVEABLE; break;
 	case F_EXIT: filter = E_EXIT; break;
 	}
 	mapEffectFilterPattern->setEnabled(true);
-	mapEffectFilterPattern->setEffectColorPair(color, filter);
+//	mapEffectFilterPattern->setEffectColorPair(color, filter);
 }
 
 
@@ -520,7 +524,7 @@ void MapEditor::applyTool(int y, int x)
 		else
 		{
 			chtype c = (chtype)drawChar;
-			map->setDisplayChar(y, x, c | textColor | bkgdColor);
+			tileMap->setDatum(y, x, c | textColor | bkgdColor);
 		}
 	}
 	break;
@@ -538,117 +542,118 @@ void MapEditor::markModified()
 	fileNameLbl->setText(fileName + "*");
 }
 
-void MapEditor::processMovementInput(int input)
-{
-	switch (input)
-	{
-	case CTL_HOME: //use two movements to upper left corner
-		processDirectionalInput(DIR_LEFT, canvasCols);
-		processDirectionalInput(DIR_UP, canvasRows);
-		break;
-	case CTL_END: //use two movements to lower right corner
-		processDirectionalInput(DIR_RIGHT, canvasCols);
-		processDirectionalInput(DIR_DOWN, canvasRows);
-		break;
-	default:
-		int dir = getDirectionFromKey(input);
-		int magnitude = getMoveMagnitudeFromKey(input);
-		processDirectionalInput(dir, magnitude);
-		break;
-	}
-}
-
-int MapEditor::getMoveMagnitudeFromKey(int key)
-{
-	int magnitude = 0;
-	switch (key)
-	{
-	case KEY_UP:
-	case KEY_DOWN:
-	case KEY_LEFT:
-	case KEY_RIGHT: magnitude = 1;
-		break;
-	case KEY_PGUP://up down paging
-	case KEY_PGDN: magnitude = visibleRows;
-		break;
-	case CTL_PGUP://left right paging
-	case CTL_PGDN: magnitude = visibleCols;
-		break;
-
-	case KEY_HOME: 
-	case KEY_END: magnitude = canvasCols;
-		break;
-	}
-	return magnitude;
-}
-
-int MapEditor::getDirectionFromKey(int key)
-{
-	int dir;
-	switch (key)
-	{
-	case KEY_PGUP:
-	case KEY_UP: dir = DIR_UP; 
-		break;
-	case KEY_PGDN:
-	case KEY_DOWN: dir = DIR_DOWN; 
-		break;
-	case KEY_HOME:
-	case CTL_PGUP:
-	case KEY_LEFT: dir = DIR_LEFT; 
-		break;
-	case KEY_END:
-	case CTL_PGDN:
-	case KEY_RIGHT: dir = DIR_RIGHT; 
-		break;
-	default:
-		dir = DIR_ERR;
-	}
-	return dir;
-}
-
-void MapEditor::processDirectionalInput(int dirInput, int magnitude)
-{
-	short* axis = NULL;
-	int step = 1;
-
-	switch (dirInput)
-	{
-	case DIR_UP:
-		axis = &curY;
-		step = -step;
-		break;
-	case DIR_DOWN:
-		axis = &curY;
-		break;
-	case DIR_LEFT:
-		axis = &curX;
-		step = -step;
-		break;
-	case DIR_RIGHT:
-		axis = &curX;
-		break;
-	}
-
-	for (int i = 0; i < magnitude; i++) //take repeated steps until move is over
-	{
-		//move the cursor
-		*axis += step;
-
-		//verify that cursor is within bounds
-		if (curX < 0 || curY < 0 || curX >= canvasCols || curY >= canvasRows)
-		{
-			*axis -= step; break;//reverse step and quit
-		}
-		
-		//shift map
-		axis == &curY ? map->shift(step, 0) : map->shift(0, step);
-
-		//apply brush if necessary
-		if (tool == BRUSH)
-			applyTool(curY, curX);
-	}
-}
+//void MapEditor::processMovementInput(int input)
+//{
+//	switch (input)
+//	{
+//	case CTL_HOME: //use two movements to upper left corner
+//		processDirectionalInput(DIR_LEFT, canvasCols);
+//		processDirectionalInput(DIR_UP, canvasRows);
+//		break;
+//	case CTL_END: //use two movements to lower right corner
+//		processDirectionalInput(DIR_RIGHT, canvasCols);
+//		processDirectionalInput(DIR_DOWN, canvasRows);
+//		break;
+//	default:
+//		int dir = getDirectionFromKey(input);
+//		int magnitude = getMoveMagnitudeFromKey(input);
+//		processDirectionalInput(dir, magnitude);
+//		break;
+//	}
+//}
+//
+//int MapEditor::getMoveMagnitudeFromKey(int key)
+//{
+//	int magnitude = 0;
+//	switch (key)
+//	{
+//	case KEY_UP:
+//	case KEY_DOWN:
+//	case KEY_LEFT:
+//	case KEY_RIGHT: magnitude = 1;
+//		break;
+//	case KEY_PGUP://up down paging
+//	case KEY_PGDN: magnitude = visibleRows;
+//		break;
+//	case CTL_PGUP://left right paging
+//	case CTL_PGDN: magnitude = visibleCols;
+//		break;
+//
+//	case KEY_HOME: 
+//	case KEY_END: magnitude = canvasCols;
+//		break;
+//	}
+//	return magnitude;
+//}
+//
+//int MapEditor::getDirectionFromKey(int key)
+//{
+//	int dir;
+//	switch (key)
+//	{
+//	case KEY_PGUP:
+//	case KEY_UP: dir = DIR_UP; 
+//		break;
+//	case KEY_PGDN:
+//	case KEY_DOWN: dir = DIR_DOWN; 
+//		break;
+//	case KEY_HOME:
+//	case CTL_PGUP:
+//	case KEY_LEFT: dir = DIR_LEFT; 
+//		break;
+//	case KEY_END:
+//	case CTL_PGDN:
+//	case KEY_RIGHT: dir = DIR_RIGHT; 
+//		break;
+//	default:
+//		dir = DIR_ERR;
+//	}
+//	return dir;
+//}
+//
+//void MapEditor::processDirectionalInput(int dirInput, int magnitude)
+//{
+//	short* axis = NULL;
+//	int step = 1;
+//
+//	switch (dirInput)
+//	{
+//	case DIR_UP:
+//		axis = &curY;
+//		step = -step;
+//		break;
+//	case DIR_DOWN:
+//		axis = &curY;
+//		break;
+//	case DIR_LEFT:
+//		axis = &curX;
+//		step = -step;
+//		break;
+//	case DIR_RIGHT:
+//		axis = &curX;
+//		break;
+//	}
+//
+//	for (int i = 0; i < magnitude; i++) //take repeated steps until move is over
+//	{
+//		//move the cursor
+//		*axis += step;
+//
+//		//verify that cursor is within bounds
+//		if (curX < 0 || curY < 0 || curX >= canvasCols || curY >= canvasRows)
+//		{
+//			*axis -= step; break;//reverse step and quit
+//		}
+//		
+//		//shift map
+//	//	axis == &curY ? map->shift(step, 0) : map->shift(0, step);
+//		axis == &curY ? image->shift(step, 0) : image->shift(0, step);
+//
+//		//apply brush if necessary
+//		if (tool == BRUSH)
+//			applyTool(curY, curX);
+//	}
+//}
 
 
 void MapEditor::processShiftDirectionalInput(int input)
@@ -662,7 +667,8 @@ void MapEditor::processShiftDirectionalInput(int input)
 	case KEY_SRIGHT: input = KEY_RIGHT; break;
 	}
 
-	processMovementInput(input);
+	mp->processMovementInput(input);
+	//processMovementInput(input);
 }
 
 
@@ -683,7 +689,8 @@ bool MapEditor::processMapInput(int input)
 	case CTL_HOME://upper left corner
 	case CTL_END: //lower right corner
 		hl->setHighlighting(false);
-		processMovementInput(input);
+		mp->processMovementInput(input);
+		//processMovementInput(input);
 		break;
 
 	case KEY_SUP: 
@@ -701,10 +708,11 @@ bool MapEditor::processMapInput(int input)
 		{
 			if (mapEffectFilterPattern->isEnabled())
 			{
-				map->removeEffect(curY, curX, mapEffectFilterPattern->getEffect());
+				map->getLayer(LAYER_EFFECT)->setDatum(curY, curX, E_NONE);
+				//map->removeEffect(curY, curX, mapEffectFilterPattern->getEffect());
 			}
 			else
-				map->setDisplayChar(curY, curX, ' ');
+				tileMap->setDatum(curY, curX, ' ');
 		}
 		break;
 	case CTRL_C:
@@ -725,6 +733,12 @@ bool MapEditor::processMapInput(int input)
 		hl->flip(HL_HOR);
 		markModified();
 		break;
+
+	//case CTRL_B: mp->setBounded(bounded = !bounded); break;
+	case CTRL_D: mp->setViewMode(VM_DYNAMIC); break;
+	case CTRL_L: mp->setViewMode(VM_LOCK); break;
+	case CTRL_P: mp->setViewMode(VM_CENTER); break;
+
 	case KEY_MOUSE:
 		processMouseInput(input);
 		break;
@@ -749,7 +763,7 @@ void MapEditor::fill(int sourceRow, int sourceCol)
 {
 	list<int> fillPoints;
 
-	chtype replaceTile = map->getDisplayChar(sourceRow, sourceCol);
+	chtype replaceTile = tileMap->getDatum(sourceRow, sourceCol);
 		//mvwinch(viewport, sourceRow, sourceCol); //make sure this isn't reversed
 	chtype fillTile = drawChar | bkgdColor | textColor;
 	if (drawChar == ' ')
@@ -757,8 +771,8 @@ void MapEditor::fill(int sourceRow, int sourceCol)
 		fillTile = drawChar | bkgdColor; //we don't need the text color for blank spaces
 	}
 	
-	int totalCols = map->getWidth();
-	int totalRows = map->getHeight();
+	int totalCols = map->getTotalCols();
+	int totalRows = map->getTotalRows();
 
 	if (replaceTile != fillTile) //meaning we have chosen the same fill character as what the cursor is currently over
 		fillPoints.push_back(sourceRow * totalCols + sourceCol);
@@ -772,46 +786,46 @@ void MapEditor::fill(int sourceRow, int sourceCol)
 		int y = editTile / totalCols;
 		int x = editTile % totalCols;
 
-		map->setDisplayChar(y, x, fillTile);
+		tileMap->setDatum(y, x, fillTile);
 
 		//check adjacent positions to see if they have the replace character
 		int rightTile = x + 1;
 		if (rightTile < totalCols)//make sure it is on fillable map area
 		{
-			if(map->getDisplayChar(y, rightTile) == replaceTile)
+			if(tileMap->getDatum(y, rightTile) == replaceTile)
 			{
 				fillPoints.push_back(y * totalCols + rightTile);
-				map->setDisplayChar(y, rightTile, fillTile);
+				tileMap->setDatum(y, rightTile, fillTile);
 			}
 		}
 
 		int leftTile = x - 1;
 		if (leftTile >= 0)//make sure it is on fillable map area
 		{
-			if (map->getDisplayChar(y, leftTile) == replaceTile)
+			if (tileMap->getDatum(y, leftTile) == replaceTile)
 			{
 				fillPoints.push_back(y * totalCols + leftTile);
-				map->setDisplayChar(y, leftTile, fillTile);
+				tileMap->setDatum(y, leftTile, fillTile);
 			}
 		}
 
 		int downTile = y + 1;
 		if (downTile < totalRows)//make sure it is on fillable map area
 		{
-			if (map->getDisplayChar(downTile, x) == replaceTile)
+			if (tileMap->getDatum(downTile, x) == replaceTile)
 			{
 				fillPoints.push_back(downTile * totalCols + x);
-				map->setDisplayChar(downTile, x, fillTile);
+				tileMap->setDatum(downTile, x, fillTile);
 			}
 		}
 		
 		int upTile = y - 1;
 		if (upTile >= 0)//make sure it is on fillable map area
 		{
-			if (map->getDisplayChar(upTile, x) == replaceTile)
+			if (tileMap->getDatum(upTile, x) == replaceTile)
 			{
 				fillPoints.push_back(upTile * totalCols + x);
-				map->setDisplayChar(upTile, x, fillTile);
+				tileMap->setDatum(upTile, x, fillTile);
 			}
 		}
 	}
@@ -845,11 +859,7 @@ void MapEditor::draw()
 	
 	cm->draw();
 	
-
-	
-
-
-	chtype cursorChar = mvwinch(viewport, centerY, centerX);
+	chtype cursorChar = mvwinch(viewport, curY - image->getUlY(), curX - image->getUlX());
 	waddch(viewport, cursorChar | A_REVERSE);
 	wnoutrefresh(viewport);
 }

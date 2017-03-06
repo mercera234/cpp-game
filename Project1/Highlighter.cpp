@@ -2,9 +2,10 @@
 #include "Highlighter.h"
 
 
-Highlighter::Highlighter(Map* mapIn, short* y, short* x)
+Highlighter::Highlighter(Image* mapIn, short* y, short* x)
 {
 	map = mapIn;
+	tileMap = map->getTileMap();
 	highlighting = false;
 	pinPushed = false;
 
@@ -41,8 +42,8 @@ void Highlighter::fill(chtype fillChar)
 	int maxY = r->y + r->height;
 	int maxX = r->x + r->width;
 
-	int containerWidth = map->getWidth();  
-	int containerHeight = map->getHeight();
+	int containerWidth = map->getTotalCols();  
+	int containerHeight = map->getTotalRows();
 
 	maxX = r->width > containerWidth - r->x ? containerWidth : maxX;
 	maxY = r->height > containerHeight - r->y ? containerHeight : maxY;
@@ -51,7 +52,8 @@ void Highlighter::fill(chtype fillChar)
 	{
 		for (int j = 0, col = r->x; col < maxX; col++, j++)
 		{
-			map->setDisplayChar(row, col, fillChar);
+			tileMap->setDatum(row, col, fillChar);
+			//map->setDisplayChar(row, col, fillChar);
 		}
 	}
 }
@@ -73,7 +75,8 @@ void Highlighter::copy()
 		for (int j = 0, col = r->x; col < maxX; col++, j++)
 		{
 			int bufferEl = i * cb->cols + j;
-			cb->buffer[bufferEl] = map->getDisplayChar(row, col);
+			cb->buffer[bufferEl] = tileMap->getDatum(row, col);
+				// map->getDisplayChar(row, col);
 		}
 	}
 }
@@ -85,8 +88,8 @@ void Highlighter::paste()
 	int maxY = *curY + cb->rows;
 	int maxX = *curX + cb->cols;
 
-	int containerWidth = map->getWidth();
-	int containerHeight = map->getHeight();
+	int containerWidth = map->getTotalCols();
+	int containerHeight = map->getTotalRows();
 
 	maxX = cb->cols > containerWidth - *curX ? containerWidth : maxX;
 	maxY = cb->rows > containerHeight - *curY ? containerHeight : maxY;
@@ -96,7 +99,8 @@ void Highlighter::paste()
 		for (int j = 0, col = *curX; col < maxX; col++, j++)
 		{
 			int bufferEl = i * cb->cols + j;
-			map->setDisplayChar(row, col, cb->buffer[bufferEl]);
+			tileMap->setDatum(row, col, cb->buffer[bufferEl]);
+			//map->setDisplayChar(row, col, cb->buffer[bufferEl]);
 		}
 	}
 
@@ -239,10 +243,14 @@ void Highlighter::flip(int axys)
 
 void Highlighter::swap(int y1, int x1, int y2, int x2)
 {
-	chtype swap = map->getDisplayChar(y1, x1);
+	/*chtype swap = map->getDisplayChar(y1, x1);
 	chtype rightC = map->getDisplayChar(y2, x2);
 	map->setDisplayChar(y1, x1, rightC);
-	map->setDisplayChar(y2, x2, swap);
+	map->setDisplayChar(y2, x2, swap);*/
+	chtype swap = tileMap->getDatum(y1, x1);
+	chtype rightC = tileMap->getDatum(y2, x2);
+	tileMap->setDatum(y1, x1, rightC);
+	tileMap->setDatum(y2, x2, swap);
 }
 
 

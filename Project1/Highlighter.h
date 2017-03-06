@@ -39,12 +39,14 @@ private:
 	short* offX;
 
 	Clipboard* cb;
-	Map* map;
+	//Map* map;
+	Image* map;
+	_2DStorage<chtype>* tileMap;
 	Rect* getHighlitRegion();
 	void swap(int y1, int x1, int y2, int x2);
 
 public:
-	Highlighter(Map* mapIn, short* y, short* x);
+	Highlighter(Image* mapIn, short* y, short* x);
 	~Highlighter();
 	void setHighlighting(bool status);
 	void pushPin(int y, int x);
