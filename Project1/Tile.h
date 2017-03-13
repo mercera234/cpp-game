@@ -3,9 +3,9 @@
 
 struct TileEffect
 {
-	short type;
+	unsigned char type;
 	short value;
-	TileEffect(short type, short value) { this->type = type; this->value = value; }
+	TileEffect(unsigned char type, short value) { this->type = type; this->value = value; }
 };
 
 class Tile

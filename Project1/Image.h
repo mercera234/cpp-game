@@ -12,16 +12,7 @@ class Image : public Controllable
 {
 private:
 	//dimensional members
-	unsigned int totalTiles;
-
-//	unsigned short visibleRows, visibleCols; //the size of the window
-	short imgY, imgX; //the coordinates of the upper left corner of the map relative to the view
-
-	
-	//data storage
-	/*I read that using a 2d array is slow and inefficient, so we'll try a 1d arrays in row-major format*/
-	//chtype* displayLayer;
-	
+	unsigned int totalTiles;	
 	_2DStorage<chtype>* tileMap;
 	
 	//private methods
@@ -40,7 +31,7 @@ public:
 
 	_2DStorage<chtype>* getTileMap() { return tileMap; }
 
-	bool save(ofstream saveFile);
+	bool save(ofstream* saveFile);
 	bool load(ifstream* loadFile);
 
 	~Image();

@@ -1,6 +1,7 @@
 #include "FileChooser.h"
 #include <dirent.h>
 #include <sstream>
+#include "LineItem.h"
 
 /*The window parameter should have a height of at least 5*/
 FileChooser::FileChooser(WINDOW* win, string workingDir, int type, string filter)
@@ -27,10 +28,12 @@ FileChooser::FileChooser(WINDOW* win, string workingDir, int type, string filter
 	pathLbl = new TextLabel(derwin(win, 1, pathWidth, 0, indent), ""); //text will be set when drawn
 
 	fileMenu = new Menu(derwin(win, height - 4, dialogWidth - 1, 2, 0), 255, 1); //subtract 4 from height to account for 2 dividers, 1 label, and 1 textfield
-	fileMenu->setMaxNameLength(dialogWidth - 3); //- 3 for scroll bar room, and marker
+	
+	fileMenu->setItemWidth(dialogWidth - 4); //- 1 for scroll bar room, 2 for mark
+	
 	fileMenu->setWrapAround(false);
 	//set up menu entries
-	fileMenu->clear();
+	//fileMenu->clear();
 
 	//set up text field at bottom
 	fileNameField = new TextField(derwin(win, 1, 15, height - 1, 2));
@@ -61,7 +64,7 @@ void FileChooser::resetDirEntries()
 		
 		if(setItem)
 		{
-			fileMenu->setItem(entry->d_name, "", currElement++, entry->d_type);
+			fileMenu->setItem(new LineItem(entry->d_name, currElement++, entry->d_type));
 		}
 		
 	}
@@ -106,46 +109,60 @@ void FileChooser::draw()
 	wnoutrefresh(win);
 }
 
-string FileChooser::driver(int input)
+
+string FileChooser::filePathDriver()
 {
 	string retPath;
+	LineItem* choice = (LineItem*)fileMenu->getCurrentItem();
+	
+	if (choice != NULL)
+	{
+		if (fileNameField->getText().compare("") != 0) //if hit enter and there is text in field, 
+		{
+			retPath.append(workingDir);
+			retPath.append(1, '\\');
+			retPath.append(fileNameField->getText()); //retPath will be fullpath and selected file name
+		}
+		else //no text in field, which means, must be directory
+		{
+			if (choice->name.compare("..") == 0)
+			{
+				//navigate up one dir
+				int pos = workingDir.find_last_of('\\');
+				workingDir = workingDir.substr(0, pos);
+			}
+			else //navigate down into dir
+			{
+				workingDir.append(1, '\\');
+				workingDir.append(choice->name);
+			}
+			resetDirEntries();
+		}
+	}
+
+	return retPath;
+}
+
+
+
+
+void FileChooser::driver(int input)
+{
 	if (input >= MIN_MENU_COMMAND && input <= MAX_MENU_COMMAND) //route input to menu
 	{
 		fileMenu->driver(input);
-		MenuItem* choice = fileMenu->getCurrentItem();
+		LineItem* choice = (LineItem*)fileMenu->getCurrentItem();
 
-		switch (input)
+		if (choice == NULL)
+			return;
+
+		switch (choice->crossref) //this is done only when moving up and down in a file chooser
 		{
-		case REQ_TOGGLE_ITEM: 
-			
-			if (fileNameField->getText().compare("") != 0) //if hit enter and there is text in field)
-			{
-				retPath.append(workingDir);
-				retPath.append(1, '\\');
-				retPath.append(fileNameField->getText());
-			}
-			else //no text in field, which means, must be directory
-			{
-				if (choice->name.compare("..") == 0)
-				{
-					//navigate up one dir
-					int pos = workingDir.find_last_of('\\');
-					workingDir = workingDir.substr(0, pos);
-				}
-				else //navigate down into dir
-				{
-					workingDir.append(1, '\\');
-					workingDir.append(choice->name);
-				}
-				resetDirEntries();
-				break;
-			}
+		case DT_REG: 
+			fileNameField->setText(choice->name);
 			break;
-		default: //up or down processing
-			if (choice->crossref == DT_REG) //this is done only when moving up and down in a file chooser
-				fileNameField->setText(choice->name);
-			else if (choice->crossref == DT_DIR)
-				fileNameField->setText("");
+		case DT_DIR: 
+			fileNameField->setText("");
 			break;
 		}
 	}
@@ -153,7 +170,5 @@ string FileChooser::driver(int input)
 	{
 		fileNameField->inputChar(input);
 	}
-
-	return retPath;
 }
 

@@ -6,8 +6,7 @@ Image::Image(int rows, int cols, WINDOW* win)
 	this->totalRows = rows;
 	this->totalCols = cols;
 	totalTiles = totalRows * totalCols;
-	//displayLayer = new chtype[totalTiles];
-
+	
 	tileMap = new _2DStorage<chtype>(totalRows, totalCols);
 
 	reset();
@@ -18,8 +17,6 @@ Image::Image(int rows, int cols, WINDOW* win)
 void Image::init(WINDOW* win)
 {
 	setWindow(win);
-	imgY = 0;
-	imgX = 0;
 }
 
 Image::Image(WINDOW* win)
@@ -35,9 +32,6 @@ void Image::reset()
 		{
 		/*	chtype c = (chtype)(row % NULL_MARKER_SPACING == 0 && 
 							    col % NULL_MARKER_SPACING == 0) ? '!' : ' ';*/
-			//int element = row * totalCols + col;
-			//displayLayer[element] = ' '; //fill display with null template
-
 			tileMap->setDatum(row, col, ' ');
 		}
 	}
@@ -68,8 +62,6 @@ void Image::drawTileChar(int row, int col, int mapY, int mapX)
 	chtype c;
 	if (mapX >= 0 && mapY >= 0 && mapX < totalCols && mapY < totalRows) //in the grid
 	{
-		//int element = mapY * cols + mapX;
-		//c = displayLayer[element]; //pull chtype from storage
 		c = tileMap->getDatum(mapY, mapX);
 	}
 	else //if negative or beyond the canvas then we are outside the array so draw a box like boundary around the map
@@ -79,23 +71,6 @@ void Image::drawTileChar(int row, int col, int mapY, int mapX)
 
 	mvwaddch(win, row, col, c);
 }
-
-//void Image::drawTileChar(int row, int col, int mapY, int mapX)
-//{
-//	chtype c;
-//	if (mapX >= 0 && mapY >= 0 && mapX < totalCols && mapY < totalRows) //in the grid
-//	{
-//		int element = mapY * totalCols + mapX;
-//		c = displayLayer[element]; //pull chtype from storage
-//	}
-//	else //if negative or beyond the canvas then we are outside the array so draw a box like boundary around the map
-//	{
-//		c = getOutOfBoundsTile(mapY, mapX);
-//	}
-//
-//	mvwaddch(win, row, col, c & filterMask);
-//}
-
 
 
 chtype Image::getOutOfBoundsTile(int mapY, int mapX)
@@ -140,33 +115,23 @@ chtype Image::getOutOfBoundsTile(int mapY, int mapX)
 }
 
 
-bool Image::save(ofstream saveFile)
+bool Image::save(ofstream* saveFile)
 {
-	/*ofstream saveFile;
-	saveFile.open(fileName, ios::trunc | ios::binary);
-	*/
-	
-	if (saveFile.is_open() == false)
+	if (saveFile->is_open() == false)
 		return false;
 
-//	saveFile.write((char*) &id, sizeof(short));
-	saveFile.write((char*)&totalRows, sizeof(short));
-	saveFile.write((char*)&totalCols, sizeof(short));
+	saveFile->write((char*)&totalRows, sizeof(short));
+	saveFile->write((char*)&totalCols, sizeof(short));
 	
-	//TODO need to save tileMap here
-	//saveFile.write((char*)displayLayer, sizeof(chtype) * totalTiles);
-
-	//saveFile.close();
+	saveFile->write((char*)tileMap->getData(), sizeof(chtype) * totalTiles);
 }
 
 
 bool Image::load(ifstream* loadFile)
 {
-//	gFile.open(fileName, ios::binary);
 	if (loadFile->is_open() == false)
 		return false;
 
-//	loadFile->read((char*)&id, sizeof(short));
 	loadFile->read((char*)&totalRows, sizeof(short));
 	loadFile->read((char*)&totalCols, sizeof(short));
 	totalTiles = totalRows * totalCols;
@@ -177,18 +142,10 @@ bool Image::load(ifstream* loadFile)
 			tileMap->~_2DStorage(); //if display was already setup then delete the data
 			
 		tileMap = new _2DStorage<chtype>(totalRows, totalCols);
-
-	//	delete displayLayer;
-	//	displayLayer = new chtype[totalTiles];
 	}
 
-//	int displayPos = loadFile->tellg();
-//	loadFile->read((char*)displayLayer, sizeof(chtype) * totalTiles);
-
-//	loadFile->seekg(displayPos);
 	loadFile->read((char*)tileMap->getData(), sizeof(chtype) * totalTiles);
-	
-	//loadFile.close();
+
 }
 
 /*
@@ -237,6 +194,5 @@ void Image::resize(int rows, int cols)
 Image::~Image()
 {
 	delwin(win);
-	//delete displayLayer;
 	delete tileMap;
 }

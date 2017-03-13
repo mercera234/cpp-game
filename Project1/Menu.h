@@ -1,6 +1,6 @@
 #pragma once
 #include "Controllable.h"
-//#include "MenuItem.h"
+#include "MenuItem.h"
 #include "curses.h"
 #include <iostream>
 using namespace std;
@@ -59,50 +59,36 @@ rowmajor: row * menuCols + col
 colmajor: col * menuRows + row
 
 */
-struct MenuItem
-{
-	short index;
-	int crossref;
-	bool itemChosen;
-	string name;
-	bool selectable; //not tested yet
-
-	MenuItem()
-	{
-		clear();
-	}
-
-	void clear()
-	{
-		name = "";
-		selectable = false;
-		itemChosen = false;
-		crossref = -1;
-		index = -1;
-	}
-};
-
 
 class Menu : public Controllable
 {
 private:
 	unsigned short itemCount; //the current # of items the menu has
-	MenuItem* items;
+	MenuItem** items;
 
 	/*
 	the maximum # of items the menu can have
 	capacity should always = menuRows * menuCols
 	*/
 	unsigned short capacity; 
-	unsigned short menuRows;
-	unsigned short menuCols;
-	unsigned short dividerLen;
-	unsigned short colWidth; //full width of column = maxNameLength + 2 (mark length) + dividerLen
+	unsigned short menuRows; //the selectable rows in the menu
+	unsigned short menuCols; //selectable cols in menu
+
+	unsigned short colSepLen; //how large of a gap between columns
+	unsigned short rowSepLen; //how large of a gap between rows
+
+	unsigned short itemWidth; //width of the column portion that holds the item (not the mark or separator)
+	unsigned short colWidth; //item width + mark and separator
 	//the maximum length to use for all names, can be used to set a menu with a uniform column width
 	//if not set, then there is no limit
-	unsigned short maxNameLength;
+	unsigned short itemHeight;
+	unsigned short rowHeight; //full height of row = itemHeight + separator
 	
-	int* crossRef; //a cross reference array so that menu selections can return a more desired value
+	//these dimensions define how many visible menuRows and menuCols there are in a scrolling menu
+	unsigned short visibleMenuCols;
+	unsigned short visibleMenuRows;
+
+	//int* crossRef; //a cross reference array so that menu selections can return a more desired value
 	
 	/*row major order = true
 	1 2 3
@@ -113,13 +99,11 @@ private:
 	2 4 6*/
 	bool majorOrder; //default is row major
 
-	//these dimensions define how many visible menuRows and menuCols there are in a scrolling menu
-	unsigned short visibleRows;
-	unsigned short visibleCols;
 	
 	short currentIndex; //the currently selected item
 	unsigned char pad; 
-	char mark[3];
+	string mark;
+	
 	char disabledMark[3];
 	bool markSide; //true = left; false = right
 	int colorPair;
@@ -131,32 +115,36 @@ private:
 	void setDefaults();
 
 	void drawMenu();
-	void drawItem(int row, int col);
+	void drawItem(int row, int col);//
 
 	int getElement(int row, int col);
 
-	int rowMajorDriver(int input);
+	int dirDriver(int input);
+	bool wrapOccurred(int navReq);
 public:
 	Menu(WINDOW* win, int rows, int cols);
 
-	void setMaxNameLength(int length);
 	void setMajorOrder(bool majorOrder);
-	bool setItem(string name, string itemDesc, int element, int crossRefNdx);
+	void setItem(MenuItem* item);
 	void setSelectedIndex(int index);
-	int getCrossRefIndex();
 	int getCurrentIndex();
 	void setMarkSide(bool markSide);
 	void setWrapAround(bool wrap);
 	void setColor(int colorPair);
 	void disableItem(int y, int x);
 	void draw(); //overridden
-
+	void setItemHeight(int height);
+	void setItemWidth(int width); //should be set wide enough to hold item label data, mark, and separator
 	void clear();
 	
 	int driver(int input);
-	MenuItem* getSelectedItem();
-	MenuItem* getItem(int y, int x);
-	MenuItem* getCurrentItem();
-	virtual ~Menu();
+	MenuItem* getItem(int y, int x);//
+	MenuItem* getCurrentItem();//
+	~Menu();
+
+	//deprecated methods
+	bool setItem(string name, string itemDesc, int element, int crossRefNdx);//deprecated
+	bool setItem(string name, int element, int crossRefNdx);//deprecated
+
 };
 

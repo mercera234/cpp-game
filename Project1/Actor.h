@@ -5,6 +5,8 @@
 //#include "ability.h"
 //#include "AI.h"
 #include "curses.h"
+#include <iostream>
+using namespace std;
 
 /*need a serial number assigning system where
  0-just pick some in the random range(the scripts couldn't handle a negative value)
@@ -95,7 +97,8 @@ struct Actor
 	//unsigned int serialNo; //unique id
 	//CharICS* charICS; //handles inventory for character
     short type;
-    int currHp;
+    short currHp;
+	short currMp;
     short x, y;//relative to map window
 	short prevX, prevY; //previous position
 };

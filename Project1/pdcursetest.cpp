@@ -27,6 +27,10 @@
 #include "Tile.h"
 #include "MovementProcessor.h"
 #include "Image.h"
+#include "Exit.h"
+#include "MegaMap.h"
+#include "ActorCard.h"
+#include "LineItem.h"
 
 void mockFightTest()
 {
@@ -79,15 +83,6 @@ void mockFightTest()
 }
 
 
-
-
-
-void characterTest()
-{
-
-
-
-}
 
 void exploreTest()
 {
@@ -176,17 +171,17 @@ MenuItem* menuDriver(int input, Menu* m)
 	case '\n':
 	case '\r':
 	case KEY_ENTER:
-		m->driver(REQ_TOGGLE_ITEM); break;	
+		item = m->getCurrentItem();
 		break;
 	default: break;
 	}
 
-	item = m->getSelectedItem();
 	return item;
 }
 
-int confirmDriver(int input, Menu* m)
+MenuItem* confirmDriver(int input, Menu* m)
 {
+	MenuItem* item = NULL;
 	int retval = -1;
 	switch (input)
 	{
@@ -197,36 +192,39 @@ int confirmDriver(int input, Menu* m)
 	case '\n':
 	case '\r':
 	case KEY_ENTER:
-		retval = m->getCrossRefIndex();
+		item = m->getCurrentItem();
 		break;
 	default: break;
 	}
-	return retval;
+	return item;
 }
 
 void menuTest()
 {
-	int rows = 12;
-	int cols = 1;
-//	WINDOW* win = newwin(rows, cols * 18, 1, 1);
-	WINDOW* win = newwin(4, (cols) * 18, 1, 1);
+	int rows = 6;
+	int cols = 2;
+	WINDOW* win = newwin(3, 2 * 25, 1, 1);
 
 	Menu menu(win, rows, cols);
-	menu.setItem("012345678901234", "", 0, 'N');
-	menu.setItem("TOGGLE WRAP", "", 1, 'L');
-	menu.setItem("QUIT", "", 2, 'Q');
-	//menu.setItem("3123456789012345", "", 3, 'T');
-	menu.setItem("4123456789012345", "", 4, '?');
-	menu.setItem("Clear", "", 5, 'N');
-	menu.setItem("6123456789012345", "", 6, 'L');
-	menu.setItem("7123456789012345", "", 7, 'Q');
-	menu.setItem("8123456789012345", "", 8, 'T');
-	menu.setItem("9123456789012345", "", 9, '?');
-	menu.setItem("a123456789012345", "", 10, 'N');
-	menu.setItem("b123456789012345", "", 11, 'L');
 
-	menu.disableItem(8, 0);
-	menu.setMarkSide(RIGHT_MARK);
+	menu.setItem(new LineItem("0123456789012345", 0, 'N'));
+	menu.setItem(new LineItem("TOGGLE WRAP", 1, 'L'));
+	menu.setItem(new LineItem("QUIT", 2, 'Q'));
+	//menu.setItem("3123456789012345", "", 3, 'T');
+	menu.setItem(new LineItem("4123456789012345", 4, '?'));
+	menu.setItem(new LineItem("Clear", 5, 'N'));
+	menu.setItem(new LineItem("Flip Mark", 6, 'L'));
+	menu.setItem(new LineItem("7123456789012345", 7, 'Q'));
+	menu.setItem(new LineItem("8123456789012345", 8, 'T'));
+	menu.setItem(new LineItem("9123456789012345", 9, '?'));
+	menu.setItem(new LineItem("a123456789012345", 10, 'N'));
+	menu.setItem(new LineItem("b123456789012345", 11, 'L'));
+
+//	menu.setMenuColWidth(18);
+//	menu.setMenuRowHeight(3);
+//	menu.disableItem(8, 0);
+	int markSide = RIGHT_MARK;
+	menu.setMarkSide(markSide);
 	bool wrap = true;
 
 	bool usingMenu = true;
@@ -236,30 +234,39 @@ void menuTest()
 		doupdate();
 		int input = getch();
 
-		MenuItem* item = menuDriver(input, &menu);
-
-		if (item == NULL)
+		switch (input) //process global input
 		{
-			continue;
-		}
-
-		switch(item->index)
-		{
-
-		case 2:
-			usingMenu = false;
-			break;
-		case 1:
-			menu.setWrapAround(wrap = !wrap); break;
-		case 5:
-			menu.clear();
-			break;
+		case KEY_ESC: usingMenu = false; break;
 		default: 
+		{
+			MenuItem* item = menuDriver(input, &menu);
 
-			mvaddch(7, 30, (chtype)item->crossref);
+			if (item == NULL)
+			{
+				continue;
+			}
+
+			switch (item->index)
+			{
+
+			case 2:
+				usingMenu = false;
+				break;
+			case 1:
+				menu.setWrapAround(wrap = !wrap); break;
+			case 5:
+				menu.clear();
+				break;
+			case 6:
+				menu.setMarkSide(markSide = !markSide); break;
+
+			default:
+				mvaddch(7, 30, (chtype)item->crossref);
+				break;
+			}
+		}
 			break;
 		}
-		item->itemChosen = false;
 	}
 }
 
@@ -687,9 +694,9 @@ void RGBTest()
 	WINDOW* win = newwin(3, 3, 1, 3);
 	Menu* rgbMenu = new Menu(win, 3, 1);
 
-	rgbMenu->setItem("R", "", 0, 0);
-	rgbMenu->setItem("G", "", 1, 1);
-	rgbMenu->setItem("B", "", 2, 2);
+	rgbMenu->setItem(new LineItem("R", 0, 0));
+	rgbMenu->setItem(new LineItem("G", 1, 1));
+	rgbMenu->setItem(new LineItem("B", 2, 2));
 
 	char* mark = new char[3];
 	mark[0] = '*'; mark[1] = '*'; mark[2] = 0;
@@ -816,10 +823,10 @@ void RGBTest2()
 	WINDOW* win = newwin(4, 3, 1, 3);
 	Menu* rgbMenu = new Menu(win, 4, 1);
 
-	rgbMenu->setItem("R", "", 0, 0);
+	/*rgbMenu->setItem("R", "", 0, 0);
 	rgbMenu->setItem("G", "", 1, 1);
 	rgbMenu->setItem("B", "", 2, 2);
-	rgbMenu->setItem("!", "", 3, 3);
+	rgbMenu->setItem("!", "", 3, 3);*/
 
 	char* mark = new char[3];
 	mark[0] = '*'; mark[1] = '*'; mark[2] = 0;
@@ -913,11 +920,11 @@ void AttrControllerTest()
 	WINDOW* win = newwin(4, 3, 1, 3);
 	Menu* menu = new Menu(win, 4, 1);
 
-	menu->setItem("R", "", 0, 0);
+	/*menu->setItem("R", "", 0, 0);
 	menu->setItem("G", "", 1, 1);
 	menu->setItem("B", "", 2, 2);
 	menu->setItem("!", "", 3, 3);
-
+*/
 	char* mark = new char[3];
 	mark[0] = '*'; mark[1] = '*'; mark[2] = 0;
 
@@ -1247,7 +1254,7 @@ void modalCallback(void* caller, void* ptr, int input)
 	case '\r': m->driver(REQ_TOGGLE_ITEM); break;
 	}
 
-	MenuItem* item = m->getSelectedItem();
+	MenuItem* item = m->getCurrentItem();
 	if (item != NULL)
 	{
 		ControlManager* cm = f->getControlManager();
@@ -1279,7 +1286,7 @@ void callBackTest(void* caller, void* ptr, int input)
 	case '\r': m->driver(REQ_TOGGLE_ITEM); break;
 	}
 
-	MenuItem* item = m->getSelectedItem();
+	MenuItem* item = m->getCurrentItem();
 	if (item != NULL)
 	{
 		if (item->index == 0) //YES
@@ -1290,9 +1297,9 @@ void callBackTest(void* caller, void* ptr, int input)
 			WINDOW* dWin = derwin(win, 1, 38, 2, 1);
 			Menu* modal = new Menu(dWin, 1, 2);
 			modal->setModal(true);
-			modal->setItem("Yes", "", 0, 0);
+		/*	modal->setItem("Yes", "", 0, 0);
 			modal->setItem("No", "", 1, 1);
-			
+		*/	
 			Frame* f = new Frame(win, modal);
 			f->setText("Are you sure you want to quit?", 1, 1);
 			ControlManager* cm = m->getControlManager();
@@ -1300,7 +1307,6 @@ void callBackTest(void* caller, void* ptr, int input)
 			cm->setFocus(f);
 			
 		}
-		item->itemChosen = false;
 	}
 
 }
@@ -1333,8 +1339,8 @@ void controlManagerTest()
 	WINDOW* win = newwin(2, 20, 1, 1);
 	Menu* m1 = new Menu(win, 2, 1);
 
-	m1->setItem("Yes", "", 0, 0);
-	m1->setItem("No", "", 1, 1);
+	/*m1->setItem("Yes", "", 0, 0);
+	m1->setItem("No", "", 1, 1);*/
 
 	int rows;
 	int cols;
@@ -1377,8 +1383,8 @@ void commandTest()
 	WINDOW* win = newwin(2, 20, 1, 1);
 	Menu* m1 = new Menu(win, 2, 1);
 
-	m1->setItem("Yes", "", 0, 0);
-	m1->setItem("No", "", 1, 1);
+	/*m1->setItem("Yes", "", 0, 0);
+	m1->setItem("No", "", 1, 1);*/
 
 	int rows;
 	int cols;
@@ -1427,8 +1433,8 @@ void templateTest()
 	WINDOW* win = newwin(2, 20, 1, 1);
 	Menu* m1 = new Menu(win, 2, 1);
 
-	m1->setItem("Item A", "", 0, 5);
-	m1->setItem("Item B", "", 1, 7);
+	//m1->setItem("Item A", "", 0, 5);
+	//m1->setItem("Item B", "", 1, 7);
 
 	aList.push_back(m1);
 
@@ -1748,7 +1754,7 @@ void simpleFightTest()
 	resize_term(totalRows, totalCols);
 	WINDOW* frame = newwin(totalRows, totalCols, 0, 0);
 	string ruler = "1234567890123456789012345678901234567890123456789012345678901234567890";
-	char* hpDispTemplate = "HP %+4u/%-4u";
+	//char* hpDispTemplate = "HP %+4u/%-4u";
 
 	
 	//setup actors
@@ -1810,8 +1816,8 @@ void simpleFightTest()
 	Menu* fightMenu = new Menu(subWin, 2, 1);
 	Frame* mFrame = new Frame(subPanel, fightMenu);
 
-	fightMenu->setItem("Attack", "", 0, 0);
-	fightMenu->setItem("Run", "", 1, 1);
+	/*fightMenu->setItem("Attack", "", 0, 0);
+	fightMenu->setItem("Run", "", 1, 1);*/
 
 
 	//setup additional vars
@@ -2002,9 +2008,9 @@ Menu* m1driver(Menu* m, int input) //simulated callback for menu
 	WINDOW* win2 = newwin(1, 40, 1, 1);
 	Menu* m2 = new Menu(win2, 1, 2);
 
-	m2->setItem("Yes2", "", 0, 0);
+	/*m2->setItem("Yes2", "", 0, 0);
 	m2->setItem("No2", "", 1, 1);
-	return m2;
+	*/return m2;
 }
 
 void m2driver(Menu* m, int input) //simulated callback for menu
@@ -2019,8 +2025,8 @@ void menuTest2()
 	WINDOW* win1 = newwin(1, 40, 1, 1);
 	Menu* m1 = new Menu(win1, 1, 2);
 
-	m1->setItem("Yes", "", 0, 0);
-	m1->setItem("No", "", 1, 1);
+	/*m1->setItem("Yes", "", 0, 0);
+	m1->setItem("No", "", 1, 1);*/
 
 	Menu* menus[2];
 	menus[0] = m1;
@@ -2047,7 +2053,7 @@ void menuTest2()
 			case '\r': activeMenu->driver(REQ_TOGGLE_ITEM); break;
 			}
 			
-			MenuItem* mi = activeMenu->getSelectedItem();
+			MenuItem* mi = activeMenu->getCurrentItem();
 			if(mi != NULL)
 			{
 				switch (mi->index)
@@ -2056,7 +2062,6 @@ void menuTest2()
 					activeMenu = m1driver(activeMenu, c);
 					menus[1] = activeMenu;
 					totalMenus++;
-					mi->itemChosen = false; 
 					break;
 				case 1: playing = false; //quit on no
 					break;
@@ -2073,7 +2078,7 @@ void menuTest2()
 			case '\r': activeMenu->driver(REQ_TOGGLE_ITEM); break;
 			}
 
-			MenuItem* mi = activeMenu->getSelectedItem();
+			MenuItem* mi = activeMenu->getCurrentItem();
 			if (mi != NULL)
 			{
 				switch (mi->index)
@@ -2101,8 +2106,8 @@ void frameTest()
 	WINDOW* w = newwin(4, 40, 1, 1);
 	WINDOW* dw = derwin(w, 1, 38, 2, 1);
 	Menu* m = new Menu(dw, 1, 2);
-	m->setItem("Yes", "", 0, 0);
-	m->setItem("No", "", 1, 1);
+	//m->setItem("Yes", "", 0, 0);
+	//m->setItem("No", "", 1, 1);
 
 	Frame* f = new Frame(w, m);
 	mvwaddstr(w, 1, 1, "Are you sure you want to quit?");
@@ -2236,7 +2241,8 @@ void openFileTest()
 
 
 	Menu* diskNavigator = new Menu(newwin(8, 40, 2, 0), 255, 1);
-	diskNavigator->setMaxNameLength(40);
+	diskNavigator->setItemWidth(40);
+	//diskNavigator->setMaxNameLength(40);
 
 	bool playing = true;
 	bool newDir = true;
@@ -2254,7 +2260,7 @@ void openFileTest()
 			dirent* entry;
 			while ((entry = readdir(dir)) != NULL)
 			{				
-				diskNavigator->setItem(entry->d_name, "", currElement++, entry->d_type);
+				diskNavigator->setItem(new LineItem(entry->d_name, currElement++, entry->d_type));
 			}
 
 
@@ -2293,7 +2299,8 @@ void openFileTest()
 			break;
 		}
 
-		MenuItem* choice = diskNavigator->getSelectedItem();
+		//MenuItem* choice = diskNavigator->getSelectedItem();
+		LineItem* choice = (LineItem*)diskNavigator->getCurrentItem();
 
 		if (choice != NULL)
 		{
@@ -2378,9 +2385,9 @@ void tableTest()
 
 	TextLabel* tl1 = new TextLabel(newwin(1, 5, 0, 0), "(0,0)");
 	Menu* menu = new Menu(newwin(3, 18, 0, 0), 3, 1);
-	menu->setItem("012345678901234", "", 0, 'N');
-	menu->setItem("11234567890123456", "", 1, 'L');
-	menu->setItem("2123456789", "", 2, 'Q');
+	//menu->setItem("012345678901234", "", 0, 'N');
+	//menu->setItem("11234567890123456", "", 1, 'L');
+	//menu->setItem("2123456789", "", 2, 'Q');
 	TextLabel* tl2 = new TextLabel(newwin(1, 10, 0, 0), "(0,1)");
 	//TextLabel* tl3 = new TextLabel(newwin(1, 15, 0, 0), "(1,0)");
 	TextLabel* tl4 = new TextLabel(newwin(1, 8, 0, 0), "(1,1)");
@@ -2500,7 +2507,7 @@ void wideTest()
 }
 
 
-void fileDialogTest(int dialogType)
+void fileChooserTest(int dialogType)
 {
 	char buf[256];
 	GetFullPathName(".", 256, buf, NULL);
@@ -2529,9 +2536,9 @@ void fileDialogTest(int dialogType)
 		{
 		case KEY_DOWN: fd->driver(REQ_DOWN_ITEM);   break;
 		case KEY_UP: fd->driver(REQ_UP_ITEM); break;
-		case CTRL_Q: playing = false; break;
+		case KEY_ESC: playing = false; break;
 		case '\r':
-			fileChosen = fd->driver(REQ_TOGGLE_ITEM);
+			fileChosen = fd->filePathDriver();
 			break;
 		default:
 			fd->driver(c);
@@ -2549,36 +2556,38 @@ void fileDialogTest(int dialogType)
 
 void saveDialogTest()
 {
-	fileDialogTest(SAVE_DIALOG);
+	fileChooserTest(SAVE_DIALOG);
 }
 
 void openDialogTest()
 {
-	fileDialogTest(OPEN_DIALOG);
+	fileChooserTest(OPEN_DIALOG);
 }
 
 void scrollTest()
 {
 	int rows = 12;
 	int cols = 1;
-	WINDOW* win = newwin(4, (cols) * 18, 1, 1);
+	WINDOW* win = newwin(4, (cols) * 19, 1, 1);
 
 	Menu menu(win, rows, cols);
-	menu.setItem("012345678901234", "", 0, 'N');
-	menu.setItem("TOGGLE WRAP", "", 1, 'L');
-	menu.setItem("QUIT", "", 2, 'Q');
+	menu.setItem(new LineItem("0123456789012345", 0, 'N'));
+	menu.setItem(new LineItem("TOGGLE WRAP", 1, 'L'));
+	menu.setItem(new LineItem("QUIT", 2, 'Q'));
 	//menu.setItem("3123456789012345", "", 3, 'T');
-	menu.setItem("4123456789012345", "", 4, '?');
-	menu.setItem("Clear", "", 5, 'N');
-	menu.setItem("6123456789012345", "", 6, 'L');
-	menu.setItem("7123456789012345", "", 7, 'Q');
-	menu.setItem("8123456789012345", "", 8, 'T');
-	menu.setItem("9123456789012345", "", 9, '?');
-	menu.setItem("a123456789012345", "", 10, 'N');
-	menu.setItem("b123456789012345", "", 11, 'L');
+	menu.setItem(new LineItem("4123456789012345", 4, '?'));
+	menu.setItem(new LineItem("Clear", 5, 'N'));
+	menu.setItem(new LineItem("Flip Mark", 6, 'L'));
+	menu.setItem(new LineItem("7123456789012345", 7, 'Q'));
+	menu.setItem(new LineItem("8123456789012345", 8, 'T'));
+	menu.setItem(new LineItem("9123456789012345", 9, '?'));
+	menu.setItem(new LineItem("a123456789012345", 10, 'N'));
+	menu.setItem(new LineItem("b123456789012345", 11, 'L'));
 
-	menu.disableItem(8, 0);
-	menu.setMarkSide(RIGHT_MARK);
+	menu.setItemWidth(16);
+	//menu.disableItem(8, 0);
+	bool markSide = RIGHT_MARK;
+	menu.setMarkSide(markSide);
 	bool wrap = true;
 
 	bool usingMenu = true;
@@ -2610,12 +2619,14 @@ void scrollTest()
 		case 5:
 			menu.clear();
 			break;
+		case 6:
+			menu.setMarkSide(markSide = !markSide); break;
+
 		default:
 
 			mvaddch(7, 30, (chtype)item->crossref);
 			break;
 		}
-		item->itemChosen = false;
 	}
 }
 
@@ -3319,38 +3330,278 @@ void movementProcessorTest()
 
 void imageTest()
 {
-	//Image* img = new Image("test", 64, 64, stdscr);
 	Image* img = new Image(stdscr);
 
-	//TODO fix use of load method here
-//	img->load("data\\volcano.map");
-	//img->filterMask = 0x00ffffff;
+	ifstream* is = new ifstream();
+	is->open("data\\itest.map", ios::binary);
+
+	img->load(is);
+	is->close();
+
 	img->draw();
 
 	doupdate();
-	getch();
+	int c = getch();
+
+	if (c == 's')
+	{
+		ofstream* os = new ofstream();
+		os->open("data\\itest.map", ios::trunc | ios::binary);
+		img->save(os);
+		os->close();
+	}
 }
+
+void exitMapTest()
+{
+	int height = 7;
+	int width = 14;
+	resize_term(height, width);
+	WINDOW* viewport = dupwin(stdscr);
+
+	int mapHeight = height + (height / 2);
+	int mapWidth = width + (width / 2);
+	
+	//setup map 1
+	Map* map = new Map("test", mapHeight, mapWidth, viewport);
+	Image* img = map->getDisplay(); //new Image(mapHeight, mapWidth, viewport);
+	_2DStorage<chtype>* tileMap = img->getTileMap();
+
+	BorderExit* eastExit = new BorderExit(B_EAST, 0, mapHeight, 2);
+
+	tileMap->setDatum(0, 0, '1'); //upper left
+	tileMap->setDatum(0, mapWidth - 1, '2'); //upper right
+	tileMap->setDatum(mapHeight - 1, 0, '3'); //lower left
+	tileMap->setDatum(mapHeight - 1, mapWidth - 1, '4'); //lower right
+
+	map->setPosition(0, 0);
+
+	//setup map 2
+	Map* map2 = new Map("test2", mapHeight, mapWidth, viewport);
+	Image* img2 = map2->getDisplay();
+	_2DStorage<chtype>* tileMap2 = img2->getTileMap();
+
+	tileMap2->setDatum(0, 0, '5'); //upper left
+	tileMap2->setDatum(0, mapWidth - 1, '6'); //upper right
+	tileMap2->setDatum(mapHeight - 1, 0, '7'); //lower left
+	tileMap2->setDatum(mapHeight - 1, mapWidth - 1, '8'); //lower right
+
+	//position cursor
+	short centerY = getmaxy(viewport) / 2;
+	short centerX = getmaxx(viewport) / 2;
+
+	short curY = centerY;
+	short curX = centerX;
+
+	Map* curMap = map;
+
+	bool playing = true;
+	while (playing)
+	{
+		curMap->draw();
+
+		//mvwaddch(viewport, centerY + 1, centerX + 1, '@' | 0x0f000000); //for always drawing cursor in center of screen
+		mvwaddch(viewport, curY - curMap->getUlY(), curX - curMap->getUlX(), '@' | 0x0f000000); //for always drawing cursor in center of screen
+		wnoutrefresh(viewport);
+		doupdate();
+		int input = getch();
+
+		int step = 0;
+		short* axis = 0;
+		bool dirKeyPressed = false;
+		switch (input)
+		{
+		case KEY_UP: step = -1; axis = &curY; dirKeyPressed = true; break;
+		case KEY_DOWN: step = 1; axis = &curY; dirKeyPressed = true; break;
+		case KEY_LEFT: step = -1; axis = &curX; dirKeyPressed = true; break;
+		case KEY_RIGHT: step = 1; axis = &curX; dirKeyPressed = true; break;
+		case KEY_ESC: playing = false; break;
+		}
+		
+		if (dirKeyPressed)
+		{
+			*axis += step;
+			axis == &curY ? curMap->shift(step, 0) : curMap->shift(0, step);
+		}
+
+
+
+	}
+}
+
+void exitTest()
+{
+	int height = 7;
+	int width = 14;
+	resize_term(height, width);
+	WINDOW* viewport = dupwin(stdscr);
+	BorderExit* eastExit = new BorderExit(B_EAST, 0, 3, 1);
+	BorderExit* westExit = new BorderExit(B_WEST, 0, 3, 0);
+	BorderExit* northExit = new BorderExit(B_NORTH, 5, 8, 2);
+	BorderExit* southExit = new BorderExit(B_SOUTH, 5, 8, 3);
+
+	//position cursor
+	short centerY = getmaxy(viewport) / 2;
+	short centerX = getmaxx(viewport) / 2;
+
+	short curY = centerY;
+	short curX = centerX;
+	char mapId = '0';
+	bool playing = true;
+	while (playing)
+	{
+		wclear(viewport);
+		mvwaddch(viewport, 0, 0, mapId);
+		mvwaddch(viewport, curY, curX, '@' | 0x0f000000); //for always drawing cursor in center of screen
+		
+		wnoutrefresh(viewport);
+		doupdate();
+		int input = getch();
+
+		int step = 0;
+		short* axis = 0;
+		short* perpAxis = 0;
+		bool dirKeyPressed = false;
+
+		switch (input)
+		{
+		case KEY_UP: step = -1; axis = &curY; perpAxis = &curX; dirKeyPressed = true; break;
+		case KEY_DOWN: step = 1; axis = &curY; perpAxis = &curX; dirKeyPressed = true; break;
+		case KEY_LEFT: step = -1; axis = &curX; perpAxis = &curY; dirKeyPressed = true; break;
+		case KEY_RIGHT: step = 1; axis = &curX; perpAxis = &curY; dirKeyPressed = true; break;
+		case KEY_ESC: playing = false; break;
+		}
+
+		if (dirKeyPressed)
+		{
+			*axis += step;
+			int oppSide = 0;
+			if (curY < 0 || curY >= height || curX < 0 || curX >= width) //walked off edge
+			{
+				BorderExit* border = NULL;
+
+				if (curY >= height)
+				{
+					border = southExit;
+					oppSide = 0;
+				}
+				else if (curY < 0)
+				{
+					border = northExit;
+					oppSide = height - 1;
+				}
+				else if (curX >= width)
+				{					
+					border = eastExit;
+					oppSide = 0;
+				}
+				else if (curX < 0)
+				{
+					border = westExit;
+					oppSide = width - 1;
+				}
+
+				if (*perpAxis >= border->start && *perpAxis < border->start + border->length)
+				{
+					mapId = border->destMapId + 48;
+					*axis = oppSide;
+				}
+
+
+			}
+
+		}
+
+
+
+	}
+}
+
+void megaMapTest()
+{
+	MegaMap* mm = new MegaMap(newwin(10, 20, 1, 1));
+
+	MapMetadata* map = new MapMetadata();
+	map->hX = 1;
+	map->hY = 1;
+	map->layer = 0;
+	map->visualId = 'a';
+	map->unitHeight = 2;
+	map->unitWidth = 3;
+	map->mapId = 1;
+
+	MapMetadata* map2 = new MapMetadata();
+	map2->hX = 1;
+	map2->hY = 3;
+	map2->layer = 0;
+	map2->visualId = 'b';
+	map2->unitHeight = 1;
+	map2->unitWidth = 8;
+	map2->mapId = 2;
+
+	mm->addMap(map);
+	mm->addMap(map2);
+
+	bool playing = true;
+	while (playing)
+	{
+		mm->draw();
+		doupdate();
+
+		int input = getch();
+		
+
+		switch (input)
+		{
+		case KEY_ESC: playing = false; break;
+		case KEY_RIGHT: mm->shift(0, 1); break;
+		case KEY_LEFT: mm->shift(0, -1); break;
+		case KEY_DOWN: mm->shift(1, 0); break;
+		case KEY_UP: mm->shift(-1, 0); break;
+		default:
+			mm->removeMap(input - 48);
+			break;
+		}
+	}
+}
+
+
+void battleTargetMenuTest()
+{
+
+
+}
+
+
+void actorCardTest()
+{
+	Actor* a = createActor();
+
+	ActorCard* card = new ActorCard(a);
+
+	card->draw(stdscr, 1, 1);
+	wnoutrefresh(stdscr);
+	doupdate();
+
+	int input = getch();
+}
+
 
 int main()
 {
 	TUI* tui = new TUI();
 	tui->init();
 	//curs_set(0);
-	//menuTest();
-	//menuTest2();
-	//fileDialogTest();
-	//scrollTest();
-	//storageTest();
-	//simpleMapTest();
+	//actorCardTest();
 //	tileMapTest();
-	//imageTest();
+//	imageTest();
 	mapEditorTest();
+	//megaMapTest();
+	//menuTest();
+	//openDialogTest();
+	//scrollTest();
+	//exitTest();
 	//movementProcessorTest();
-//	mapHighlighterTest();
-	//tileTest();
-//	filterTest();
-	//mapEffectFilterTest();
-//	tableTest();
 	//mapTest();
 	//highlighterTest();
 	tui->shutdown();

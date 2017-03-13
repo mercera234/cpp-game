@@ -113,6 +113,7 @@ private:
 	int state;
 	bool modified;
 	string fileName;
+	string dialogDefPath;
 
 	void setupPalettes();
 	void setupRulers();

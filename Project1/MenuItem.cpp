@@ -1,13 +1,15 @@
 #include "MenuItem.h"
 
-
-void MenuItem::setName(string name)
+MenuItem::MenuItem()
 {
-	this->name = name;
+	clear();
 }
 
-string MenuItem::getName()
+void MenuItem::clear()
 {
-	return name;
+	selectable = false;
+//	selected = false;
+	crossref = -1;
+	index = -1;
 }
 

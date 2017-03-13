@@ -4,6 +4,7 @@
 #include <dirent.h>
 #include <string>
 #include "2DStorage.h"
+#include "LineItem.h"
 
 MapEditor::MapEditor()
 {
@@ -44,6 +45,13 @@ MapEditor::MapEditor()
 	WINDOW* textWin = newwin(1, 15, 0, 1);
 	fileNameLbl = new TextLabel(textWin, fileName);
 	
+	//setup default file path for opening/saving files
+	char buf[256];
+	GetFullPathName(".", 256, buf, NULL);
+	//string fullPath(buf);
+	dialogDefPath = buf;
+
+
 	
 	map = new Map(fileName, canvasRows, canvasCols, viewport);
 	image = map->getDisplay();
@@ -256,8 +264,8 @@ Frame* MapEditor::createConfirmDialog()
 	WINDOW* fWin = newwin(4, confirmMsg.length() + 2, (height - 4) / 2, (width - 40) / 2);
 	WINDOW* cdWin = derwin(fWin, 1, confirmMsg.length(), 2, 1);
 	Menu* cdMenu = new Menu(cdWin, 1, 2);
-	cdMenu->setItem("No", "", 0, 0);
-	cdMenu->setItem("Yes", "", 1, 1);
+	cdMenu->setItem(new LineItem("No", 0, 0));
+	cdMenu->setItem(new LineItem("Yes", 1, 1));
 
 	Frame* f = new Frame(fWin, cdMenu);
 	f->setText(confirmMsg, 1, 1);
@@ -280,16 +288,16 @@ void MapEditor::newMap()
 void MapEditor::setupFileDialog(int dialogType)
 {
 	//open file dialog
-	char buf[256];
-	GetFullPathName(".", 256, buf, NULL);
-	string fullPath(buf);
+	//char buf[256];
+	//GetFullPathName(".", 256, buf, NULL);
+	//string fullPath(buf);
 
 	int height = 12;
 	int width = 42;
 	WINDOW* main = newwin(height, width, (getmaxy(stdscr) - height) / 2, (getmaxx(stdscr) - width) / 2);
 	WINDOW* w = derwin(main, height - 2, width - 2, 1, 1);
 
-	FileChooser* fd = new FileChooser(w, fullPath, dialogType, DEF_MAP_EXTENSION);
+	FileChooser* fd = new FileChooser(w, dialogDefPath, dialogType, DEF_MAP_EXTENSION);
 
 	Frame* f = new Frame(main, fd);
 	f->setModal(true);
@@ -381,7 +389,7 @@ void MapEditor::fileDialogDriver(Controllable* dialog, int input)
 	case KEY_UP: fd->driver(REQ_UP_ITEM); break;
 	case CTRL_Q: cm->popControl(); cm->setFocus(map); break;
 	case '\r':
-		fileChosen = fd->driver(REQ_TOGGLE_ITEM);
+		fileChosen = fd->filePathDriver();
 		break;
 	default:
 		fd->driver(input);
@@ -403,6 +411,9 @@ void MapEditor::fileDialogDriver(Controllable* dialog, int input)
 		fileNameLbl->setText(fileName);
 		cm->popControl(); 
 		cm->setFocus(map);
+
+		//save path that file was opened/saved from as the start point for next time
+		dialogDefPath = fileChosen.substr(0, pos);
 	}
 }
 
@@ -411,14 +422,15 @@ void MapEditor::confirmDialogDriver(Controllable* c, int input, int confirmMetho
 	Frame* f = (Frame*)c;
 	Menu* dialog = (Menu*)f->getControl();
 
+	MenuItem* mi = NULL;
 	switch (input)
 	{
 	case KEY_LEFT: dialog->driver(REQ_LEFT_ITEM); break;
 	case KEY_RIGHT: dialog->driver(REQ_RIGHT_ITEM); break;
-	case '\r': dialog->driver(REQ_TOGGLE_ITEM); break;
+	case '\r': 
+		mi = dialog->getCurrentItem(); break;
 	}
 
-	MenuItem* mi = dialog->getSelectedItem();
 	if (mi != NULL)
 	{
 		switch (mi->index)
@@ -668,7 +680,6 @@ void MapEditor::processShiftDirectionalInput(int input)
 	}
 
 	mp->processMovementInput(input);
-	//processMovementInput(input);
 }
 
 
@@ -690,7 +701,10 @@ bool MapEditor::processMapInput(int input)
 	case CTL_END: //lower right corner
 		hl->setHighlighting(false);
 		mp->processMovementInput(input);
-		//processMovementInput(input);
+
+		if (tool == BRUSH)
+			applyTool(curY, curX);
+
 		break;
 
 	case KEY_SUP: 

@@ -34,5 +34,6 @@ public:
 	unsigned short getType() { return type; }
 	Menu* getMenu() { return fileMenu; }
 	void draw();
-	string driver(int input);
+	void driver(int input);
+	string filePathDriver();
 };

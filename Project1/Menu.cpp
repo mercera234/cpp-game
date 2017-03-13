@@ -12,27 +12,40 @@ Menu::Menu(WINDOW* win, int rows, int cols)
 	this->menuCols = cols;
 
 	//we're assuming here for now that null windows will not be passed into this constructor!
-	this->win = win;
-
+	setWindow(win);
 	capacity = rows * cols;
 	
-	//this array may be deprecated! crossref is now in menuitem
-	crossRef = new int[capacity];
+	items = new MenuItem*[capacity];
 	for (int i = 0; i < capacity; i++)
 	{
-		crossRef[i] = -1; //initialize all crossRefs to -1 to indicate they are linked to nothing
+		items[i] = NULL;
 	}
 
-	items = new MenuItem[capacity];
-
 	focusable = true; //all menus accept key input
-	setDefaults();
+	setDefaults();	
+}
 
-	visibleRows = getmaxy(win); //as many rows that can fit in the window being used
-	visibleCols = getmaxx(win) / colWidth;
 
-	totalRows = menuRows;
-	totalCols = menuCols * colWidth;
+void Menu::setItemHeight(int height)
+{
+	itemHeight = height;
+	rowHeight = itemHeight + rowSepLen;
+	
+	totalRows = menuRows * rowHeight - rowSepLen; //subtract the separator off the last row
+
+	visibleMenuRows = visibleRows / rowHeight;
+}
+
+
+void Menu::setItemWidth(int width)
+{
+	itemWidth = width;
+	colWidth = itemWidth + mark.length() + colSepLen;
+
+	//total columns is the width of the columns times the number of menu columns + length of the column separators between columns
+	totalCols = menuCols * colWidth - 1; //subtract 1 because we don't need separator at very end of row
+	
+	visibleMenuCols = visibleCols / colWidth;
 }
 
 
@@ -41,23 +54,23 @@ void Menu::setDefaults()
 	itemCount = 0;
 	majorOrder = ROW_MAJOR; //default
 
-	ulY = 0; //the top menu item that is visible
-	ulX = 0;
-	currentIndex = 0; //default index will be top left item
-
+	//currentIndex = 0; //default index will be top left item
+	clear();
 	
 	pad = ' '; //space by default
 
-	mark[0] = '-';//set default mark to ->
-	mark[1] = '>';
-	mark[2] = 0;
 	markSide = LEFT_MARK;
+	setMarkSide(markSide);
 
 	disabledMark[0] = disabledMark[1] = 'X';
 	disabledMark[2] = 0;
 
-	dividerLen = 1;
-	setMaxNameLength(15); //default is 15
+	colSepLen = 1;
+	
+	setItemWidth(16); //default is 16
+	
+	rowSepLen = 0; //most menus will have no gap between rows
+	setItemHeight(1);
 
 	colorPair = 0;//use default color pair
 	wrapAround = true; //allow by default
@@ -77,16 +90,7 @@ void Menu::setMajorOrder(bool majorOrder)
 void Menu::setMarkSide(bool markSide)
 {
 	this->markSide = markSide;
-	if (markSide == LEFT_MARK)
-	{
-		mark[0] = '-';
-		mark[1] = '>';
-	}
-	else //markSide == RIGHT_MARK
-	{
-		mark[0] = '<';
-		mark[1] = '-';
-	}
+	mark = markSide == LEFT_MARK ? "->" : "<-";
 }
 
 
@@ -103,18 +107,32 @@ void Menu::setWrapAround(bool wrap)
 /*
 setItem will set the item at the element specified. If element has already been set it will be overwritten.
 */
-bool Menu::setItem(string name, string itemDesc, int element, int crossRefNdx)
-{
-	items[element].index = element;
-	items[element].itemChosen = false;
-	items[element].crossref = crossRefNdx;
-	items[element].name = name;
-	items[element].selectable = true;
+//bool Menu::setItem(string name, string itemDesc, int element, int crossRefNdx)
+//{
+//	setItem(name, element, crossRefNdx); //until we find a usage for the item description
+//	return true;
+//}
 
-	//next line may be deprecated
-	crossRef[element] = crossRefNdx;//unused crossrefs will be -1 by default
-	
-	return true;
+/*
+setItem will set the item at the element specified. If element has already been set it will be overwritten.
+*/
+//bool Menu::setItem(string name, int element, int crossRefNdx)
+//{
+//	//items[element].index = element;
+//	//items[element].itemChosen = false;
+//	//items[element].crossref = crossRefNdx;
+//	//items[element].name = name;
+//	//items[element].selectable = true;
+//
+//	////next line may be deprecated
+//	//crossRef[element] = crossRefNdx;//unused crossrefs will be -1 by default
+//
+//	return true;
+//}
+
+void Menu::setItem(MenuItem* item)
+{
+	items[item->index] = item;
 }
 
 void Menu::drawMenu()
@@ -126,9 +144,9 @@ void Menu::drawMenu()
 	//render each item
 	if (majorOrder == ROW_MAJOR)
 	{
-		for (int row = ulY; row < ulY + visibleRows; row++)
+		for (int row = ulY; row < ulY + visibleMenuRows; row++)
 		{
-			for (int col = ulX; col < ulX + visibleCols; col++)
+			for (int col = ulX; col < ulX + visibleMenuCols; col++)
 			{
 				drawItem(row, col);
 			}
@@ -154,30 +172,23 @@ void Menu::drawItem(int row, int col)
 	if (element >= capacity) //can't draw a null item
 		return;
 
-	char* usedMark;
-
-	usedMark = mark;
-	if (items[element].selectable == false && items[element].name.compare("") != 0)
-	{
-		usedMark = disabledMark;
-	}
-
 	//print mark and name in correct order
 	if (markSide == LEFT_MARK)
 	{
 		if(element == currentIndex)
-			mvwaddstr(win, row - ulY, (col - ulX) * colWidth, usedMark); //print blot mark
-		mvwaddnstr(win, row - ulY, (col - ulX) * colWidth + 2, items[element].name.c_str(), maxNameLength); //get item name
+			mvwaddstr(win, row - ulY, (col - ulX) * colWidth, mark.c_str()); //print mark
+
+		if(items[element] != NULL)
+			items[element]->draw(win, row - ulY, (col - ulX) * colWidth + mark.length());
 	}
 	else //markSide == RIGHT_MARK
 	{
-		mvwaddnstr(win, row - ulY, (col - ulX) * colWidth, items[element].name.c_str(), maxNameLength); //get item name
-
+		if (items[element] != NULL)
+			items[element]->draw(win, row - ulY, (col - ulX) * colWidth);
+			
 		if (element == currentIndex)
-			mvwaddstr(win, row - ulY, (col - ulX) * colWidth + maxNameLength, usedMark); //print blot mark
+			mvwaddstr(win, row - ulY, (col - ulX) * colWidth + itemWidth, mark.c_str()); //print mark
 	}
-
-	wattroff(win, A_BLINK);
 }
 
 /*Get element from row and col
@@ -202,200 +213,118 @@ void Menu::draw()
 	wnoutrefresh(win);
 }
 
-
-void Menu::setMaxNameLength(int length)
+//return true if wrap condition is met for the specified direction
+//the nav req is the last movement that occurred that brought the user to the current index
+bool Menu::wrapOccurred(int navReq)
 {
-	maxNameLength = length;
-	colWidth = maxNameLength + 2 + dividerLen; //the 2 is the mark length
+	bool wrapOccurred = false;
+	switch (navReq)
+	{
+	case REQ_DOWN_ITEM: // down at bottom of menu it should wrap around to top of same column
+		wrapOccurred = currentIndex >= capacity; break;
+	case REQ_UP_ITEM: // up at top of menu it should wrap around to bottom of same column
+		wrapOccurred = currentIndex < 0; break;
+	case REQ_RIGHT_ITEM: //right at right edge of menu should wrap to first item of same row
+		wrapOccurred = currentIndex % menuCols == 0; break;
+	case REQ_LEFT_ITEM: //left at left edge of menu should wrap to last item of same row
+		wrapOccurred = (currentIndex + 1) % menuCols == 0; break;
+	}
+
+	return wrapOccurred;
 }
 
-int Menu::rowMajorDriver(int input)
+/*
+process all directional navigation requests
+(only handles requests in row major format currently!)
+*/
+int Menu::dirDriver(int input)
 {
+	int navIncr = 0;
+	int wrapOffset = 0;
+	int* axis = 0;
+	int axisPos = 0;
+	int visualOffset = 0;
+	int visibleDimension;
 	switch (input)
 	{
 	case REQ_DOWN_ITEM:
-		currentIndex += menuCols;
-		//handle wraparound
-		if (currentIndex >= capacity)
-		{
-			if (wrapAround)
-			{
-				currentIndex %= menuCols;
-				ulY = 0;
-			}
-			else
-				currentIndex -= menuCols;
-		}
-
-		{
-			//reset toprow if necessary
-			int currRow = currentIndex / menuCols;
-			if (currRow >= ulY + visibleRows)
-			{
-				ulY = currRow + 1 - visibleRows;
-			}
-		}
-		
+		navIncr = menuCols;
+		axis = &ulY;
+		wrapOffset = -capacity;
+		axisPos = 0;
+		visibleDimension = visibleMenuRows;
+		visualOffset = 1 - visibleDimension;
 		break;
 	case REQ_UP_ITEM:
-		//calculate next position
-		currentIndex -= menuCols;
-		//handle wraparound
-		if (currentIndex < 0)
-		{
-			if (wrapAround)
-			{
-				currentIndex += capacity; //yay for this working!
-				ulY = menuRows - visibleRows;
-			}
-			else
-				currentIndex += menuCols;
-		}
-		//reset toprow if necessary
-		{
-			int currRow = currentIndex / menuCols;
-			if (currRow < ulY)
-			{
-				ulY = currRow;
-			}
-		}
-		
-		break;
-	case REQ_LEFT_ITEM:
-		//calculate next position
-		currentIndex--;
-		//handle wraparound
-		if ((currentIndex + 1) % menuCols == 0)
-		{
-			if (wrapAround)
-			{
-				currentIndex += menuCols;
-				ulX = (currentIndex + 1 - visibleCols) % menuCols;
-			}
-			else
-				currentIndex++;
-		}
-		//reset ulX if necessary
-		{
-			int currCol = currentIndex % menuCols;
-			if (currCol < ulX)
-			{
-				ulX = currCol;
-			}
-		}
+		navIncr = -menuCols;
+		axis = &ulY;
+		wrapOffset = capacity;
+		visibleDimension = visibleMenuRows;
+		axisPos = menuRows - visibleDimension;
+		visualOffset = 0;
 		break;
 	case REQ_RIGHT_ITEM:
-		//calculate next position
-		currentIndex++;
-		//handle wraparound
-		if (currentIndex % menuCols == 0)
-		{
-			if (wrapAround)
-			{
-				currentIndex -= menuCols;
-				ulX = currentIndex % menuCols;
-			}
-			else
-				currentIndex--;
-		}
-		//reset ulX if necessary
-		{
-			int currCol = currentIndex % menuCols;
-			if (currCol >= visibleCols)
-			{
-				ulX = currCol + 1 - visibleCols;
-			}
-		}
+		navIncr = 1;
+		axis = &ulX;
+		wrapOffset = -menuCols;
+		axisPos = 0;
+		visibleDimension = visibleMenuCols;
+		visualOffset = 1 - visibleDimension;
 		break;
+	case REQ_LEFT_ITEM:
+		navIncr = -1;
+		axis = &ulX;
+		wrapOffset = menuCols;
+		visibleDimension = visibleMenuCols;
+		axisPos = menuCols - visibleDimension;
+		visualOffset = 0;
+		break;
+	
+	}
+
+	//perform movement
+	currentIndex += navIncr;
+	if(wrapOccurred(input)) //hit edge of menu
+	{
+		if(wrapAround)
+		{
+			currentIndex += wrapOffset;
+			*axis = axisPos;
+		}
+		else //no wrapping, reverse the movement
+			currentIndex -= navIncr; 
+	}
+
+	//get current row or col
+	int currAxis = axis == &ulY ? currentIndex / menuCols : currentIndex % menuCols;
+
+	/*if current row or col is either less than the upper left corner of the control 
+	or beyond the visual portion of the control*/
+	if(currAxis < *axis || currAxis >= *axis + visibleDimension)
+	{
+		*axis = currAxis + visualOffset;
 	}
 
 	return currentIndex;
 }
 
-/*
-colMajorDriver(int input)
-{
-//switch (input)
-//{
-//case REQ_DOWN_ITEM:
-//	//calculate next position
-//	
-//		currentIndex++;
-//		//handle wraparound
-//		if (currentIndex % menuRows == 0) //pressing down shouldn't lead to these values
-//		{
-//			if (wrapAround)
-//			{
-//				currentIndex -= menuRows;
-//			}
-//			else
-//				currentIndex--;
-//		}
 
-//	break;
-//case REQ_UP_ITEM:
-//	//calculate next position
-//	
-//		currentIndex--;
-//		//handle wraparound
-//		if ((currentIndex + 1) % menuRows == 0) //pressing down shouldn't lead to these values
-//		{
-//			if (wrapAround)
-//			{
-//				currentIndex += menuRows;
-//			}
-//			else
-//				currentIndex++;
-//		}
-//	break;
-//case REQ_LEFT_ITEM:
-//	//calculate next position
-//		currentIndex -= menuRows;
-//		//handle wraparound
-//		if (currentIndex < 0) //pressing down shouldn't lead to these values
-//		{
-//			if (wrapAround)
-//			{
-//				currentIndex += capacity;
-//			}
-//			else
-//				currentIndex += menuRows;
-//		}
-//	break;
-//case REQ_RIGHT_ITEM:
-//	//calculate next position
-//		currentIndex += menuRows;
-//		//handle wraparound
-//		if (currentIndex >= capacity) //pressing down shouldn't lead to these values
-//		{
-//			if (wrapAround)
-//			{
-//				currentIndex -= capacity;
-//			}
-//			else
-//				currentIndex -= menuRows;
-//		}
-//	break;
-	}
-}
-*/
 
 int Menu::driver(int input)
 {
-	if (majorOrder == ROW_MAJOR)
+	switch (input)
 	{
-		rowMajorDriver(input); //not returning a value right now
-	}
-	//else colMajorDriver(input)
-
-	
-	switch(input)
-	{
+	case REQ_DOWN_ITEM:
+	case REQ_UP_ITEM:
+	case REQ_RIGHT_ITEM:
+	case REQ_LEFT_ITEM: 
+		dirDriver(input);
+		break;
 	case REQ_TOGGLE_ITEM:
-		if (items[currentIndex].selectable == false)
+		if (items[currentIndex]->selectable == false)
 			break;
 
-		items[currentIndex].itemChosen = true;
+		//items[currentIndex]->selected = true;
 		break;
 
 	default: break;
@@ -405,38 +334,23 @@ int Menu::driver(int input)
 }
 
 
-int Menu::getCrossRefIndex()
-{
-	int crossRefNdx = crossRef[currentIndex];
-	//-1 in the crossref means it was never set, this also implies that
-	//  -1 can never be used as a value we want to return to the user unless it is cancel
-	return (crossRefNdx == -1) ? currentIndex : crossRefNdx;//use crossrefndx only if set
-}
-
 int Menu::getCurrentIndex()
 {
 	return currentIndex;
 }
 
-MenuItem* Menu::getSelectedItem()
-{
-	MenuItem* item = &items[currentIndex];
-
-	//currentIndex = row * menuCols + col;
-	return item->itemChosen ? item : NULL;
-}
 
 MenuItem* Menu::getItem(int y, int x)
 {
 	int row = y;
 	int col = x / 3;
 	int element = row * menuCols + col;
-	return &items[element];
+	return items[element];
 }
 
 MenuItem* Menu::getCurrentItem()
 {
-	return &items[currentIndex];
+	return items[currentIndex];
 }
 
 void Menu::disableItem(int y, int x)
@@ -445,20 +359,23 @@ void Menu::disableItem(int y, int x)
 	mi->selectable = false;
 }
 
+/*
+Remove all items from menu, but do not destroy menu itself. Capacity is unaltered
+*/
 void Menu::clear()
 {
 	for (int i = 0; i < capacity; i++)
 	{
-		MenuItem* item = &items[i];
-		item->clear();
+		delete items[i];
+		items[i] = 0;
 	}	
 	currentIndex = 0;
-	ulY = 0;
-	ulX = 0;
+	setPosition(0, 0);
 }
 
 Menu::~Menu()
 {
+	clear();
 	delete [] items;
 
 	delwin(win);

@@ -48,31 +48,21 @@ class Map : public Controllable
 private:
 	//meta members
 	string name;
-	unsigned short id;
+	unsigned short id; 
 
 	//dimensional members
 	unsigned int totalTiles;
-
-	//unsigned short visibleRows, visibleCols; //the size of the window
-	short mapY, mapX; //the coordinates of the upper left corner of the map relative to the view
-
 	
 	//data storage
 	Image* display;
-	/*I read that using a 2d array is slow and inefficient, so we'll try a 1d arrays in row-major format*/
-	//chtype* displayLayer;
+	bool brightness; //true - bright, false - dark
+
+	//saveable data
 	short* effectsLayer;
-	//refactor input
-//	_2DStorage<int>* dLayer;
 	_2DStorage<int>* eLayer;
 
-	bool brightness; //true - bright, false - dark
 	
-	//private methods
-	//void drawTileChar(
-	//	int row, int col, //position in viewport to render char
-	//	int mapY, int mapX); //coords of char in map array to draw
-	//chtype getOutOfBoundsTile(int mapX, int mapY); //a boundary drawn around the edges of the map within the viewport
+	
 public:
 	Map(string name, int rows, int cols, WINDOW* win);
 
@@ -81,12 +71,9 @@ public:
 	void resize(int rows, int cols);
 
 	Image* getDisplay() { return display; }
-//	chtype* getDisplayLayer() { return displayLayer; }
 	short* getEffectsLayer() { return effectsLayer; }
-//	void setDisplayChar(int y, int x, chtype c);
 	void setEffect(int y, int x, short effect);
 	void removeEffect(int y, int x, short effect);
-//	chtype getDisplayChar(int y, int x);
 	short getEffects(int y, int x);
 	_2DStorage<int>* getLayer(int layer);
 
@@ -94,6 +81,5 @@ public:
 
 	bool save(string fileName);
 	bool load(string fileName);
-	bool load2(string fileName);
 	~Map();
 };
