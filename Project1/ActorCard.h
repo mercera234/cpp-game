@@ -1,13 +1,15 @@
 #pragma once
+#include "MenuItem.h"
 #include "Actor.h"
 #include "curses.h"
 
-class ActorCard
+class ActorCard : public MenuItem
 {
 private:
 	Actor* actor;
 
 public:
-	ActorCard(Actor* actor);
-	void draw(WINDOW* win, int y, int x);
+	ActorCard(Actor* actor, int element, int crossRefNdx);
+	//void draw(WINDOW* win, int offY, int offX);
+	void draw(WINDOW* win);
 };

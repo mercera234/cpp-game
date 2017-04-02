@@ -72,6 +72,10 @@ using namespace std;
 #define COLOR_GRAY_BOLD 16 //doesn't work
 #define TOTAL_COLORS 16
 
+//cursor states
+#define CURSOR_INVISIBLE 0
+#define CURSOR_NORMAL 1
+#define CURSOR_BOLD 2
 
 class TUI
 {

@@ -2,6 +2,8 @@
 #include <dirent.h>
 #include <sstream>
 #include "LineItem.h"
+#include <list>
+using namespace std;
 
 /*The window parameter should have a height of at least 5*/
 FileChooser::FileChooser(WINDOW* win, string workingDir, int type, string filter)
@@ -27,11 +29,11 @@ FileChooser::FileChooser(WINDOW* win, string workingDir, int type, string filter
 
 	pathLbl = new TextLabel(derwin(win, 1, pathWidth, 0, indent), ""); //text will be set when drawn
 
-	fileMenu = new Menu(derwin(win, height - 4, dialogWidth - 1, 2, 0), 255, 1); //subtract 4 from height to account for 2 dividers, 1 label, and 1 textfield
+	fileMenu = new GridMenu(derwin(win, height - 4, dialogWidth - 1, 2, 0), 1, 1); //subtract 4 from height to account for 2 dividers, 1 label, and 1 textfield
 	
 	fileMenu->setItemWidth(dialogWidth - 4); //- 1 for scroll bar room, 2 for mark
-	
 	fileMenu->setWrapAround(false);
+
 	//set up menu entries
 	//fileMenu->clear();
 
@@ -48,12 +50,13 @@ FileChooser::FileChooser(WINDOW* win, string workingDir, int type, string filter
 
 void FileChooser::resetDirEntries()
 {
-	int currElement = 0;
-	
-	fileMenu->clear();
-
 	DIR* dir = opendir(workingDir.c_str());
 	dirent* entry;
+
+	int currElement = 0;
+	list<LineItem*> lineItems;
+
+	//create list of entries in directory
 	while ((entry = readdir(dir)) != NULL)
 	{
 		bool setItem = true;
@@ -64,10 +67,17 @@ void FileChooser::resetDirEntries()
 		
 		if(setItem)
 		{
-			fileMenu->setItem(new LineItem(entry->d_name, currElement++, entry->d_type));
+			lineItems.push_back(new LineItem(entry->d_name, currElement++, entry->d_type));
 		}
-		
 	}
+
+	//add the entries to the menu
+	fileMenu->resetItems(lineItems.size(), 1);
+	for (list<LineItem*>::iterator it = lineItems.begin(); it != lineItems.end(); it++)
+		fileMenu->setItem(*it);
+
+	fileMenu->setCurrentItem(0);
+	fileMenu->post(true);
 
 	//truncate path name so we can see as much of the end as possible
 	string openPathStr;
@@ -156,7 +166,7 @@ void FileChooser::driver(int input)
 		if (choice == NULL)
 			return;
 
-		switch (choice->crossref) //this is done only when moving up and down in a file chooser
+		switch (choice->crossRef) //this is done only when moving up and down in a file chooser
 		{
 		case DT_REG: 
 			fileNameField->setText(choice->name);

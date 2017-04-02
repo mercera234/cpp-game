@@ -13,6 +13,8 @@ struct Registration
 	Command* cmd;
 	void(*callback) (void*, void*, int);
 	char listen_map = 0; //bit map of all listeners
+	Registration* prev;
+	Registration* next;
 	Registration() {};
 };
 
@@ -26,14 +28,14 @@ class ControlManager
 {
 private:
 
-	//list<Controllable*> controls;
 	list<Registration*> controls;
 	list<KeyAccelerator*> shortcuts;
-	//<Registration*> mouseList;
-	//list<Registration*> keyList;
-	Controllable* focus; //the item with focus
+	//Controllable* focusC; //the item with focus
+	Registration* focus;
 	bool shutdown = false; //if true then marks the CM for shutting down
 	void* caller; //the type of class that utilizes the Control Manager
+	short cycleKey; //to cycle forward
+	short revCycleKey; //to cycle backwards
 
 public:
 
@@ -44,8 +46,8 @@ public:
 	
 	ControlManager(void* caller) { this->caller = caller; }
 	Controllable* getFocus();
-	void setFocus(Controllable* c) { focus = c; }
-	//void cycleFocus();
+	void setFocus(Controllable* c); 
+	void cycleFocus(short cycleKey);
 	void prepareForShutdown() { shutdown = true; }
 	bool handleInput(int input);
 	bool handleGlobalInput(int input);

@@ -3,26 +3,39 @@
 
 TextField::TextField(WINDOW* win)
 {
+	init(win);
+}
+
+TextField::TextField(int length, int y, int x)
+{
+	WINDOW* w = newwin(1, length, y, x);
+	init(w);
+}
+
+void TextField::init(WINDOW* win)
+{
 	focusable = true;
 
-	this->win = win;
+	setWindow(win);
+	//this->win = win;
 	getbegyx(win, y, x);
-	
-	fullLength = getmaxx(win) + 1;
-	length = fullLength - 1;
 
-	text = new char[length];
+	length = getmaxx(win);
+	text = new char[length + 1]; //set one more so there is a null char at the end
 
 	memset(text, BLANK_SPACE, length);
 	textPtr = text;
 	text[length] = 0; //end with null term
 	cursorPos = 0; //starts at beginning
+
+	color = 0x00000000; //set to black and white by default
 }
 
 void TextField::setFocus()
 {
 	curs_set(1);
-	move(y, x + cursorPos); //a known issue with using wmove combined with getch is why we're using move
+	//need to use :: to differentiate this from the Controllable move method
+	::move(y, x + cursorPos); //a known issue with using wmove combined with getch is why we're using move
 }
 
 bool TextField::inputChar(int c)
@@ -111,7 +124,7 @@ string TextField::getText()
 
 	//trim algorithm
 	t.erase(0, t.find_first_not_of(' '));       //prefixing spaces
-	t.erase(t.find_last_not_of(' ') + 1);         //surfixing spaces
+	t.erase(t.find_last_not_of(' ') + 1);         //suffixing spaces
 	return t;
 }
 
@@ -123,9 +136,38 @@ WINDOW* TextField::getWindow()
 void TextField::draw()
 {
 	wclear(win);
-	mvwaddstr(win, 0, 0, text);
+	wbkgd(win, color);
+	//wattron(win, color);
+
+	char* pos = text;
+	bool endReached = false;
+
+	for (int row = 0; row < visibleRows && endReached == false; row++)
+	{
+		for (int col = 0; col < visibleCols && endReached == false; col++)
+		{
+			switch (*pos)
+			{
+			case '\n': pos++; break;//advance beyond newline
+			case 0: endReached = true; break;
+			default: mvwaddch(win, row, col, *pos++);
+			}
+		}
+
+	}
+
+	//add
+	//mvwaddstr(win, 0, 0, text);
 	wnoutrefresh(win);
 }
+
+
+void TextField::setColor(int bkgdColor, int textColor)
+{
+	color = bkgdColor << 28 | textColor << 24;
+	color &= 0xff000000;
+}
+
 
 TextField::~TextField()
 {

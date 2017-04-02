@@ -5,10 +5,11 @@
 #include <iostream>
 using namespace std;
 #include "2DStorage.h"
+#include "Storable.h"
 
 #define NULL_MARKER_SPACING 8
 
-class Image : public Controllable
+class Image : public Controllable, Storable
 {
 private:
 	//dimensional members
@@ -30,6 +31,7 @@ public:
 	void resize(int rows, int cols);
 
 	_2DStorage<chtype>* getTileMap() { return tileMap; }
+	unsigned int getTotalTiles() { return totalTiles; };
 
 	bool save(ofstream* saveFile);
 	bool load(ifstream* loadFile);

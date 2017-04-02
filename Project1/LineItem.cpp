@@ -1,17 +1,48 @@
 #include "LineItem.h"
+#include "AbstractMenu.h"
 
 LineItem::LineItem(string name, int element, int crossRefNdx)
 {
 	index = element;
-//	selected = false;
-	crossref = crossRefNdx;
+	crossRef = crossRefNdx;
 	this->name = name;
 	selectable = true;
+	selected = false;
 }
 
-void LineItem::draw(WINDOW* win, int y, int x)
+void LineItem::draw(WINDOW* win, int offY, int offX)
 {
-	mvwaddstr(win, y, x, name.c_str()); //get item name
+	mvwaddstr(win, posY + offY, posX + offX, name.c_str()); //get item name
+}
+
+void LineItem::draw(WINDOW* win)
+{
+	int offY = menu->getUlY();
+	int offX = menu->getUlX();
+
+	int markPosX = 0;
+	int itemPosX = 0;
+	//for now, our main focus will be on getting the left mark working
+	switch (menu->getMarkSide())
+	{
+	case LEFT_MARK: 
+		markPosX = posX - offX;
+		itemPosX = markPosX + 2;
+		break;
+	case RIGHT_MARK: 
+		itemPosX = posX - offX;
+		markPosX = itemPosX + name.length(); //should maybe use width of the item, but this is not an abstract property currently
+		break;
+	}
+
+	
+	if (this == menu->getCurrentItem()) //draw mark
+	{
+		mvwaddstr(win, posY - offY, markPosX, menu->getMark().c_str()); //get item name
+	}
+	//draw item
+	mvwaddstr(win, posY - offY, itemPosX, name.c_str()); //get item name
+	
 }
 
 void LineItem::clear()

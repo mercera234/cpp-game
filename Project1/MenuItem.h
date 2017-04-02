@@ -3,18 +3,42 @@
 #include <iostream>
 using namespace std;
 #include "curses.h"
+//#include "AbstractMenu.h"
 
+#define UP_LINK 0
+#define DOWN_LINK 1
+#define LEFT_LINK 2
+#define RIGHT_LINK 3
+
+class AbstractMenu;
 struct MenuItem
 {
-protected:
+private:
 public:
-	short index;
-	int crossref;
-	//bool selected;
-	bool selectable;
+	AbstractMenu* menu;
 
-	virtual void draw(WINDOW* win, int y, int x) = 0;
+	short index;
+	int crossRef;
+	bool selected;
+	bool selectable;
+	bool hidden; //do not draw hidden items, they have functional purpose only
+
+	MenuItem* upItem;
+	MenuItem* downItem;
+	MenuItem* leftItem;
+	MenuItem* rightItem;
+
+	unsigned short posY, posX;
+	
+	//virtual void draw(WINDOW* win, int offY = 0, int offX = 0) = 0;
+	virtual void draw(WINDOW* win) = 0;
 	MenuItem();
+	MenuItem(unsigned short y, unsigned short x);
+	void setPosition(unsigned short y, unsigned short x);
+	void setMenu(AbstractMenu* menu) { this->menu = menu; }
 	void clear();
+	void link(bool setLink, int link, MenuItem* item);
+	void link(int link, MenuItem* item);
+	void setHidden(bool hidden);
 };
 

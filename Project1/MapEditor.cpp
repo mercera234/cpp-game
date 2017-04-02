@@ -34,8 +34,6 @@ MapEditor::MapEditor()
 	
 	setupPalettes();
 
-	state = MAP_EDIT;
-
 	modified = false; 
 
 	keypad(stdscr, true);
@@ -263,10 +261,11 @@ Frame* MapEditor::createConfirmDialog()
 	int width, height;  getmaxyx(stdscr, height, width);
 	WINDOW* fWin = newwin(4, confirmMsg.length() + 2, (height - 4) / 2, (width - 40) / 2);
 	WINDOW* cdWin = derwin(fWin, 1, confirmMsg.length(), 2, 1);
-	Menu* cdMenu = new Menu(cdWin, 1, 2);
+	GridMenu* cdMenu = new GridMenu(cdWin, 1, 2);
 	cdMenu->setItem(new LineItem("No", 0, 0));
 	cdMenu->setItem(new LineItem("Yes", 1, 1));
-
+	cdMenu->post(true);
+	
 	Frame* f = new Frame(fWin, cdMenu);
 	f->setText(confirmMsg, 1, 1);
 	f->setModal(true);
@@ -420,7 +419,7 @@ void MapEditor::fileDialogDriver(Controllable* dialog, int input)
 void MapEditor::confirmDialogDriver(Controllable* c, int input, int confirmMethod)
 {
 	Frame* f = (Frame*)c;
-	Menu* dialog = (Menu*)f->getControl();
+	GridMenu* dialog = (GridMenu*)f->getControl();
 
 	MenuItem* mi = NULL;
 	switch (input)
@@ -553,119 +552,6 @@ void MapEditor::markModified()
 	modified = true;
 	fileNameLbl->setText(fileName + "*");
 }
-
-//void MapEditor::processMovementInput(int input)
-//{
-//	switch (input)
-//	{
-//	case CTL_HOME: //use two movements to upper left corner
-//		processDirectionalInput(DIR_LEFT, canvasCols);
-//		processDirectionalInput(DIR_UP, canvasRows);
-//		break;
-//	case CTL_END: //use two movements to lower right corner
-//		processDirectionalInput(DIR_RIGHT, canvasCols);
-//		processDirectionalInput(DIR_DOWN, canvasRows);
-//		break;
-//	default:
-//		int dir = getDirectionFromKey(input);
-//		int magnitude = getMoveMagnitudeFromKey(input);
-//		processDirectionalInput(dir, magnitude);
-//		break;
-//	}
-//}
-//
-//int MapEditor::getMoveMagnitudeFromKey(int key)
-//{
-//	int magnitude = 0;
-//	switch (key)
-//	{
-//	case KEY_UP:
-//	case KEY_DOWN:
-//	case KEY_LEFT:
-//	case KEY_RIGHT: magnitude = 1;
-//		break;
-//	case KEY_PGUP://up down paging
-//	case KEY_PGDN: magnitude = visibleRows;
-//		break;
-//	case CTL_PGUP://left right paging
-//	case CTL_PGDN: magnitude = visibleCols;
-//		break;
-//
-//	case KEY_HOME: 
-//	case KEY_END: magnitude = canvasCols;
-//		break;
-//	}
-//	return magnitude;
-//}
-//
-//int MapEditor::getDirectionFromKey(int key)
-//{
-//	int dir;
-//	switch (key)
-//	{
-//	case KEY_PGUP:
-//	case KEY_UP: dir = DIR_UP; 
-//		break;
-//	case KEY_PGDN:
-//	case KEY_DOWN: dir = DIR_DOWN; 
-//		break;
-//	case KEY_HOME:
-//	case CTL_PGUP:
-//	case KEY_LEFT: dir = DIR_LEFT; 
-//		break;
-//	case KEY_END:
-//	case CTL_PGDN:
-//	case KEY_RIGHT: dir = DIR_RIGHT; 
-//		break;
-//	default:
-//		dir = DIR_ERR;
-//	}
-//	return dir;
-//}
-//
-//void MapEditor::processDirectionalInput(int dirInput, int magnitude)
-//{
-//	short* axis = NULL;
-//	int step = 1;
-//
-//	switch (dirInput)
-//	{
-//	case DIR_UP:
-//		axis = &curY;
-//		step = -step;
-//		break;
-//	case DIR_DOWN:
-//		axis = &curY;
-//		break;
-//	case DIR_LEFT:
-//		axis = &curX;
-//		step = -step;
-//		break;
-//	case DIR_RIGHT:
-//		axis = &curX;
-//		break;
-//	}
-//
-//	for (int i = 0; i < magnitude; i++) //take repeated steps until move is over
-//	{
-//		//move the cursor
-//		*axis += step;
-//
-//		//verify that cursor is within bounds
-//		if (curX < 0 || curY < 0 || curX >= canvasCols || curY >= canvasRows)
-//		{
-//			*axis -= step; break;//reverse step and quit
-//		}
-//		
-//		//shift map
-//	//	axis == &curY ? map->shift(step, 0) : map->shift(0, step);
-//		axis == &curY ? image->shift(step, 0) : image->shift(0, step);
-//
-//		//apply brush if necessary
-//		if (tool == BRUSH)
-//			applyTool(curY, curX);
-//	}
-//}
 
 
 void MapEditor::processShiftDirectionalInput(int input)

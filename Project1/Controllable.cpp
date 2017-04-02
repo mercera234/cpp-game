@@ -1,6 +1,9 @@
 #include "Controllable.H"
 #include "curses.h"
 
+/*
+Sets window for Controllable with count of visible rows/cols and upper left corner of view
+*/
 void Controllable::setWindow(WINDOW* win)
 {
 	this->win = win;

@@ -7,6 +7,7 @@
 #include "curses.h"
 #include <iostream>
 using namespace std;
+#include "Storable.h"
 
 /*need a serial number assigning system where
  0-just pick some in the random range(the scripts couldn't handle a negative value)
@@ -29,6 +30,8 @@ using namespace std;
 #define MAX_PLAYER_HP 9999
 #define MAX_EXP 9999999
 #define MAX_PLAYERS 4
+
+#define MAX_NAME_LENGTH 16 //max characters in string
 
 //statuses
 #define ALIVE 0
@@ -54,7 +57,7 @@ CharDef - a struct containing a character blueprint
 All CharDefs will be originally stored in a file and only one copy of each is read into memory
 This is everything that would be setup in an editor for a character
 */
-struct ActorDef
+struct ActorDef : public Storable
 {
     string name;
 	
@@ -64,7 +67,7 @@ struct ActorDef
 	
 	unsigned short level;
 	unsigned int exp;
-	unsigned int gold;
+	unsigned int money;
 
     unsigned int maxHp;
 	unsigned int maxMp;
@@ -84,12 +87,14 @@ struct ActorDef
 	//item
 	
 	//int ailments; //not sure if this should be with Actor or ActorDef
+	bool save(ofstream* saveFile);
+	bool load(ifstream* loadFile);
 };
 
 /*
 Actor - An instantiation of a CharDef. A copy of a CharDef that can be manipulated until we are ready to dispose of it
 */
-struct Actor
+struct Actor // : public Storable
 {
 	unsigned int defIndex; //index of chardefinition
 	ActorDef* def; //actual definition
@@ -101,6 +106,9 @@ struct Actor
 	short currMp;
     short x, y;//relative to map window
 	short prevX, prevY; //previous position
+	/*bool save(ofstream* saveFile);
+	bool load(ifstream* loadFile);*/
 };
+
 
 

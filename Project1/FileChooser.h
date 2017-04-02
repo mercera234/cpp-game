@@ -1,5 +1,5 @@
 #pragma once
-#include "Menu.h"
+#include "GridMenu.h"
 #include "TextLabel.h"
 #include "ScrollBar.h"
 #include "TextField.h"
@@ -14,7 +14,7 @@ General rule of thumb when using a FileChooser
 class FileChooser : public Controllable
 {
 protected:
-	Menu* fileMenu;
+	GridMenu* fileMenu;
 	string workingDir;
 	TextLabel* purposeLbl;
 	TextLabel* pathLbl;
@@ -32,7 +32,7 @@ public:
 	void resetDirEntries();
 	void setFilter(string filter) { this->filter = filter; }
 	unsigned short getType() { return type; }
-	Menu* getMenu() { return fileMenu; }
+	GridMenu* getMenu() { return fileMenu; }
 	void draw();
 	void driver(int input);
 	string filePathDriver();

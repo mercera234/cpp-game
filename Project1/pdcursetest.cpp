@@ -31,6 +31,11 @@
 #include "MegaMap.h"
 #include "ActorCard.h"
 #include "LineItem.h"
+#include "GridMenu.h"
+#include "GraphMenu.h"
+#include "ActorEditor.h"
+#include "TextDisplay.h"
+#include "FormField.h"
 
 void mockFightTest()
 {
@@ -179,6 +184,27 @@ MenuItem* menuDriver(int input, Menu* m)
 	return item;
 }
 
+MenuItem* absMenuDriver(int input, AbstractMenu* m)
+{
+	MenuItem* item = NULL;
+	int retval = -1;
+	switch (input)
+	{
+	case KEY_DOWN: retval = m->driver(REQ_DOWN_ITEM); break;
+	case KEY_UP: retval = m->driver(REQ_UP_ITEM); break;
+	case KEY_LEFT: retval = m->driver(REQ_LEFT_ITEM); break;
+	case KEY_RIGHT: retval = m->driver(REQ_RIGHT_ITEM); break;
+	case '\n':
+	case '\r':
+	case KEY_ENTER:
+		item = m->getCurrentItem();
+		break;
+	default: break;
+	}
+
+	return item;
+}
+
 MenuItem* confirmDriver(int input, Menu* m)
 {
 	MenuItem* item = NULL;
@@ -201,9 +227,9 @@ MenuItem* confirmDriver(int input, Menu* m)
 
 void menuTest()
 {
-	int rows = 6;
-	int cols = 2;
-	WINDOW* win = newwin(3, 2 * 25, 1, 1);
+	int rows = 1;
+	int cols = 12;
+	WINDOW* win = newwin(12, 1 * 25, 1, 1);
 
 	Menu menu(win, rows, cols);
 
@@ -223,7 +249,8 @@ void menuTest()
 //	menu.setMenuColWidth(18);
 //	menu.setMenuRowHeight(3);
 //	menu.disableItem(8, 0);
-	int markSide = RIGHT_MARK;
+	menu.setSelectedIndex(0);
+	int markSide = LEFT_MARK;
 	menu.setMarkSide(markSide);
 	bool wrap = true;
 
@@ -261,11 +288,97 @@ void menuTest()
 				menu.setMarkSide(markSide = !markSide); break;
 
 			default:
-				mvaddch(7, 30, (chtype)item->crossref);
+				mvaddch(7, 30, (chtype)item->crossRef);
 				break;
 			}
 		}
 			break;
+		}
+	}
+}
+
+
+void gridMenuTest()
+{
+	int rows = 2;
+	int cols = 6;
+	WINDOW* win = newwin(2, 2 * 19, 1, 1);
+
+	GridMenu menu(win, rows, cols);
+
+	menu.setItem(new LineItem("0123456789012345", 0, 'N'));
+	menu.setItem(new LineItem("TOGGLE WRAP", 1, 'L'));
+	menu.setItem(new LineItem("QUIT", 2, 'Q'));
+	menu.setItem(new LineItem("", 3, -1));
+	menu.setItem(new LineItem("4123456789012345", 4, '?'));
+	menu.setItem(new LineItem("Clear", 5, 'N'));
+	menu.setItem(new LineItem("Flip Mark", 6, 'L'));
+	menu.setItem(new LineItem("7123456789012345", 7, 'Q'));
+	menu.setItem(new LineItem("Reset Items", 8, 'T'));
+	menu.setItem(new LineItem("0 capacity", 9, '?'));
+	menu.setItem(new LineItem("a123456789012345", 10, 'N'));
+	menu.setItem(new LineItem("b123456789012345", 11, 'L'));
+
+	menu.setCurrentItem(0);
+	int markSide = LEFT_MARK;
+	menu.setMarkSide(markSide);
+	bool wrap = true;
+	//menu.setRowSepLength(1);
+	menu.setColorPair(COLOR_PAIR(COLOR_GREEN_BOLD) | COLOR_GREEN << 28);
+	menu.post(true);
+	bool usingMenu = true;
+	while (usingMenu)
+	{
+		menu.draw();
+		doupdate();
+		int input = getch();
+
+		switch (input) //process global input
+		{
+		case KEY_ESC: usingMenu = false; break;
+		default:
+		{
+			MenuItem* item = absMenuDriver(input, &menu);
+
+			if (item == NULL)
+			{
+				continue;
+			}
+
+			switch (item->index)
+			{
+
+			case 1:
+				menu.setWrapAround(wrap = !wrap); break;
+			case 2:
+				usingMenu = false;
+				break;
+			
+			case 5:
+				menu.clearItems();
+				break;
+			case 6:
+				menu.setMarkSide(markSide = !markSide); break;
+			case 8:
+				menu.resetItems(2, 2); 
+				menu.setItem(new LineItem("A", 0, -1));
+				menu.setItem(new LineItem("B", 1, -1));
+				menu.setItem(new LineItem("C", 2, -1));
+				menu.setItem(new LineItem("D", 3, -1));
+				menu.setCurrentItem(0);
+				menu.post(true);
+				break;
+			case 9:
+				//menu.resetItems(0, 0); //both of these statements work the same
+				menu.resetItems(0, 1);
+
+				break;
+			default:
+				mvaddch(7, 30, (chtype)item->crossRef);
+				break;
+			}
+		}
+		break;
 		}
 	}
 }
@@ -289,8 +402,7 @@ void mapEditorTest()
 
 
 	MapEditor me;
-	//me.loadMap();
-
+	
 	mousemask(ALL_MOUSE_EVENTS | REPORT_MOUSE_POSITION, NULL);
 	bool editing = true;
 	while (editing) //simulate input/process/update loop
@@ -298,9 +410,26 @@ void mapEditorTest()
 		me.draw();
 
 		doupdate();
-		int wc = getch();
+		int input = getch();
 
-		editing = me.processInput(wc);
+		editing = me.processInput(input);
+	}
+}
+
+void actorEditorTest()
+{
+	ActorEditor* ae = new ActorEditor();
+	resize_term(30, 150);
+	
+	bool editing = true;
+	while (editing) //simulate input/process/update loop
+	{
+		ae->draw();
+
+		doupdate();
+		int input = getch();
+
+		editing = ae->processInput(input);
 	}
 }
 
@@ -1595,7 +1724,7 @@ Actor* createActor()
 	def->symbol = (chtype) '@' | 0x0e000000;
 	def->level = 1;
 	def->exp = 0;
-	def->gold = 50;
+	def->money = 50;
 	def->maxHp = 25;
 	def->maxMp = 10;
 	def->strength = 8;
@@ -1623,7 +1752,7 @@ Actor* createNPCActor()
 	def->symbol = (chtype) '&' | 0x0e000000;
 	def->level = 5;
 	def->exp = 0;
-	def->gold = 0;
+	def->money = 0;
 	def->maxHp = 1;
 	def->maxMp = 1;
 	def->strength = 1;
@@ -1651,7 +1780,7 @@ Actor* createEnemyActor()
 	def->symbol = (chtype) 't' | (COLOR_GREEN << 24);
 	def->level = 1;
 	def->exp = 0;
-	def->gold = 3;
+	def->money = 3;
 	def->maxHp = 1;
 	def->maxMp = 0;
 	def->strength = 1;
@@ -1921,10 +2050,10 @@ void realMapTest()
 
 void textFieldtest()
 {
-	WINDOW* textWin = newwin(1, 15, 1, 1);
-	TextField field(textWin);
+	TextField field(15, 1, 1);
 	field.setText("Default text");
-	
+	field.setColor(COLOR_BLUE, COLOR_MAGENTA_BOLD);
+
 	bool playing = true;
 	while (playing)
 	{
@@ -1934,7 +2063,12 @@ void textFieldtest()
 		doupdate();
 		int c = getch();
 
-		field.inputChar(c);
+		if (c == KEY_ESC)
+		{
+			playing = false;
+		}
+		else
+			field.inputChar(c);
 	}
 
 }
@@ -1952,7 +2086,7 @@ bool saveActorDef(string fileName, ActorDef* def)
 	file.write((char*)&def->symbol, sizeof(int));
 	file.write((char*)&def->level, sizeof(short));
 	file.write((char*)&def->exp, sizeof(int));
-	file.write((char*)&def->gold, sizeof(int));
+	file.write((char*)&def->money, sizeof(int));
 	file.write((char*)&def->maxHp, sizeof(int));
 	file.write((char*)&def->maxMp, sizeof(int));
 	file.write((char*)&def->strength, sizeof(short));
@@ -1977,7 +2111,7 @@ void dataPkgTest()
 	def->symbol = (chtype) '@' | 0x0e000000;
 	def->level = 1;
 	def->exp = 0;
-	def->gold = 50;
+	def->money = 50;
 	def->maxHp = 25;
 	def->maxMp = 10;
 	def->strength = 8;
@@ -2313,7 +2447,7 @@ void openFileTest()
 			}
 			else //check if directory was chosen
 			{
-				if (choice->crossref == DT_DIR) //dir was chosen
+				if (choice->crossRef == DT_DIR) //dir was chosen
 				{
 					fullPath.append(1, '\\');
 					fullPath.append(choice->name);
@@ -2624,7 +2758,7 @@ void scrollTest()
 
 		default:
 
-			mvaddch(7, 30, (chtype)item->crossref);
+			mvaddch(7, 30, (chtype)item->crossRef);
 			break;
 		}
 	}
@@ -3568,22 +3702,303 @@ void megaMapTest()
 
 void battleTargetMenuTest()
 {
+	GraphMenu* targetMenu = new GraphMenu(newwin(16, 40, 1,1), 16);
+	
+	ActorCard* p1 = new ActorCard(createActor(), 0, -1);
+	ActorCard* p2 = new ActorCard(createActor(), 2, -1);
+	ActorCard* p3 = new ActorCard(createActor(), 4, -1);
+	ActorCard* p4 = new ActorCard(createActor(), 6, -1);
+
+	ActorCard* e1 = new ActorCard(createEnemyActor(), 1, -1);
+	ActorCard* e2 = new ActorCard(createEnemyActor(), 3, -1);
+	ActorCard* e3 = new ActorCard(createEnemyActor(), 5, -1);
+	ActorCard* e4 = new ActorCard(createEnemyActor(), 7, -1);
+
+	ActorCard* eh1 = new ActorCard(NULL, 8, -1);
+	ActorCard* eh2 = new ActorCard(NULL, 9, -1);
+	ActorCard* eh3 = new ActorCard(NULL, 10, -1);
+	ActorCard* eh4 = new ActorCard(NULL, 11, -1);
+	eh1->hidden = eh2->hidden = eh3->hidden = eh4->hidden = true;
+
+	ActorCard* ph1 = new ActorCard(NULL, 12, -1);
+	ActorCard* ph2 = new ActorCard(NULL, 13, -1);
+	ActorCard* ph3 = new ActorCard(NULL, 14, -1);
+	ActorCard* ph4 = new ActorCard(NULL, 15, -1);
+	ph1->hidden = ph2->hidden = ph3->hidden = ph4->hidden = true;
+
+	int pLeft = 2;
+	int eLeft = pLeft + 20;
+
+	//set positions
+	p1->setPosition(0, pLeft);
+	p2->setPosition(4, pLeft);
+	p3->setPosition(8, pLeft);
+	p4->setPosition(12, pLeft);
+
+	e1->setPosition(0, eLeft);
+	e2->setPosition(4, eLeft);
+	e3->setPosition(8, eLeft);
+	e4->setPosition(12, eLeft);
 
 
+	//link players together
+	p1->link(DOWN_LINK, p2);
+	p2->link(DOWN_LINK, p3);
+	p3->link(DOWN_LINK, p4);
+
+	//link enemies together
+	e1->link(DOWN_LINK, e2);
+	e2->link(DOWN_LINK, e3);
+	e3->link(DOWN_LINK, e4);
+
+	//link players to enemies
+	p1->link(RIGHT_LINK, e1);
+	p2->link(RIGHT_LINK, e2);
+	p3->link(RIGHT_LINK, e3);
+	p4->link(RIGHT_LINK, e4);
+
+	//link hidden items
+	e1->link(RIGHT_LINK, eh1);
+	e2->link(RIGHT_LINK, eh2);
+	e3->link(RIGHT_LINK, eh3);
+	e4->link(RIGHT_LINK, eh4);
+
+	p1->link(LEFT_LINK, ph1);
+	p2->link(LEFT_LINK, ph2);
+	p3->link(LEFT_LINK, ph3);
+	p4->link(LEFT_LINK, ph4);
+
+	//add all items to menu
+	targetMenu->setItem(p1);
+	targetMenu->setItem(p2);
+	targetMenu->setItem(p3);
+	targetMenu->setItem(p4);
+	targetMenu->setItem(e1);
+	targetMenu->setItem(e2);
+	targetMenu->setItem(e3);
+	targetMenu->setItem(e4);
+	targetMenu->setItem(eh1);
+	targetMenu->setItem(eh2);
+	targetMenu->setItem(eh3);
+	targetMenu->setItem(eh4);
+	targetMenu->setItem(ph1);
+	targetMenu->setItem(ph2);
+	targetMenu->setItem(ph3);
+	targetMenu->setItem(ph4);
+
+	targetMenu->setCurrentItem(0);
+
+	bool playing = true;
+	while (playing)
+	{
+		targetMenu->draw();
+		doupdate();
+
+		int input = getch();
+
+		switch (input)
+		{
+		case KEY_ESC: playing = false; break;
+		default:
+		{
+			absMenuDriver(input, targetMenu);
+
+			MenuItem* item = targetMenu->getCurrentItem();
+			if (item == NULL)
+			{
+				continue;
+			}
+			else if (item == eh1 || item == eh2 || item == eh3 || item == eh4)
+			{
+				targetMenu->selectItem(1);
+				targetMenu->selectItem(3);
+				targetMenu->selectItem(5);
+				targetMenu->selectItem(7);
+			}
+			else if (item == ph1 || item == ph2 || item == ph3 || item == ph4)
+			{
+				targetMenu->selectItem(0);
+				targetMenu->selectItem(2);
+				targetMenu->selectItem(4);
+				targetMenu->selectItem(6);
+			}
+			else
+			{
+				for(int i = 0; i < 8; i++) //clear all non-hidden items
+					targetMenu->deSelectItem(i);
+			}
+
+
+		}
+		break;
+		}
+	}
+	
 }
 
 
 void actorCardTest()
 {
-	Actor* a = createActor();
+	//Actor* a = createActor();
+	ActorDef* def = new ActorDef();
+	Actor* a = new Actor();
+	a->def = def;
 
-	ActorCard* card = new ActorCard(a);
+	ifstream* is = new ifstream();
+	is->open("test.atr", ios::binary);
+	
+	a->def->load(is);
 
-	card->draw(stdscr, 1, 1);
+
+	ActorCard* card = new ActorCard(a, 0, -1);
+
+	card->draw(stdscr);
 	wnoutrefresh(stdscr);
 	doupdate();
 
 	int input = getch();
+}
+
+void graphMenuTest()
+{
+	GraphMenu* menu = new GraphMenu(newwin(10, 30, 1, 1), 4);
+	LineItem* li = new LineItem("item1", 0, -1);
+	li->setPosition(3, 3);
+	ActorCard* ac = new ActorCard(createActor(), 1, -1);
+	ac->setPosition(6, 10);
+	menu->setItem(li);
+	menu->setItem(ac);
+	
+	menu->setCurrentItem(1);
+	ac->link(UP_LINK, li);
+
+	bool playing = true;
+	while (playing)
+	{
+		menu->draw();
+		doupdate();
+		int input = getch();
+
+		switch (input)
+		{
+		case KEY_ESC: playing = false; break;
+		default:
+		{
+			MenuItem* item = absMenuDriver(input, menu);
+
+			if (item == NULL)
+			{
+				continue;
+			}
+
+		}
+		break;
+		}
+
+	}
+
+	
+}
+
+void objectFormTest()
+{
+	char buf[256];
+	GetFullPathName(".", 256, buf, NULL);
+	string fullPath(buf);
+
+	ifstream is ("data\\form_ActorDef.txt");
+	//is.open();
+
+	if (is.is_open() == false)
+	{
+		return;
+	}
+
+	string line;
+	
+	int i = 0;
+
+	string type;
+	getline(is, type); //get type
+
+	string label;
+	int length;
+	string member;
+	string validation;
+	string range;
+	
+	while (is.eof() == false)
+	{
+		getline(is, line);
+		is >> label >> length >> member >> validation >> range;
+
+		if (member.compare("name") == 0)
+		{
+			//TODO
+		}
+
+
+		//mvaddstr(i++, 0, line.c_str());
+		mvaddstr(i++, 0, validation.c_str());
+	}
+
+	wnoutrefresh(stdscr);
+	doupdate();
+	int input = getch();
+
+	is.close();
+}
+
+void textDisplaytest()
+{
+	WINDOW* textWin = newwin(5, 15, 1, 1);
+	string text = "01234567890123456789";
+	TextDisplay display(textWin, 5, 15, text.length());
+	
+	display.setText(text);
+	display.setColor(COLOR_BLUE, COLOR_MAGENTA_BOLD);
+	curs_set(CURSOR_INVISIBLE);
+	display.setEditable(true);
+	bool playing = true;
+	while (playing)
+	{
+		display.draw();
+		display.setFocus();
+		doupdate();
+		int c = getch();
+
+		if (c == KEY_ESC)
+		{
+			playing = false;
+		}
+		else
+			display.inputChar(c);
+	}
+
+}
+
+
+void formFieldTest()
+{
+	TextLabel* lbl = new TextLabel(newwin(1, 10, 1, 1), "Testlabel");
+	TextField* field = new TextField(16, 2, 1);
+	FormField* fField = new FormField(lbl, field, 0, NULL);
+
+	bool playing = true;
+	while (playing)
+	{
+		fField->draw();
+		field->setFocus();
+		doupdate();
+		int c = getch();
+
+		if (c == KEY_ESC)
+		{
+			playing = false;
+		}
+		else
+			field->inputChar(c);
+	}
 }
 
 
@@ -3592,13 +4007,21 @@ int main()
 	TUI* tui = new TUI();
 	tui->init();
 	//curs_set(0);
-	//actorCardTest();
+//	actorCardTest();
 //	tileMapTest();
 //	imageTest();
-	mapEditorTest();
+//	mapEditorTest();
+//	actorEditorTest();
+	//actorCardTest();
+	//objectFormTest();
+//	textDisplaytest();
+	//formFieldTest();
+	//textFieldtest();
+	battleTargetMenuTest();
+	//graphMenuTest();
 	//megaMapTest();
-	//menuTest();
-	//openDialogTest();
+//	gridMenuTest();
+//	openDialogTest();
 	//scrollTest();
 	//exitTest();
 	//movementProcessorTest();

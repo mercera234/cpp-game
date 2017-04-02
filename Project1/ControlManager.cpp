@@ -10,7 +10,24 @@ void ControlManager::registerControl(Controllable* c, char listeners, void(*call
 	c->setControlManager(this);
 	r->callback = callback;
 	r->listen_map = listeners;
+	r->next = r;
+	r->prev = r;//by default both pointers point to the current registration
+
+	//link controls
+	if (controls.empty() == false) //if not empty
+	{
+		Registration* curr = controls.back();
+		Registration* front = controls.front();
+		curr->next = r;
+		r->prev = curr;
+		r->next = front;
+		front->prev = r;
+	}
+	
 	controls.push_back(r);
+
+	cycleKey = '\t'; //tab will be the default always the default
+	revCycleKey = KEY_BTAB; //this is shifted tab key
 }
 
 void ControlManager::registerControl(Controllable* c, char listeners, Command* cmd)
@@ -46,7 +63,7 @@ void ControlManager::popControl()
 
 		if (c->isFocusable())
 		{
-			focus = c;
+			focus = r;
 		}
 	}
 }
@@ -54,11 +71,48 @@ void ControlManager::popControl()
 
 Controllable* ControlManager::getFocus()
 {
-	return focus;
+	return focus->c;
 }
+
+void ControlManager::cycleFocus(short key)
+{
+	if (key == cycleKey)
+	{
+		focus = focus->next;
+	}
+	else if (key == revCycleKey)
+	{
+		focus = focus->prev;
+	}
+}
+
+/*
+Maybe there's a better way to do this!
+*/
+void ControlManager::setFocus(Controllable* c)
+{ 
+	list<Registration*>::iterator it;
+	Registration* focusReg;
+	for (it = controls.begin(); it != controls.end(); it++)
+	{
+		Registration* r = *it;
+		if (r->c == c)
+		{
+			focus = r;
+			break;
+		}
+	}
+} 
 
 bool ControlManager::handleGlobalInput(int input)
 {
+	//check for cycle key
+	if (input == cycleKey || input == revCycleKey)
+	{
+		cycleFocus(input);
+		return true;
+	}
+
 	//process global input for non-modal controls
 	list<KeyAccelerator*>::iterator it;
 	for (it = shortcuts.begin(); it != shortcuts.end(); it++)//having this here suggests that global inputs cannot ever be used in local components
@@ -84,7 +138,7 @@ bool ControlManager::handleGlobalInput(int input)
 bool ControlManager::handleInput(int input)
 {
 	//process global inputs if the focused control is not modal
-	if (focus->isModal() == false)
+	if (focus->c->isModal() == false)
 	{
 		bool status = handleGlobalInput(input);
 		if (status == false)
@@ -105,7 +159,7 @@ bool ControlManager::handleInput(int input)
 			if(wenclose(c->getWindow(), event.y, event.x))
 			{
 				if (c->isFocusable())
-					focus = c;
+					focus = r;
 
 				if (r->callback != NULL)
 				{
@@ -117,14 +171,12 @@ bool ControlManager::handleInput(int input)
 		}
 		else if(r->listen_map & KEY_LISTENER)
 		{
-			Controllable* c = r->c;
-			
 			//process local key input			
-			if (c == focus) //only route the input if control has focus
+			if (r == focus) //only route the input if control has focus
 			{
 				if (r->callback != NULL)
 				{
-					r->callback(caller, c, input);
+					r->callback(caller, r->c, input);
 					break;
 				}
 				else if(r->cmd != NULL) //implement command if setup
@@ -158,4 +210,5 @@ void ControlManager::draw()
 		Controllable* c = r->c;
 		c->draw();
 	}
+	focus->c->setFocus(); //execute the focused component's method for rendering focus
 }

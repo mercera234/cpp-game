@@ -36,6 +36,7 @@ public:
 	void setWindow(WINDOW* win);
 	virtual void draw() = 0;
 	virtual void move(int y, int x);
+	virtual void setFocus() {};
 	WINDOW* getWindow() { return win; };
 	bool isInWindow(int y, int x);
 	void translateCoords(int inY, int inX, int &outY, int &outX);
@@ -48,6 +49,8 @@ public:
 	int getUlX() { return ulX; }
 	unsigned short getTotalRows() { return totalRows; }
 	unsigned short getTotalCols() { return totalCols; }
+	unsigned short getVisibleRows() { return visibleRows; }
+	unsigned short getVisibleCols() { return visibleCols; }
 	void setPosition(int y, int x);
 	void shift(int y, int x);
 };

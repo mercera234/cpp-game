@@ -18,9 +18,9 @@ using namespace std;
 #define SAVE_MAP 2
 #define QUIT_MAP 3
 
-#define MAP_CHOOSE 1
-#define MAP_EDIT 2
-#define MAP_NAME 3
+//#define MAP_CHOOSE 1
+//#define MAP_EDIT 2
+//#define MAP_NAME 3
 
 #define DOT 0
 #define FILL 1
@@ -38,7 +38,7 @@ using namespace std;
 
 #define DEF_MAP_EXTENSION ".map"
 #define DEF_FILENAME "Untitled.map" //will add open/close arrows later
-//#define 
+
 class MapEditor
 {
 private:
@@ -110,7 +110,7 @@ private:
 	MapEffectFilterPattern* mapEffectFilterPattern;
 	Highlighter* hl;
 
-	int state;
+	//int state;
 	bool modified;
 	string fileName;
 	string dialogDefPath;
@@ -121,10 +121,10 @@ private:
 	bool processMapInput(int input);
 	void processMouseInput(int input);
 
-	void processMovementInput(int input);
+	/*void processMovementInput(int input);
 	int  getMoveMagnitudeFromKey(int key);
 	int  getDirectionFromKey(int key);
-	void processDirectionalInput(int input, int magnitude);
+	void processDirectionalInput(int input, int magnitude);*/
 	void processShiftDirectionalInput(int input);
 
 	void processPaletteInput(Palette* p, int input);
