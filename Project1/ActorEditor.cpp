@@ -1,6 +1,7 @@
 #include "ActorEditor.h"
 #include "TUI.h"
 #include <string>
+#include <dirent.h>
 
 ActorEditor::ActorEditor()
 {
@@ -12,12 +13,26 @@ ActorEditor::ActorEditor()
 	actor = new Actor();
 	actor->def = def;
 
+	//setup filename (this should eventually be moved to program that sets up master editor
+	fileName = DEF_FILENAME;
+	WINDOW* textWin = newwin(1, 15, 0, 1);
+	fileNameLbl = new TextLabel(textWin, fileName);
+
+	//setup default file path for opening/saving files
+	char buf[256];
+	GetFullPathName(".", 256, buf, NULL);
+	dialogDefPath = buf;
+
+
 	cm = new ControlManager(this);
 
 	setupFields();
+	cm->registerControl(fileNameLbl, 0, 0);
 
 	cm->registerShortcutKey(KEY_ESC, globalCallback);
 	cm->registerShortcutKey(CTRL_S, globalCallback);
+	cm->registerShortcutKey(CTRL_N, globalCallback);
+	cm->registerShortcutKey(CTRL_O, globalCallback);
 	cm->setFocus(fields->front());
 }
 
@@ -60,16 +75,24 @@ void ActorEditor::setupField(string fieldName, int maxLen, int fieldY, int type,
 
 void ActorEditor::draw()
 {
+	clear();
+	wnoutrefresh(stdscr);
 	cm->draw();
 }
 
 
-//void ActorEditor::drawLabel(int row, string lbl)
-//{
-//	//start from fieldMargin, back 2 beyond : and space, subtract length of string
-//	int left = fieldMargin - 2 - lbl.length();
-//	mvprintw(row, left, "%s:", lbl.c_str());
-//}
+void ActorEditor::createNew()
+{
+	//clear text from all fields
+	for (list<FormField*>::iterator it = fields->begin(); it != fields->end(); it++)
+	{
+		FormField* ff = (FormField*)*it;
+		ff->clear();
+	}
+	cm->setFocus(fields->front());
+	fileName = DEF_FILENAME;
+	setModified(false);
+}
 
 
 bool ActorEditor::processInput(int input)
@@ -77,92 +100,87 @@ bool ActorEditor::processInput(int input)
 	return cm->handleInput(input);
 }
 
-void ActorEditor::processGlobalInput(int input)
+
+void ActorEditor::load(string fileName)
 {
-	//handle preliminary input
-	switch (input)
+	//load the actor from file
+	ifstream* is = new ifstream(fileName, ios::binary);
+	actor->def->load(is);
+	is->close();
+
+	//populate each field with actor data
+	for (list<FormField*>::iterator it = fields->begin(); it != fields->end(); it++)
 	{
-	case KEY_ESC: //quit
-		/*if (modified)
-		{
-			Frame* f = createConfirmDialog();
-
-			cm->registerControl(f, KEY_LISTENER, confirmQuitCallback);
-			cm->setFocus(f);
-		}
-		else
-		{*/
-			cm->prepareForShutdown();
-		//}
-		break;
-	case CTRL_N:
-		/*if (modified)
-		{
-			Frame* f = createConfirmDialog();
-
-			cm->registerControl(f, KEY_LISTENER, confirmNewCallback);
-			cm->setFocus(f);
-		}
-		else
-		{
-			newMap();
-		}*/
-		break;
-	case CTRL_O:
-		/*if (modified)
-		{
-			Frame* f = createConfirmDialog();
-
-			cm->registerControl(f, KEY_LISTENER, confirmOpenCallback);
-			cm->setFocus(f);
-		}
-		else
-		{
-			setupFileDialog(OPEN_DIALOG);
-		}*/
-
-		break;
-	case CTRL_S:
-		//if (modified) //save only if there are changes
-		//	setupFileDialog(SAVE_DIALOG);
-
-		//temporary only!!!!
-		saveFields();
-
-		ofstream* os = new ofstream("test.atr", ios::binary | ios::trunc);
-		actor->def->save(os);
-		os->close();
-		break;
+		FormField* ff = (FormField*)*it;
+		loadField(ff);
 	}
 }
 
-
-void ActorEditor::globalCallback(void* caller, void* ptr, int input) //static
+void ActorEditor::loadField(FormField* ff)
 {
-	ActorEditor* ae = (ActorEditor*)caller;
-	ae->processGlobalInput(input);
+	TextField* field = (TextField*)ff->getField();
+	int type = ff->getType();
+	void* data = ff->getData();
+	string text = field->getText();
+
+	switch (type)
+	{
+	case T_STRING:
+	{
+		string* d = (string*)data;
+		field->setText(*d);
+	} break;
+	case T_CHAR:
+	{
+		char* c = (char*)data;
+		string c2 = c;
+		field->setText(c2);
+	} break;
+	case T_INTEGER:
+	{
+		int* i = (int*)data;
+		field->setText(*i);
+	} break;
+	case T_SHORT:
+	{
+		short* s = (short*)data;
+		field->setText(*s);
+	} break;
+	case T_FLOAT:
+	{
+		float* f = (float*)data;
+		field->setText(*f);
+	} break;
+	}
+
+
 }
 
 
-void ActorEditor::saveFields()
+void ActorEditor::save(string fileName)
 {
-	ActorDef* def = actor->def;
-
+	//extract data from fields and put in the Actor
 	for (list<FormField*>::iterator it = fields->begin(); it != fields->end(); it++)
 	{
 		FormField* ff = (FormField*)*it;
 		saveField(ff);
 	}
+
+	//save the Actor to file
+	ofstream* os = new ofstream(fileName, ios::binary | ios::trunc);
+	actor->def->save(os);
+	os->close();
 }
+
 
 void ActorEditor::saveField(FormField* ff)
 {
 	TextField* field = (TextField*)ff->getField();
-	int id = ff->getId();
+	int type = ff->getType();
 	void* data = ff->getData();
 	string text = field->getText();
 
-	switch (id)
+	switch (type)
 	{
 	case T_STRING:
 	{
@@ -206,11 +224,13 @@ void ActorEditor::textFieldDriver(TextField* field, int input)
 	{
 	case KEY_MOUSE: //cm->setFocus(field); 
 		break;
+	case KEY_BTAB:
 	case '\t':
 		//does nothing here, but cycles choice in the control manager. We don't want this routed as input to the field
 		break;
 	default:
 		field->inputChar(input);
+		setModified(true);
 		break;
 	}
 

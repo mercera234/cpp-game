@@ -1,14 +1,25 @@
 #include "TextField.h"
 #include <sstream>
+#include "TUI.h"
 
+//I can't get rid of this method yet because it is needed if TextField is derived from another window
 TextField::TextField(WINDOW* win)
 {
+	totalRows = 1;
+	totalCols = maxLen = getmaxx(win);
+
 	init(win);
 }
 
+/*
+Right now, this assumes the window length and text max length are equal
+*/
 TextField::TextField(int length, int y, int x)
 {
-	WINDOW* w = newwin(1, length, y, x);
+	totalRows = 1;
+	totalCols = maxLen = length;
+
+	WINDOW* w = newwin(totalRows, length, y, x);
 	init(w);
 }
 
@@ -17,15 +28,16 @@ void TextField::init(WINDOW* win)
 	focusable = true;
 
 	setWindow(win);
-	//this->win = win;
-	getbegyx(win, y, x);
+	getbegyx(win, scrY, scrX);
 
-	length = getmaxx(win);
-	text = new char[length + 1]; //set one more so there is a null char at the end
+	//length = getmaxx(win);
+	text = new char[maxLen]; //set one more so there is a null char at the end
 
-	memset(text, BLANK_SPACE, length);
+	setEditable(true);
+
+	memset(text, BLANK_SPACE, maxLen);
+	curLen = 0; //length of text stored
 	textPtr = text;
-	text[length] = 0; //end with null term
 	cursorPos = 0; //starts at beginning
 
 	color = 0x00000000; //set to black and white by default
@@ -33,81 +45,119 @@ void TextField::init(WINDOW* win)
 
 void TextField::setFocus()
 {
-	curs_set(1);
+	curs_set(CURSOR_NORMAL);
+
+	//apply move globally to screen
 	//need to use :: to differentiate this from the Controllable move method
-	::move(y, x + cursorPos); //a known issue with using wmove combined with getch is why we're using move
+	::move(scrY, scrX + cursorPos); //a known issue with using wmove combined with getch is why we're using move
 }
+
+bool TextField::deleteChar()
+{
+	if (cursorPos >= curLen)
+		return false;
+	//shift string beyond position up a space
+	short moveSize = curLen - (cursorPos + 1); //length of printable characters - one beyond current position
+	memcpy_s(textPtr, moveSize, textPtr + sizeof(char), moveSize);
+	//clear last position
+	text[curLen - 1] = BLANK_SPACE;
+	curLen--; //decrement current length
+	return true;
+}
+
+
+bool TextField::insertChar(int c)
+{
+	if (curLen >= maxLen)
+		return false;
+
+	//verify character is within ascii range
+	if (c < ' ' || c > '~')
+		return false;
+
+	short moveSize = maxLen - cursorPos - 1;
+	memcpy_s(textPtr + sizeof(char), moveSize, textPtr, moveSize);
+
+	*textPtr = c;
+
+	shiftCursor(1);
+
+	curLen++;
+	return true;
+}
+
 
 bool TextField::inputChar(int c)
 {
 	short moveSize;
+	bool result = true;
 	switch (c)
 	{
 	case '\b':
 		if (cursorPos <= 0)
 			return false;
-		//shift string beyond position up a space
-		moveSize = length - cursorPos; //length of printable characters - one beyond current position
-		textPtr--;
-		cursorPos--;
-		memcpy_s(textPtr, moveSize, textPtr + sizeof(char), moveSize);
-		//clear last position
-		text[length - 1] = BLANK_SPACE;
+		//backup one character and then use regular delete character routine
+		shiftCursor(-1);
+		result = deleteChar();
 		break;
 	case KEY_DC:
-		if (cursorPos >= length)
-			return false;
-		//shift string beyond position up a space
-		moveSize = length - (cursorPos + 1); //length of printable characters - one beyond current position
-		memcpy_s(textPtr, moveSize, textPtr + sizeof(char), moveSize);
-		//clear last position
-		text[length - 1] = BLANK_SPACE;
+		result = deleteChar();
 		break;
 	case KEY_LEFT: 
 		if (cursorPos <= 0)
 			return false;
 
-		cursorPos--; textPtr--; break;
+		shiftCursor(-1);
+		break;
 	case KEY_RIGHT: 
-		if (cursorPos >= length) //can't move write after last character
+		if (cursorPos >= curLen) //can't move right after last character
 			return false;
 
-		cursorPos++; textPtr++; break;
-
+		shiftCursor(1);
+		break;
 	case KEY_HOME: 
-		cursorPos = 0;
-		textPtr = text;
+		moveHome();
 		break;
 	case KEY_END: 
-		cursorPos = length - 1;
-		textPtr = text + length - 1;
+		moveEnd();
 		break;
 	default: //all printable characters
-		if (cursorPos >= length)
-			return false;
-
-		//verify character is within ascii range
-		if (c < ' ' || c > '~')
-			return false;
-
-		moveSize = length - cursorPos - 1;
-		memcpy_s(textPtr + sizeof(char), moveSize, textPtr, moveSize);
-
-		*textPtr++ = c; 
-		cursorPos++;
-		
+		result = insertChar(c);	
 		break;
 	}
 
 	return true;
 }
 
+void TextField::shiftCursor(int amount)
+{
+	moveCursor(cursorPos + amount);
+}
+
+void TextField::moveCursor(unsigned int position)
+{
+	cursorPos = position;
+	textPtr = text + cursorPos;
+}
+
+void TextField::moveHome()
+{
+	moveCursor(0);
+}
+
+void TextField::moveEnd()
+{
+	moveCursor(curLen);
+}
+
+
 void TextField::setText(string text)
 {
-	memset(this->text, BLANK_SPACE, length);
+	clear();
 	const char* t = text.c_str();
-	memcpy_s(this->text, text.length(), t, text.length());
-	cursorPos = text.length();
+	memcpy_s(this->text, maxLen, t, text.length());
+	curLen = text.length();
+	cursorPos = curLen;
 	textPtr = this->text + cursorPos;
 }
 
@@ -120,8 +170,8 @@ void TextField::setText(int value)
 
 string TextField::getText()
 {
-	string t = text;
-
+	string t(text, curLen);
+	
 	//trim algorithm
 	t.erase(0, t.find_first_not_of(' '));       //prefixing spaces
 	t.erase(t.find_last_not_of(' ') + 1);         //suffixing spaces
@@ -137,27 +187,16 @@ void TextField::draw()
 {
 	wclear(win);
 	wbkgd(win, color);
-	//wattron(win, color);
-
+	
 	char* pos = text;
 	bool endReached = false;
 
-	for (int row = 0; row < visibleRows && endReached == false; row++)
+	for (int col = 0; col < visibleCols && col < maxLen; col++)
 	{
-		for (int col = 0; col < visibleCols && endReached == false; col++)
-		{
-			switch (*pos)
-			{
-			case '\n': pos++; break;//advance beyond newline
-			case 0: endReached = true; break;
-			default: mvwaddch(win, row, col, *pos++);
-			}
-		}
-
+		mvwaddch(win, 0, col, *pos++);
 	}
 
-	//add
-	//mvwaddstr(win, 0, 0, text);
+
 	wnoutrefresh(win);
 }
 
@@ -168,6 +207,16 @@ void TextField::setColor(int bkgdColor, int textColor)
 	color &= 0xff000000;
 }
 
+
+void TextField::clear()
+{
+	memset(text, BLANK_SPACE, curLen);
+	moveHome();
+	curLen = 0;
+	
+	/*textPtr = text;
+	cursorPos = 0;*/
+}
 
 TextField::~TextField()
 {

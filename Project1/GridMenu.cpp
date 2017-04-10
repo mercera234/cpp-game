@@ -149,6 +149,9 @@ void GridMenu::setWrapAround(bool wrap)
 		wrapLinks(); 
 }
 
+/*
+Post the menu. This method is important because it links up the items internally after all items have been filled.
+*/
 bool GridMenu::post(bool post)
 {
 	if (itemCount != capacity)
@@ -578,6 +581,18 @@ void GridMenu::dirDriver(int input)
 			}
 
 			break;
+		case REQ_SCR_DPAGE: //not sure if this is the most efficient way to page up and down but it was quick to implement
+			for (int i = 0; i < visibleRows; i++)
+			{
+				driver(REQ_DOWN_ITEM);
+			}
+			break;
+		case REQ_SCR_UPAGE:
+			for (int i = 0; i < visibleRows; i++)
+			{
+				driver(REQ_UP_ITEM);
+			}
+			break;
 	}
 
 }
@@ -598,6 +613,8 @@ int GridMenu::driver(int input)
 	case REQ_UP_ITEM:
 	case REQ_RIGHT_ITEM:
 	case REQ_LEFT_ITEM: 
+	case REQ_SCR_DPAGE:
+	case REQ_SCR_UPAGE:
 		dirDriver(input);
 		break;
 	case REQ_TOGGLE_ITEM:

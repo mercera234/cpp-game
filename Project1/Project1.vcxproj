@@ -123,8 +123,10 @@
     <ClCompile Include="ActorEditor.cpp" />
     <ClCompile Include="BWFilter.cpp" />
     <ClCompile Include="ChtypeFilter.cpp" />
+    <ClCompile Include="Editor.cpp" />
     <ClCompile Include="FilterPattern.cpp" />
     <ClCompile Include="Form.cpp" />
+    <ClCompile Include="FormControl.cpp" />
     <ClCompile Include="FormField.cpp" />
     <ClCompile Include="GraphMenu.cpp" />
     <ClCompile Include="GridMenu.cpp" />
@@ -140,6 +142,7 @@
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="MapEditor.cpp" />
     <ClCompile Include="MapEffectFilterPattern.cpp" />
+    <ClCompile Include="MasterEditor.cpp" />
     <ClCompile Include="MegaMap.cpp" />
     <ClCompile Include="CursesPanel.cpp" />
     <ClCompile Include="Menu.cpp" />
@@ -169,6 +172,7 @@
     <ClInclude Include="Exit.h" />
     <ClInclude Include="FilterPattern.h" />
     <ClInclude Include="Form.h" />
+    <ClInclude Include="FormControl.h" />
     <ClInclude Include="FormField.h" />
     <ClInclude Include="GraphMenu.h" />
     <ClInclude Include="GridMenu.h" />
@@ -185,6 +189,7 @@
     <ClInclude Include="MapEditor.h" />
     <ClInclude Include="MapEffectFilterPattern.h" />
     <ClInclude Include="MapMetadata.h" />
+    <ClInclude Include="MasterEditor.h" />
     <ClInclude Include="MegaMap.h" />
     <ClInclude Include="CursesPanel.h" />
     <ClInclude Include="Menu.h" />

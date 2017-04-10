@@ -1,6 +1,6 @@
 #include "TUI.h"
 #include "CursesPanel.h"
-#include "Menu.h"
+//#include "Menu.h"
 #include "MapEditor.h"
 #include "CursesAttributeController.h"
 #include "RGBControl.h"
@@ -36,6 +36,7 @@
 #include "ActorEditor.h"
 #include "TextDisplay.h"
 #include "FormField.h"
+#include "MasterEditor.h"
 
 void mockFightTest()
 {
@@ -194,6 +195,8 @@ MenuItem* absMenuDriver(int input, AbstractMenu* m)
 	case KEY_UP: retval = m->driver(REQ_UP_ITEM); break;
 	case KEY_LEFT: retval = m->driver(REQ_LEFT_ITEM); break;
 	case KEY_RIGHT: retval = m->driver(REQ_RIGHT_ITEM); break;
+	case KEY_PGDN: m->driver(REQ_SCR_DPAGE); break;
+	case KEY_PGUP: m->driver(REQ_SCR_UPAGE); break;
 	case '\n':
 	case '\r':
 	case KEY_ENTER:
@@ -225,84 +228,84 @@ MenuItem* confirmDriver(int input, Menu* m)
 	return item;
 }
 
-void menuTest()
-{
-	int rows = 1;
-	int cols = 12;
-	WINDOW* win = newwin(12, 1 * 25, 1, 1);
-
-	Menu menu(win, rows, cols);
-
-	menu.setItem(new LineItem("0123456789012345", 0, 'N'));
-	menu.setItem(new LineItem("TOGGLE WRAP", 1, 'L'));
-	menu.setItem(new LineItem("QUIT", 2, 'Q'));
-	//menu.setItem("3123456789012345", "", 3, 'T');
-	menu.setItem(new LineItem("4123456789012345", 4, '?'));
-	menu.setItem(new LineItem("Clear", 5, 'N'));
-	menu.setItem(new LineItem("Flip Mark", 6, 'L'));
-	menu.setItem(new LineItem("7123456789012345", 7, 'Q'));
-	menu.setItem(new LineItem("8123456789012345", 8, 'T'));
-	menu.setItem(new LineItem("9123456789012345", 9, '?'));
-	menu.setItem(new LineItem("a123456789012345", 10, 'N'));
-	menu.setItem(new LineItem("b123456789012345", 11, 'L'));
-
-//	menu.setMenuColWidth(18);
-//	menu.setMenuRowHeight(3);
-//	menu.disableItem(8, 0);
-	menu.setSelectedIndex(0);
-	int markSide = LEFT_MARK;
-	menu.setMarkSide(markSide);
-	bool wrap = true;
-
-	bool usingMenu = true;
-	while (usingMenu)
-	{
-		menu.draw();
-		doupdate();
-		int input = getch();
-
-		switch (input) //process global input
-		{
-		case KEY_ESC: usingMenu = false; break;
-		default: 
-		{
-			MenuItem* item = menuDriver(input, &menu);
-
-			if (item == NULL)
-			{
-				continue;
-			}
-
-			switch (item->index)
-			{
-
-			case 2:
-				usingMenu = false;
-				break;
-			case 1:
-				menu.setWrapAround(wrap = !wrap); break;
-			case 5:
-				menu.clear();
-				break;
-			case 6:
-				menu.setMarkSide(markSide = !markSide); break;
-
-			default:
-				mvaddch(7, 30, (chtype)item->crossRef);
-				break;
-			}
-		}
-			break;
-		}
-	}
-}
+//void menuTest()
+//{
+//	int rows = 1;
+//	int cols = 12;
+//	WINDOW* win = newwin(12, 1 * 25, 1, 1);
+//
+//	Menu menu(win, rows, cols);
+//
+//	menu.setItem(new LineItem("0123456789012345", 0, 'N'));
+//	menu.setItem(new LineItem("TOGGLE WRAP", 1, 'L'));
+//	menu.setItem(new LineItem("QUIT", 2, 'Q'));
+//	//menu.setItem("3123456789012345", "", 3, 'T');
+//	menu.setItem(new LineItem("4123456789012345", 4, '?'));
+//	menu.setItem(new LineItem("Clear", 5, 'N'));
+//	menu.setItem(new LineItem("Flip Mark", 6, 'L'));
+//	menu.setItem(new LineItem("7123456789012345", 7, 'Q'));
+//	menu.setItem(new LineItem("8123456789012345", 8, 'T'));
+//	menu.setItem(new LineItem("9123456789012345", 9, '?'));
+//	menu.setItem(new LineItem("a123456789012345", 10, 'N'));
+//	menu.setItem(new LineItem("b123456789012345", 11, 'L'));
+//
+////	menu.setMenuColWidth(18);
+////	menu.setMenuRowHeight(3);
+////	menu.disableItem(8, 0);
+//	menu.setSelectedIndex(0);
+//	int markSide = LEFT_MARK;
+//	menu.setMarkSide(markSide);
+//	bool wrap = true;
+//
+//	bool usingMenu = true;
+//	while (usingMenu)
+//	{
+//		menu.draw();
+//		doupdate();
+//		int input = getch();
+//
+//		switch (input) //process global input
+//		{
+//		case KEY_ESC: usingMenu = false; break;
+//		default: 
+//		{
+//			MenuItem* item = menuDriver(input, &menu);
+//
+//			if (item == NULL)
+//			{
+//				continue;
+//			}
+//
+//			switch (item->index)
+//			{
+//
+//			case 2:
+//				usingMenu = false;
+//				break;
+//			case 1:
+//				menu.setWrapAround(wrap = !wrap); break;
+//			case 5:
+//				menu.clear();
+//				break;
+//			case 6:
+//				menu.setMarkSide(markSide = !markSide); break;
+//
+//			default:
+//				mvaddch(7, 30, (chtype)item->crossRef);
+//				break;
+//			}
+//		}
+//			break;
+//		}
+//	}
+//}
 
 
 void gridMenuTest()
 {
-	int rows = 2;
-	int cols = 6;
-	WINDOW* win = newwin(2, 2 * 19, 1, 1);
+	int rows = 12;
+	int cols = 1;
+	WINDOW* win = newwin(3, 1 * 19, 1, 1);
 
 	GridMenu menu(win, rows, cols);
 
@@ -1372,30 +1375,29 @@ void colorPairTest()
 void modalCallback(void* caller, void* ptr, int input)
 {
 	Frame* f = (Frame*)ptr;
-	Menu* m = (Menu*)f->getControl();
+	GridMenu* m = (GridMenu*)f->getControl();
 
+	MenuItem* item = NULL;
 	switch (input)
 	{
 	case KEY_LEFT: m->driver(REQ_LEFT_ITEM);  break;
 	case KEY_RIGHT: m->driver(REQ_RIGHT_ITEM);  break;
 		//case KEY_UP: m->driver(REQ_UP_ITEM);  break;
 		//case KEY_DOWN: m->driver(REQ_DOWN_ITEM);  break;
-	case '\r': m->driver(REQ_TOGGLE_ITEM); break;
+	case '\r':
+		item = m->getCurrentItem();
+		break;
 	}
 
-	MenuItem* item = m->getCurrentItem();
+	
 	if (item != NULL)
 	{
 		ControlManager* cm = f->getControlManager();
-		if (item->index == 0) //YES
+		switch (item->index)
 		{
-			//exit(0); //works, but probably not good to use in a game with multiple states
-			cm->prepareForShutdown();
-		}
-		else if (item->index == 1) //no remove modal window
-		{
-			//cm = m->getControlManager();
-			cm->popControl();
+		//case 0: cm->prepareForShutdown(); break;
+		case 0: cm->setActive(false); break;
+		case 1: cm->popControl(); break;
 		}
 	}
 
@@ -1404,7 +1406,8 @@ void modalCallback(void* caller, void* ptr, int input)
 
 void callBackTest(void* caller, void* ptr, int input)
 {
-	Menu* m = (Menu*)ptr;
+	GridMenu* m = (GridMenu*)ptr;
+	MenuItem* item = NULL;
 
 	switch (input)
 	{
@@ -1412,29 +1415,34 @@ void callBackTest(void* caller, void* ptr, int input)
 	case KEY_RIGHT: m->driver(REQ_RIGHT_ITEM);  break;
 	case KEY_UP: m->driver(REQ_UP_ITEM);  break;
 	case KEY_DOWN: m->driver(REQ_DOWN_ITEM);  break;
-	case '\r': m->driver(REQ_TOGGLE_ITEM); break;
+	case '\r': 
+		item = m->getCurrentItem();
+		break;
 	}
 
-	MenuItem* item = m->getCurrentItem();
+	
 	if (item != NULL)
 	{
-		if (item->index == 0) //YES
+		switch(item->index)
 		{
+		case 0:
 			//create modal menu
-
+		{
 			WINDOW* win = newwin(4, 40, 6, 40);
 			WINDOW* dWin = derwin(win, 1, 38, 2, 1);
-			Menu* modal = new Menu(dWin, 1, 2);
-			modal->setModal(true);
-		/*	modal->setItem("Yes", "", 0, 0);
-			modal->setItem("No", "", 1, 1);
-		*/	
+			GridMenu* modal = new GridMenu(dWin, 1, 2);
+			modal->setItem(new LineItem("Yes", 0, 0));
+			modal->setItem(new LineItem("No", 1, 1));
+			modal->post(true);
 			Frame* f = new Frame(win, modal);
 			f->setText("Are you sure you want to quit?", 1, 1);
+			f->setModal(true);
 			ControlManager* cm = m->getControlManager();
 			cm->registerControl(f, KEY_LISTENER, modalCallback);
 			cm->setFocus(f);
-			
+		}
+			break;
+		
 		}
 	}
 
@@ -1454,22 +1462,39 @@ void callBackTest2(void* caller, void* ptr, int input)
 
 void newCallback(void* caller, void* ptr, int input)
 {
+	clear();
 	mvaddstr(25, 25, "new callback called");
 }
 
 void quitCallback(void* caller, void* ptr, int input)
 {
 	ControlManager* cm = (ControlManager*)ptr;
-	cm->prepareForShutdown();
+	cm->setActive(false);
+	//cm->prepareForShutdown();
+}
+
+void textCallback(void* caller, void* ptr, int input)
+{
+	TextField* field = (TextField*)ptr;
+	
+	switch (input)
+	{
+	case KEY_BTAB:
+	case '\t': break;
+	default: field->inputChar(input); break;
+	}
+	
 }
 
 void controlManagerTest()
 {
 	WINDOW* win = newwin(2, 20, 1, 1);
-	Menu* m1 = new Menu(win, 2, 1);
+	GridMenu* m1 = new GridMenu(win, 2, 1);
 
-	/*m1->setItem("Yes", "", 0, 0);
-	m1->setItem("No", "", 1, 1);*/
+	m1->setItem(new LineItem("Yes", 0, 0));
+	m1->setItem(new LineItem("No", 1, 1));
+
+	m1->post(true);
 
 	int rows;
 	int cols;
@@ -1483,17 +1508,19 @@ void controlManagerTest()
 		palette->setItem(TUI::colorNames[i], c, y, x);
 	}
 
+	TextField* field1 = new TextField(15, 1, 30);
+
 
 	ControlManager* cm = new ControlManager(NULL);
 	cm->registerControl(m1, MOUSE_LISTENER | KEY_LISTENER, callBackTest);
 	cm->registerControl(palette, MOUSE_LISTENER, callBackTest2);
+	cm->registerControl(field1, KEY_LISTENER, textCallback);
 	cm->registerShortcutKey(CTRL_N, newCallback);
-	cm->registerShortcutKey(CTRL_Q, quitCallback);
-
+	cm->registerShortcutKey(KEY_ESC, quitCallback);
+	
 	bool inMenus = true;
 	while (inMenus)
 	{
-		clear();
 		wnoutrefresh(stdscr);
 		cm->draw();
 		
@@ -1501,8 +1528,10 @@ void controlManagerTest()
 		doupdate();
 		int c = getch();
 
+		clear();
 		inMenus = cm->handleInput(c);
 	}
+	cm->shutdown();
 
 }
 
@@ -2063,12 +2092,25 @@ void textFieldtest()
 		doupdate();
 		int c = getch();
 
-		if (c == KEY_ESC)
+		switch (c)
 		{
+		case KEY_ESC:
 			playing = false;
+			break;
+		case CTRL_N:
+			field.clear();
+			break;
+		case '\r':
+		case '\n':
+		case KEY_ENTER:
+		{
+			string text = field.getText();
+			mvaddstr(3, 1, text.c_str());
 		}
-		else
+			break;
+		default:
 			field.inputChar(c);
+		}
 	}
 
 }
@@ -2661,6 +2703,7 @@ void fileChooserTest(int dialogType)
 	while (playing)
 	{
 		f->draw();
+		fd->setFocus();
 		doupdate();
 
 		int c = getch();
@@ -4001,32 +4044,33 @@ void formFieldTest()
 	}
 }
 
+void masterEditorTest()
+{
+	MasterEditor* editor = new MasterEditor();
+
+	bool editing = true;
+	while (editing) //simulate input/process/update loop
+	{
+		editor->draw();
+
+		doupdate();
+		int input = getch();
+
+		editing = editor->processInput(input);
+	}
+}
+
 
 int main()
 {
 	TUI* tui = new TUI();
 	tui->init();
-	//curs_set(0);
-//	actorCardTest();
-//	tileMapTest();
-//	imageTest();
+	
+//	controlManagerTest();
 //	mapEditorTest();
 //	actorEditorTest();
-	//actorCardTest();
-	//objectFormTest();
-//	textDisplaytest();
-	//formFieldTest();
-	//textFieldtest();
-	battleTargetMenuTest();
-	//graphMenuTest();
-	//megaMapTest();
-//	gridMenuTest();
-//	openDialogTest();
-	//scrollTest();
-	//exitTest();
-	//movementProcessorTest();
-	//mapTest();
-	//highlighterTest();
+	masterEditorTest();
+
 	tui->shutdown();
 	delete tui;
 	return 0;

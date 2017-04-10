@@ -38,7 +38,7 @@ MapEditor::MapEditor()
 
 	keypad(stdscr, true);
 
-	//setup filename
+	//setup filename (this should eventually be moved to program that sets up master editor
 	fileName = DEF_FILENAME;
 	WINDOW* textWin = newwin(1, 15, 0, 1);
 	fileNameLbl = new TextLabel(textWin, fileName);
@@ -46,12 +46,12 @@ MapEditor::MapEditor()
 	//setup default file path for opening/saving files
 	char buf[256];
 	GetFullPathName(".", 256, buf, NULL);
-	//string fullPath(buf);
 	dialogDefPath = buf;
-
+	extensionFilter = DEF_MAP_EXTENSION;
 
 	
 	map = new Map(fileName, canvasRows, canvasCols, viewport);
+	
 	image = map->getDisplay();
 	tileMap = image->getTileMap();
 
@@ -91,17 +91,17 @@ void MapEditor::setupControlManager()
 	cm->registerControl(canvasColsInput, KEY_LISTENER | MOUSE_LISTENER, canvasInputCallback);
 	cm->registerControl(map, KEY_LISTENER | MOUSE_LISTENER, mapCallback);
 	cm->setFocus(map);
-	cm->registerControl(mapEffectFilterPattern, 0, (Command*)0);
-	cm->registerControl(hl, 0, (Command*)0);
-	cm->registerControl(fileNameLbl, 0, (Command*) 0);
-	cm->registerControl(topRuler, 0, (Command*)0);
-	cm->registerControl(textTitle, 0, (Command*)0);
-	cm->registerControl(bkgdTitle, 0, (Command*)0);
-	cm->registerControl(toolTitle, 0, (Command*)0);
-	cm->registerControl(filterTitle, 0, (Command*)0);
-	cm->registerControl(xyLbl, 0, (Command*)0);
-	cm->registerControl(hLbl, 0, (Command*)0);
-	cm->registerControl(wLbl, 0, (Command*)0);
+	cm->registerControl(mapEffectFilterPattern, 0, 0);
+	cm->registerControl(hl, 0, 0);
+	cm->registerControl(fileNameLbl, 0, 0);
+	cm->registerControl(topRuler, 0, 0);
+	cm->registerControl(textTitle, 0, 0);
+	cm->registerControl(bkgdTitle, 0, 0);
+	cm->registerControl(toolTitle, 0, 0);
+	cm->registerControl(filterTitle, 0, 0);
+	cm->registerControl(xyLbl, 0, 0);
+	cm->registerControl(hLbl, 0, 0);
+	cm->registerControl(wLbl, 0, 0);
 	
 	cm->registerShortcutKey(KEY_ESC, globalCallback);
 	cm->registerShortcutKey(CTRL_N, globalCallback);
@@ -199,117 +199,14 @@ bool MapEditor::processInput(int input)
 }
 
 
-
-
-void MapEditor::processGlobalInput(int input)
-{
-	//handle preliminary input
-	switch (input)
-	{
-	case KEY_ESC: //quit
-		if (modified)
-		{
-			Frame* f = createConfirmDialog();
-
-			cm->registerControl(f, KEY_LISTENER, confirmQuitCallback);
-			cm->setFocus(f);
-		}
-		else
-		{
-			cm->prepareForShutdown();
-		}
-		break;
-	case CTRL_N: 
-		if (modified)
-		{
-			Frame* f = createConfirmDialog();
-			
-			cm->registerControl(f, KEY_LISTENER, confirmNewCallback);
-			cm->setFocus(f);
-		}
-		else
-		{
-			newMap();
-		}
-		break;
-	case CTRL_O:
-		if (modified)
-		{
-			Frame* f = createConfirmDialog();
-
-			cm->registerControl(f, KEY_LISTENER, confirmOpenCallback);
-			cm->setFocus(f);
-		}
-		else
-		{
-			setupFileDialog(OPEN_DIALOG);
-		}
-		
-		break;
-	case CTRL_S: 
-		if (modified) //save only if there are changes
-			setupFileDialog(SAVE_DIALOG);
-		break;
-	}
-}
-
-Frame* MapEditor::createConfirmDialog()
-{
-	//create confirmation dialog
-	string confirmMsg = "Are you sure? You have unsaved changes.";
-
-	int width, height;  getmaxyx(stdscr, height, width);
-	WINDOW* fWin = newwin(4, confirmMsg.length() + 2, (height - 4) / 2, (width - 40) / 2);
-	WINDOW* cdWin = derwin(fWin, 1, confirmMsg.length(), 2, 1);
-	GridMenu* cdMenu = new GridMenu(cdWin, 1, 2);
-	cdMenu->setItem(new LineItem("No", 0, 0));
-	cdMenu->setItem(new LineItem("Yes", 1, 1));
-	cdMenu->post(true);
-	
-	Frame* f = new Frame(fWin, cdMenu);
-	f->setText(confirmMsg, 1, 1);
-	f->setModal(true);
-	return f;
-}
-
-
-void MapEditor::newMap()
+void MapEditor::createNew()
 {
 	map->reset();
-	modified = false;
 	fileName = DEF_FILENAME;
-	fileNameLbl->setText(fileName);
+	setModified(false);
 }
 
 
-
-
-void MapEditor::setupFileDialog(int dialogType)
-{
-	//open file dialog
-	//char buf[256];
-	//GetFullPathName(".", 256, buf, NULL);
-	//string fullPath(buf);
-
-	int height = 12;
-	int width = 42;
-	WINDOW* main = newwin(height, width, (getmaxy(stdscr) - height) / 2, (getmaxx(stdscr) - width) / 2);
-	WINDOW* w = derwin(main, height - 2, width - 2, 1, 1);
-
-	FileChooser* fd = new FileChooser(w, dialogDefPath, dialogType, DEF_MAP_EXTENSION);
-
-	Frame* f = new Frame(main, fd);
-	f->setModal(true);
-
-	cm->registerControl(f, KEY_LISTENER, fileDialogCallback);
-	cm->setFocus(f);
-}
-
-void MapEditor::globalCallback(void* caller, void* ptr, int input) //static
-{
-	MapEditor* me = (MapEditor*)caller;
-	me->processGlobalInput(input);
-}
 
 void MapEditor::paletteCallback(void* caller, void* ptr, int input) //static
 {
@@ -323,29 +220,6 @@ void MapEditor::mapCallback(void* caller, void* ptr, int input) //static
 	me->processMapInput(input);
 }
 
-void MapEditor::confirmNewCallback(void* caller, void* ptr, int input) //static
-{
-	MapEditor* me = (MapEditor*)caller;
-	me->confirmDialogDriver((Controllable*)ptr, input, NEW_MAP);
-}
-
-void MapEditor::confirmOpenCallback(void* caller, void* ptr, int input) //static
-{
-	MapEditor* me = (MapEditor*)caller;
-	me->confirmDialogDriver((Controllable*)ptr, input, OPEN_MAP);
-}
-
-void MapEditor::confirmQuitCallback(void* caller, void* ptr, int input) //static
-{
-	MapEditor* me = (MapEditor*)caller;
-	me->confirmDialogDriver((Controllable*)ptr, input, QUIT_MAP);
-}
-
-void MapEditor::fileDialogCallback(void* caller, void* ptr, int input) //static
-{
-	MapEditor* me = (MapEditor*)caller;
-	me->fileDialogDriver((Controllable*)ptr, input);
-}
 
 void MapEditor::canvasInputCallback(void* caller, void* ptr, int input) //static
 {
@@ -376,85 +250,16 @@ void MapEditor::canvasInputDriver(TextField* field, int input)
 
 }
 
-void MapEditor::fileDialogDriver(Controllable* dialog, int input)
+
+void MapEditor::load(string fileName)
 {
-	Frame* f = (Frame*)dialog;
-	FileChooser* fd = (FileChooser*) f->getControl();
-
-	string fileChosen;
-	switch (input)
-	{
-	case KEY_DOWN: fd->driver(REQ_DOWN_ITEM);   break;
-	case KEY_UP: fd->driver(REQ_UP_ITEM); break;
-	case CTRL_Q: cm->popControl(); cm->setFocus(map); break;
-	case '\r':
-		fileChosen = fd->filePathDriver();
-		break;
-	default:
-		fd->driver(input);
-		break;
-	}
-
-	if (fileChosen.empty() == false)
-	{
-		switch (fd->getType())
-		{
-		case OPEN_DIALOG: map->load(fileChosen); break;
-		case SAVE_DIALOG: map->save(fileChosen); break;
-		}
-		modified = false;
-
-		int pos = fileChosen.find_last_of('\\');
-		fileName = fileChosen.substr(pos + 1, fileChosen.length());
-
-		fileNameLbl->setText(fileName);
-		cm->popControl(); 
-		cm->setFocus(map);
-
-		//save path that file was opened/saved from as the start point for next time
-		dialogDefPath = fileChosen.substr(0, pos);
-	}
+	map->load(fileName);
 }
 
-void MapEditor::confirmDialogDriver(Controllable* c, int input, int confirmMethod)
+void MapEditor::save(string fileName)
 {
-	Frame* f = (Frame*)c;
-	GridMenu* dialog = (GridMenu*)f->getControl();
-
-	MenuItem* mi = NULL;
-	switch (input)
-	{
-	case KEY_LEFT: dialog->driver(REQ_LEFT_ITEM); break;
-	case KEY_RIGHT: dialog->driver(REQ_RIGHT_ITEM); break;
-	case '\r': 
-		mi = dialog->getCurrentItem(); break;
-	}
-
-	if (mi != NULL)
-	{
-		switch (mi->index)
-		{
-		case 0: //no
-			cm->popControl();
-			cm->setFocus(map);
-			break;
-		case 1: //yes
-			cm->popControl();
-			switch (confirmMethod)
-			{
-			case NEW_MAP: newMap(); cm->setFocus(map); break;
-			case OPEN_MAP: setupFileDialog(OPEN_DIALOG); break;
-			case QUIT_MAP: 
-				cm->popControl();
-				cm->prepareForShutdown(); 
-				break;
-			}
-			
-			break;
-		}
-	}
+	map->save(fileName);
 }
-
 
 
 void MapEditor::processPaletteInput(Palette* p, int input)
@@ -544,13 +349,7 @@ void MapEditor::applyTool(int y, int x)
 		fill(y, x);
 		break;
 	}
-	markModified();
-}
-
-void MapEditor::markModified()
-{
-	modified = true;
-	fileNameLbl->setText(fileName + "*");
+	setModified(true);
 }
 
 
@@ -621,17 +420,17 @@ bool MapEditor::processMapInput(int input)
 		break;
 	case CTRL_V:
 		hl->paste(); 
-		markModified();
+		setModified(true);
 		break;
 	case CTL_UP:
 	case CTL_DOWN:
 		hl->flip(HL_VER);
-		markModified();
+		setModified(true);
 		break;
 	case CTL_LEFT:
 	case CTL_RIGHT:
 		hl->flip(HL_HOR);
-		markModified();
+		setModified(true);
 		break;
 
 	//case CTRL_B: mp->setBounded(bounded = !bounded); break;

@@ -2,6 +2,11 @@
 #include "curses.h"
 #include <iterator>
 
+ControlManager::ControlManager(void* caller)
+{ 
+	this->caller = caller; 
+}
+
 void ControlManager::registerControl(Controllable* c, char listeners, void(*callback) (void*, void*, int))
 {
 	Registration* r = new Registration();
@@ -10,37 +15,33 @@ void ControlManager::registerControl(Controllable* c, char listeners, void(*call
 	c->setControlManager(this);
 	r->callback = callback;
 	r->listen_map = listeners;
-	r->next = r;
-	r->prev = r;//by default both pointers point to the current registration
 
-	//link controls
-	if (controls.empty() == false) //if not empty
-	{
-		Registration* curr = controls.back();
-		Registration* front = controls.front();
-		curr->next = r;
-		r->prev = curr;
-		r->next = front;
-		front->prev = r;
-	}
-	
 	controls.push_back(r);
 
-	cycleKey = '\t'; //tab will be the default always the default
+	cycleKey = '\t'; //tab will be the default
 	revCycleKey = KEY_BTAB; //this is shifted tab key
+
+	if (controls.size() == 1)
+		focus = controls.begin();
 }
 
-void ControlManager::registerControl(Controllable* c, char listeners, Command* cmd)
-{
-	Registration* r = new Registration();
-
-	r->c = c;
-	c->setControlManager(this);
-	//r->callback = callback;
-	r->cmd = cmd;
-	r->listen_map = listeners;
-	controls.push_back(r);
-}
+/*
+! method is not being used yet and is now out of date!
+*/
+//void ControlManager::registerControl(Controllable* c, char listeners, Command* cmd)
+//{
+//	Registration* r = new Registration();
+//
+//	r->c = c;
+//	c->setControlManager(this);
+//	//r->callback = callback;
+//	r->cmd = cmd;
+//	r->listen_map = listeners;
+//	controls.push_back(r);
+//
+//	if (focus == NULL) //set first item to focus by default
+//		focus = r;
+//}
 
 void ControlManager::registerShortcutKey(int key, void(*callback) (void*, void*, int))
 {
@@ -52,38 +53,50 @@ void ControlManager::registerShortcutKey(int key, void(*callback) (void*, void*,
 
 void ControlManager::popControl()
 {
-	controls.pop_back();
-	
-	//set focus to the next focusable component in the stack
-	list<Registration*>::reverse_iterator it;
-	for (it = controls.rbegin(); it != controls.rend(); it++) //we start from the end, so modal windows are always processed first
+	if (*focus == controls.back()) //if the control being popped is focused
 	{
-		Registration* r = *it;
-		Controllable* c = r->c;
-
-		if (c->isFocusable())
+		//if object was focused then set focus to next 
+		list<Registration*>::reverse_iterator it;
+		for (it = ++controls.rbegin(); it != controls.rend(); it++) //we start from the end, so modal windows are always processed first
 		{
-			focus = r;
+			Registration* r = *it;
+			Controllable* c = r->c;
+
+			if (c->isFocusable())
+			{
+				focus = --it.base();//we always need to subtract 1 since the base iterator is one before the reverse iterator
+				break;
+			}
 		}
 	}
+	controls.pop_back();
 }
 
 
 Controllable* ControlManager::getFocus()
 {
-	return focus->c;
+	return (*focus)->c;
 }
 
 void ControlManager::cycleFocus(short key)
 {
-	if (key == cycleKey)
+	do //cycle to next control until we find one that is focusable
 	{
-		focus = focus->next;
+		if (key == cycleKey)
+		{
+			focus++;
+			if (focus == controls.end())
+				focus = controls.begin();
+		}
+		else if (key == revCycleKey)
+		{
+			if (focus == controls.begin()) //if focus is before beginning
+				focus = --controls.end();
+			else
+				focus--;
+		}
 	}
-	else if (key == revCycleKey)
-	{
-		focus = focus->prev;
-	}
+	while ((*focus)->c->isFocusable() == false);
 }
 
 /*
@@ -92,13 +105,12 @@ Maybe there's a better way to do this!
 void ControlManager::setFocus(Controllable* c)
 { 
 	list<Registration*>::iterator it;
-	Registration* focusReg;
 	for (it = controls.begin(); it != controls.end(); it++)
 	{
 		Registration* r = *it;
 		if (r->c == c)
 		{
-			focus = r;
+			focus = it;
 			break;
 		}
 	}
@@ -113,6 +125,8 @@ bool ControlManager::handleGlobalInput(int input)
 		return true;
 	}
 
+	bool handled = false;
+
 	//process global input for non-modal controls
 	list<KeyAccelerator*>::iterator it;
 	for (it = shortcuts.begin(); it != shortcuts.end(); it++)//having this here suggests that global inputs cannot ever be used in local components
@@ -123,28 +137,32 @@ bool ControlManager::handleGlobalInput(int input)
 		{
 			k->callback(caller, this, input);
 
-			if (shutdown)
-			{
-				//pop all controls
-				controls.clear();
-				return false;
-			}
-			return true;
+			handled = true;
+			if (handled)
+				break;
 		}
 	}
-	return true;
+	return handled;
 }
 
 bool ControlManager::handleInput(int input)
 {
+	bool handled = false;
 	//process global inputs if the focused control is not modal
-	if (focus->c->isModal() == false)
+	if ((*focus)->c->isModal() == false)
 	{
-		bool status = handleGlobalInput(input);
-		if (status == false)
-			return status;
+		handled = handleGlobalInput(input);
 	}
+	
+	if(handled == false)
+		handleControlInput(input);
 
+	return active;
+}
+
+void ControlManager::handleControlInput(int input)
+{
+	//process input through registered controls
 	list<Registration*>::reverse_iterator it;
 	for (it = controls.rbegin(); it != controls.rend(); it++) //we start from the end, so modal windows are always processed first
 	{
@@ -156,48 +174,51 @@ bool ControlManager::handleInput(int input)
 			MEVENT event;
 			nc_getmouse(&event);
 
-			if(wenclose(c->getWindow(), event.y, event.x))
+			if (wenclose(c->getWindow(), event.y, event.x))
 			{
 				if (c->isFocusable())
-					focus = r;
-
+					focus = --it.base();
+			
 				if (r->callback != NULL)
 				{
 					r->callback(caller, c, input);
 					break;
 				}
-					
+
 			}
 		}
-		else if(r->listen_map & KEY_LISTENER)
+		else if (r->listen_map & KEY_LISTENER)
 		{
-			//process local key input			
-			if (r == focus) //only route the input if control has focus
+			if(*focus == r)
 			{
 				if (r->callback != NULL)
 				{
 					r->callback(caller, r->c, input);
 					break;
 				}
-				else if(r->cmd != NULL) //implement command if setup
+				else if (r->cmd != NULL) //implement command if setup
 				{
 					r->cmd->execute();
 					break;
 				}
-			}			
-		
+			}
+
 		}
 	}
+}
 
 
-	if (shutdown)
+/*
+Shuts down the control manager only if deactivated
+*/
+void ControlManager::shutdown()
+{
+	if (!active)
 	{
 		//pop all controls
 		controls.clear();
-		return false;
-	}
-	else
-		return true;
+		shortcuts.clear();
+	}	
 }
 
 void ControlManager::draw()
@@ -210,5 +231,5 @@ void ControlManager::draw()
 		Controllable* c = r->c;
 		c->draw();
 	}
-	focus->c->setFocus(); //execute the focused component's method for rendering focus
+	(*focus)->c->setFocus(); //execute the focused component's method for rendering focus
 }

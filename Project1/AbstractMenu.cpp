@@ -41,6 +41,8 @@ void AbstractMenu::setItem(MenuItem* item)
 
 	
 	items[item->index] = item;
+	if (curItem == NULL) //set first added item to current item by default
+		setCurrentItem(item->index);
 }
 
 void AbstractMenu::selectItem(int index)

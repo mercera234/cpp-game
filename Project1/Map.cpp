@@ -14,6 +14,7 @@ Map::Map(string name, int rows, int cols, WINDOW* win)
 	display = new Image(rows, cols, win); //use same window as map
 
 	brightness = true;
+	focusable = true;
 
 	reset();
 

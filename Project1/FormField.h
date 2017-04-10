@@ -1,7 +1,7 @@
 #pragma once
 #include <iostream>
 using namespace std;
-
+#include "FormControl.h"
 #include "TextLabel.h"
 
 /* field justification */
@@ -33,17 +33,18 @@ class FormField : public Controllable
 {
 private:
 	TextLabel* label;
-	Controllable* field;
+	FormControl* field;
 	int type;
 	void* data;
 
 public:
-	FormField(TextLabel* label, Controllable* field, int type, void* data);
+	FormField(TextLabel* label, FormControl* field, int type, void* data);
 	void draw();
 	void setFocus();
-	int getId() { return type; }
+	int getType() { return type; }
 	void* getData() { return data; }
-	Controllable* getField() { return field; }
+	void clear() { field->clear(); }
+	FormControl* getField() { return field; }
 //	void saveField();
 };
 

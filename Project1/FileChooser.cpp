@@ -31,15 +31,14 @@ FileChooser::FileChooser(WINDOW* win, string workingDir, int type, string filter
 
 	fileMenu = new GridMenu(derwin(win, height - 4, dialogWidth - 1, 2, 0), 1, 1); //subtract 4 from height to account for 2 dividers, 1 label, and 1 textfield
 	
-	fileMenu->setItemWidth(dialogWidth - 4); //- 1 for scroll bar room, 2 for mark
+	int internalWidth = dialogWidth - 4; //- 1 for scroll bar room, 2 for mark
+
+	fileMenu->setItemWidth(internalWidth);
 	fileMenu->setWrapAround(false);
 
-	//set up menu entries
-	//fileMenu->clear();
-
 	//set up text field at bottom
-	fileNameField = new TextField(derwin(win, 1, 15, height - 1, 2));
-
+	fileNameField = new TextField(derwin(win, 1, internalWidth, height - 1, 2));
+	
 	//get list of files in current dir to display in Menu
 	resetDirEntries();
 
