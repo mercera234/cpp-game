@@ -98,7 +98,8 @@ void GridMenu::setDefaults()
 {
 	majorOrder = ROW_MAJOR; //default
 	focusable = true; //all menus accept key input
-	
+	showing = true; //shows by default
+
 	pad = ' '; //space by default
 
 	markSide = LEFT_MARK;
@@ -328,10 +329,19 @@ void GridMenu::draw()
 {
 	//clear the submenu
 	wclear(win);
+
+	if (!showing) return;
+
+	
 	wbkgd(win, ' ' | colorPair);
 
 	wattron(win, colorPair);
-	
+	if (focus)
+		wattron(win, A_BOLD);
+	else
+		wattroff(win, A_BOLD);
+
+
 	//render each item
 	for (int i = 0; i < capacity; i++)
 	{

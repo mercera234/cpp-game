@@ -19,11 +19,11 @@ using namespace std;
 #define GenerateRandomSerialNo() (rand() % (RAND_MAX - MAX_RESERVED)) + MAX_RESERVED
 
 //character types
-#define CHAR_PC 0
-#define CHAR_NPC 1
-#define CHAR_MC 2
-#define _CHAR_PC 254 // a sneaky underhanded way to use the above macros in menus and such
-#define _CHAR_MC 255
+#define AT_HUMAN 0
+#define AT_CPU 1
+//#define CHAR_NPC 1
+
+
 
 //maximums
 #define MAX_LEVELS 99
@@ -36,6 +36,8 @@ using namespace std;
 //statuses
 #define ALIVE 0
 #define REVEALED 1
+#define IS_ALIVE(a) (a->currHp > 0) //takes a pointer to an actor
+#define IS_DEAD(a) (a->currHp <= 0) //takes a pointer to an actor
 
 //effect results
 #define F_ESCAPE_FIGHT 0
@@ -73,7 +75,14 @@ struct ActorDef : public Storable
 	unsigned int maxMp;
 	
     unsigned short strength;
-	unsigned short defense;
+
+	/*a percentage of how much damage is absorbed 
+	Example:
+	0 take all damage
+	50 take half damage
+	100 take no damage
+	*/
+	unsigned short defense; 
 	unsigned short intelligence;
 	unsigned short will;
 	unsigned short agility;
@@ -94,7 +103,7 @@ struct ActorDef : public Storable
 /*
 Actor - An instantiation of a CharDef. A copy of a CharDef that can be manipulated until we are ready to dispose of it
 */
-struct Actor // : public Storable
+struct Actor
 {
 	unsigned int defIndex; //index of chardefinition
 	ActorDef* def; //actual definition

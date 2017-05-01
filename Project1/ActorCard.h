@@ -10,6 +10,7 @@ private:
 
 public:
 	ActorCard(Actor* actor, int element, int crossRefNdx);
+	Actor* getActor() { return actor; }
 	//void draw(WINDOW* win, int offY, int offX);
 	void draw(WINDOW* win);
 };

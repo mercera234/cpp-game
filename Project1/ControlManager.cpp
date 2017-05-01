@@ -22,7 +22,11 @@ void ControlManager::registerControl(Controllable* c, char listeners, void(*call
 	revCycleKey = KEY_BTAB; //this is shifted tab key
 
 	if (controls.size() == 1)
-		focus = controls.begin();
+	{
+		setFocusedControl(controls.begin());
+		/*focusedControl = controls.begin();
+		(*focusedControl)->c->setFocus(true); */
+	}
 }
 
 /*
@@ -53,7 +57,7 @@ void ControlManager::registerShortcutKey(int key, void(*callback) (void*, void*,
 
 void ControlManager::popControl()
 {
-	if (*focus == controls.back()) //if the control being popped is focused
+	if (*focusedControl == controls.back()) //if the control being popped is focused
 	{
 		//if object was focused then set focus to next 
 		list<Registration*>::reverse_iterator it;
@@ -64,7 +68,9 @@ void ControlManager::popControl()
 
 			if (c->isFocusable())
 			{
-				focus = --it.base();//we always need to subtract 1 since the base iterator is one before the reverse iterator
+				setFocusedControl(--it.base());
+				//focusedControl = --it.base();//we always need to subtract 1 since the base iterator is one before the reverse iterator
+				//c->setFocus(true);
 				break;
 			}
 		}
@@ -72,31 +78,46 @@ void ControlManager::popControl()
 	controls.pop_back();
 }
 
+void ControlManager::unsetFocus()
+{
+	(*focusedControl)->c->setFocus(false);
+}
+
+void ControlManager::setFocusedControl(list<Registration*>::iterator it)
+{
+	focusedControl = it;
+	(*focusedControl)->c->setFocus(true);
+}
 
 Controllable* ControlManager::getFocus()
 {
-	return (*focus)->c;
+	return (*focusedControl)->c;
 }
 
 void ControlManager::cycleFocus(short key)
 {
+	//unset focus on current controllable
+	unsetFocus();
+
 	do //cycle to next control until we find one that is focusable
 	{
 		if (key == cycleKey)
 		{
-			focus++;
-			if (focus == controls.end())
-				focus = controls.begin();
+			focusedControl++;
+			if (focusedControl == controls.end())
+				focusedControl = controls.begin();
 		}
 		else if (key == revCycleKey)
 		{
-			if (focus == controls.begin()) //if focus is before beginning
-				focus = --controls.end();
+			if (focusedControl == controls.begin()) //if focus is before beginning
+				focusedControl = --controls.end();
 			else
-				focus--;
+				focusedControl--;
 		}
 	}
-	while ((*focus)->c->isFocusable() == false);
+	while ((*focusedControl)->c->isFocusable() == false);
+
+	(*focusedControl)->c->setFocus(true);
 }
 
 /*
@@ -104,13 +125,21 @@ Maybe there's a better way to do this!
 */
 void ControlManager::setFocus(Controllable* c)
 { 
+	//unset focus on currently focused controllable
+	/*Registration* r = *focusedControl;
+	r->c->setFocus(false);*/
+	unsetFocus();
+
+	//set focus on c
 	list<Registration*>::iterator it;
 	for (it = controls.begin(); it != controls.end(); it++)
 	{
 		Registration* r = *it;
 		if (r->c == c)
 		{
-			focus = it;
+			setFocusedControl(it);
+			/*focusedControl = it;
+			c->setFocus(true);*/
 			break;
 		}
 	}
@@ -149,7 +178,7 @@ bool ControlManager::handleInput(int input)
 {
 	bool handled = false;
 	//process global inputs if the focused control is not modal
-	if ((*focus)->c->isModal() == false)
+	if ((*focusedControl)->c->isModal() == false)
 	{
 		handled = handleGlobalInput(input);
 	}
@@ -177,7 +206,10 @@ void ControlManager::handleControlInput(int input)
 			if (wenclose(c->getWindow(), event.y, event.x))
 			{
 				if (c->isFocusable())
-					focus = --it.base();
+				{
+					setFocusedControl(--it.base());
+				}
+					//focusedControl = --it.base();
 			
 				if (r->callback != NULL)
 				{
@@ -189,7 +221,7 @@ void ControlManager::handleControlInput(int input)
 		}
 		else if (r->listen_map & KEY_LISTENER)
 		{
-			if(*focus == r)
+			if(*focusedControl == r)
 			{
 				if (r->callback != NULL)
 				{
@@ -231,5 +263,5 @@ void ControlManager::draw()
 		Controllable* c = r->c;
 		c->draw();
 	}
-	(*focus)->c->setFocus(); //execute the focused component's method for rendering focus
+	(*focusedControl)->c->setCursorFocus(); //execute the focused component's method for rendering focus
 }

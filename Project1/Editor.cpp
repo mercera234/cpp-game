@@ -3,19 +3,19 @@
 #include "FileChooser.h"
 #include "LineItem.h"
 
-void Editor::setModified(bool modified)
+void Editor::setModified(bool mod)
 {
-	this->modified = modified;
-	
-	if (modified)
-	{
-		fileNameLbl->setText(fileName.substr(0, 14) + "*");
+	if (modified == mod && mod)//exit if no change in modified state and modified is set to true
+		return;
 
-	}
-	else //unmodified
-	{
-		fileNameLbl->setText(fileName);
-	}
+	modified = mod;
+	
+	updateFileNameLabel();
+
+	/*string lblTxt;
+	lblTxt = modified ? fileName.substr(0, 14) + "*" : fileName;
+
+	fileNameLbl->setText(lblTxt);*/
 }
 
 void Editor::processGlobalInput(int input)
@@ -57,8 +57,18 @@ void Editor::processGlobalInput(int input)
 	case CTRL_S:
 		if (modified) //save only if there are changes
 		{
-			setupFileDialog(SAVE_DIALOG);
+			if(fileName.compare(DEF_FILENAME) == 0) //bring up filechooser if default name is still used 
+				setupFileDialog(SAVE_DIALOG);
+			else
+			{
+				save(dialogDefPath + '\\' + fileName);
+				setModified(false);
+			}
+				
 		}
+		break;
+	case CTRL_A:
+		setupFileDialog(SAVE_DIALOG);
 		break;
 	}
 }
@@ -188,7 +198,6 @@ void Editor::fileDialogDriver(Controllable* dialog, int input)
 	case KEY_DOWN: fd->driver(REQ_DOWN_ITEM);   break;
 	case KEY_UP: fd->driver(REQ_UP_ITEM); break;
 	case CTRL_Q: cm->popControl(); 
-		//cm->setFocus(map); 
 		break;
 	case '\r':
 		fileChosen = fd->filePathDriver();
@@ -202,18 +211,25 @@ void Editor::fileDialogDriver(Controllable* dialog, int input)
 	{
 		switch (fd->getType())
 		{
-			//!! this needs to be modified
 		case OPEN_DIALOG: load(fileChosen); break;
 		case SAVE_DIALOG: save(fileChosen); break;
 		}
 		int pos = fileChosen.find_last_of('\\');
 		fileName = fileChosen.substr(pos + 1, fileChosen.length());
-		setModified(false);
-
-		cm->popControl();
-		//cm->setFocus(map);
 
 		//save path that file was opened/saved from as the start point for next time
 		dialogDefPath = fileChosen.substr(0, pos);
+		setModified(false);
+
+		cm->popControl();
 	}
+}
+
+
+void Editor::updateFileNameLabel()
+{
+	string lblTxt;
+	lblTxt = modified ? fileName.substr(0, 14) + "*" : fileName;
+
+	fileNameLbl->setText(lblTxt);
 }

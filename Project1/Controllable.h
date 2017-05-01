@@ -11,6 +11,7 @@ protected:
 	WINDOW* win;
 	bool focusable; //true if control can accept keyboard input
 	bool showing; //true if should be drawn 
+	bool focus; //true if the controllable is focused
 	
 	Rect* r; //A rectangle to save the true dimensions of the window in case it should go off screen
 	
@@ -36,11 +37,19 @@ public:
 	void setWindow(WINDOW* win);
 	virtual void draw() = 0;
 	virtual void move(int y, int x);
-	virtual void setFocus() {};
-	WINDOW* getWindow() { return win; };
+	void setPosition(int y, int x);
+	void shift(int y, int x);
 	bool isInWindow(int y, int x);
 	void translateCoords(int inY, int inX, int &outY, int &outX);
+
+	//getters/setters
+	WINDOW* getWindow() { return win; };
 	bool isFocusable() { return focusable; }
+	virtual void setFocus() {};
+	virtual void setCursorFocus() {}; //for moving the cursor to this component
+	virtual void setFocus(bool focusIn) { focus = focusIn; }
+	bool isFocused() { return focus; }
+	void setShowing(bool on) { showing = on; }
 	void setModal(bool on) { modal = on; }
 	bool isModal() { return modal; }
 	void setControlManager(ControlManager* cm) { this->cm = cm; }
@@ -51,7 +60,6 @@ public:
 	unsigned short getTotalCols() { return totalCols; }
 	unsigned short getVisibleRows() { return visibleRows; }
 	unsigned short getVisibleCols() { return visibleCols; }
-	void setPosition(int y, int x);
-	void shift(int y, int x);
+	
 };
 

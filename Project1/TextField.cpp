@@ -43,7 +43,10 @@ void TextField::init(WINDOW* win)
 	color = 0x00000000; //set to black and white by default
 }
 
-void TextField::setFocus()
+/*
+move cursor to this control
+*/
+void TextField::setCursorFocus()
 {
 	curs_set(CURSOR_NORMAL);
 

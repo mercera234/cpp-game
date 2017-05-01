@@ -49,7 +49,7 @@ private:
 public:
 	TextField(WINDOW* win);
 	TextField(int length, int y, int x);
-	void setFocus();
+	void setCursorFocus();
 	bool inputChar(int c);
 	void setText(string text);
 	void setText(int value);

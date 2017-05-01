@@ -41,6 +41,7 @@ public:
 	FormField(TextLabel* label, FormControl* field, int type, void* data);
 	void draw();
 	void setFocus();
+	void setCursorFocus();
 	int getType() { return type; }
 	void* getData() { return data; }
 	void clear() { field->clear(); }

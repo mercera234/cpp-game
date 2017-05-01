@@ -8,16 +8,6 @@ ActorCard::ActorCard(Actor* actor, int element, int crossRefNdx)
 	this->crossRef = crossRefNdx;
 }
 
-//void ActorCard::draw(WINDOW* win, int offY, int offX)
-//{
-//	int topRow = posY - offY;
-//	int leftEdge = posX - offX;
-//
-//	mvwaddstr(win, topRow, leftEdge, actor->def->name.c_str());
-//	mvwprintw(win, topRow + 1, leftEdge, "HP %+4u/%-4u", actor->currHp, actor->def->maxHp);
-//	mvwprintw(win, topRow + 2, leftEdge, "MP %+3u/%-3u", actor->currMp, actor->def->maxMp);
-//}
-
 void ActorCard::draw(WINDOW* win)
 {
 	int offY = menu == NULL ? 0 : menu->getUlY();
@@ -26,9 +16,11 @@ void ActorCard::draw(WINDOW* win)
 	int topRow = posY - offY;
 	int leftEdge = posX - offX;
 
-	mvwaddstr(win, topRow, leftEdge, actor->def->name.c_str());
+	string titleStr = IS_DEAD(actor) ? "*DEAD*" : actor->def->name;
+
+	mvwaddstr(win, topRow, leftEdge, titleStr.c_str());
 	mvwprintw(win, topRow + 1, leftEdge, "HP %+4u/%-4u", actor->currHp, actor->def->maxHp);
-	mvwprintw(win, topRow + 2, leftEdge, "MP %+3u/%-3u", actor->currMp, actor->def->maxMp);
+	mvwprintw(win, topRow + 2, leftEdge, "MP %+4u/%-4u", actor->currMp, actor->def->maxMp);
 
 	//mark side not implemented yet!
 
@@ -48,6 +40,10 @@ void ActorCard::draw(WINDOW* win)
 	if (menu != NULL && 
 		(this == menu->getCurrentItem() || selected)) //draw mark
 	{
-		mvwaddstr(win, topRow, leftEdge - 2, menu->getMark().c_str());
+		string mark;
+		if (menu->isFocused()) 
+		{
+			mvwaddstr(win, topRow, leftEdge - 2, menu->getMark().c_str());
+		}
 	}
 }

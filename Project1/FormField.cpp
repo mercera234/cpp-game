@@ -14,6 +14,11 @@ void FormField::setFocus()
 	field->setFocus();
 }
 
+void FormField::setCursorFocus()
+{
+	field->setCursorFocus();
+}
+
 
 void FormField::draw()
 {

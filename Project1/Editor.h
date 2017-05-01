@@ -22,6 +22,7 @@ protected:
 	bool modified = false;
 	string extensionFilter;
 
+	void updateFileNameLabel();
 	void processGlobalInput(int input);
 	Frame* createConfirmDialog(string confirmMsg);
 	void confirmDialogDriver(Controllable* dialog, int input, int confirmMethod);

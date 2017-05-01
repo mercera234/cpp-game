@@ -1,9 +1,9 @@
 #pragma once
 
 #include <iostream>
+#include <vector>
 using namespace std;
 #include "curses.h"
-//#include "AbstractMenu.h"
 
 #define UP_LINK 0
 #define DOWN_LINK 1
@@ -40,5 +40,8 @@ public:
 	void link(bool setLink, int link, MenuItem* item);
 	void link(int link, MenuItem* item);
 	void setHidden(bool hidden);
-};
 
+	static void linkItemGroup(vector<MenuItem*>& group, int link);
+	static void linkItemGroups(vector<MenuItem*>& group1, vector<MenuItem*>& group2, int link);
+	static void positionItemGroup(vector<MenuItem*>& group, int posY, int posX);
+};

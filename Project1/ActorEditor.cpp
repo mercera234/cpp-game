@@ -6,6 +6,7 @@
 ActorEditor::ActorEditor()
 {
 	fieldMargin = 22;
+	extensionFilter = DEF_ACTOR_EXTENSION;
 
 	fields = new list<FormField*>();
 
@@ -31,6 +32,7 @@ ActorEditor::ActorEditor()
 
 	cm->registerShortcutKey(KEY_ESC, globalCallback);
 	cm->registerShortcutKey(CTRL_S, globalCallback);
+	cm->registerShortcutKey(CTRL_A, globalCallback);
 	cm->registerShortcutKey(CTRL_N, globalCallback);
 	cm->registerShortcutKey(CTRL_O, globalCallback);
 	cm->setFocus(fields->front());
@@ -90,7 +92,9 @@ void ActorEditor::createNew()
 		ff->clear();
 	}
 	cm->setFocus(fields->front());
+
 	fileName = DEF_FILENAME;
+//	updateFileNameLabel();
 	setModified(false);
 }
 

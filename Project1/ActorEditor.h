@@ -4,7 +4,7 @@
 #include "TextField.h"
 #include "Editor.h"
 
-
+#define DEF_ACTOR_EXTENSION ".actr"
 
 class ActorEditor : public Editor
 {
@@ -29,7 +29,6 @@ public:
 	void draw();
 	bool processInput(int input);
 	
-	//static void globalCallback(void* caller, void* ptr, int input); //static
 	static void textFieldCallback(void* caller, void* ptr, int input); //static
 	
 };

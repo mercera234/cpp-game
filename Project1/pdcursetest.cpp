@@ -1,6 +1,5 @@
 #include "TUI.h"
 #include "CursesPanel.h"
-//#include "Menu.h"
 #include "MapEditor.h"
 #include "CursesAttributeController.h"
 #include "RGBControl.h"
@@ -37,6 +36,9 @@
 #include "TextDisplay.h"
 #include "FormField.h"
 #include "MasterEditor.h"
+#include "BattleProcessor.h"
+#include "TurnTracker.h"
+#include "Spell.h"
 
 void mockFightTest()
 {
@@ -164,7 +166,7 @@ void panelTest()
 }
 
 
-MenuItem* menuDriver(int input, Menu* m)
+MenuItem* menuDriver(int input, AbstractMenu* m)
 {
 	MenuItem* item = NULL;
 	int retval = -1;
@@ -208,7 +210,7 @@ MenuItem* absMenuDriver(int input, AbstractMenu* m)
 	return item;
 }
 
-MenuItem* confirmDriver(int input, Menu* m)
+MenuItem* confirmDriver(int input, AbstractMenu* m)
 {
 	MenuItem* item = NULL;
 	int retval = -1;
@@ -227,78 +229,6 @@ MenuItem* confirmDriver(int input, Menu* m)
 	}
 	return item;
 }
-
-//void menuTest()
-//{
-//	int rows = 1;
-//	int cols = 12;
-//	WINDOW* win = newwin(12, 1 * 25, 1, 1);
-//
-//	Menu menu(win, rows, cols);
-//
-//	menu.setItem(new LineItem("0123456789012345", 0, 'N'));
-//	menu.setItem(new LineItem("TOGGLE WRAP", 1, 'L'));
-//	menu.setItem(new LineItem("QUIT", 2, 'Q'));
-//	//menu.setItem("3123456789012345", "", 3, 'T');
-//	menu.setItem(new LineItem("4123456789012345", 4, '?'));
-//	menu.setItem(new LineItem("Clear", 5, 'N'));
-//	menu.setItem(new LineItem("Flip Mark", 6, 'L'));
-//	menu.setItem(new LineItem("7123456789012345", 7, 'Q'));
-//	menu.setItem(new LineItem("8123456789012345", 8, 'T'));
-//	menu.setItem(new LineItem("9123456789012345", 9, '?'));
-//	menu.setItem(new LineItem("a123456789012345", 10, 'N'));
-//	menu.setItem(new LineItem("b123456789012345", 11, 'L'));
-//
-////	menu.setMenuColWidth(18);
-////	menu.setMenuRowHeight(3);
-////	menu.disableItem(8, 0);
-//	menu.setSelectedIndex(0);
-//	int markSide = LEFT_MARK;
-//	menu.setMarkSide(markSide);
-//	bool wrap = true;
-//
-//	bool usingMenu = true;
-//	while (usingMenu)
-//	{
-//		menu.draw();
-//		doupdate();
-//		int input = getch();
-//
-//		switch (input) //process global input
-//		{
-//		case KEY_ESC: usingMenu = false; break;
-//		default: 
-//		{
-//			MenuItem* item = menuDriver(input, &menu);
-//
-//			if (item == NULL)
-//			{
-//				continue;
-//			}
-//
-//			switch (item->index)
-//			{
-//
-//			case 2:
-//				usingMenu = false;
-//				break;
-//			case 1:
-//				menu.setWrapAround(wrap = !wrap); break;
-//			case 5:
-//				menu.clear();
-//				break;
-//			case 6:
-//				menu.setMarkSide(markSide = !markSide); break;
-//
-//			default:
-//				mvaddch(7, 30, (chtype)item->crossRef);
-//				break;
-//			}
-//		}
-//			break;
-//		}
-//	}
-//}
 
 
 void gridMenuTest()
@@ -806,7 +736,7 @@ void testPanel()
 //}
 
 
-void RGBMenuDriver(Menu* menu, int input)
+void RGBMenuDriver(AbstractMenu* menu, int input)
 {
 	switch (input)
 	{
@@ -824,7 +754,7 @@ void RGBMenuDriver(Menu* menu, int input)
 void RGBTest()
 {
 	WINDOW* win = newwin(3, 3, 1, 3);
-	Menu* rgbMenu = new Menu(win, 3, 1);
+	GridMenu* rgbMenu = new GridMenu(win, 3, 1);
 
 	rgbMenu->setItem(new LineItem("R", 0, 0));
 	rgbMenu->setItem(new LineItem("G", 1, 1));
@@ -883,7 +813,9 @@ void RGBTest()
 		
 		//process
 		RGBMenuDriver(rgbMenu, c);
-		currRow = rgbMenu->getCurrentIndex() + 1;
+		
+		//!!!!Broke code here!!!!
+		//currRow = rgbMenu->getCurrentIndex() + 1;
 
 		chtype oneAttr = 0x0; //single attribute
 		if (c == KEY_RIGHT)
@@ -953,7 +885,7 @@ void RGBTest()
 void RGBTest2()
 {
 	WINDOW* win = newwin(4, 3, 1, 3);
-	Menu* rgbMenu = new Menu(win, 4, 1);
+	GridMenu* rgbMenu = new GridMenu(win, 4, 1);
 
 	/*rgbMenu->setItem("R", "", 0, 0);
 	rgbMenu->setItem("G", "", 1, 1);
@@ -1014,7 +946,9 @@ void RGBTest2()
 
 		//process
 		RGBMenuDriver(rgbMenu, c);
-		currRow = rgbMenu->getCurrentIndex() + 1;
+		
+		//!!!!Broke code here
+		//currRow = rgbMenu->getCurrentIndex() + 1;
 
 		bool position;
 		int color;
@@ -1050,7 +984,7 @@ void RGBTest2()
 void AttrControllerTest()
 {
 	WINDOW* win = newwin(4, 3, 1, 3);
-	Menu* menu = new Menu(win, 4, 1);
+	GridMenu* menu = new GridMenu(win, 4, 1);
 
 	/*menu->setItem("R", "", 0, 0);
 	menu->setItem("G", "", 1, 1);
@@ -1114,7 +1048,9 @@ void AttrControllerTest()
 
 		//process
 		RGBMenuDriver(menu, c);
-		currRow = menu->getCurrentIndex() + 1;
+	
+		//!!!!!!Broke code here!!!
+		//	currRow = menu->getCurrentIndex() + 1;
 
 		int color;
 		if (c == KEY_RIGHT)
@@ -1395,7 +1331,6 @@ void modalCallback(void* caller, void* ptr, int input)
 		ControlManager* cm = f->getControlManager();
 		switch (item->index)
 		{
-		//case 0: cm->prepareForShutdown(); break;
 		case 0: cm->setActive(false); break;
 		case 1: cm->popControl(); break;
 		}
@@ -1470,7 +1405,6 @@ void quitCallback(void* caller, void* ptr, int input)
 {
 	ControlManager* cm = (ControlManager*)ptr;
 	cm->setActive(false);
-	//cm->prepareForShutdown();
 }
 
 void textCallback(void* caller, void* ptr, int input)
@@ -1539,10 +1473,7 @@ void controlManagerTest()
 void commandTest()
 {
 	WINDOW* win = newwin(2, 20, 1, 1);
-	Menu* m1 = new Menu(win, 2, 1);
-
-	/*m1->setItem("Yes", "", 0, 0);
-	m1->setItem("No", "", 1, 1);*/
+	GridMenu* m1 = new GridMenu(win, 2, 1);
 
 	int rows;
 	int cols;
@@ -1584,12 +1515,12 @@ void commandTest()
 void templateTest()
 {
 
-	list<Menu*> aList;
+	list<GridMenu*> aList;
 
 
 
 	WINDOW* win = newwin(2, 20, 1, 1);
-	Menu* m1 = new Menu(win, 2, 1);
+	GridMenu* m1 = new GridMenu(win, 2, 1);
 
 	//m1->setItem("Item A", "", 0, 5);
 	//m1->setItem("Item B", "", 1, 7);
@@ -1745,34 +1676,36 @@ void filterPaletteTest()
 	}*/
 }
 
-
-Actor* createActor()
+Actor* buildActorFromDef(ActorDef* def, int type)
 {
-	ActorDef* def = new ActorDef();
-	def->name = "Test guy";
-	def->symbol = (chtype) '@' | 0x0e000000;
-	def->level = 1;
-	def->exp = 0;
-	def->money = 50;
-	def->maxHp = 25;
-	def->maxMp = 10;
-	def->strength = 8;
-	def->defense = 5;
-	def->agility = 4;
-	def->accuracy = .9f;
-	def->luck = .05f;
-
 	Actor* actor = new Actor();
 	actor->def = def;
 	actor->currHp = def->maxHp;
+	actor->currMp = def->maxMp;
 	actor->defIndex = 1;
 	actor->prevX = -1;
 	actor->prevY = -1;
 	actor->x = 30;
 	actor->y = 5;
-	actor->type = 0; //not used yet
+	actor->type = type;
 	return actor;
 }
+
+
+Actor* createActor(string filename, int type)
+{
+	ActorDef* def = new ActorDef();
+
+	ifstream* is = new ifstream();
+	is->open("data\\" + filename, ios::binary);
+
+	def->load(is);
+
+	is->close();
+
+	return buildActorFromDef(def, type);
+}
+
 
 Actor* createNPCActor()
 {
@@ -1793,42 +1726,16 @@ Actor* createNPCActor()
 	Actor* actor = new Actor();
 	actor->def = def;
 	actor->currHp = def->maxHp;
+	actor->currMp = def->maxMp;
 	actor->defIndex = 1;
 	actor->prevX = -1;
 	actor->prevY = -1;
 	actor->x = 40;
 	actor->y = 4;
-	actor->type = 0; //not used yet
+	actor->type = AT_CPU; //not sure if we'll use npc actors yet
 	return actor;
 }
 
-Actor* createEnemyActor()
-{
-	ActorDef* def = new ActorDef();
-	def->name = "Toadie";
-	def->symbol = (chtype) 't' | (COLOR_GREEN << 24);
-	def->level = 1;
-	def->exp = 0;
-	def->money = 3;
-	def->maxHp = 1;
-	def->maxMp = 0;
-	def->strength = 1;
-	def->defense = 1;
-	def->agility = 2;
-	def->accuracy = .9f;
-	def->luck = .01f;
-
-	Actor* actor = new Actor();
-	actor->def = def;
-	actor->currHp = def->maxHp;
-	actor->defIndex = 2;
-	actor->prevX = -1;
-	actor->prevY = -1;
-	actor->x = 40;
-	actor->y = 5;
-	actor->type = 2; //not used yet
-	return actor;
-}
 
 /*Checks for directional key by checking hex values*/
 bool isDirKey(int input)
@@ -1840,7 +1747,7 @@ bool isDirKey(int input)
 
 void simpleActorTest()
 {
-	Actor* player1 = createActor();
+	Actor* player1 = createActor("hero.actr", AT_HUMAN);
 	Actor* testNPC = createNPCActor();
 
 	bool playing = true;
@@ -1916,8 +1823,8 @@ void simpleFightTest()
 
 	
 	//setup actors
-	Actor* p1 = createActor();
-	Actor* e1 = createEnemyActor();
+	Actor* p1 = createActor("hero.actr", AT_HUMAN);
+	Actor* e1 = createActor("toadie.actr", AT_CPU);
 
 	//setup player display
 	TextLabel* playerName = new TextLabel(newwin(1, 15, 0, 0), p1->def->name);
@@ -1971,7 +1878,7 @@ void simpleFightTest()
 	WINDOW* subPanel = newwin(6, totalCols, totalRows - 6, 0);
 	WINDOW* subWin = derwin(subPanel, 2, 18, 1, 1);
 
-	Menu* fightMenu = new Menu(subWin, 2, 1);
+	GridMenu* fightMenu = new GridMenu(subWin, 2, 1);
 	Frame* mFrame = new Frame(subPanel, fightMenu);
 
 	/*fightMenu->setItem("Attack", "", 0, 0);
@@ -2088,7 +1995,7 @@ void textFieldtest()
 	{
 		curs_set(0);
 		field.draw();
-		field.setFocus();
+		field.setCursorFocus();
 		doupdate();
 		int c = getch();
 
@@ -2179,10 +2086,10 @@ void textLabelTest()
 	getch();
 }
 
-Menu* m1driver(Menu* m, int input) //simulated callback for menu
+GridMenu* m1driver(AbstractMenu* m, int input) //simulated callback for menu
 {
 	WINDOW* win2 = newwin(1, 40, 1, 1);
-	Menu* m2 = new Menu(win2, 1, 2);
+	GridMenu* m2 = new GridMenu(win2, 1, 2);
 
 	/*m2->setItem("Yes2", "", 0, 0);
 	m2->setItem("No2", "", 1, 1);
@@ -2199,15 +2106,15 @@ void m2driver(Menu* m, int input) //simulated callback for menu
 void menuTest2()
 {
 	WINDOW* win1 = newwin(1, 40, 1, 1);
-	Menu* m1 = new Menu(win1, 1, 2);
+	GridMenu* m1 = new GridMenu(win1, 1, 2);
 
 	/*m1->setItem("Yes", "", 0, 0);
 	m1->setItem("No", "", 1, 1);*/
 
-	Menu* menus[2];
+	GridMenu* menus[2];
 	menus[0] = m1;
 	int totalMenus = 1;
-	Menu* activeMenu = m1;
+	GridMenu* activeMenu = m1;
 
 	bool playing = true;
 
@@ -2281,7 +2188,7 @@ void frameTest()
 {
 	WINDOW* w = newwin(4, 40, 1, 1);
 	WINDOW* dw = derwin(w, 1, 38, 2, 1);
-	Menu* m = new Menu(dw, 1, 2);
+	GridMenu* m = new GridMenu(dw, 1, 2);
 	//m->setItem("Yes", "", 0, 0);
 	//m->setItem("No", "", 1, 1);
 
@@ -2292,117 +2199,12 @@ void frameTest()
 	doupdate();
 	getch();
 
-	f->setBorder(BORDER_NONE);
+//	f->setBorder(BORDER_NONE);
 	f->draw();
 	doupdate();
 	getch();
 }
 
-/*
-Deprecated test method that uses the incomplete <filesystem> header
-*/
-//void openFileTest()
-//{
-//	path fullPath = current_path();
-//	fullPath.make_preferred();
-//	
-//	string openPathStr = fullPath.string();
-//
-//	TextLabel* openFile = new TextLabel(newwin(1, 10, 0, 0), "Open from:");
-//
-//	int openPathSpace = 30;
-//	TextLabel* openPath = new TextLabel(newwin(1, openPathSpace, 0, 11), openPathStr);
-//	
-//
-//	Menu* diskNavigator = new Menu(newwin(8, 40, 2, 0), 255, 1);
-//	diskNavigator->setMaxNameLength(40);
-//	
-//	bool playing = true;
-//	bool newDir = true;
-//
-//	while (playing)
-//	{
-//		if (newDir)
-//		{
-//			diskNavigator->clear();
-//			diskNavigator->setItem("..", "", 0, 0);
-//
-//			//get list of files in current dir to display in Menu
-//			int currElement = 1;
-//			for (directory_iterator it(fullPath), end; it != end; it++)
-//			{
-//				directory_entry entry = *it;
-//				path entryPath = entry.path();
-//				diskNavigator->setItem(entryPath.filename().string(), "", currElement++, currElement);
-//			}
-//			
-//			//truncate path name so we can see as much of the end as possible
-//			openPathStr = fullPath.string();
-//			if (openPathStr.length() > openPathSpace)
-//			{
-//				ostringstream oss;
-//				oss << "..." << openPathStr.substr(openPathStr.length() - openPathSpace + 3);
-//				openPathStr = oss.str();
-//			}
-//			openPath->setText(openPathStr);
-//
-//			newDir = false;
-//		}
-//	
-//		
-//		mvaddnstr(1, 0, "--------------------------------------------------------------------", 40);
-//
-//
-//		openFile->draw();
-//		openPath->draw();
-//		diskNavigator->draw();
-//		doupdate();
-//		int c = getch();
-//
-//		switch (c)
-//		{
-//		case KEY_DOWN: diskNavigator->driver(REQ_DOWN_ITEM);   break;
-//		case KEY_UP: diskNavigator->driver(REQ_UP_ITEM); break;
-//		case 'q': playing = false; break;
-//		case '\r':
-//			diskNavigator->driver(REQ_TOGGLE_ITEM);
-//			break;
-//		}
-//
-//		MenuItem* choice = diskNavigator->getSelectedItem();
-//
-//		if (choice != NULL)
-//		{
-//			if (choice->name.compare("..") == 0)
-//			{
-//				//navigate up one dir
-//				fullPath = fullPath.parent_path();
-//				newDir = true;
-//			}
-//			else
-//			{
-//			/*	ostringstream oss;
-//				string name = choice->name;
-//				oss << fullPath << '\\' << name << ends;
-//
-//*/
-//
-//				//directory_entry entry(oss.str());
-//				directory_entry entry(fullPath /= choice->name);
-//				file_status fs = entry.status();
-//				
-//				if (is_directory(fs))
-//				{
-//					fullPath.append(choice->name);
-//					newDir = true;
-//				}
-//				
-//			}
-//
-//
-//		}
-//	}
-//}
 
 void openFileTest()
 {
@@ -2416,7 +2218,7 @@ void openFileTest()
 	TextLabel* openPath = new TextLabel(newwin(1, openPathSpace, 0, 11), fullPath);
 
 
-	Menu* diskNavigator = new Menu(newwin(8, 40, 2, 0), 255, 1);
+	GridMenu* diskNavigator = new GridMenu(newwin(8, 40, 2, 0), 255, 1);
 	diskNavigator->setItemWidth(40);
 	//diskNavigator->setMaxNameLength(40);
 
@@ -2427,7 +2229,7 @@ void openFileTest()
 	{
 		if (newDir)
 		{
-			diskNavigator->clear();
+			diskNavigator->clearItems();
 
 			//get list of files in current dir to display in Menu
 			int currElement = 0;
@@ -2560,7 +2362,7 @@ void tableTest()
 	Table* subtbl = new Table(3, 1, 0, 0, c1);
 
 	TextLabel* tl1 = new TextLabel(newwin(1, 5, 0, 0), "(0,0)");
-	Menu* menu = new Menu(newwin(3, 18, 0, 0), 3, 1);
+	GridMenu* menu = new GridMenu(newwin(3, 18, 0, 0), 3, 1);
 	//menu->setItem("012345678901234", "", 0, 'N');
 	//menu->setItem("11234567890123456", "", 1, 'L');
 	//menu->setItem("2123456789", "", 2, 'Q');
@@ -2747,7 +2549,7 @@ void scrollTest()
 	int cols = 1;
 	WINDOW* win = newwin(4, (cols) * 19, 1, 1);
 
-	Menu menu(win, rows, cols);
+	GridMenu menu(win, rows, cols);
 	menu.setItem(new LineItem("0123456789012345", 0, 'N'));
 	menu.setItem(new LineItem("TOGGLE WRAP", 1, 'L'));
 	menu.setItem(new LineItem("QUIT", 2, 'Q'));
@@ -2794,7 +2596,7 @@ void scrollTest()
 		case 1:
 			menu.setWrapAround(wrap = !wrap); break;
 		case 5:
-			menu.clear();
+			menu.clearItems();
 			break;
 		case 6:
 			menu.setMarkSide(markSide = !markSide); break;
@@ -3743,19 +3545,19 @@ void megaMapTest()
 }
 
 
-void battleTargetMenuTest()
+void graphMenuTest2()
 {
 	GraphMenu* targetMenu = new GraphMenu(newwin(16, 40, 1,1), 16);
 	
-	ActorCard* p1 = new ActorCard(createActor(), 0, -1);
-	ActorCard* p2 = new ActorCard(createActor(), 2, -1);
-	ActorCard* p3 = new ActorCard(createActor(), 4, -1);
-	ActorCard* p4 = new ActorCard(createActor(), 6, -1);
+	ActorCard* p1 = new ActorCard(createActor("hero.actr", AT_HUMAN), 0, -1);
+	ActorCard* p2 = new ActorCard(createActor("hero.actr", AT_HUMAN), 2, -1);
+	ActorCard* p3 = new ActorCard(createActor("hero.actr", AT_HUMAN), 4, -1);
+	ActorCard* p4 = new ActorCard(createActor("hero.actr", AT_HUMAN), 6, -1);
 
-	ActorCard* e1 = new ActorCard(createEnemyActor(), 1, -1);
-	ActorCard* e2 = new ActorCard(createEnemyActor(), 3, -1);
-	ActorCard* e3 = new ActorCard(createEnemyActor(), 5, -1);
-	ActorCard* e4 = new ActorCard(createEnemyActor(), 7, -1);
+	ActorCard* e1 = new ActorCard(createActor("toadie.actr", AT_CPU), 1, -1);
+	ActorCard* e2 = new ActorCard(createActor("toadie.actr", AT_CPU), 3, -1);
+	ActorCard* e3 = new ActorCard(createActor("toadie.actr", AT_CPU), 5, -1);
+	ActorCard* e4 = new ActorCard(createActor("toadie.actr", AT_CPU), 7, -1);
 
 	ActorCard* eh1 = new ActorCard(NULL, 8, -1);
 	ActorCard* eh2 = new ActorCard(NULL, 9, -1);
@@ -3880,6 +3682,58 @@ void battleTargetMenuTest()
 }
 
 
+void battleProcessorTest()
+{
+	bool testing = true;
+	while (testing)
+	{
+		list<Actor*> players;
+		players.push_back(createActor("hero.actr", AT_HUMAN));
+		players.push_back(createActor("hero2.actr", AT_HUMAN));
+		players.push_back(createActor("hero3.actr", AT_HUMAN));
+		players.push_back(createActor("hero4.actr", AT_HUMAN));
+
+		list<Actor*> enemies;
+		enemies.push_back(createActor("toadie.actr", AT_CPU));
+		enemies.push_back(createActor("bigbug.actr", AT_CPU));
+		enemies.push_back(createActor("skittler.actr", AT_CPU));
+		enemies.push_back(createActor("wispwing.actr", AT_CPU));
+
+		int totalRows = 23;
+		int totalCols = 51;
+		resize_term(totalRows, totalCols);
+		BattleProcessor* bp = new BattleProcessor(newwin(totalRows, totalCols, 0, 0), players, enemies);
+
+		bool playing = true;
+		while (playing)
+		{
+			bp->draw();
+			doupdate();
+
+			int input = getch();
+
+			switch (input)
+			{
+			case KEY_ESC: 
+				playing = false;
+				testing = false;
+				break;
+			default:
+			{
+				playing = bp->processInput(input);
+			}
+			break;
+			}
+		}
+
+
+
+	}
+}
+
+
+
+
 void actorCardTest()
 {
 	//Actor* a = createActor();
@@ -3907,7 +3761,7 @@ void graphMenuTest()
 	GraphMenu* menu = new GraphMenu(newwin(10, 30, 1, 1), 4);
 	LineItem* li = new LineItem("item1", 0, -1);
 	li->setPosition(3, 3);
-	ActorCard* ac = new ActorCard(createActor(), 1, -1);
+	ActorCard* ac = new ActorCard(createActor("hero.actr", AT_HUMAN), 1, -1);
 	ac->setPosition(6, 10);
 	menu->setItem(li);
 	menu->setItem(ac);
@@ -4031,7 +3885,7 @@ void formFieldTest()
 	while (playing)
 	{
 		fField->draw();
-		field->setFocus();
+		field->setCursorFocus();
 		doupdate();
 		int c = getch();
 
@@ -4060,16 +3914,104 @@ void masterEditorTest()
 	}
 }
 
+void turnTrackerTest()
+{
+	list<Actor*> players;
+	players.push_back(createActor("hero.actr", AT_HUMAN));
+	
+
+	list<Actor*> enemies;
+	enemies.push_back(createActor("toadie.actr", AT_CPU));
+	enemies.push_back(createActor("bigbug.actr", AT_CPU));
+	enemies.push_back(createActor("Skittler.actr", AT_CPU));
+	enemies.push_back(createActor("wispwing.actr", AT_CPU));
+
+	int turns = players.size() + enemies.size();
+	TurnTracker tracker(turns);
+
+	tracker.addPlayers(players);
+	tracker.addPlayers(enemies);
+
+	int rounds = 4;
+	for (int round = 0; round < rounds; round++)
+	{
+		for (int i = 0; i < turns; i++)
+		{
+			cout << tracker.getNext()->def->name << endl;
+		}
+
+		switch (round)
+		{
+		case 0:
+		{
+			Actor* runaway = enemies.back(); //remove one entirely
+			delete runaway;
+			enemies.pop_back();
+		}
+			break;
+		case 1:
+		{
+			Actor* toDie = enemies.back();
+			toDie->currHp = 0; //kill enemy
+		}	
+			break;
+		}
+		
+
+
+		system("pause");
+	}
+		
+}
+
+void itemGroupTest()
+{
+	int count = 3;
+	vector<MenuItem*> cards;
+	cards.push_back(new ActorCard(NULL, 0, 0));
+	cards.push_back(new ActorCard(NULL, 1, 0));
+	cards.push_back(new ActorCard(NULL, 2, 0));
+
+	MenuItem::linkItemGroup(cards, DOWN_LINK);
+}
+
+
+void spellTest()
+{
+	Spell* spell = new Spell();
+
+	Actor* actor = createActor("hero.actr", AT_HUMAN);
+	spell->caster = actor;
+	spell->cost = 5;
+	spell->name = "Fire";
+	spell->desc = "Burns enemies with fire";
+	spell->value = 15;
+
+	TargetScheme ts;
+	ts.set = TGT_SINGLE | TGT_SIDE;
+
+	ts.side = ANY_SIDE;
+
+	
+	
+
+}
 
 int main()
 {
+	//tests above TUI for non curses testing
+//	turnTrackerTest();
+
 	TUI* tui = new TUI();
 	tui->init();
 	
 //	controlManagerTest();
 //	mapEditorTest();
 //	actorEditorTest();
-	masterEditorTest();
+//	masterEditorTest();
+//	battleProcessorTest();
+	//itemGroupTest();
+
 
 	tui->shutdown();
 	delete tui;

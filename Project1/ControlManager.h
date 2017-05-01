@@ -30,7 +30,7 @@ private:
 	list<KeyAccelerator*> shortcuts;
 
 	//this should maybe be replaced with an iterator and prev/next pointers removed from Registration!
-	list<Registration*>::iterator focus;
+	list<Registration*>::iterator focusedControl;
 
 	bool active = true;
 	void* caller; //the type of class that utilizes the Control Manager
@@ -48,6 +48,8 @@ public:
 	ControlManager(void* caller);// { this->caller = caller; }
 	Controllable* getFocus();
 	void setFocus(Controllable* c); 
+	void unsetFocus();
+	void setFocusedControl(list<Registration*>::iterator it);
 	void cycleFocus(short cycleKey);
 	void setActive(bool status) { active = status; }
 	void shutdown();

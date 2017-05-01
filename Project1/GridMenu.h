@@ -110,7 +110,6 @@ public:
 	void setRowSepLength(int length);
 	void setColSepLength(int length);
 	bool post(bool post);
-	//void clear();
 	
 	int driver(int input);
 	MenuItem* getItem(int y, int x);//

@@ -126,9 +126,6 @@
     <ClCompile Include="FormField.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Menu.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="FormControl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -136,6 +133,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MasterEditor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BattleProcessor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TurnTracker.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -272,13 +275,19 @@
     <ClInclude Include="FormField.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Menu.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="FormControl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MasterEditor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BattleProcessor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TurnTracker.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Spell.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

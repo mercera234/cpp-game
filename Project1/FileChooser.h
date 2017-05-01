@@ -30,7 +30,7 @@ protected:
 public:
 	FileChooser(WINDOW* win, string workingDir, int type, string filter = "");
 	void resetDirEntries();
-	void setFocus() { fileNameField->setFocus(); }
+	void setFocus() { fileNameField->setCursorFocus(); }
 	void setFilter(string filter) { this->filter = filter; }
 	unsigned short getType() { return type; }
 	GridMenu* getMenu() { return fileMenu; }

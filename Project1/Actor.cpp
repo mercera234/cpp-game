@@ -5,7 +5,11 @@ bool ActorDef::save(ofstream* saveFile)
 	if (saveFile->is_open() == false)
 		return false;
 
-	saveFile->write(name.data(), MAX_NAME_LENGTH);
+	char buf[MAX_NAME_LENGTH];
+	memset(buf, 0, MAX_NAME_LENGTH);
+	memcpy_s(buf, MAX_NAME_LENGTH, name.data(), name.length());
+
+	saveFile->write(buf, MAX_NAME_LENGTH);
 	saveFile->write((char*)&symbol, sizeof(char));
 	saveFile->write((char*)&level, sizeof(short));
 	saveFile->write((char*)&exp, sizeof(int));

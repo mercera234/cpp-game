@@ -14,11 +14,6 @@ using namespace std;
 #include "MovementProcessor.h"
 #include "Editor.h"
 
-//#define NEW_MAP 0
-//#define OPEN_MAP 1
-//#define SAVE_MAP 2
-//#define QUIT_MAP 3
-
 #define DOT 0
 #define FILL 1
 #define BRUSH 2

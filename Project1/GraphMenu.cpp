@@ -16,6 +16,11 @@ void GraphMenu::draw()
 {
 	wclear(win);
 
+	if (focus)
+		wattron(win, A_BOLD);
+	else
+		wattroff(win, A_BOLD);
+
 	//render each item
 	for (int i = 0; i < capacity; i++)
 	{
