@@ -2,6 +2,7 @@
 #include "LineItem.h"
 #include <sstream>
 #include "MenuItem.h"
+#include "BattleAlgorithm.h"
 
 BattleProcessor::BattleProcessor(WINDOW* win, list<Actor*>& players, list<Actor*>& enemies)
 {
@@ -9,8 +10,12 @@ BattleProcessor::BattleProcessor(WINDOW* win, list<Actor*>& players, list<Actor*
 	totalRows = getmaxy(win);//total row/col dimensions same as visible
 	totalCols = getmaxx(win);
 
-	humanActors = players;
-	cpuActors = enemies;
+	//humanActors = players;
+	//cpuActors = enemies;
+
+	createActorCards(players, 0, humanActors);
+	createActorCards(enemies, humanActors.size(), cpuActors);
+
 
 	initTurnTracker(); 
 	initTargetMenu();
@@ -27,7 +32,8 @@ Must be done after actors have been setup
 void BattleProcessor::initTurnTracker()
 {
 	int totalPlayers = humanActors.size() + cpuActors.size();
-	turnTracker = new TurnTracker(totalPlayers);
+	turnTracker = new TurnTracker();
+	
 	turnTracker->addPlayers(humanActors);
 	turnTracker->addPlayers(cpuActors);
 }
@@ -42,47 +48,70 @@ void BattleProcessor::initTargetMenu()
 
 
 	//setup actor cards
-	vector<MenuItem*>humanCards(humanActors.size());
+	/*vector<MenuItem*>humanCards(humanActors.size());
 	vector<MenuItem*>cpuCards(cpuActors.size());
 
 	createActorCards(humanActors, 0, humanCards);
 	createActorCards(cpuActors, humanCards.size(), cpuCards);
-
+*/
 	//link cards
-	MenuItem::linkItemGroup(humanCards, DOWN_LINK);
-	MenuItem::linkItemGroup(cpuCards, DOWN_LINK);
+	/*MenuItem::linkItemGroup(humanCards, DOWN_LINK);
+	MenuItem::linkItemGroup(cpuCards, DOWN_LINK);*/
+	MenuItem::linkItemGroup(humanActors, DOWN_LINK);
+	MenuItem::linkItemGroup(cpuActors, DOWN_LINK);
 
-	MenuItem::linkItemGroups(humanCards, cpuCards, RIGHT_LINK);
+	MenuItem::linkItemGroups(humanActors, cpuActors, RIGHT_LINK);
 	
 	//position cards
 	int pLeft = 2;
 	int eLeft = pLeft + (visibleCols / 2); //midway across screen
 
-	MenuItem::positionItemGroup(humanCards, 0, pLeft);
-	MenuItem::positionItemGroup(cpuCards, 0, eLeft);
+	MenuItem::positionItemGroup(humanActors, 0, pLeft);
+	MenuItem::positionItemGroup(cpuActors, 0, eLeft);
 
 	//add cards to target menu
-	addCardsToTargetMenu(humanCards);
-	addCardsToTargetMenu(cpuCards);
+	addCardsToTargetMenu(humanActors);
+	addCardsToTargetMenu(cpuActors);
 }
 
 
-void BattleProcessor::addCardsToTargetMenu(vector<MenuItem*>& cards)
+void BattleProcessor::addCardsToTargetMenu(list<MenuItem*>& cards)
 {
-	for (int i = 0; i < cards.size(); i++)
+	for each (MenuItem* item in cards)
+	{
+		targetMenu->setItem(item);
+	}
+	/*for (int i = 0; i < cards.size(); i++)
 	{
 		targetMenu->setItem(cards[i]);
-	}
+	}*/
+}
+
+void BattleProcessor::attack(ActorCard * attacker, ActorCard * target)
+{
+	Actor* attackerActor = attacker->getActor();
+	Actor* targetActor = target->getActor();
+	int damage = BattleAlgorithm::calcAttackDamage(attackerActor->def->strength, targetActor->def->defense);
+	targetActor->currHp -= damage;
+	if (targetActor->currHp < 0)
+		targetActor->currHp = 0;
+	target->setDamage(damage);
+
+	ostringstream attackMsg;
+	attackMsg << attackerActor->def->name << " hits " << targetActor->def->name;
+
+	messages.push_back(attackMsg.str());
 }
 
 
-void BattleProcessor::createActorCards(list<Actor*>& actors, int startNdx, vector<MenuItem*>& cards)
+void BattleProcessor::createActorCards(list<Actor*>& actors, int startNdx, list<MenuItem*>& cards)
 {
 	int i = 0;
 	int index = startNdx;
 	for each (Actor* actor in actors)
 	{
-		cards[i++] = new ActorCard(actor, index++, -1);
+		cards.push_back(new ActorCard(actor, index++, -1));
+		//cards[i++] = new ActorCard(actor, index++, -1);
 	}
 }
 
@@ -120,21 +149,20 @@ void BattleProcessor::initControlManager()
 	setControlManager(cm);
 	cm->registerControl(targetMenu, KEY_LISTENER, controlCallback);
 	cm->registerControl(skillMenuFrame, KEY_LISTENER, controlCallback);
-//	cm->registerControl(skillMenu, KEY_LISTENER, controlCallback);
 	cm->registerControl(msgDisplay, KEY_LISTENER, controlCallback); 
 }
 
 void BattleProcessor::advanceTurn()
 {
 	turnHolder = turnTracker->getNext();
+	
+	if (turnHolder == NULL)	return;
 
-	if (turnHolder == NULL) return;
-
-	switch (turnHolder->type)
+	Actor* next = turnHolder->getActor();
+	switch (next->type)
 	{
 	case AT_HUMAN:
-		//cm->setFocus(skillMenu);
-		skillMenuFrame->setText(turnHolder->def->name, 0, 4);
+		skillMenuFrame->setText(next->def->name, 0, 4);
 		cm->setFocus(skillMenuFrame);
 		break;
 	case AT_CPU:
@@ -233,23 +261,16 @@ void BattleProcessor::targetMenuDriver(int input)
 	if (item != NULL) //target was chosen, apply skill
 	{
 		//only skill right now is attack so use that
-		Actor* target = ((ActorCard*) item)->getActor();
-		//Actor* turnHolder = humanActors.front(); //should have been set before populating skillMenu
+		ActorCard* target = (ActorCard*)item;
 		
-		target->currHp -= turnHolder->def->strength;
-		if (target->currHp < 0)
-			target->currHp = 0;
-
-		ostringstream attackMsg;
-		attackMsg << turnHolder->def->name << " hits " << target->def->name;
-
-		messages.push_back(attackMsg.str());
+		attack(turnHolder, target);
 
 		//check if enemies are defeated
 		bool allDead = true;
-		for (list<Actor*>::iterator it = cpuActors.begin(); it != cpuActors.end(); it++)
+		for (list<MenuItem*>::iterator it = cpuActors.begin(); it != cpuActors.end(); it++)
 		{
-			Actor* enemy = *it;
+			ActorCard* card = (ActorCard*)*it;
+			Actor* enemy = card->getActor();
 			if (IS_DEAD(enemy) == false)
 			{
 				allDead = false; break;
@@ -301,9 +322,10 @@ void BattleProcessor::calcRewards(int& totalExp, int &totalMoney)
 {
 	totalExp = 0;
 	totalMoney = 0;
-	for (list<Actor*>::iterator it = cpuActors.begin(); it != cpuActors.end(); it++)
+	for (list<MenuItem*>::iterator it = cpuActors.begin(); it != cpuActors.end(); it++)
 	{
-		Actor* enemy = *it;
+		ActorCard* card = (ActorCard*)*it;
+		Actor* enemy = card->getActor();
 		totalExp += enemy->def->exp;
 		totalMoney += enemy->def->money;
 	}
@@ -311,9 +333,10 @@ void BattleProcessor::calcRewards(int& totalExp, int &totalMoney)
 
 void BattleProcessor::transferRewards(int totalExp, int totalMoney)
 {
-	for (list<Actor*>::iterator it = humanActors.begin(); it != humanActors.end(); it++)
+	for (list<MenuItem*>::iterator it = humanActors.begin(); it != humanActors.end(); it++)
 	{
-		Actor* player = *it;
+		ActorCard* card = (ActorCard*)*it;
+		Actor* player = card->getActor();
 		player->def->exp += totalExp;
 
 		//not sure how to handle money just yet
@@ -376,35 +399,27 @@ void BattleProcessor::processCPUTurn()
 {
 	//choose random human target
 	int targetId = rand() % humanActors.size();
-	list<Actor*>::iterator it;
+	list<MenuItem*>::iterator it;
 	int seq = 0;
-	Actor* target = NULL;
+	ActorCard* target = NULL;
 	for (it = humanActors.begin(); it != humanActors.end(); it++)
 	{
+		ActorCard* card = (ActorCard*)*it;
 		if (seq++ == targetId)
 		{
-			target = *it;
+			target = card;// ->getActor();
 		}
 	}
-	//Actor* target = humanActors.front(); //only one for now
-
-	//apply skill (just attack for now)
-	target->currHp -= turnHolder->def->strength;
-
-	if (target->currHp < 0)
-		target->currHp = 0;
-
-	//setup acknowledgement messages
-	ostringstream attackMsg;
-	attackMsg << turnHolder->def->name << " hits " << target->def->name;
 	
-	messages.push_back(attackMsg.str());
+	//apply skill (just attack for now)
+	attack(turnHolder, target);
 
 	//check if heros are defeated (this should be merged in with the other one!)
 	bool allDead = true;
-	for (list<Actor*>::iterator it = humanActors.begin(); it != humanActors.end(); it++)
+	for (list<MenuItem*>::iterator it = humanActors.begin(); it != humanActors.end(); it++)
 	{
-		Actor* human = *it;
+		ActorCard* card = (ActorCard*)*it;
+		Actor* human = card->getActor();
 		if (IS_DEAD(human) == false)
 		{
 			allDead = false; break;

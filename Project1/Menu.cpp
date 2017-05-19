@@ -29,22 +29,43 @@ Menu::Menu(WINDOW* win, int rows, int cols)
 void Menu::setItemHeight(int height)
 {
 	itemHeight = height;
+	setRowHeight(); //recalculate when item height changes
+}
+
+void Menu::setRowSepLength(int length)
+{
+	rowSepLen = length;
+	setRowHeight(); //recalculate when separator length changes
+}
+
+void Menu::setRowHeight()
+{
 	rowHeight = itemHeight + rowSepLen;
-	
+
 	totalRows = menuRows * rowHeight - rowSepLen; //subtract the separator off the last row
 
 	visibleMenuRows = visibleRows / rowHeight;
 }
 
-
 void Menu::setItemWidth(int width)
 {
 	itemWidth = width;
+	setColWidth(); //recalculate when item width changes
+}
+
+void Menu::setColSepLength(int length)
+{
+	colSepLen = length;
+	setColWidth(); //recalculate when separator length changes
+}
+
+void Menu::setColWidth()
+{
 	colWidth = itemWidth + mark.length() + colSepLen;
 
 	//total columns is the width of the columns times the number of menu columns + length of the column separators between columns
 	totalCols = menuCols * colWidth - 1; //subtract 1 because we don't need separator at very end of row
-	
+
 	visibleMenuCols = visibleCols / colWidth;
 }
 
@@ -54,7 +75,11 @@ void Menu::setDefaults()
 	itemCount = 0;
 	majorOrder = ROW_MAJOR; //default
 
-	//currentIndex = 0; //default index will be top left item
+	selector = new MenuSelector();
+	selector->cursor = &currentIndex;
+	
+	//selector->value = *(selector->cursor);
+
 	clear();
 	
 	pad = ' '; //space by default
@@ -74,6 +99,7 @@ void Menu::setDefaults()
 
 	colorPair = 0;//use default color pair
 	wrapAround = true; //allow by default
+	spreadable = false; //most menus will never use this
 }
 
 void Menu::setColor(int colorPair)
@@ -96,42 +122,31 @@ void Menu::setMarkSide(bool markSide)
 
 void Menu::setSelectedIndex(int index)
 {
+	if (index < 0 || index >= capacity) //can't set an out of bounds index
+		return;
+
+	items[currentIndex]->selected = false; //unselect current item
 	currentIndex = index;
+	items[currentIndex]->selected = true;
 }
+
 
 void Menu::setWrapAround(bool wrap)
 {
 	wrapAround = wrap;
+	spreadable = false; //these two should be mutually exclusive
 }
 
-/*
-setItem will set the item at the element specified. If element has already been set it will be overwritten.
-*/
-//bool Menu::setItem(string name, string itemDesc, int element, int crossRefNdx)
-//{
-//	setItem(name, element, crossRefNdx); //until we find a usage for the item description
-//	return true;
-//}
+void Menu::setSpreadable(bool spread)
+{
+	spreadable = spread; //these two should be mutually exclusive
+	wrapAround = false;
+}
 
-/*
-setItem will set the item at the element specified. If element has already been set it will be overwritten.
-*/
-//bool Menu::setItem(string name, int element, int crossRefNdx)
-//{
-//	//items[element].index = element;
-//	//items[element].itemChosen = false;
-//	//items[element].crossref = crossRefNdx;
-//	//items[element].name = name;
-//	//items[element].selectable = true;
-//
-//	////next line may be deprecated
-//	//crossRef[element] = crossRefNdx;//unused crossrefs will be -1 by default
-//
-//	return true;
-//}
 
 void Menu::setItem(MenuItem* item)
 {
+	delete items[item->index]; //delete previous item
 	items[item->index] = item;
 }
 
@@ -165,30 +180,33 @@ void Menu::drawMenu()
 }
 
 
-
 void Menu::drawItem(int row, int col)
 {
 	int element = getElement(row, col);
 	if (element >= capacity) //can't draw a null item
 		return;
 
-	//print mark and name in correct order
-	if (markSide == LEFT_MARK)
-	{
-		if(element == currentIndex)
-			mvwaddstr(win, row - ulY, (col - ulX) * colWidth, mark.c_str()); //print mark
+	bool selected = true;
+	if (items[element] == NULL || items[element]->selected == false)
+		selected = false;
 
-		if(items[element] != NULL)
-			items[element]->draw(win, row - ulY, (col - ulX) * colWidth + mark.length());
-	}
-	else //markSide == RIGHT_MARK
-	{
-		if (items[element] != NULL)
-			items[element]->draw(win, row - ulY, (col - ulX) * colWidth);
-			
-		if (element == currentIndex)
-			mvwaddstr(win, row - ulY, (col - ulX) * colWidth + itemWidth, mark.c_str()); //print mark
-	}
+	//print mark and name in correct order
+	//if (markSide == LEFT_MARK)
+	//{
+	//	if(selected)
+	//		mvwaddstr(win, (row - ulY) * rowHeight, (col - ulX) * colWidth, mark.c_str()); //print mark
+
+	//	if(items[element] != NULL)
+	//		items[element]->draw(win, (row - ulY) * rowHeight, (col - ulX) * colWidth + mark.length());
+	//}
+	//else //markSide == RIGHT_MARK
+	//{
+	//	if (items[element] != NULL)
+	//		items[element]->draw(win, (row - ulY) * rowHeight, (col - ulX) * colWidth);
+	//		
+	//	if (selected)
+	//		mvwaddstr(win, (row - ulY) * rowHeight, (col - ulX) * colWidth + itemWidth, mark.c_str()); //print mark
+	//}
 }
 
 /*Get element from row and col
@@ -215,19 +233,19 @@ void Menu::draw()
 
 //return true if wrap condition is met for the specified direction
 //the nav req is the last movement that occurred that brought the user to the current index
-bool Menu::wrapOccurred(int navReq)
+bool Menu::wrapOccurred(int navReq, int index)
 {
 	bool wrapOccurred = false;
 	switch (navReq)
 	{
 	case REQ_DOWN_ITEM: // down at bottom of menu it should wrap around to top of same column
-		wrapOccurred = currentIndex >= capacity; break;
+		wrapOccurred = index >= capacity; break;
 	case REQ_UP_ITEM: // up at top of menu it should wrap around to bottom of same column
-		wrapOccurred = currentIndex < 0; break;
+		wrapOccurred = index < 0; break;
 	case REQ_RIGHT_ITEM: //right at right edge of menu should wrap to first item of same row
-		wrapOccurred = currentIndex % menuCols == 0; break;
+		wrapOccurred = index % menuCols == 0; break;
 	case REQ_LEFT_ITEM: //left at left edge of menu should wrap to last item of same row
-		wrapOccurred = (currentIndex + 1) % menuCols == 0; break;
+		wrapOccurred = (index + 1) % menuCols == 0; break;
 	}
 
 	return wrapOccurred;
@@ -237,8 +255,9 @@ bool Menu::wrapOccurred(int navReq)
 process all directional navigation requests
 (only handles requests in row major format currently!)
 */
-int Menu::dirDriver(int input)
+void Menu::dirDriver(int input)
 {
+	int index = currentIndex;
 	int navIncr = 0;
 	int wrapOffset = 0;
 	int* axis = 0;
@@ -283,20 +302,41 @@ int Menu::dirDriver(int input)
 	}
 
 	//perform movement
-	currentIndex += navIncr;
-	if(wrapOccurred(input)) //hit edge of menu
+	index += navIncr;
+	if(wrapOccurred(input, index)) //hit edge of menu
 	{
 		if(wrapAround)
 		{
-			currentIndex += wrapOffset;
+			index += wrapOffset;
 			*axis = axisPos;
 		}
 		else //no wrapping, reverse the movement
-			currentIndex -= navIncr; 
+		{
+			index -= navIncr;
+
+			//only allow spreading of columns
+			if (spreadable && axis == &ulX)
+			{
+				spread = true;
+				selector->type = MS_COL;
+				selector->colCursor = index % menuCols;
+			}
+				
+		}
+	}
+	else //no wrap occurred, spread cannot be set
+	{
+		if (spreadable && axis == &ulX)
+		{
+			spread = false; //TODO how to spread for a 1 column menu
+			selector->type = MS_ELEMENT;
+			//selector->colCursor = index % menuCols;
+		}
+
 	}
 
 	//get current row or col
-	int currAxis = axis == &ulY ? currentIndex / menuCols : currentIndex % menuCols;
+	int currAxis = axis == &ulY ? index / menuCols : index % menuCols;
 
 	/*if current row or col is either less than the upper left corner of the control 
 	or beyond the visual portion of the control*/
@@ -305,10 +345,22 @@ int Menu::dirDriver(int input)
 		*axis = currAxis + visualOffset;
 	}
 
-	return currentIndex;
+	setSelectedIndex(index);
+	
+	//select all items in spread
+	if (spread)
+	{
+		for (int row = 0, element = selector->colCursor; row < menuRows; row++, element += menuCols)
+		{
+			items[element]->selected = true;
+		}
+	}
 }
 
-
+void Menu::selectItem(int index)
+{
+	items[index]->selected = true;
+}
 
 int Menu::driver(int input)
 {
@@ -323,8 +375,6 @@ int Menu::driver(int input)
 	case REQ_TOGGLE_ITEM:
 		if (items[currentIndex]->selectable == false)
 			break;
-
-		//items[currentIndex]->selected = true;
 		break;
 
 	default: break;
@@ -371,6 +421,10 @@ void Menu::clear()
 	}	
 	currentIndex = 0;
 	setPosition(0, 0);
+
+	selector->type = MS_ELEMENT;
+	selector->rowCursor = 0;
+	selector->colCursor = 0;
 }
 
 Menu::~Menu()

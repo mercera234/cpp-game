@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <vector>
+#include <list>
 using namespace std;
 #include "curses.h"
 
@@ -30,7 +31,6 @@ public:
 
 	unsigned short posY, posX;
 	
-	//virtual void draw(WINDOW* win, int offY = 0, int offX = 0) = 0;
 	virtual void draw(WINDOW* win) = 0;
 	MenuItem();
 	MenuItem(unsigned short y, unsigned short x);
@@ -41,7 +41,8 @@ public:
 	void link(int link, MenuItem* item);
 	void setHidden(bool hidden);
 
+	static void linkItemGroup(list<MenuItem*>& group, int link);
 	static void linkItemGroup(vector<MenuItem*>& group, int link);
-	static void linkItemGroups(vector<MenuItem*>& group1, vector<MenuItem*>& group2, int link);
-	static void positionItemGroup(vector<MenuItem*>& group, int posY, int posX);
+	static void linkItemGroups(list<MenuItem*>& group1, list<MenuItem*>& group2, int link);
+	static void positionItemGroup(list<MenuItem*>& group, int posY, int posX);
 };

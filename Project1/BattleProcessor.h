@@ -7,7 +7,7 @@ using namespace std;
 #include "GraphMenu.h"
 #include "GridMenu.h"
 #include "TextLabel.h"
-#include "TurnTracker.h"
+#include "TurnTracker2.h"
 #include "ActorCard.h"
 #include "Frame.h"
 
@@ -29,9 +29,10 @@ private:
 
 	void setMessage();
 
-	void createActorCards(list<Actor*>& actors, int startNdx, vector<MenuItem*>& cards);
-	void addCardsToTargetMenu(vector<MenuItem*>& cards);
+	void createActorCards(list<Actor*>& actors, int startNdx, list<MenuItem*>& cards);
+	void addCardsToTargetMenu(list<MenuItem*>& cards);
 
+	void attack(ActorCard * attacker, ActorCard * target);
 	//checkForVictory
 	//checkForDeath
 	void setupVictory();
@@ -40,8 +41,8 @@ private:
 
 	void setupDeath();
 public:
-	list<Actor*> humanActors; //human combatants
-	list<Actor*> cpuActors; //cpu combatants
+	list<MenuItem*> humanActors; //human combatants
+	list<MenuItem*> cpuActors; //cpu combatants
 	list<string> messages;
 	
 	GraphMenu* targetMenu;
@@ -49,7 +50,7 @@ public:
 	GridMenu* skillMenu;
 	TextLabel* msgDisplay;
 	TurnTracker* turnTracker;
-	Actor* turnHolder;
+	ActorCard* turnHolder;
 
 	BattleProcessor(WINDOW* win, list<Actor*>& players, list<Actor*>& enemies);
 	void draw();

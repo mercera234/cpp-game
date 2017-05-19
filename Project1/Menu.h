@@ -40,8 +40,17 @@ using namespace std;
 #define COL_MAJOR false
 
 
+#define MS_ELEMENT 0
+#define MS_ROW 1
+#define MS_COL 2
 
-
+struct MenuSelector
+{
+	int type; 
+	int rowCursor;
+	int colCursor;
+	short* cursor; //equal to the current Index selected in the menu
+};
 
 
 /*
@@ -63,9 +72,10 @@ colmajor: col * menuRows + row
 class Menu : public Controllable
 {
 private:
-	unsigned short itemCount; //the current # of items the menu has
 	MenuItem** items;
+	MenuSelector* selector;
 
+	unsigned short itemCount; //the current # of items the menu has
 	/*
 	the maximum # of items the menu can have
 	capacity should always = menuRows * menuCols
@@ -109,6 +119,9 @@ private:
 	int colorPair;
 	bool wrapAround;
 
+	bool spread; //if selection is spread
+	bool spreadable; //allows for spreading selection to an entire column on edge of menu
+
 	//unimplemented properties
 	unsigned short justification;
 
@@ -119,22 +132,30 @@ private:
 
 	int getElement(int row, int col);
 
-	int dirDriver(int input);
-	bool wrapOccurred(int navReq);
+	void dirDriver(int input);
+	bool wrapOccurred(int navReq, int index);
+	void setRowHeight();
+	void setColWidth();
+	void selectItem(int index);
 public:
 	Menu(WINDOW* win, int rows, int cols);
+
+	int getCurrentIndex();
+	void disableItem(int y, int x);
+	void draw(); //overridden
 
 	void setMajorOrder(bool majorOrder);
 	void setItem(MenuItem* item);
 	void setSelectedIndex(int index);
-	int getCurrentIndex();
 	void setMarkSide(bool markSide);
 	void setWrapAround(bool wrap);
+	void setSpreadable(bool spread);
 	void setColor(int colorPair);
-	void disableItem(int y, int x);
-	void draw(); //overridden
 	void setItemHeight(int height);
 	void setItemWidth(int width); //should be set wide enough to hold item label data, mark, and separator
+	void setRowSepLength(int length);
+	void setColSepLength(int length);
+	
 	void clear();
 	
 	int driver(int input);

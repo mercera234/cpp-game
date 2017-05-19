@@ -6,6 +6,7 @@
 using namespace std;
 #include "2DStorage.h"
 #include "Image.h"
+#include "Actor.h"
 
 
 #define NULL_MARKER_SPACING 8
@@ -54,24 +55,33 @@ private:
 	unsigned int totalTiles;
 	
 	//data storage
-	Image* display;
+	Image* display = NULL;
 	bool brightness; //true - bright, false - dark
 
 	//saveable data
-	short* effectsLayer;
-	_2DStorage<int>* eLayer;
+	short* effectsLayer = NULL;
+	_2DStorage<int>* eLayer = NULL;
 
 	
 	
+	void setDefaults();
 public:
-	Map(string name, int rows, int cols, WINDOW* win);
+	//overlay data (eventually this should be private)
+	Actor* controlActor; //the actor controlled by the player and moved around on the map
+	
+	
+	Map(string name, int rows, int cols, WINDOW* win); //create new map
+	Map(WINDOW* win, string fileName); //load map from file
 
 	void draw();
 	void reset(); //wipe all data out of the map
 	void resize(int rows, int cols);
 
+	unsigned short getId() { return id; }
+	void setId(unsigned short id) { this->id = id; }
 	Image* getDisplay() { return display; }
 	short* getEffectsLayer() { return effectsLayer; }
+	void setDimensions(int rows, int cols);
 	void setEffect(int y, int x, short effect);
 	void removeEffect(int y, int x, short effect);
 	short getEffects(int y, int x);

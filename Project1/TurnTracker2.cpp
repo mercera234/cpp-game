@@ -1,35 +1,37 @@
 #include <iostream>
 #include <ctime>
-#include "TurnTracker.h"
+#include "TurnTracker2.h"
 
-TurnTracker::TurnTracker(int capacity)
+TurnTracker::TurnTracker()
 {
 	active = true;
-	playerCount = 0;
-	this->capacity = capacity;
-	players = new Actor*[capacity];
 	srand(time(NULL));
 }
 
-void TurnTracker::addPlayers(list<Actor*> joiningPlayers)
+void TurnTracker::addPlayers(list<MenuItem*> joiningPlayers)
 {
-	for each (Actor* actor in joiningPlayers)
+	for each (MenuItem* actor in joiningPlayers)
 	{
-		players[playerCount++] = actor;
+		players.push_back(actor);
 	}
+}
+
+void TurnTracker::removePlayer(ActorCard* player)
+{
+	players.remove(player);
 }
 
 void TurnTracker::setupRound()
 {
 	//set up list of choices
-	for (int i = 0; i < capacity; i++)
+	for (list<MenuItem*>::iterator it = players.begin(); it != players.end(); it++)
 	{
-		Actor* player = players[i];
+		ActorCard* player = (ActorCard*)*it;
 
 		//only abled players are added to list of choices
-		if (IS_ALIVE(player)) //only if player is alive (later change to can fight, not immobilized or anything like that)
+		if (IS_ALIVE(player->getActor())) //only if player is alive (later change to can fight, not immobilized or anything like that)
 		{
-			choiceList.push_back(players[i]);
+			choiceList.push_back(player);
 		}
 	}
 
@@ -46,14 +48,14 @@ void TurnTracker::setupRound()
 	}
 }
 
-Actor* TurnTracker::getNext()
+ActorCard* TurnTracker::getNext()
 {
 	if (!active) return NULL;
 
 
-	Actor* next = getFromQueue();
+	ActorCard* next = getFromQueue();
 
-	while (IS_DEAD(next))
+	while (IS_DEAD(next->getActor()))
 	{
 		turnQueue.pop(); //a disabled character cannot be used (actors can be disabled during battle)
 		next = getFromQueue();
@@ -64,7 +66,7 @@ Actor* TurnTracker::getNext()
 	return next;
 }
 
-Actor* TurnTracker::getFromQueue()
+ActorCard* TurnTracker::getFromQueue()
 {
 	if (turnQueue.empty())
 	{
@@ -76,7 +78,7 @@ Actor* TurnTracker::getFromQueue()
 
 void TurnTracker::free()
 {
-	delete [] players;
+	players.clear();
 }
 
 TurnTracker::~TurnTracker()

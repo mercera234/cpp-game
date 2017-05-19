@@ -9,9 +9,6 @@ private:
 	
 public:
 	GraphMenu(WINDOW* win, int capacity);
-	//void setItem(MenuItem* item);
 	void draw();
-	//void clear();
-	//void selectItem(int index);
 	int driver(int input);
 };

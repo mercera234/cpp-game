@@ -1,24 +1,43 @@
 #include "Map.h"
 #include <fstream>
+#include "TUI.h"
 
+/*
+Create a new map from scratch
+*/
 Map::Map(string name, int rows, int cols, WINDOW* win)
 {
-	id = 0;
 	this->name = name;
-	this->totalRows = rows;
-	this->totalCols = cols;
-	totalTiles = totalRows * totalCols;
+
+	setDimensions(rows, cols);
+
 	effectsLayer = new short[totalTiles];
 
 	eLayer = new _2DStorage<int>(totalRows, totalCols);
 	display = new Image(rows, cols, win); //use same window as map
 
-	brightness = true;
-	focusable = true;
-
 	reset();
 
 	setWindow(win);
+
+	setDefaults();
+}
+
+
+Map::Map(WINDOW* win, string fileName)
+{
+	setWindow(win);
+	load(fileName);
+}
+
+
+void Map::setDefaults()
+{
+	id = 0;
+	brightness = true;
+	focusable = true;
+
+	controlActor = NULL;
 }
 
 _2DStorage<int>* Map::getLayer(int layer)
@@ -31,6 +50,10 @@ _2DStorage<int>* Map::getLayer(int layer)
 	return strg;
 }
 
+/*
+Clear the map (set all tiles to spaces)
+Clear all effects from effect layer.
+*/
 void Map::reset()
 {
 	for (int row = 0; row < totalRows; row++)
@@ -74,6 +97,20 @@ short Map::getEffects(int y, int x)
 void Map::draw()
 {
 	display->draw();
+
+	if (controlActor != NULL) //draw actor if present
+	{
+		chtype normalColor = COLOR_PAIR(COLOR_YELLOW_BOLD);
+		chtype standoutColor = COLOR_PAIR(COLOR_BLACK);
+		chtype mainCImageNormal = controlActor->def->symbol | normalColor;
+		chtype mainCImageStandout = controlActor->def->symbol | standoutColor;
+
+		chtype bkgdTile = mvwinch(win, controlActor->y - display->getUlY(), controlActor->x - display->getUlX());
+		bkgdTile &= (BKGDCOLOR_MASK | ATTR_ONLY_MASK);//keep only the background and attributes
+		chtype mainCImage = (getBkgdColor(bkgdTile) != getTextColor(normalColor)) ? mainCImageNormal : mainCImageStandout;
+		waddch(win, bkgdTile | mainCImage);
+		wnoutrefresh(win);
+	}
 }
 
 
@@ -102,13 +139,30 @@ bool Map::load(string fileName)
 
 	gFile.read((char*)&id, sizeof(short));
 
+	if (display == NULL)
+	{
+		display = new Image(win);
+	}
 	display->load(&gFile);
 	
-//	gFile.read((char*)effectsLayer, sizeof(short) * totalTiles);
+	setDimensions(display->getTotalRows(), display->getTotalCols());
+////	gFile.read((char*)effectsLayer, sizeof(short) * totalTiles);
 
 	gFile.close();
+
+	//! these parameters are not saved and loaded yet
+	brightness = true;
+	focusable = true;
 }
 
+
+void Map::setDimensions(int rows, int cols)
+{
+	this->totalRows = rows;
+	this->totalCols = cols;
+
+	totalTiles = rows * cols;
+}
 
 /*
 Works, 
@@ -117,11 +171,9 @@ and resizing to fixed sizes instead of exactly what we specify
 */
 void Map::resize(int rows, int cols)
 {
-	this->totalRows = rows;
-	this->totalCols = cols;
-
 	int prevTotalTiles = totalTiles;
-	totalTiles = rows * cols;
+
+	setDimensions(rows, cols);
 
 	//for now we will resize to the preferred size, but later on we will only do dynamic resizing to particular sizes
 	chtype* newDisplayLayer = new chtype[totalTiles];
@@ -159,7 +211,6 @@ void Map::resize(int rows, int cols)
 
 Map::~Map()
 {
-	delwin(win);
 	delete effectsLayer;
 	
 	delete eLayer;

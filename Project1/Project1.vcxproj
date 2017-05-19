@@ -121,6 +121,7 @@
     <ClCompile Include="Actor.cpp" />
     <ClCompile Include="ActorCard.cpp" />
     <ClCompile Include="ActorEditor.cpp" />
+    <ClCompile Include="BattleAlgorithm.cpp" />
     <ClCompile Include="BattleProcessor.cpp" />
     <ClCompile Include="BWFilter.cpp" />
     <ClCompile Include="ChtypeFilter.cpp" />
@@ -147,18 +148,20 @@
     <ClCompile Include="MegaMap.cpp" />
     <ClCompile Include="CursesPanel.cpp" />
     <ClCompile Include="MenuItem.cpp" />
+    <ClCompile Include="FreeMovementProcessor.cpp" />
     <ClCompile Include="MovementProcessor.cpp" />
     <ClCompile Include="Palette.cpp" />
     <ClCompile Include="pdcursetest.cpp" />
     <ClCompile Include="RGBControl.cpp" />
     <ClCompile Include="ScrollBar.cpp" />
+    <ClCompile Include="SimpleMapMovementProcessor.cpp" />
     <ClCompile Include="stateManager.cpp" />
     <ClCompile Include="Table.cpp" />
     <ClCompile Include="TextDisplay.cpp" />
     <ClCompile Include="TextField.cpp" />
     <ClCompile Include="TextLabel.cpp" />
     <ClCompile Include="TUI.cpp" />
-    <ClCompile Include="TurnTracker.cpp" />
+    <ClCompile Include="TurnTracker2.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="2DStorage.h" />
@@ -166,12 +169,13 @@
     <ClInclude Include="Actor.h" />
     <ClInclude Include="ActorCard.h" />
     <ClInclude Include="ActorEditor.h" />
+    <ClInclude Include="BattleAlgorithm.h" />
     <ClInclude Include="BattleProcessor.h" />
     <ClInclude Include="BWFilter.h" />
     <ClInclude Include="ChtypeFilter.h" />
     <ClInclude Include="ControlDecorator.h" />
     <ClInclude Include="Editor.h" />
-    <ClInclude Include="Exit.h" />
+    <ClInclude Include="MapExit.h" />
     <ClInclude Include="FilterPattern.h" />
     <ClInclude Include="Form.h" />
     <ClInclude Include="FormControl.h" />
@@ -195,11 +199,13 @@
     <ClInclude Include="MegaMap.h" />
     <ClInclude Include="CursesPanel.h" />
     <ClInclude Include="MenuItem.h" />
+    <ClInclude Include="FreeMovementProcessor.h" />
     <ClInclude Include="MovementProcessor.h" />
     <ClInclude Include="Palette.h" />
     <ClInclude Include="Rectangle.h" />
     <ClInclude Include="RGBControl.h" />
     <ClInclude Include="ScrollBar.h" />
+    <ClInclude Include="SimpleMapMovementProcessor.h" />
     <ClInclude Include="Spell.h" />
     <ClInclude Include="stateManager.h" />
     <ClInclude Include="Storable.h" />
@@ -209,7 +215,7 @@
     <ClInclude Include="TextLabel.h" />
     <ClInclude Include="Tile.h" />
     <ClInclude Include="TUI.h" />
-    <ClInclude Include="TurnTracker.h" />
+    <ClInclude Include="TurnTracker2.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />

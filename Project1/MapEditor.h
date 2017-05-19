@@ -11,7 +11,7 @@ using namespace std;
 #include "Map.h"
 #include "Highlighter.h"
 #include "MapEffectFilterPattern.h"
-#include "MovementProcessor.h"
+#include "FreeMovementProcessor.h"
 #include "Editor.h"
 
 #define DOT 0
@@ -54,7 +54,7 @@ private:
 	short curX; 
 	short curY;
 
-	MovementProcessor* mp;
+	FreeMovementProcessor* mp;
 
 	Map* map;
 	Image* image;

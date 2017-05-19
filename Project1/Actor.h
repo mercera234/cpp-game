@@ -76,15 +76,24 @@ struct ActorDef : public Storable
 	
     unsigned short strength;
 
-	/*a percentage of how much damage is absorbed 
+	/*a percentage(based on 256) of how much physical damage is absorbed 
 	Example:
 	0 take all damage
-	50 take half damage
-	100 take no damage
+	128 take half damage
+	256 take no damage
 	*/
 	unsigned short defense; 
+
 	unsigned short intelligence;
+
+	/*a percentage(based on 256) of how much magic damage is absorbed
+	Example:
+	0 take all damage
+	128 take half damage
+	256 take no damage
+	*/
 	unsigned short will;
+
 	unsigned short agility;
 	float accuracy;
 	float luck;

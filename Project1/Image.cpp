@@ -193,6 +193,11 @@ void Image::resize(int rows, int cols)
 
 Image::~Image()
 {
-	delwin(win);
+	/*if (win != NULL)
+	{
+		delwin(win);
+		win = NULL;
+	}*/
+	
 	delete tileMap;
 }

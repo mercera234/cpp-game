@@ -6,22 +6,7 @@
 using namespace std;
 #include "Actor.h"
 
-//struct Player
-//{
-////	int id;
-//	Actor* actor;
-//	int teamId;
-//	int turns;
-//	bool enabled;
-//};
-
 #define TT_CAPACITY 30
-
-//enum 
-//{
-//	TEAM_BASED = 1,
-//	ROUND_BASED
-//};
 
 class TurnTracker
 {

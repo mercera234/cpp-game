@@ -53,13 +53,6 @@ using namespace std;
 
 #define BORDER_OFFSET 0 //extra space needed when performing window operations with a border
 
-//directions
-#define DIR_ERR -1
-#define DIR_UP 0
-#define DIR_DOWN 1
-#define DIR_LEFT 2
-#define DIR_RIGHT 3
-
 #define COLOR_GRAY 8
 #define COLOR_BLACK_BOLD COLOR_GRAY
 #define COLOR_BLUE_BOLD 9
@@ -72,10 +65,25 @@ using namespace std;
 #define COLOR_GRAY_BOLD 16 //doesn't work
 #define TOTAL_COLORS 16
 
+//color offsets
+#define BKGDCOLOR_OFFSET 28
+#define TEXTCOLOR_OFFSET 24
+
+//bit masks
+#define BKGDCOLOR_MASK 0xf0000000
+#define TEXTCOLOR_MASK 0x0f000000
+#define ATTR_ONLY_MASK 0x00ff0000
+
+
+#define getBkgdColor(c) (c >> BKGDCOLOR_OFFSET)
+#define getTextColor(c) ((c & TEXTCOLOR_MASK) >> TEXTCOLOR_OFFSET)
+
 //cursor states
 #define CURSOR_INVISIBLE 0
 #define CURSOR_NORMAL 1
 #define CURSOR_BOLD 2
+
+
 
 class TUI
 {
@@ -83,6 +91,8 @@ private:
 
 public:
 	static string colorNames[16]; 
+	//static int getBkgdColor(chtype c);
+	//static int getTextColor(chtype c);
 
 	TUI();
 

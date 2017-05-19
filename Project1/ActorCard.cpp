@@ -1,11 +1,16 @@
 #include "ActorCard.h"
 #include "AbstractMenu.h"
+#include <sstream>
+#include "TUI.h"
 
 ActorCard::ActorCard(Actor* actor, int element, int crossRefNdx)
 {
 	this->actor = actor;
 	index = element;
 	this->crossRef = crossRefNdx;
+
+	displayDamage = false; //only true when damage has been taken and must be displayed
+	damageTaken = 0;
 }
 
 void ActorCard::draw(WINDOW* win)
@@ -46,4 +51,19 @@ void ActorCard::draw(WINDOW* win)
 			mvwaddstr(win, topRow, leftEdge - 2, menu->getMark().c_str());
 		}
 	}
+
+	//display damage taken if any
+	if (displayDamage)
+	{
+		displayDamage = false; //
+		ostringstream oss;
+
+		char sign = damageTaken > 0 ? '-' : '+';
+		oss << sign << damageTaken;
+		//string dmgStr = damageTaken;
+		wattron(win, COLOR_PAIR(COLOR_RED_BOLD));
+		mvwaddstr(win, topRow, leftEdge + 17, oss.str().c_str());
+		wattroff(win, COLOR_PAIR(COLOR_RED_BOLD));
+	}
+
 }

@@ -47,6 +47,23 @@ void MenuItem::linkItemGroup(vector<MenuItem*>& group, int link)
 	}
 }
 
+void MenuItem::linkItemGroup(list<MenuItem*>& group, int link)
+{
+	list<MenuItem*>::iterator endIt = --(group.end()); //must stop at next to last element
+	for (list<MenuItem*>::iterator it = group.begin(); it != endIt; it++)
+	{
+		MenuItem* item = *it;
+		MenuItem* nextItem = *next(it);
+		
+		item->link(link, nextItem);
+	}
+
+	/*for (int i = 0; i < group.size() - 1; i++)
+	{
+		group[i]->link(link, group[i + 1]);
+	}*/
+}
+
 /*
 Links two separate groups of items in a 1 to 1 ordering for as many that can be done
 ex: group1 has {A, B, C}, group2 has {D, E}, link is right
@@ -54,26 +71,34 @@ A->D
 B->E
 C->null
 */
-void MenuItem::linkItemGroups(vector<MenuItem*>& group1, vector<MenuItem*>& group2, int link)
+void MenuItem::linkItemGroups(list<MenuItem*>& group1, list<MenuItem*>& group2, int link)
 {
 	int smallestSize = min(group1.size(), group2.size()); 
 	
+	list<MenuItem*>::iterator it1 = group1.begin();
+	list<MenuItem*>::iterator it2 = group2.begin();
 	for (int i = 0; i < smallestSize; i++)
 	{
-		group1[i]->link(link, group2[i]);
+		(*it1++)->link(link, *it2++);
+		//group1[i]->link(link, group2[i]);
 	}
 }
 
 /*
 For now only displays menu items sequentially vertically and assumes menuitem height of 4 (or 3 with a 1 row separator)
 */
-void MenuItem::positionItemGroup(vector<MenuItem*>& group, int posY, int posX)
+void MenuItem::positionItemGroup(list<MenuItem*>& group, int posY, int posX)
 {
+	for each (MenuItem* item in group)
+	{
+		item->setPosition(posY, posX);
+		posY += 4;
+	}
 
-	for (int i = 0; i < group.size(); i++, posY += 4)
+	/*for (int i = 0; i < group.size(); i++, posY += 4)
 	{
 		group[i]->setPosition(posY, posX);
-	}
+	}*/
 }
 
 

@@ -55,7 +55,7 @@ MapEditor::MapEditor()
 	image = map->getDisplay();
 	tileMap = image->getTileMap();
 
-	mp = new MovementProcessor(image, &curY, &curX);
+	mp = new FreeMovementProcessor(image, &curY, &curX);
 	int bottomRow = visibleRows + 2 + topRulerRow + 1;
 
 	//mvprintw(bottom + topRulerRow + 1, sideRulerCol + 1, "x: %+4d  y: %+4d", x, y); //%+4d always render sign, 4 char field, int
@@ -204,6 +204,7 @@ void MapEditor::createNew()
 	map->reset();
 	fileName = DEF_FILENAME;
 	setModified(false);
+	cm->setFocus(map);
 }
 
 
@@ -254,6 +255,7 @@ void MapEditor::canvasInputDriver(TextField* field, int input)
 void MapEditor::load(string fileName)
 {
 	map->load(fileName);
+	cm->setFocus(map);
 }
 
 void MapEditor::save(string fileName)

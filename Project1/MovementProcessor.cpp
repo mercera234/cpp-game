@@ -1,23 +1,9 @@
 #include "MovementProcessor.h"
-
-MovementProcessor::MovementProcessor(Controllable* c, short* curY, short* curX)
-{
-	this->c = c;
-	this->curY = curY;
-	this->curX = curX;
-
-	bounded = true;
-	cursorType = true; //static by default
-
-	//set convenience variables
-	setConvenienceVariables();
-
-	setViewMode(VM_CENTER);
-}
+#include "TUI.h"
 
 void MovementProcessor::setConvenienceVariables()
 {
-	getmaxyx(c->getWindow(), viewHeight, viewWidth);
+	getmaxyx(moveControl->getWindow(), viewHeight, viewWidth);
 	widthCenter = viewWidth / 2;
 	heightCenter = viewHeight / 2;
 
@@ -37,27 +23,35 @@ void MovementProcessor::setViewMode(int mode)
 
 	switch (viewMode)
 	{
-	case VM_CENTER: //reposition map so cursor is centered
-		c->setPosition(*curY - heightCenter, *curX - widthCenter); 
+	case VM_CENTER: //reposition control so cursor is centered
+		//c->setPosition(*curY - heightCenter, *curX - widthCenter);
+		centerView();
 		break;
 	case VM_DYNAMIC:
 	{
-		int ulY = c->getUlY();
-		int ulX = c->getUlX();
-		
+		centerView(); //center the view first since the cursor may be off screen to start with 
+
+		int ulY = moveControl->getUlY();
+		int ulX = moveControl->getUlX();
+
 
 		int newX = ulX;
 		int newY = ulY;
 		if (ulY < 0) newY = 0;
-		else if (ulY + viewHeight > c->getTotalRows()) newY = c->getTotalRows() - viewHeight;
+		else if (ulY + viewHeight > moveControl->getTotalRows()) newY = moveControl->getTotalRows() - viewHeight;
 
 		if (ulX < 0) newX = 0;
-		else if (ulX + viewWidth > c->getTotalCols()) newX = c->getTotalCols() - viewWidth;
+		else if (ulX + viewWidth > moveControl->getTotalCols()) newX = moveControl->getTotalCols() - viewWidth;
 
-		c->setPosition(newY, newX);
+		moveControl->setPosition(newY, newX);
 	}
-		//nothing changes in lock mode so it isn't here
+	//nothing changes in lock mode so it isn't here
 	}
+}
+
+void MovementProcessor::centerView()
+{
+	moveControl->setPosition(*curY - heightCenter, *curX - widthCenter);
 }
 
 void MovementProcessor::processMovementInput(int input)
@@ -65,12 +59,12 @@ void MovementProcessor::processMovementInput(int input)
 	switch (input)
 	{
 	case CTL_HOME: //use two movements to upper left corner
-		processDirectionalInput(DIR_LEFT, c->getTotalCols());
-		processDirectionalInput(DIR_UP, c->getTotalRows());
+		processDirectionalInput(DIR_LEFT, moveControl->getTotalCols());
+		processDirectionalInput(DIR_UP, moveControl->getTotalRows());
 		break;
 	case CTL_END: //use two movements to lower right corner
-		processDirectionalInput(DIR_RIGHT, c->getTotalCols());
-		processDirectionalInput(DIR_DOWN, c->getTotalRows());
+		processDirectionalInput(DIR_RIGHT, moveControl->getTotalCols());
+		processDirectionalInput(DIR_DOWN, moveControl->getTotalRows());
 		break;
 	default:
 		int dir = getDirectionFromKey(input);
@@ -85,7 +79,7 @@ int MovementProcessor::getMoveMagnitudeFromKey(int key)
 	int magnitude = 0;
 	int visibleRows;
 	int visibleCols;
-	getmaxyx(c->getWindow(), visibleRows, visibleCols);
+	getmaxyx(moveControl->getWindow(), visibleRows, visibleCols);
 
 	switch (key)
 	{
@@ -102,7 +96,7 @@ int MovementProcessor::getMoveMagnitudeFromKey(int key)
 		break;
 
 	case KEY_HOME:
-	case KEY_END: magnitude = c->getTotalCols();
+	case KEY_END: magnitude = moveControl->getTotalCols();
 		break;
 	}
 	return magnitude;
@@ -158,68 +152,63 @@ void MovementProcessor::processDirectionalInput(int dirInput, int magnitude)
 
 	setConvenienceVariables(); //do this for every movement in case dimensions change
 
-	int ulY = c->getUlY();
-	int ulX = c->getUlX();
-
 	for (int i = 0; i < magnitude; i++) //take repeated steps until move is over
 	{
-		//move the cursor
-		*axis += step;
-
-		//verify that cursor is within bounds
-		if (bounded)
-		{
-			if (*curX < 0 || *curY < 0 || *curX >= c->getTotalCols() || *curY >= c->getTotalRows())
-			{
-				*axis -= step; break;//reverse step and quit
-			}
-		}
-		
-		
-		switch(viewMode)
-		{
-		case VM_LOCK: 
-			//just make sure step doesn't go out of window
-		{
-			if (*curX < ulX || *curY < ulY || *curX >= ulX + viewWidth || *curY >= ulY + viewHeight)
-			{
-				*axis -= step; break;//reverse step and quit
-			}
-		}
+		if (processStep(axis, step, dirInput) == false)
 			break;
-		case VM_CENTER: 
-			axis == curY ? c->shift(step, 0) : c->shift(0, step);
-			break;
-		case VM_DYNAMIC: 
-		{
-			
-			switch (dirInput)
-			{
-			case DIR_RIGHT:
-				if (*curX > widthCenter && *curX <= c->getTotalCols() - widthCenter - oddOffsetX)
-					c->shift(0, step);
-				break;
-			case DIR_LEFT:
-				if (*curX >= widthCenter && *curX < c->getTotalCols() - widthCenter - oddOffsetX)
-					c->shift(0, step);
-				break;
-			case DIR_DOWN:
-				if (*curY > heightCenter && *curY <= c->getTotalRows() - heightCenter - oddOffsetY)
-					c->shift(step, 0);
-				break;
-			case DIR_UP:
-				if (*curY >= heightCenter && *curY < c->getTotalRows() - heightCenter - oddOffsetY)
-					c->shift(step, 0);
-				break;
+	}
+}
 
-			}
-		}
-			break;
-		}
+/*
+Return integer value representing the edge of the control that we have moved off of.
+Return 0 if in bounds
 
-		//not sure what to do about this
-		////apply brush if necessary
-		//if (tool == BRUSH)
-		//	applyTool(curY, curX);
+true if cursor coordinates are nonnegative and less than the size of the controllable
+*/
+int MovementProcessor::inBounds()
+{
+	if (*curX < 0) return B_WEST;
+	if (*curY < 0) return B_NORTH;
+	if (*curX >= moveControl->getTotalCols()) return B_EAST;
+	if (*curY >= moveControl->getTotalRows()) return B_SOUTH;
+
+	return 0;// *curX >= 0 && *curY >= 0 && *curX < c->getTotalCols() && *curY < c->getTotalRows();
+}
+
+
+/*
+Return true if coordinates are not less than the controls upper left coordinate, and within the visible area
+*/
+bool MovementProcessor::inWindow()
+{
+	int ulY = moveControl->getUlY();
+	int ulX = moveControl->getUlX();
+
+	return *curX >= ulX && *curY >= ulY && *curX < ulX + viewWidth && *curY < ulY + viewHeight;
+}
+
+
+//not sure if this is the best name for this method
+void MovementProcessor::adjustDynamicView(int step, int dirInput)
+{
+	switch (dirInput)
+	{
+	case DIR_RIGHT:
+		if (*curX > widthCenter && *curX <= moveControl->getTotalCols() - widthCenter - oddOffsetX)
+			moveControl->shift(0, step);
+		break;
+	case DIR_LEFT:
+		if (*curX >= widthCenter && *curX < moveControl->getTotalCols() - widthCenter - oddOffsetX)
+			moveControl->shift(0, step);
+		break;
+	case DIR_DOWN:
+		if (*curY > heightCenter && *curY <= moveControl->getTotalRows() - heightCenter - oddOffsetY)
+			moveControl->shift(step, 0);
+		break;
+	case DIR_UP:
+		if (*curY >= heightCenter && *curY < moveControl->getTotalRows() - heightCenter - oddOffsetY)
+			moveControl->shift(step, 0);
+		break;
+
 	}
 }

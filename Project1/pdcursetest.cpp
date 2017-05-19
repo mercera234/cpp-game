@@ -24,9 +24,8 @@
 #include "MapEffectFilterPattern.h"
 #include "2DStorage.h"
 #include "Tile.h"
-#include "MovementProcessor.h"
+#include "FreeMovementProcessor.h"
 #include "Image.h"
-#include "Exit.h"
 #include "MegaMap.h"
 #include "ActorCard.h"
 #include "LineItem.h"
@@ -37,8 +36,13 @@
 #include "FormField.h"
 #include "MasterEditor.h"
 #include "BattleProcessor.h"
-#include "TurnTracker.h"
+#include "TurnTracker2.h"
+//#include "TurnTracker.h"
 #include "Spell.h"
+#include "TestCommand.h"
+#include "BattleAlgorithm.h"
+#include "SimpleMapMovementProcessor.h"
+#include "MapExit.h"
 
 void mockFightTest()
 {
@@ -92,7 +96,7 @@ void mockFightTest()
 
 
 
-void exploreTest()
+void mockExploreTest()
 {
 	short totalRows = 23;
 	short totalCols = 51;
@@ -1472,40 +1476,28 @@ void controlManagerTest()
 
 void commandTest()
 {
-	WINDOW* win = newwin(2, 20, 1, 1);
-	GridMenu* m1 = new GridMenu(win, 2, 1);
+	GridMenu* menu = new GridMenu(newwin(5, 20, 2, 1), 1, 1);
+	menu->setColorPair(COLOR_BLUE);
+	menu->setItem(new LineItem("Red", 0, -1));
+	menu->setItem(new LineItem("Green", 1, -1));
 
-	int rows;
-	int cols;
-	rows = cols = 4;
-	Palette* palette = new Palette(rows, cols, 7, 1);
-	for (int i = 0; i < TOTAL_COLORS; i++)
-	{
-		chtype c = ' ' | (i << 28) & A_COLOR;
-		int x = i % cols;
-		int y = i / cols;
-		palette->setItem(TUI::colorNames[i], c, y, x);
-	}
-
-
-	ControlManager* cm = new ControlManager(NULL);
-	cm->registerControl(m1, MOUSE_LISTENER | KEY_LISTENER, callBackTest);
-	cm->registerControl(palette, MOUSE_LISTENER, callBackTest2);
-	cm->registerShortcutKey(CTRL_N, newCallback);
-	cm->registerShortcutKey(CTRL_Q, quitCallback);
+	Command* cmd = new TestCommand();
 
 	bool inMenus = true;
 	while (inMenus)
 	{
 		clear();
+
+		/*if (cmd != NULL)
+			cmd->execute();*/
+
 		wnoutrefresh(stdscr);
-		cm->draw();
-
-
+		
 		doupdate();
 		int c = getch();
 
-		inMenus = cm->handleInput(c);
+		
+		
 	}
 
 }
@@ -3233,7 +3225,7 @@ void tileMapTest()
 	}
 }
 
-void movementProcessorTest()
+void freeMovementProcessorTest()
 {
 	int height = 5;
 	int width = 7;
@@ -3250,21 +3242,20 @@ void movementProcessorTest()
 	short centerX = getmaxx(viewport) / 2;
 	short y = -centerY;
 	short x = -centerX;
-	short curY = 1;
-	short curX = 1;
+	short curY = 7;
+	short curX = 7;
 
 	tileMap->setDatum(0, 0, '1'); //upper left
 	tileMap->setDatum(0, mapWidth - 1, '2'); //upper right
 	tileMap->setDatum(mapHeight - 1, 0, '3'); //lower left
 	tileMap->setDatum(mapHeight - 1, mapWidth - 1, '4'); //lower right
 
-	map->setPosition(0, 0);
-
-	MovementProcessor* mp = new MovementProcessor(map, &curY, &curX);
+	FreeMovementProcessor* mp = new FreeMovementProcessor(map, &curY, &curX);
+	
 
 	bool playing = true;
 	bool bounded = true;
-	bool cursorType = true;
+
 	while (playing)
 	{
 		map->draw();
@@ -3331,193 +3322,194 @@ void imageTest()
 	}
 }
 
-void exitMapTest()
+//void exitMapTest()
+//{
+//	int height = 7;
+//	int width = 14;
+//	resize_term(height, width);
+//	WINDOW* viewport = dupwin(stdscr);
+//
+//	int mapHeight = height + (height / 2);
+//	int mapWidth = width + (width / 2);
+//	
+//	//setup map 1
+//	Map* map = new Map("test", mapHeight, mapWidth, viewport);
+//	Image* img = map->getDisplay(); //new Image(mapHeight, mapWidth, viewport);
+//	_2DStorage<chtype>* tileMap = img->getTileMap();
+//
+//	BorderExit* eastExit = new BorderExit(B_EAST, 0, mapHeight, 2);
+//
+//	tileMap->setDatum(0, 0, '1'); //upper left
+//	tileMap->setDatum(0, mapWidth - 1, '2'); //upper right
+//	tileMap->setDatum(mapHeight - 1, 0, '3'); //lower left
+//	tileMap->setDatum(mapHeight - 1, mapWidth - 1, '4'); //lower right
+//
+//	map->setPosition(0, 0);
+//
+//	//setup map 2
+//	Map* map2 = new Map("test2", mapHeight, mapWidth, viewport);
+//	Image* img2 = map2->getDisplay();
+//	_2DStorage<chtype>* tileMap2 = img2->getTileMap();
+//
+//	tileMap2->setDatum(0, 0, '5'); //upper left
+//	tileMap2->setDatum(0, mapWidth - 1, '6'); //upper right
+//	tileMap2->setDatum(mapHeight - 1, 0, '7'); //lower left
+//	tileMap2->setDatum(mapHeight - 1, mapWidth - 1, '8'); //lower right
+//
+//	//position cursor
+//	short centerY = getmaxy(viewport) / 2;
+//	short centerX = getmaxx(viewport) / 2;
+//
+//	short curY = centerY;
+//	short curX = centerX;
+//
+//	Map* curMap = map;
+//
+//	bool playing = true;
+//	while (playing)
+//	{
+//		curMap->draw();
+//
+//		//mvwaddch(viewport, centerY + 1, centerX + 1, '@' | 0x0f000000); //for always drawing cursor in center of screen
+//		mvwaddch(viewport, curY - curMap->getUlY(), curX - curMap->getUlX(), '@' | 0x0f000000); //for always drawing cursor in center of screen
+//		wnoutrefresh(viewport);
+//		doupdate();
+//		int input = getch();
+//
+//		int step = 0;
+//		short* axis = 0;
+//		bool dirKeyPressed = false;
+//		switch (input)
+//		{
+//		case KEY_UP: step = -1; axis = &curY; dirKeyPressed = true; break;
+//		case KEY_DOWN: step = 1; axis = &curY; dirKeyPressed = true; break;
+//		case KEY_LEFT: step = -1; axis = &curX; dirKeyPressed = true; break;
+//		case KEY_RIGHT: step = 1; axis = &curX; dirKeyPressed = true; break;
+//		case KEY_ESC: playing = false; break;
+//		}
+//		
+//		if (dirKeyPressed)
+//		{
+//			*axis += step;
+//			axis == &curY ? curMap->shift(step, 0) : curMap->shift(0, step);
+//		}
+//
+//
+//
+//	}
+//}
+
+//void exitTest()
+//{
+//	int height = 7;
+//	int width = 14;
+//	resize_term(height, width);
+//	WINDOW* viewport = dupwin(stdscr);
+//	BorderExit* eastExit = new BorderExit(B_EAST, 0, 3, 1);
+//	BorderExit* westExit = new BorderExit(B_WEST, 0, 3, 0);
+//	BorderExit* northExit = new BorderExit(B_NORTH, 5, 8, 2);
+//	BorderExit* southExit = new BorderExit(B_SOUTH, 5, 8, 3);
+//
+//	//position cursor
+//	short centerY = getmaxy(viewport) / 2;
+//	short centerX = getmaxx(viewport) / 2;
+//
+//	short curY = centerY;
+//	short curX = centerX;
+//	char mapId = '0';
+//	bool playing = true;
+//	while (playing)
+//	{
+//		wclear(viewport);
+//		mvwaddch(viewport, 0, 0, mapId);
+//		mvwaddch(viewport, curY, curX, '@' | 0x0f000000); //for always drawing cursor in center of screen
+//		
+//		wnoutrefresh(viewport);
+//		doupdate();
+//		int input = getch();
+//
+//		int step = 0;
+//		short* axis = 0;
+//		short* perpAxis = 0;
+//		bool dirKeyPressed = false;
+//
+//		switch (input)
+//		{
+//		case KEY_UP: step = -1; axis = &curY; perpAxis = &curX; dirKeyPressed = true; break;
+//		case KEY_DOWN: step = 1; axis = &curY; perpAxis = &curX; dirKeyPressed = true; break;
+//		case KEY_LEFT: step = -1; axis = &curX; perpAxis = &curY; dirKeyPressed = true; break;
+//		case KEY_RIGHT: step = 1; axis = &curX; perpAxis = &curY; dirKeyPressed = true; break;
+//		case KEY_ESC: playing = false; break;
+//		}
+//
+//		if (dirKeyPressed)
+//		{
+//			*axis += step;
+//			int oppSide = 0;
+//			if (curY < 0 || curY >= height || curX < 0 || curX >= width) //walked off edge
+//			{
+//				BorderExit* border = NULL;
+//
+//				if (curY >= height)
+//				{
+//					border = southExit;
+//					oppSide = 0;
+//				}
+//				else if (curY < 0)
+//				{
+//					border = northExit;
+//					oppSide = height - 1;
+//				}
+//				else if (curX >= width)
+//				{					
+//					border = eastExit;
+//					oppSide = 0;
+//				}
+//				else if (curX < 0)
+//				{
+//					border = westExit;
+//					oppSide = width - 1;
+//				}
+//
+//				if (*perpAxis >= border->start && *perpAxis < border->start + border->length)
+//				{
+//					mapId = border->destMapId + 48;
+//					*axis = oppSide;
+//				}
+//
+//
+//			}
+//
+//		}
+//
+//
+//
+//	}
+//}
+
+/*
+Only tests viewing a megamap as a high level map
+*/
+void autoMapTest()
 {
-	int height = 7;
-	int width = 14;
-	resize_term(height, width);
-	WINDOW* viewport = dupwin(stdscr);
-
-	int mapHeight = height + (height / 2);
-	int mapWidth = width + (width / 2);
-	
-	//setup map 1
-	Map* map = new Map("test", mapHeight, mapWidth, viewport);
-	Image* img = map->getDisplay(); //new Image(mapHeight, mapWidth, viewport);
-	_2DStorage<chtype>* tileMap = img->getTileMap();
-
-	BorderExit* eastExit = new BorderExit(B_EAST, 0, mapHeight, 2);
-
-	tileMap->setDatum(0, 0, '1'); //upper left
-	tileMap->setDatum(0, mapWidth - 1, '2'); //upper right
-	tileMap->setDatum(mapHeight - 1, 0, '3'); //lower left
-	tileMap->setDatum(mapHeight - 1, mapWidth - 1, '4'); //lower right
-
-	map->setPosition(0, 0);
-
-	//setup map 2
-	Map* map2 = new Map("test2", mapHeight, mapWidth, viewport);
-	Image* img2 = map2->getDisplay();
-	_2DStorage<chtype>* tileMap2 = img2->getTileMap();
-
-	tileMap2->setDatum(0, 0, '5'); //upper left
-	tileMap2->setDatum(0, mapWidth - 1, '6'); //upper right
-	tileMap2->setDatum(mapHeight - 1, 0, '7'); //lower left
-	tileMap2->setDatum(mapHeight - 1, mapWidth - 1, '8'); //lower right
-
-	//position cursor
-	short centerY = getmaxy(viewport) / 2;
-	short centerX = getmaxx(viewport) / 2;
-
-	short curY = centerY;
-	short curX = centerX;
-
-	Map* curMap = map;
-
-	bool playing = true;
-	while (playing)
-	{
-		curMap->draw();
-
-		//mvwaddch(viewport, centerY + 1, centerX + 1, '@' | 0x0f000000); //for always drawing cursor in center of screen
-		mvwaddch(viewport, curY - curMap->getUlY(), curX - curMap->getUlX(), '@' | 0x0f000000); //for always drawing cursor in center of screen
-		wnoutrefresh(viewport);
-		doupdate();
-		int input = getch();
-
-		int step = 0;
-		short* axis = 0;
-		bool dirKeyPressed = false;
-		switch (input)
-		{
-		case KEY_UP: step = -1; axis = &curY; dirKeyPressed = true; break;
-		case KEY_DOWN: step = 1; axis = &curY; dirKeyPressed = true; break;
-		case KEY_LEFT: step = -1; axis = &curX; dirKeyPressed = true; break;
-		case KEY_RIGHT: step = 1; axis = &curX; dirKeyPressed = true; break;
-		case KEY_ESC: playing = false; break;
-		}
-		
-		if (dirKeyPressed)
-		{
-			*axis += step;
-			axis == &curY ? curMap->shift(step, 0) : curMap->shift(0, step);
-		}
-
-
-
-	}
-}
-
-void exitTest()
-{
-	int height = 7;
-	int width = 14;
-	resize_term(height, width);
-	WINDOW* viewport = dupwin(stdscr);
-	BorderExit* eastExit = new BorderExit(B_EAST, 0, 3, 1);
-	BorderExit* westExit = new BorderExit(B_WEST, 0, 3, 0);
-	BorderExit* northExit = new BorderExit(B_NORTH, 5, 8, 2);
-	BorderExit* southExit = new BorderExit(B_SOUTH, 5, 8, 3);
-
-	//position cursor
-	short centerY = getmaxy(viewport) / 2;
-	short centerX = getmaxx(viewport) / 2;
-
-	short curY = centerY;
-	short curX = centerX;
-	char mapId = '0';
-	bool playing = true;
-	while (playing)
-	{
-		wclear(viewport);
-		mvwaddch(viewport, 0, 0, mapId);
-		mvwaddch(viewport, curY, curX, '@' | 0x0f000000); //for always drawing cursor in center of screen
-		
-		wnoutrefresh(viewport);
-		doupdate();
-		int input = getch();
-
-		int step = 0;
-		short* axis = 0;
-		short* perpAxis = 0;
-		bool dirKeyPressed = false;
-
-		switch (input)
-		{
-		case KEY_UP: step = -1; axis = &curY; perpAxis = &curX; dirKeyPressed = true; break;
-		case KEY_DOWN: step = 1; axis = &curY; perpAxis = &curX; dirKeyPressed = true; break;
-		case KEY_LEFT: step = -1; axis = &curX; perpAxis = &curY; dirKeyPressed = true; break;
-		case KEY_RIGHT: step = 1; axis = &curX; perpAxis = &curY; dirKeyPressed = true; break;
-		case KEY_ESC: playing = false; break;
-		}
-
-		if (dirKeyPressed)
-		{
-			*axis += step;
-			int oppSide = 0;
-			if (curY < 0 || curY >= height || curX < 0 || curX >= width) //walked off edge
-			{
-				BorderExit* border = NULL;
-
-				if (curY >= height)
-				{
-					border = southExit;
-					oppSide = 0;
-				}
-				else if (curY < 0)
-				{
-					border = northExit;
-					oppSide = height - 1;
-				}
-				else if (curX >= width)
-				{					
-					border = eastExit;
-					oppSide = 0;
-				}
-				else if (curX < 0)
-				{
-					border = westExit;
-					oppSide = width - 1;
-				}
-
-				if (*perpAxis >= border->start && *perpAxis < border->start + border->length)
-				{
-					mapId = border->destMapId + 48;
-					*axis = oppSide;
-				}
-
-
-			}
-
-		}
-
-
-
-	}
-}
-
-void megaMapTest()
-{
-	MegaMap* mm = new MegaMap(newwin(10, 20, 1, 1));
+	MegaMap* mm = new MegaMap(newwin(10, 20, 1, 1), 64,64);
 
 	MapMetadata* map = new MapMetadata();
 	map->hX = 1;
 	map->hY = 1;
 	map->layer = 0;
 	map->visualId = 'a';
-	map->unitHeight = 2;
-	map->unitWidth = 3;
-	map->mapId = 1;
-
+	map->unitsTall = 2;
+	map->unitsWide = 3;
+	
 	MapMetadata* map2 = new MapMetadata();
 	map2->hX = 1;
 	map2->hY = 3;
 	map2->layer = 0;
 	map2->visualId = 'b';
-	map2->unitHeight = 1;
-	map2->unitWidth = 8;
-	map2->mapId = 2;
-
+	map2->unitsTall = 1;
+	map2->unitsWide = 8;
+	
 	mm->addMap(map);
 	mm->addMap(map2);
 
@@ -3543,6 +3535,60 @@ void megaMapTest()
 		}
 	}
 }
+
+
+void megaMapTest()
+{
+	MegaMap* mm = new MegaMap(newwin(10, 20, 1, 1), 64, 64);
+
+
+
+
+
+	//MapMetadata* map = new MapMetadata();
+	//map->hX = 1;
+	//map->hY = 1;
+	//map->layer = 0;
+	//map->visualId = 'a';
+	//map->unitsTall = 2;
+	//map->unitsWide = 3;
+	//map->mapId = 1;
+
+	//MapMetadata* map2 = new MapMetadata();
+	//map2->hX = 1;
+	//map2->hY = 3;
+	//map2->layer = 0;
+	//map2->visualId = 'b';
+	//map2->unitsTall = 1;
+	//map2->unitsWide = 8;
+	//map2->mapId = 2;
+
+	//mm->addMap(map);
+	//mm->addMap(map2);
+
+	/*bool playing = true;
+	while (playing)
+	{
+		mm->draw();
+		doupdate();
+
+		int input = getch();
+
+
+		switch (input)
+		{
+		case KEY_ESC: playing = false; break;
+		case KEY_RIGHT: mm->shift(0, 1); break;
+		case KEY_LEFT: mm->shift(0, -1); break;
+		case KEY_DOWN: mm->shift(1, 0); break;
+		case KEY_UP: mm->shift(-1, 0); break;
+		default:
+			mm->removeMap(input - 48);
+			break;
+		}
+	}*/
+}
+
 
 
 void graphMenuTest2()
@@ -3914,20 +3960,71 @@ void masterEditorTest()
 	}
 }
 
-void turnTrackerTest()
+//void turnTrackerTest()
+//{
+//	list<Actor*> players;
+//	players.push_back(createActor("hero.actr", AT_HUMAN));
+//
+//
+//	list<Actor*> enemies;
+//	enemies.push_back(createActor("toadie.actr", AT_CPU));
+//	enemies.push_back(createActor("bigbug.actr", AT_CPU));
+//	enemies.push_back(createActor("Skittler.actr", AT_CPU));
+//	enemies.push_back(createActor("wispwing.actr", AT_CPU));
+//
+//	int turns = players.size() + enemies.size();
+//	TurnTracker tracker(turns);
+//
+//	tracker.addPlayers(players);
+//	tracker.addPlayers(enemies);
+//
+//	int rounds = 4;
+//	for (int round = 0; round < rounds; round++)
+//	{
+//		for (int i = 0; i < turns; i++)
+//		{
+//			cout << tracker.getNext()->def->name << endl;
+//		}
+//
+//		switch (round)
+//		{
+//		case 0:
+//		{
+//			Actor* runaway = enemies.back(); //remove one entirely
+//			delete runaway;
+//			enemies.pop_back();
+//		}
+//		break;
+//		case 1:
+//		{
+//			Actor* toDie = enemies.back();
+//			toDie->currHp = 0; //kill enemy
+//		}
+//		break;
+//		}
+//
+//
+//
+//		system("pause");
+//	}
+//
+//}
+
+void turnTrackerTest2()
 {
-	list<Actor*> players;
-	players.push_back(createActor("hero.actr", AT_HUMAN));
+	list<MenuItem*> players;
+	
+	players.push_back(new ActorCard(createActor("hero.actr", AT_HUMAN), 0, -1));
 	
 
-	list<Actor*> enemies;
-	enemies.push_back(createActor("toadie.actr", AT_CPU));
-	enemies.push_back(createActor("bigbug.actr", AT_CPU));
-	enemies.push_back(createActor("Skittler.actr", AT_CPU));
-	enemies.push_back(createActor("wispwing.actr", AT_CPU));
+	list<MenuItem*> enemies;
+	enemies.push_back(new ActorCard(createActor("toadie.actr", AT_CPU), 1, -1));
+	enemies.push_back(new ActorCard(createActor("bigbug.actr", AT_CPU), 2, -1));
+	enemies.push_back(new ActorCard(createActor("Skittler.actr", AT_CPU), 3, -1));
+	enemies.push_back(new ActorCard(createActor("wispwing.actr", AT_CPU), 4, -1));
 
 	int turns = players.size() + enemies.size();
-	TurnTracker tracker(turns);
+	TurnTracker tracker;
 
 	tracker.addPlayers(players);
 	tracker.addPlayers(enemies);
@@ -3935,30 +4032,27 @@ void turnTrackerTest()
 	int rounds = 4;
 	for (int round = 0; round < rounds; round++)
 	{
-		for (int i = 0; i < turns; i++)
+		for (int i = 0; i < tracker.getPlayerCount(); i++)
 		{
-			cout << tracker.getNext()->def->name << endl;
+			Actor* next = tracker.getNext()->getActor();
+			cout << next->def->name << endl;
 		}
 
 		switch (round)
 		{
 		case 0:
 		{
-			Actor* runaway = enemies.back(); //remove one entirely
-			delete runaway;
+			tracker.removePlayer((ActorCard*)enemies.back());
 			enemies.pop_back();
 		}
 			break;
 		case 1:
 		{
-			Actor* toDie = enemies.back();
-			toDie->currHp = 0; //kill enemy
+			ActorCard* toDie = (ActorCard*)enemies.back();
+			toDie->getActor()->currHp = 0; //kill enemy
 		}	
 			break;
 		}
-		
-
-
 		system("pause");
 	}
 		
@@ -3992,25 +4086,159 @@ void spellTest()
 
 	ts.side = ANY_SIDE;
 
+}
+
+
+
+
+void attackAlgorithmTest()
+{
+	int attack = 8;
+	int defense = 0;
+
+	int maxDefense = 255;
+	int savedLoss = 0;
+	for (int i = 0; i <= maxDefense; i++)
+	{
+		defense = i;
+		int hpLoss = BattleAlgorithm::calcAttackDamage(attack, defense);
+
+		if (hpLoss != savedLoss)
+		{
+			cout << "Attack: " << attack << " Defense: " << defense << " Hp loss: " << hpLoss << endl;
+			savedLoss = hpLoss;
+		}
+	}
 	
-	
+}
+
+void colorStringTest()
+{
+	attron(COLOR_PAIR(COLOR_BLUE));
+	mvprintw(1, 1, "The first string should be blue");
+	attroff(COLOR_PAIR(COLOR_BLUE));
+	mvprintw(2, 2, "The second string should be white");
+
+	attron(COLOR_PAIR(COLOR_GREEN_BOLD));
+	mvprintw(3, 3, "The third string should be green");
+	attroff(COLOR_PAIR(COLOR_GREEN_BOLD));
+
+	wnoutrefresh(stdscr);
+	doupdate();
+
+	int input = getch();
+
 
 }
+
+
+void exploreTest()
+{
+	int scrHeight = 23;
+	int scrWidth = 51;
+	resize_term(scrHeight, scrWidth);
+
+	bool playing = true;
+
+	WINDOW* screen = newwin(scrHeight, scrWidth, 0, 0);
+
+	//create 2 maps
+	Map map0 (screen, "data\\water_templ.map");
+	Map map1 (screen, "data\\labyrinth.map");
+	Map map2 (screen, "data\\crypt.map");
+
+	//setup main character
+	Actor* mainC = createActor("hero.actr", AT_HUMAN);
+	mainC->def->symbol = 'A';
+
+	mainC->x = 45;
+	mainC->y = 37;
+	
+	//try to pass off controlActor when switching maps!!!
+	map0.controlActor = mainC;
+	map1.controlActor = mainC;
+	map2.controlActor = mainC;
+	
+	curs_set(CURSOR_INVISIBLE);
+
+	
+	Map* theMap = &map0;
+	SimpleMapMovementProcessor* mp = new SimpleMapMovementProcessor(&(mainC->y), &(mainC->x));
+	unsigned short id0 = 0;
+	unsigned short id1 = 1;
+	unsigned short id2 = 2;
+	map0.setId(id0);
+	map1.setId(id1);
+	map2.setId(id2);
+
+	MapOpening opening0, opening1, opening2, opening3;
+	opening0.mapId = id0;
+	opening0.location = B_EAST;
+
+	opening1.mapId = id1;
+	opening1.location = B_WEST;
+
+	opening2.mapId = id0;
+	opening2.location = B_SOUTH;
+
+	opening3.mapId = id2;
+	opening3.location = B_NORTH;
+
+	mp->addOpening(opening0, opening1);
+	mp->addOpening(opening1, opening0);
+	mp->addOpening(opening2, opening3);
+	mp->addOpening(opening3, opening2);
+
+	mp->addMap(map0);
+	mp->addMap(map1);
+	mp->addMap(map2);
+	mp->setCurrMap(map0.getId());
+	
+	while (playing)
+	{
+		//draw map
+		mp->getCurrMap()->draw();
+		
+		//add y,x coordinates to screen
+		mvwprintw(screen, scrHeight - 2, scrWidth - 16, "y:%+4u x:%+4u", mainC->y, mainC->x);
+		wnoutrefresh(screen);
+
+		doupdate();
+
+		//process input
+		int input = getch();		
+		switch (input)
+		{
+		case KEY_ESC: playing = false; break;
+		default:
+			mp->processMovementInput(input); break;
+		}
+	}
+
+	delwin(screen); //when a window is shared by multiple controllable objects, they cannot be responsible for deleting the window, because other objects can't tell that it is deleted
+}
+
 
 int main()
 {
 	//tests above TUI for non curses testing
-//	turnTrackerTest();
+//	turnTrackerTest2();
+//	attackAlgorithmTest();
+//	system("pause");
 
 	TUI* tui = new TUI();
 	tui->init();
 	
 //	controlManagerTest();
 //	mapEditorTest();
+	exploreTest();
+//	freeMovementProcessorTest();
 //	actorEditorTest();
 //	masterEditorTest();
 //	battleProcessorTest();
-	//itemGroupTest();
+//	colorStringTest();
+//	commandTest();
+	
 
 
 	tui->shutdown();
