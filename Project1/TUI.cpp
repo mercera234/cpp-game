@@ -165,9 +165,27 @@ void TUI::gameTestScreen()
 
 }
 
+/*
+Print a single character in a window so that the background doesn't change
+*/
+void TUI::printOnBkgd(chtype c, WINDOW* win, int y, int x)
+{
+	//strip text and text color from c
+	chtype text = c & A_CHARTEXT;
+	chtype regularC = c & TEXTCOLOR_MASK;
+	chtype standoutC = COLOR_PAIR(COLOR_BLACK); //prepare standoutcolor if needed
+	
+	chtype bkgdTile = mvwinch(win, y, x);
+	bkgdTile &= BKGDCOLOR_MASK;//keep only the background
+
+	chtype printTextColor = (getBkgdColor(bkgdTile) != getTextColor(regularC) ? regularC : standoutC);
+	waddch(win, bkgdTile | printTextColor | text);
+}
+
 
 void TUI::shutdown()
 {
 	endwin();
 	// finish(0);               /* we're done */
 }
+

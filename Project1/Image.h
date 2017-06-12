@@ -16,6 +16,9 @@ private:
 	unsigned int totalTiles;	
 	_2DStorage<chtype>* tileMap;
 	
+	
+	bool bordered;
+
 	//private methods
 	void init(WINDOW* win);
 	void drawTileChar(
@@ -32,9 +35,13 @@ public:
 
 	_2DStorage<chtype>* getTileMap() { return tileMap; }
 	unsigned int getTotalTiles() { return totalTiles; };
+	void setBordered(bool bordered) { this->bordered = bordered; }
 
 	bool save(ofstream* saveFile);
 	bool load(ifstream* loadFile);
 
 	~Image();
+
+	static Image* getScreenShot(unsigned int y, unsigned int x, unsigned int height, unsigned int width);
+	static Image* getFullScreenShot();
 };

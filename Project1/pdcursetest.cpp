@@ -1,31 +1,16 @@
-#include "TUI.h"
 #include "CursesPanel.h"
-#include "MapEditor.h"
 #include "CursesAttributeController.h"
 #include "RGBControl.h"
-#include <list>
-#include "ControlManager.h"
-#include "Actor.h"
-#include "Map.h"
-#include "TextField.h"
 #include "DataPkg.h"
-#include <fstream>
-#include "Palette.h"
-#include "TextLabel.h"
-#include "Frame.h"
 #include "Table.h"
 #include <sstream>
 #include <dirent.h>
 #include "FileChooser.h"
-#include "ScrollBar.h"
-#include "Highlighter.h"
 #include <ctime>
 #include "BWFilter.h"
 #include "MapEffectFilterPattern.h"
-#include "2DStorage.h"
 #include "Tile.h"
 #include "FreeMovementProcessor.h"
-#include "Image.h"
 #include "MegaMap.h"
 #include "ActorCard.h"
 #include "LineItem.h"
@@ -41,8 +26,13 @@
 #include "Spell.h"
 #include "TestCommand.h"
 #include "BattleAlgorithm.h"
-#include "SimpleMapMovementProcessor.h"
+#include "ExplorationProcessor.h"
 #include "MapExit.h"
+#include "Factory.h"
+#include "MapRepository.h"
+#include "AutoMap.h"
+#include "RandomBlitAnimation.h"
+#include "SpiralBlitAnimation.h"
 
 void mockFightTest()
 {
@@ -3075,9 +3065,9 @@ void tileTest()
 
 	for (int i = 0; i < 6; i++)
 	{
-		Tile* tiles = tileMap->getData();
+		Tile* tileTracker = tileMap->getData();
 		
-		mvaddch(0, i, tiles[i].getDisplay());
+		mvaddch(0, i, tileTracker[i].getDisplay());
 	}
 	wnoutrefresh(stdscr);
 	doupdate();
@@ -3119,7 +3109,7 @@ void tileMapTest()
 	char asciiPtr = asciiStart;
 	int totalTiles = height * width;
 
-	Tile* tiles = tileMap->getData();
+	Tile* tileTracker = tileMap->getData();
 	for (int i = 0; i < totalTiles; i++)
 	{
 		int y = i / width;
@@ -3127,30 +3117,30 @@ void tileMapTest()
 
 
 		if (x < 10)
-			tiles[i].setDisplay((chtype)asciiPtr++ | COLOR_PAIR(COLOR_YELLOW));
+			tileTracker[i].setDisplay((chtype)asciiPtr++ | COLOR_PAIR(COLOR_YELLOW));
 		else if (x >= 10 && x < 20)
-			tiles[i].setDisplay((chtype)asciiPtr++ | (COLOR_YELLOW << 28));
+			tileTracker[i].setDisplay((chtype)asciiPtr++ | (COLOR_YELLOW << 28));
 		else if (x < 30)
-			tiles[i].setDisplay((chtype)asciiPtr++ | (COLOR_YELLOW_BOLD << 28));
+			tileTracker[i].setDisplay((chtype)asciiPtr++ | (COLOR_YELLOW_BOLD << 28));
 
 		if (asciiPtr >= asciiEnd)
 			asciiPtr = asciiStart;
 
 		//give frame obstructed effect
 		if (y == 0 || x == 0 || y == height - 1 || x == width - 1)
-			tiles[i].setEffectType(E_OBSTR);		
+			tileTracker[i].setEffectType(E_OBSTR);		
 
 		if (x == 15)
-			tiles[i].setEffectType(E_JUMPABLE);
+			tileTracker[i].setEffectType(E_JUMPABLE);
 
 		if (x == 17)
 		{
-			tiles[i].setEffectType(E_HP_ALT_CONST);
-			tiles[i].setEffectValue(-5);
+			tileTracker[i].setEffectType(E_HP_ALT_CONST);
+			tileTracker[i].setEffectValue(-5);
 		}
 
 		if (y == height - 2 && x == width - 2)
-			tiles[i].setEffectType(E_EXIT);
+			tileTracker[i].setEffectType(E_EXIT);
 			
 	}
 
@@ -3168,7 +3158,7 @@ void tileMapTest()
 		{
 			int y = i / width;
 			int x = i % width;
-			mvwaddch(viewport, y, x, tiles[i].getDisplay());
+			mvwaddch(viewport, y, x, tileTracker[i].getDisplay());
 		}
 
 		mvwaddch(viewport, curY, curX, '@' | 0x0f000000);
@@ -4143,9 +4133,10 @@ void exploreTest()
 	WINDOW* screen = newwin(scrHeight, scrWidth, 0, 0);
 
 	//create 2 maps
-	Map map0 (screen, "data\\water_templ.map");
-	Map map1 (screen, "data\\labyrinth.map");
-	Map map2 (screen, "data\\crypt.map");
+	Map map0(screen, "data\\water_templ.map");
+	Map map1(screen, "data\\water_templ2.map");
+	Map map2(screen, "data\\labyrinth.map");
+//	Map map2 (screen, "data\\crypt.map");
 
 	//setup main character
 	Actor* mainC = createActor("hero.actr", AT_HUMAN);
@@ -4154,16 +4145,13 @@ void exploreTest()
 	mainC->x = 45;
 	mainC->y = 37;
 	
-	//try to pass off controlActor when switching maps!!!
 	map0.controlActor = mainC;
-	map1.controlActor = mainC;
-	map2.controlActor = mainC;
 	
 	curs_set(CURSOR_INVISIBLE);
 
+	MapRepository* repo = new MapRepository(64, 64);
 	
-	Map* theMap = &map0;
-	SimpleMapMovementProcessor* mp = new SimpleMapMovementProcessor(&(mainC->y), &(mainC->x));
+	ExplorationProcessor* mp = new ExplorationProcessor(&(mainC->y), &(mainC->x), repo);
 	unsigned short id0 = 0;
 	unsigned short id1 = 1;
 	unsigned short id2 = 2;
@@ -4171,28 +4159,15 @@ void exploreTest()
 	map1.setId(id1);
 	map2.setId(id2);
 
-	MapOpening opening0, opening1, opening2, opening3;
-	opening0.mapId = id0;
-	opening0.location = B_EAST;
+	repo->addMapSeam(map0, map1, true, 0, 1, 1);
+	repo->addMapSeam(map2, map0, false, 0, 0, 1);
+	repo->addMapSeam(map2, map1, true, 0, 0, 1);
+	repo->add(map0); //could combine this without previous method
+	repo->add(map1);
+	repo->add(map2);
 
-	opening1.mapId = id1;
-	opening1.location = B_WEST;
-
-	opening2.mapId = id0;
-	opening2.location = B_SOUTH;
-
-	opening3.mapId = id2;
-	opening3.location = B_NORTH;
-
-	mp->addOpening(opening0, opening1);
-	mp->addOpening(opening1, opening0);
-	mp->addOpening(opening2, opening3);
-	mp->addOpening(opening3, opening2);
-
-	mp->addMap(map0);
-	mp->addMap(map1);
-	mp->addMap(map2);
 	mp->setCurrMap(map0.getId());
+	mp->setViewMode(VM_DYNAMIC); //position map so character is visible (not sure if this is the best way to do this)
 	
 	while (playing)
 	{
@@ -4210,14 +4185,256 @@ void exploreTest()
 		switch (input)
 		{
 		case KEY_ESC: playing = false; break;
-		default:
+		case KEY_RIGHT:
+		case KEY_LEFT:
+		case KEY_UP:
+		case KEY_DOWN:
 			mp->processMovementInput(input); break;
+		case '\t': //toggle automap
+			break;
+		default:
+			break;
 		}
 	}
 
 	delwin(screen); //when a window is shared by multiple controllable objects, they cannot be responsible for deleting the window, because other objects can't tell that it is deleted
 }
 
+
+
+void factoryTest()
+{
+	Factory f;
+
+	resize_term(23, 51);
+
+	Map* aMap = f.createMap(7, 23, 51, '&', stdscr);
+
+	aMap->draw();
+	mvaddch(1, 1, aMap->getId()); //displays ^G for 7
+	doupdate();
+
+	int input = getch();
+}
+
+void mapRepositoryTest()
+{
+	Factory f;
+
+	int unitsWide = 51;
+	int unitsHigh = 23;
+	resize_term(unitsHigh, unitsWide);
+
+	Map* aMap = f.createMap(0, unitsHigh, unitsWide, '&', stdscr);
+	Map* bMap = f.createMap(1, unitsHigh * 2, unitsWide, '2', stdscr);
+	Map* cMap = f.createMap(2, unitsHigh, unitsWide * 2, 'l', stdscr);
+
+	MapRepository repo(unitsHigh, unitsWide);
+
+	repo.add(*aMap);
+	repo.add(*bMap);
+	repo.add(*cMap);
+
+	bool playing = true;
+
+	Map* currMap = aMap;
+
+	while (playing)
+	{
+		//draw map
+		currMap->draw();
+
+		//add y,x coordinates to screen
+		//mvwprintw(screen, scrHeight - 2, scrWidth - 16, "y:%+4u x:%+4u", mainC->y, mainC->x);
+		wnoutrefresh(stdscr);
+
+		doupdate();
+
+		//process input
+		int input = getch();
+		switch (input)
+		{
+		case KEY_ESC: playing = false; break;
+
+			//move the active map around
+		case KEY_RIGHT: 
+			currMap->getDisplay()->shift(0, 1);
+			break;
+		case KEY_LEFT:
+			currMap->getDisplay()->shift(0, -1);
+			break;
+		case KEY_UP:
+			currMap->getDisplay()->shift(-1, 0);
+			break;
+		case KEY_DOWN:
+			currMap->getDisplay()->shift(1, 0);
+			break;
+		default:
+			currMap = repo.find(input - 48);//switch the active map
+			break;
+		}
+	}
+
+}
+
+
+
+void hiLevelMapTest()
+{
+	Factory f;
+
+	int unitsWide = 51;
+	int unitsHigh = 23;
+	resize_term(unitsHigh, unitsWide);
+
+	
+
+	MapRepository* mapRepo = new MapRepository(unitsHigh, unitsWide);
+	
+
+	AutoMap autoMap(stdscr, 7,9);	
+
+	mapRepo->add(*(f.createMap(stdscr, 0, unitsHigh * 2, unitsWide * 2, '0', 0, 0)));
+	mapRepo->add(*(f.createMap(stdscr, 1, unitsHigh * 2, unitsWide    , '1', 1, 2)));
+	mapRepo->add(*(f.createMap(stdscr, 2, unitsHigh * 5, unitsWide	  , '2', 2, 1)));
+	mapRepo->add(*(f.createMap(stdscr, 3, unitsHigh, unitsWide * 2,		'3', 6, 2)));
+	mapRepo->add(*(f.createMap(stdscr, 4, unitsHigh, unitsWide,			'4', 5, 3)));
+	mapRepo->add(*(f.createMap(stdscr, 5, unitsHigh * 3, unitsWide * 3, '5', 2, 3)));
+	mapRepo->add(*(f.createMap(stdscr, 6, unitsHigh, unitsWide * 3,		'6', 3, 6)));
+	mapRepo->add(*(f.createMap(stdscr, 7, unitsHigh * 2, unitsWide,		'7', 1, 8)));
+	mapRepo->add(*(f.createMap(stdscr, 8, unitsHigh * 2, unitsWide * 2, '8', 1, 6)));
+
+	autoMap.setMapRepo(mapRepo);
+	autoMap.setCurrMap(0);
+	autoMap.updateDisplay();
+
+	short curY = 0;
+	short curX = 0;
+
+	Image* img = autoMap.getDisplay();
+	
+	curs_set(CURSOR_INVISIBLE);
+	FreeMovementProcessor mp(autoMap.getDisplay(), &curY, &curX);
+	mp.setViewMode(VM_CENTER);
+	bool playing = true;
+
+	while (playing)
+	{
+		autoMap.draw();
+
+		//draw character location
+
+		TUI::printOnBkgd('A' | COLOR_PAIR(COLOR_YELLOW_BOLD), stdscr, 0 - img->getUlY(), 0 - img->getUlX());
+		
+		wnoutrefresh(stdscr);
+
+		doupdate();
+
+		//process input
+		int input = getch();
+		switch (input)
+		{
+		case KEY_ESC: playing = false; break;
+
+			//move the active map around
+		case KEY_RIGHT:
+		case KEY_LEFT:
+		case KEY_UP:
+		case KEY_DOWN:
+			mp.processMovementInput(input);
+			break;
+		default:
+		{
+			int mapId = input - 48;
+			autoMap.setCurrMap(mapId);
+			autoMap.discover(mapId);
+			autoMap.visit(mapId, 0, 1);
+		}
+			
+			break;
+		}
+	}
+
+}
+
+void animationTest()
+{
+	resize_term(screenHeight, screenWidth);
+
+	Map map0(stdscr, "data\\water_templ.map");
+	Image* img = map0.getDisplay();
+	img->draw(); //load drawing into window (wouldn't normally draw outside of input process update loop
+	doupdate();
+
+	getch();
+	
+	//copy image on screen to new image
+	//RandomBlitAnimation anim(img);
+	SpiralBlitAnimation anim(img);
+	anim.setSpeed(1);
+
+	curs_set(CURSOR_INVISIBLE);
+	bool playing = true;
+	bool dir = true;
+
+	while(playing)
+	{
+		//draw
+		anim.draw();
+		doupdate();
+		
+		//input
+		if (anim.isPlaying() == false)
+		{
+			int input = getch();
+
+			switch (input)
+			{
+			case KEY_ESC: playing = false; break;
+			default:
+				dir = !dir;
+				anim.setPlayDirection(dir);
+				anim.play();
+				break;
+			}
+
+			
+		}
+		else //input comes from animation
+		{
+			anim.frame();
+		}		
+	}
+}
+
+
+void invisibleAttrTest()
+{
+	int rows = 10;
+	int cols = 10;
+	WINDOW* win = newwin(rows, cols, 1, 1);
+	int total = rows * cols;
+
+	int smallRows = rows - 4;
+	int smallCols = cols - 4;
+	WINDOW* background = newwin(smallRows, smallCols, 2, 2);
+
+	for (int i = 0; i < total; i++)
+	{
+		int row = i / cols;
+		int col = i % cols;
+		mvwaddch(win, row, col, 'R' | (COLOR_GREEN << TEXTCOLOR_OFFSET) | (COLOR_RED << BKGDCOLOR_OFFSET));
+	}
+
+	mvwaddch(background, 3, 3, 'R' | A_INVIS | (COLOR_GREEN << TEXTCOLOR_OFFSET) | (COLOR_RED << BKGDCOLOR_OFFSET));
+
+	wnoutrefresh(win);
+	wnoutrefresh(background);
+
+	doupdate();
+
+	int input = getch();
+}
 
 int main()
 {
@@ -4231,7 +4448,13 @@ int main()
 	
 //	controlManagerTest();
 //	mapEditorTest();
-	exploreTest();
+//	exploreTest();
+//	hiLevelMapTest();
+	animationTest();
+
+//	autoMapTest();
+//	factoryTest();
+//	mapRepositoryTest();
 //	freeMovementProcessorTest();
 //	actorEditorTest();
 //	masterEditorTest();

@@ -1,10 +1,5 @@
 #pragma once
 
-//struct MapExit
-//{
-//	int destMapId;
-//	MapExit(int id) { destMapId = id; }
-//};
 //
 //struct InMapExit : public MapExit
 //{
@@ -28,13 +23,20 @@
 //	}
 //};
 
+//struct MapExit
+//{
+//	int sourceId;
+//	int edge;
+//	int destId;
+//	int destY;
+//	int destX;
+//};
+
 struct MapExit
 {
-	int sourceId;
+	int mapId;
 	int edge;
-	int destId;
-	int destY;
-	int destX;
+	int unit; //identifies a piece of the edge (characters axis coordinate divided by map unit size)
 };
 
 struct MapOpening
@@ -42,3 +44,13 @@ struct MapOpening
 	int mapId;
 	int location;
 };
+//
+//struct MapSeam
+//{
+//	MapExit* negExit;
+//	MapExit* posExit;
+//	MapSeam(Map* negMap, Map* posMap, //negative map is either N or W, positive is S or E
+//		bool xAxis, //true if seam is between West and East maps
+//		unsigned short negUnit, unsigned short posUnit, //the unit portion of the map to join together
+//		unsigned short length);
+//};

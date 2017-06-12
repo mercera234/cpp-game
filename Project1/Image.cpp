@@ -1,5 +1,6 @@
 #include "Image.h"
 #include <fstream>
+#include "TUI.h"
 
 Image::Image(int rows, int cols, WINDOW* win)
 {
@@ -17,6 +18,7 @@ Image::Image(int rows, int cols, WINDOW* win)
 void Image::init(WINDOW* win)
 {
 	setWindow(win);
+	bordered = true;
 }
 
 Image::Image(WINDOW* win)
@@ -59,12 +61,12 @@ void Image::draw()
 
 void Image::drawTileChar(int row, int col, int mapY, int mapX)
 {
-	chtype c;
+	chtype c = ' ';
 	if (mapX >= 0 && mapY >= 0 && mapX < totalCols && mapY < totalRows) //in the grid
 	{
 		c = tileMap->getDatum(mapY, mapX);
 	}
-	else //if negative or beyond the canvas then we are outside the array so draw a box like boundary around the map
+	else if(bordered)//if negative or beyond the canvas then we are outside the array so draw a box like boundary around the map
 	{
 		c = getOutOfBoundsTile(mapY, mapX);
 	}
@@ -200,4 +202,40 @@ Image::~Image()
 	}*/
 	
 	delete tileMap;
+}
+
+
+Image* Image::getFullScreenShot() //static
+{
+	return getScreenShot(0, 0, screenHeight, screenWidth);
+}
+
+Image* Image::getScreenShot(unsigned int y, unsigned int x, unsigned int height, unsigned int width) //static
+{
+	//get actual screen dimensions for error checking
+	if (x > screenWidth || y > screenHeight) //nothing to return if coordinates are outside of screen
+		return NULL;
+
+	//if width/height was set too long, then take a snapshot of what is available
+	if (x + width > screenWidth)
+		width = screenWidth - x;
+
+	if (y + height > screenHeight)
+		height = screenHeight - y;
+
+
+	//create new snapshot
+	Image* snapShot = new Image(height, width, stdscr);
+
+	_2DStorage<chtype>* tileMap = snapShot->getTileMap();
+
+	for (int i = 0; i < snapShot->getTotalTiles(); i++)
+	{
+		int row = i / width;
+		int col = i % width;
+		chtype c = mvwinch(stdscr, row + y, col + x);
+		tileMap->setDatum(row, col, c);
+	}
+
+	return snapShot;
 }

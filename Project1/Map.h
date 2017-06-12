@@ -44,6 +44,9 @@ Effect value breakdown from MSB to LSB
 #define LAYER_DISPLAY 0
 #define LAYER_EFFECT 1
 
+const unsigned short unitHeight = 23;
+const unsigned short unitWidth = 51;
+
 class Map : public Controllable
 {
 private:
@@ -62,7 +65,15 @@ private:
 	short* effectsLayer = NULL;
 	_2DStorage<int>* eLayer = NULL;
 
-	
+	//high level members
+	_2DStorage<char>* unitMaps;
+	unsigned short totalUnits; //product of unit width and height
+		//upper left corner or hlm
+	unsigned short posY;
+	unsigned short posX;
+		//measured in unitMaps
+	unsigned short unitsWide;
+	unsigned short unitsHigh;
 	
 	void setDefaults();
 public:
@@ -79,6 +90,17 @@ public:
 
 	unsigned short getId() { return id; }
 	void setId(unsigned short id) { this->id = id; }
+
+	void setHighLevelPosition(unsigned short hlY, unsigned short hlX) { posY = hlY; posX = hlX; }
+	unsigned short getPosY() { return posY; }
+	unsigned short getPosX() { return posX; }
+	
+	unsigned short getUnitWidth() { return unitsWide; }
+	unsigned short getUnitHeight() { return unitsHigh; }
+	_2DStorage<char>* getUnitMaps() { return unitMaps; }
+
+
+
 	Image* getDisplay() { return display; }
 	short* getEffectsLayer() { return effectsLayer; }
 	void setDimensions(int rows, int cols);

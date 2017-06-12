@@ -14,15 +14,20 @@ private:
 	Map* currMap;
 
 public:
-	//high level coordinates of player in megamap
-	unsigned short hX;
-	unsigned short hY;
 	//the height/width of a unit map. All maps loaded must have dimensions that are a multiple of the unit map size
-	unsigned short unitHeight;
-	unsigned short unitWidth;
+	unsigned short unitsHigh;
+	unsigned short unitsWide;
 
-	MegaMap(WINDOW* win, unsigned short unitHeight, unsigned short unitWidth);
+	//high level coordinates of player in megamap
+	unsigned short blockX;
+	unsigned short blockY;
+	
+
+	MegaMap(WINDOW* win, unsigned short unitsHigh, unsigned short unitsWide);
 	void addMap(MapMetadata* map);
+	// void addMap(Map* map, int hY, int hX, short layer); //this can create a metadata object automatically
+
+
 	Map* findMap(unsigned short hY, unsigned short hX);
 	void setCurrMap(Map* map) { currMap = map; }
 	Map* getCurrMap() { return currMap; }

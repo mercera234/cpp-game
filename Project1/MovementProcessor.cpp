@@ -19,6 +19,8 @@ void MovementProcessor::setConvenienceVariables()
 
 void MovementProcessor::setViewMode(int mode)
 {
+	setConvenienceVariables(); //in case window dimensions have changed since view was last set
+
 	viewMode = mode;
 
 	switch (viewMode)

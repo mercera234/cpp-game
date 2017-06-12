@@ -1,16 +1,16 @@
 #include "MegaMap.h"
 #include "TUI.h"
 
-MegaMap::MegaMap(WINDOW* win, unsigned short unitHeight, unsigned short unitWidth)
+MegaMap::MegaMap(WINDOW* win, unsigned short unitsHigh, unsigned short unitsWide)
 {
 	bkgd = (COLOR_BLUE << 28);
 	setWindow(win);
 
-	this->unitHeight = unitHeight;
-	this->unitWidth = unitWidth;
+	this->unitsHigh = unitsHigh;
+	this->unitsWide = unitsWide;
 
-	hY = 0;
-	hX = 0;
+	blockY = 0;
+	blockX = 0;
 }
 
 void MegaMap::addMap(MapMetadata* map)
@@ -26,10 +26,10 @@ bool MegaMap::removeMap(int mapId)
 	list<MapMetadata*>::iterator it;
 	for (it = maps.begin(); it != maps.end(); it++)
 	{
-		MapMetadata* map = *it;
-		if (map->mapId == mapId)
+		MapMetadata* mm = *it;
+		if (mm->map->getId() == mapId)
 		{
-			maps.remove(map);
+			maps.remove(mm);
 			removed = true;
 			break; //stop after finding map with matching id
 		}

@@ -53,6 +53,7 @@ using namespace std;
 
 #define BORDER_OFFSET 0 //extra space needed when performing window operations with a border
 
+#define COLOR_BOLD 0x8
 #define COLOR_GRAY 8
 #define COLOR_BLACK_BOLD COLOR_GRAY
 #define COLOR_BLUE_BOLD 9
@@ -78,21 +79,20 @@ using namespace std;
 #define getBkgdColor(c) (c >> BKGDCOLOR_OFFSET)
 #define getTextColor(c) ((c & TEXTCOLOR_MASK) >> TEXTCOLOR_OFFSET)
 
-//cursor states
+//cursor states (for use with curs_set function)
 #define CURSOR_INVISIBLE 0
 #define CURSOR_NORMAL 1
 #define CURSOR_BOLD 2
 
-
+const unsigned short screenHeight = 23;
+const unsigned short screenWidth = 51;
+const unsigned short totalScreenTiles = screenHeight * screenWidth;
 
 class TUI
 {
 private:
-
 public:
 	static string colorNames[16]; 
-	//static int getBkgdColor(chtype c);
-	//static int getTextColor(chtype c);
 
 	TUI();
 
@@ -102,6 +102,9 @@ public:
 	void testPrint();
 	void testColors();
 	void gameTestScreen();
+
+	static void printOnBkgd(chtype c, WINDOW* win, int y, int x); //TUI must be initialized first to use this of course
+
 	void errorMsg(const char* text);
 	void shutdown(); //shutdown curses and other functions
 };

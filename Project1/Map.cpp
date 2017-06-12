@@ -16,6 +16,18 @@ Map::Map(string name, int rows, int cols, WINDOW* win)
 	eLayer = new _2DStorage<int>(totalRows, totalCols);
 	display = new Image(rows, cols, win); //use same window as map
 
+	//set hi-level map data
+	unitsHigh = totalRows / unitHeight;
+	unitsWide = totalCols / unitWidth;
+	totalUnits = unitsHigh * unitsWide;
+
+	unitMaps = new _2DStorage<char>(unitsHigh, unitsWide);
+	for (int i = 0; i < totalUnits; i++)
+	{
+		unitMaps->setDatum(i, (char)0x0); //
+	}
+
+	//
 	reset();
 
 	setWindow(win);
@@ -101,14 +113,9 @@ void Map::draw()
 	if (controlActor != NULL) //draw actor if present
 	{
 		chtype normalColor = COLOR_PAIR(COLOR_YELLOW_BOLD);
-		chtype standoutColor = COLOR_PAIR(COLOR_BLACK);
 		chtype mainCImageNormal = controlActor->def->symbol | normalColor;
-		chtype mainCImageStandout = controlActor->def->symbol | standoutColor;
 
-		chtype bkgdTile = mvwinch(win, controlActor->y - display->getUlY(), controlActor->x - display->getUlX());
-		bkgdTile &= (BKGDCOLOR_MASK | ATTR_ONLY_MASK);//keep only the background and attributes
-		chtype mainCImage = (getBkgdColor(bkgdTile) != getTextColor(normalColor)) ? mainCImageNormal : mainCImageStandout;
-		waddch(win, bkgdTile | mainCImage);
+		TUI::printOnBkgd(mainCImageNormal, win, controlActor->y - display->getUlY(), controlActor->x - display->getUlX());
 		wnoutrefresh(win);
 	}
 }
@@ -143,7 +150,8 @@ bool Map::load(string fileName)
 	{
 		display = new Image(win);
 	}
-	display->load(&gFile);
+	display->load(&gFile); //this maybe shouldn't be here. This along with the effects layer will be costly loads especially if multiple maps are present in game
+		//this could be loaded only when needed
 	
 	setDimensions(display->getTotalRows(), display->getTotalCols());
 ////	gFile.read((char*)effectsLayer, sizeof(short) * totalTiles);

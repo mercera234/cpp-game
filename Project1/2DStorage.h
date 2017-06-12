@@ -23,6 +23,7 @@ public:
 	//for primitive types
 	bool setDatum(int y, int x, T datum);
 	bool setDatum(int element, T datum);
+	void fill(T datum); //fill all elements in storage with T
 };
 
 template <class T>
@@ -94,8 +95,18 @@ bool _2DStorage<T>::setDatum(int element, T datum)
 }
 
 template <class T>
+void _2DStorage<T>::fill(T datum)
+{
+	for (int i = 0; i < size; i++)
+	{
+		setDatum(i, datum);
+	}
+}
+
+template <class T>
 _2DStorage<T>::~_2DStorage()
 {
 	delete data;
 	rows = cols = size = 0;
 }
+

@@ -1,6 +1,10 @@
 #include "FreeMovementProcessor.h"
 #include "TUI.h" 
 
+/*
+Controllable c should be something like an Image object, where is like a grid of tiles
+The cursor does not have to have any relation to the controllable itself.
+*/
 FreeMovementProcessor::FreeMovementProcessor(Controllable* c, short* curY, short* curX)
 {
 	this->moveControl = c;
@@ -8,9 +12,6 @@ FreeMovementProcessor::FreeMovementProcessor(Controllable* c, short* curY, short
 	this->curX = curX;
 
 	bounded = true;
-
-	//set convenience variables
-	setConvenienceVariables();
 
 	setViewMode(VM_CENTER);
 }
