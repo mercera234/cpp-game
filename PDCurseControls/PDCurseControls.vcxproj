@@ -1,0 +1,204 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{E3D14357-39D4-446E-B228-1ECCE4B70488}</ProjectGuid>
+    <RootNamespace>PDCurseControls</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>F:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\PDCurseControls\include\external;F:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\PDCurseControls\include;$(IncludePath)</IncludePath>
+    <OutDir>$(ProjectDir)Debug\</OutDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>$(ProjectDir)lib\pdcurses.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="include\InputManager.h" />
+    <ClInclude Include="include\TwoDStorage.h" />
+    <ClInclude Include="include\AbstractMenu.h" />
+    <ClInclude Include="include\Animation.h" />
+    <ClInclude Include="include\BlitAnimation.h" />
+    <ClInclude Include="include\Button.h" />
+    <ClInclude Include="include\BWFilter.h" />
+    <ClInclude Include="include\ChtypeFilter.h" />
+    <ClInclude Include="include\ControlDecorator.h" />
+    <ClInclude Include="include\Controllable.h" />
+    <ClInclude Include="include\ControlManager.h" />
+    <ClInclude Include="include\CursesAttributeController.h" />
+    <ClInclude Include="include\CursesPanel.h" />
+    <ClInclude Include="include\Direction.h" />
+    <ClInclude Include="include\Drawable.h" />
+    <ClInclude Include="include\FileChooser.h" />
+    <ClInclude Include="include\FileDirectory.h" />
+    <ClInclude Include="include\FilterPattern.h" />
+    <ClInclude Include="include\Form.h" />
+    <ClInclude Include="include\FormControl.h" />
+    <ClInclude Include="include\FormField.h" />
+    <ClInclude Include="include\Frame.h" />
+    <ClInclude Include="include\GraphMenu.h" />
+    <ClInclude Include="include\GridMenu.h" />
+    <ClInclude Include="include\Highlighter.h" />
+    <ClInclude Include="include\Image.h" />
+    <ClInclude Include="include\LineItem.h" />
+    <ClInclude Include="include\MenuItem.h" />
+    <ClInclude Include="include\Palette.h" />
+    <ClInclude Include="include\RandomBlitAnimation.h" />
+    <ClInclude Include="include\Rectangle.h" />
+    <ClInclude Include="include\RGBControl.h" />
+    <ClInclude Include="include\ScrollBar.h" />
+    <ClInclude Include="include\SpiralBlitAnimation.h" />
+    <ClInclude Include="include\Storable.h" />
+    <ClInclude Include="include\Table.h" />
+    <ClInclude Include="include\TextDisplay.h" />
+    <ClInclude Include="include\TextField.h" />
+    <ClInclude Include="include\TextLabel.h" />
+    <ClInclude Include="include\TUI.h" />
+    <ClInclude Include="include\KeyComparators.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\InputManager.cpp" />
+    <ClCompile Include="src\KeyComparators.cpp" />
+    <ClCompile Include="src\AbstractMenu.cpp" />
+    <ClCompile Include="src\Animation.cpp" />
+    <ClCompile Include="src\BlitAnimation.cpp" />
+    <ClCompile Include="src\Button.cpp" />
+    <ClCompile Include="src\BWFilter.cpp" />
+    <ClCompile Include="src\ChtypeFilter.cpp" />
+    <ClCompile Include="src\Controllable.cpp" />
+    <ClCompile Include="src\ControlManager.cpp" />
+    <ClCompile Include="src\CursesAttributeController.cpp" />
+    <ClCompile Include="src\CursesPanel.cpp" />
+    <ClCompile Include="src\FileChooser.cpp" />
+    <ClCompile Include="src\FileDirectory.cpp" />
+    <ClCompile Include="src\FilterPattern.cpp" />
+    <ClCompile Include="src\Form.cpp" />
+    <ClCompile Include="src\FormControl.cpp" />
+    <ClCompile Include="src\FormField.cpp" />
+    <ClCompile Include="src\Frame.cpp" />
+    <ClCompile Include="src\GraphMenu.cpp" />
+    <ClCompile Include="src\GridMenu.cpp" />
+    <ClCompile Include="src\Highlighter.cpp" />
+    <ClCompile Include="src\Image.cpp" />
+    <ClCompile Include="src\LineItem.cpp" />
+    <ClCompile Include="src\MenuItem.cpp" />
+    <ClCompile Include="src\Palette.cpp" />
+    <ClCompile Include="src\RandomBlitAnimation.cpp" />
+    <ClCompile Include="src\RGBControl.cpp" />
+    <ClCompile Include="src\ScrollBar.cpp" />
+    <ClCompile Include="src\SpiralBlitAnimation.cpp" />
+    <ClCompile Include="src\Table.cpp" />
+    <ClCompile Include="src\TextDisplay.cpp" />
+    <ClCompile Include="src\TextField.cpp" />
+    <ClCompile Include="src\TextLabel.cpp" />
+    <ClCompile Include="src\TUI.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
