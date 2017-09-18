@@ -1,51 +1,44 @@
-#include "TextField.h"
 #include <sstream>
+#include <cctype>
+#include <algorithm>
+#include "TextField.h"
 #include "TUI.h"
 
-//I can't get rid of this method yet because it is needed if TextField is derived from another window
-TextField::TextField(WINDOW* win)
+TextField::TextField()
 {
-	totalRows = 1;
-	totalCols = maxLen = getmaxx(win);
-
-	init(win);
+	init();
 }
 
-/*
-Right now, this assumes the window length and text max length are equal
-*/
-TextField::TextField(int length, int y, int x)
-{
-	totalRows = 1;
-	totalCols = maxLen = length;
 
-	WINDOW* w = newwin(totalRows, length, y, x);
-	init(w);
+TextField::TextField(unsigned int length, unsigned short y, unsigned short x)
+{
+	init();
+
+	setupField(length, y, x);
 }
 
-void TextField::init(WINDOW* win)
+void TextField::setupField(unsigned int length, unsigned short y, unsigned short x)
 {
-	focusable = true;
+	win = newwin(1, length, y, x);//height is always 1 for text fields
 
 	setWindow(win);
 	getbegyx(win, scrY, scrX);
 
-	//length = getmaxx(win);
-	text = new char[maxLen]; //set one more so there is a null char at the end
-
-	setEditable(true);
-
-	memset(text, BLANK_SPACE, maxLen);
-	curLen = 0; //length of text stored
-	textPtr = text;
-	cursorPos = 0; //starts at beginning
-
-	color = 0x00000000; //set to black and white by default
+	int winLength = getmaxx(win);
+	text.reserve(winLength);
+	setDimensions(1, winLength);
 }
 
-/*
-move cursor to this control
-*/
+void TextField::init()
+{
+	focusable = true;
+	acceptsMouseInput = false;
+	setEditable(true);
+
+	cursorPos = 0; //starts at beginning
+}
+
+
 void TextField::setCursorFocus()
 {
 	curs_set(CURSOR_NORMAL);
@@ -57,50 +50,43 @@ void TextField::setCursorFocus()
 
 bool TextField::deleteChar()
 {
-	if (cursorPos >= curLen)
+	if (cursorPos >= text.length())
 		return false;
-	//shift string beyond position up a space
-	short moveSize = curLen - (cursorPos + 1); //length of printable characters - one beyond current position
-	memcpy_s(textPtr, moveSize, textPtr + sizeof(char), moveSize);
-	//clear last position
-	text[curLen - 1] = BLANK_SPACE;
-	curLen--; //decrement current length
+
+	auto it = text.begin() + cursorPos;
+	text.erase(it);
+
 	return true;
 }
 
 
 bool TextField::insertChar(int c)
 {
-	if (curLen >= maxLen)
+	if (text.length() >= text.capacity()) //don't exceed the set capacity
 		return false;
 
 	//verify character is within ascii range
-	if (c < ' ' || c > '~')
+	if (isprint(c) == false)
 		return false;
 
-	short moveSize = maxLen - cursorPos - 1;
-	memcpy_s(textPtr + sizeof(char), moveSize, textPtr, moveSize);
+	std::string::iterator it = text.begin() + cursorPos;
+	text.insert(it, c);
 
-	*textPtr = c;
-
-	shiftCursor(1);
-
-	curLen++;
+	cursorPos++;
 	return true;
 }
 
 
 bool TextField::inputChar(int c)
 {
-	short moveSize;
 	bool result = true;
 	switch (c)
 	{
-	case '\b':
+	case '\b': //backspace
 		if (cursorPos <= 0)
 			return false;
 		//backup one character and then use regular delete character routine
-		shiftCursor(-1);
+		cursorPos--;
 		result = deleteChar();
 		break;
 	case KEY_DC:
@@ -110,119 +96,75 @@ bool TextField::inputChar(int c)
 		if (cursorPos <= 0)
 			return false;
 
-		shiftCursor(-1);
+		cursorPos--;
 		break;
 	case KEY_RIGHT: 
-		if (cursorPos >= curLen) //can't move right after last character
+		if (cursorPos >= text.length()) //can't move right after last character
 			return false;
 
-		shiftCursor(1);
+		cursorPos++;
 		break;
 	case KEY_HOME: 
-		moveHome();
+		cursorPos = 0;
 		break;
 	case KEY_END: 
-		moveEnd();
+		cursorPos = text.length();
+		break;
+	case KEY_MOUSE: //does nothing right now
 		break;
 	default: //all printable characters
 		result = insertChar(c);	
 		break;
 	}
 
-	return true;
-}
-
-void TextField::shiftCursor(int amount)
-{
-	moveCursor(cursorPos + amount);
-}
-
-void TextField::moveCursor(unsigned int position)
-{
-	cursorPos = position;
-	textPtr = text + cursorPos;
-}
-
-void TextField::moveHome()
-{
-	moveCursor(0);
-}
-
-void TextField::moveEnd()
-{
-	moveCursor(curLen);
+	return result;
 }
 
 
-void TextField::setText(string text)
+void TextField::setText(const std::string& textIn)
 {
 	clear();
-	const char* t = text.c_str();
-	memcpy_s(this->text, maxLen, t, text.length());
-	curLen = text.length();
-	cursorPos = curLen;
-	textPtr = this->text + cursorPos;
+
+	text.assign(textIn, 0, text.capacity());
+
+	cursorPos = textIn.length();
 }
 
 void TextField::setText(int value)
 {
-	ostringstream oss;
+	std::ostringstream oss; //convert to string first then called overloaded method
 	oss << value;
 	setText(oss.str());
 }
 
-string TextField::getText()
+std::string TextField::getText()
 {
-	string t(text, curLen);
-	
-	//trim algorithm
-	t.erase(0, t.find_first_not_of(' '));       //prefixing spaces
-	t.erase(t.find_last_not_of(' ') + 1);         //suffixing spaces
-	return t;
+	std::string retText = text;
+	retText.erase(0, retText.find_first_not_of(' '));       //prefixing spaces
+	retText.erase(retText.find_last_not_of(' ') + 1);
+
+	return retText;
 }
 
-WINDOW* TextField::getWindow()
-{
-	return win;
-}
 
 void TextField::draw()
 {
 	wclear(win);
-	wbkgd(win, color);
+	//wbkgd(win, color);
 	
-	char* pos = text;
-	bool endReached = false;
-
-	for (int col = 0; col < visibleCols && col < maxLen; col++)
-	{
-		mvwaddch(win, 0, col, *pos++);
-	}
-
-
+	mvwaddstr(win, 0, 0, text.c_str());
 	wnoutrefresh(win);
-}
-
-
-void TextField::setColor(int bkgdColor, int textColor)
-{
-	color = bkgdColor << 28 | textColor << 24;
-	color &= 0xff000000;
 }
 
 
 void TextField::clear()
 {
-	memset(text, BLANK_SPACE, curLen);
-	moveHome();
-	curLen = 0;
-	
-	/*textPtr = text;
-	cursorPos = 0;*/
+	text.clear();
+	cursorPos = 0;
 }
 
 TextField::~TextField()
 {
-	delete text;
-	delwin(win);
+	if(win != nullptr)
+		delwin(win);
 }

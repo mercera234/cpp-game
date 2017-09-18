@@ -56,7 +56,7 @@ namespace PDCurseControlsTester
 		{
 			TwoDStorage<int> displayData(5, 3);
 			
-			for (int i = 0; i < displayData.getSize(); i++)
+			for (unsigned int i = 0; i < displayData.getSize(); i++)
 			{
 				displayData.setDatum(i, i); //set datum equal to element
 			}
@@ -76,5 +76,24 @@ namespace PDCurseControlsTester
 			Assert::AreEqual(displayData.getDatum(lastSharedY, lastSharedX), newData.getDatum(lastSharedY, lastSharedX));
 		}
 
+		TEST_METHOD(getDataTest)
+		{
+			TwoDStorage<int> displayData(2, 2);
+			int fillDatum = 7;
+			displayData.fill(fillDatum);
+
+			std::vector<int>& secondObj = displayData.getData();
+			secondObj[0] = 4568;
+
+			Assert::AreEqual(4568, displayData.getDatum(0));
+		}
+
+		TEST_METHOD(setDimensionsTest)
+		{
+			TwoDStorage<int> displayData(3, 4);
+
+			displayData.setDimensions(1, 2);
+			Assert::AreEqual(2, (int)displayData.getSize());
+		}
 	};
 }

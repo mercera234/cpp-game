@@ -1,36 +1,41 @@
-#include "Image.h"
 #include <fstream>
+#include "Image.h"
 #include "TUI.h"
 
-Image::Image(int rows, int cols, WINDOW* win)
+const int NULL_MARKER_SPACING = 8;
+
+Image::Image()
 {
-	Controllable::setDimensions(rows, cols);
-	tileMap = new TwoDStorage<chtype>(totalRows, totalCols);
-
-	reset();
-
-	init(win);
+	init();
 }
 
-void Image::init(WINDOW* win)
-{
-	setWindow(win);
-	bordered = true;
-}
 
 Image::Image(WINDOW* win)
 {
-	init(win);
+	init();
+	setWindow(win);
 }
+
+Image::Image(int rows, int cols, WINDOW* win)
+{
+	init();
+	setWindow(win);
+
+	setDimensions(rows, cols);	
+}
+
+void Image::init()
+{
+	bordered = true;
+}
+
 
 void Image::reset()
 {
-	for (int row = 0; row < totalRows; row++)
+	for (unsigned int row = 0; row < totalRows; row++)
 	{
-		for (int col = 0; col < totalCols; col++)
+		for (unsigned int col = 0; col < totalCols; col++)
 		{
-		/*	chtype c = (chtype)(row % NULL_MARKER_SPACING == 0 && 
-							    col % NULL_MARKER_SPACING == 0) ? '!' : ' ';*/
 			tileMap->setDatum(row, col, ' ');
 		}
 	}
@@ -44,10 +49,11 @@ void Image::draw()
 	row and col are the position within the viewport
 	mapY and mapX are where we are positioned in the map array
 	*/
-
-	for (int row = 0, mapY = ulY; row <= visibleRows; row++, mapY++)
+	int mapY = ulY;
+	for (unsigned short row = 0; row <= visibleRows; row++, mapY++)
 	{
-		for (int col = 0, mapX = ulX; col <= visibleCols; col++, mapX++)
+		int mapX = ulX;
+		for (unsigned short col = 0; col <= visibleCols; col++, mapX++)
 		{
 			drawTileChar(row, col, mapY, mapX);
 		}
@@ -56,10 +62,10 @@ void Image::draw()
 }
 
 
-void Image::drawTileChar(int row, int col, int mapY, int mapX)
+void Image::drawTileChar(unsigned short row, unsigned short col, int mapY, int mapX)
 {
 	chtype c = ' ';
-	if (mapX >= 0 && mapY >= 0 && mapX < totalCols && mapY < totalRows) //in the grid
+	if (mapX >= 0 && mapY >= 0 && mapX < (int)totalCols && mapY < (int)totalRows) //in the grid
 	{
 		c = tileMap->getDatum(mapY, mapX);
 	}
@@ -85,7 +91,7 @@ chtype Image::getOutOfBoundsTile(int mapY, int mapX)
 		{
 			borderChar = ACS_URCORNER;
 		}
-		else if (mapX > -1 && mapX < totalCols)//a top piece of boundary between the upper corners
+		else if (mapX > -1 && mapX < (int)totalCols)//a top piece of boundary between the upper corners
 		{
 			borderChar = ACS_HLINE;
 		}
@@ -100,12 +106,12 @@ chtype Image::getOutOfBoundsTile(int mapY, int mapX)
 		{
 			borderChar = ACS_LRCORNER;
 		}
-		else if (mapX > -1 && mapX < totalCols)//a bottom piece of boundary between the lower corners
+		else if (mapX > -1 && mapX < (int)totalCols)//a bottom piece of boundary between the lower corners
 		{
 			borderChar = ACS_HLINE;
 		}
 	}
-	else if ((mapY > -1 && mapY < totalRows) &&
+	else if ((mapY > -1 && mapY < (int)totalRows) &&
 		(mapX == -1 || mapX == totalCols))//left or right side
 	{
 		borderChar = ACS_VLINE;
@@ -114,45 +120,45 @@ chtype Image::getOutOfBoundsTile(int mapY, int mapX)
 }
 
 
-int Image::save(ofstream* saveFile)
+int Image::save(std::ofstream& saveFile)
 {
-	if (saveFile->is_open() == false)
+	if (saveFile.is_open() == false)
 		return false;
 
-	std::streampos startPos = saveFile->tellp();
+	std::streampos startPos = saveFile.tellp();
 
-	saveFile->write((char*)&totalRows, sizeof(short));
-	saveFile->write((char*)&totalCols, sizeof(short));
+	saveFile.write((char*)&totalRows, sizeof(short));
+	saveFile.write((char*)&totalCols, sizeof(short));
 	
 	//TODO class is broken now
 	chtype c;
-	for (int i = 0; i < totalTiles; i++)
+	for (unsigned int i = 0; i < totalTiles; i++)
 	{
 		c = tileMap->getDatum(i);
-		saveFile->write((char*)&c, sizeof(chtype));
+		saveFile.write((char*)&c, sizeof(chtype));
 	}
-	//saveFile->write((char*)tileMap->getData(), sizeof(chtype) * totalTiles);
+	//saveFile.write((char*)tileMap->getData(), sizeof(chtype) * totalTiles);
 
-	std::streampos endPos = saveFile->tellp();
+	std::streampos endPos = saveFile.tellp();
 
-	return endPos - startPos;
+	return (int)(endPos - startPos);
 }
 
 
-int Image::load(ifstream* loadFile)
+int Image::load(std::ifstream& loadFile)
 {
-	if (loadFile->is_open() == false)
+	if (loadFile.is_open() == false)
 		return false;
 
-	std::streampos startPos = loadFile->tellg();
+	std::streampos startPos = loadFile.tellg();
 
-	loadFile->read((char*)&totalRows, sizeof(short));
-	loadFile->read((char*)&totalCols, sizeof(short));
+	loadFile.read((char*)&totalRows, sizeof(short));
+	loadFile.read((char*)&totalCols, sizeof(short));
 	Controllable::setDimensions(totalRows, totalCols); //this sets the variables twice, but that's ok
 
-	if (tileMap == NULL || totalTiles != tileMap->getSize()) //if image is new, or a resize is occurring
+	if (tileMap == nullptr || totalTiles != tileMap->getSize()) //if image is new, or a resize is occurring
 	{
-		if(tileMap != NULL)
+		if(tileMap != nullptr)
 			tileMap->~TwoDStorage(); //if display was already setup then delete the data
 			
 		tileMap = new TwoDStorage<chtype>(totalRows, totalCols);
@@ -160,17 +166,17 @@ int Image::load(ifstream* loadFile)
 
 	
 	chtype c;
-	for (int i = 0; i < totalTiles; i++)
+	for (unsigned int i = 0; i < totalTiles; i++)
 	{
-		loadFile->read((char*)&c, sizeof(chtype));
+		loadFile.read((char*)&c, sizeof(chtype));
 		tileMap->setDatum(i, c);
 	}
 
-	//loadFile->read((char*)tileMap->getData(), sizeof(chtype) * totalTiles);
+	//loadFile.read((char*)tileMap->getData(), sizeof(chtype) * totalTiles);
 
-	std::streampos endPos = loadFile->tellg();
+	std::streampos endPos = loadFile.tellg();
 
-	return endPos - startPos;
+	return (int)(endPos - startPos);
 }
 
 /*
@@ -183,14 +189,19 @@ void Image::setDimensions(int rows, int cols)
 
 	Controllable::setDimensions(rows, cols);
 
-	if (tileMap == NULL) //don't resize tileMap if not initialized
+	if (tileMap == nullptr) //don't resize tileMap if not initialized (like on first use)
+	{
+		tileMap = new TwoDStorage<chtype>(totalRows, totalCols);
+		reset();
 		return;
+	}
+		
 
 	TwoDStorage<chtype>* oldTileMap = tileMap;
 	TwoDStorage<chtype>* newTileMap = new TwoDStorage<chtype>(rows, cols);
 
 	//for now we will resize to the preferred size, but later on we will only do dynamic resizing to particular sizes
-	for (int i = 0; i < totalTiles; i++)
+	for (unsigned int i = 0; i < totalTiles; i++)
 	{
 		newTileMap->fill(' ');
 	}
@@ -233,7 +244,7 @@ Image* Image::getScreenShot(unsigned int y, unsigned int x, unsigned int height,
 
 	TwoDStorage<chtype>* tileMap = snapShot->getTileMap();
 
-	for (int i = 0; i < snapShot->getTotalTiles(); i++)
+	for (unsigned int i = 0; i < snapShot->getTotalTiles(); i++)
 	{
 		int row = i / width;
 		int col = i % width;
@@ -243,3 +254,7 @@ Image* Image::getScreenShot(unsigned int y, unsigned int x, unsigned int height,
 
 	return snapShot;
 }
+
+//This comment below could be used for an image factory method
+/*	chtype c = (chtype)(row % NULL_MARKER_SPACING == 0 &&
+col % NULL_MARKER_SPACING == 0) ? '!' : ' ';*/

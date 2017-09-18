@@ -4,7 +4,6 @@
 class GraphMenu : public AbstractMenu
 {
 private:
-
 	void dirDriver(int input);
 	
 public:

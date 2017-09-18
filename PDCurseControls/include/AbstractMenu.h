@@ -27,36 +27,36 @@
 #define MIN_MENU_COMMAND        (KEY_MAX + 1)
 #define MAX_MENU_COMMAND        (KEY_MAX + 17)
 
+const short NO_CUR_ITEM = -1;
 const std::string defaultCursor = "->";
 const std::string shortCursor = ">";
 
 class AbstractMenu : public Controllable
 {
 protected:
-	//MenuItem** items = NULL;
-	//unsigned short itemCount; //the current # of items the menu has
-	//unsigned short capacity; //the max # of items a menu can have
-	//
-	/*
-	The container for the items.
-	The current size is the same as the maximum items the menu can have currently
-	*/
+	/* The container for the items.
+	The current size is the same as the maximum items the menu can have currently */
 	std::vector<MenuItem*> items; 
 	
+	short curIndex; //index of currently selected item
 	MenuItem* curItem; //the currently selected item
 	
-	/*
-	The menu cursor
-	*/
+	/*The menu cursor */
 	std::string cursor;
 
-	chtype colorPair;
+	bool allowSwap;
+	int swapState;
+
+
+	chtype colorPair; //this should be moved to controllable
 
 
 	virtual void dirDriver(int input) = 0;
 
 	bool validateIndex(int index);
-	void allocateItems(); //deprecated
+	void resetCurrentItem();
+
+
 public:
 	AbstractMenu();
 
@@ -70,10 +70,7 @@ public:
 	bool setItem(MenuItem* item);
 
 	/* Get item at index.*/
-	MenuItem* getItem(int index);
-	
-	/* Set item at index with value of 'selected'. True on success. */
-	bool setSelected(int index, bool selected);
+	virtual MenuItem* getItem(int index);
 	
 	/* Delete the MenuItem pointed to at index. True on success*/
 	bool clearItem(int index);
@@ -84,11 +81,19 @@ public:
 	/* Handle menu input from user*/
 	virtual int driver(int input) = 0;
 
+	//convenience methods(we might not need these next two)
+	/* Set item at index with value of 'selected'. True on success. */
+	bool setSelected(int index, bool selected);
+
+	/* Grant/revoke ability for item at index to be 'selected'. True on success. */
+	bool setSelectable(int index, bool selectable);
+
 	static MenuItem* basicMenuDriver(int input, AbstractMenu* m);
 
 
 	//getters/setters
 	std::string getCursor() { return cursor; }
+	void setCursor(const std::string& cursor) { this->cursor = cursor; }
 
 	/* Set the item at index. This item will be drawn with the cursor. */
 	bool setCurrentItem(int index);

@@ -1,6 +1,15 @@
 #include "ScrollBar.h"
 
+ScrollBar::ScrollBar()
+{
+}
+
 ScrollBar::ScrollBar(Controllable* c)
+{
+	setTargetControl(c);
+}
+
+void ScrollBar::setTargetControl(Controllable* c)
 {
 	//window will be positioned one tile to right of c's window
 	this->c = c;
@@ -14,8 +23,7 @@ ScrollBar::ScrollBar(Controllable* c)
 	int begY;
 	getbegyx(w, begY, begX);
 
-	win = newwin(rows, 1, begY, begX + cols + 1);
-	visibleRows = rows;
+	setWindow(newwin(rows, 1, begY, begX + cols + 1));
 }
 
 void ScrollBar::draw()

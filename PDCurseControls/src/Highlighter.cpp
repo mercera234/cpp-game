@@ -4,12 +4,12 @@
 
 Highlighter::Highlighter(Image* mapIn, short* y, short* x)
 {
-	map = mapIn;
-	tileMap = map->getTileMap();
+	img = mapIn;
+	tileMap = img->getTileMap();
 	highlighting = false;
 	pinPushed = false;
 
-	win = map->getWindow();
+	win = img->getWindow();
 
 	curY = y; //by using the address, it is always in sync with whatever is being used as the cursor
 	curX = x;
@@ -42,8 +42,8 @@ void Highlighter::fill(chtype fillChar)
 	int maxY = r->y + r->height;
 	int maxX = r->x + r->width;
 
-	int containerWidth = map->getTotalCols();  
-	int containerHeight = map->getTotalRows();
+	int containerWidth = tileMap->getCols();
+	int containerHeight = tileMap->getRows();
 
 	maxX = r->width > containerWidth - r->x ? containerWidth : maxX;
 	maxY = r->height > containerHeight - r->y ? containerHeight : maxY;
@@ -53,9 +53,10 @@ void Highlighter::fill(chtype fillChar)
 		for (int j = 0, col = r->x; col < maxX; col++, j++)
 		{
 			tileMap->setDatum(row, col, fillChar);
-			//map->setDisplayChar(row, col, fillChar);
 		}
 	}
+
+	delete r;
 }
 
 void Highlighter::copy()
@@ -64,8 +65,7 @@ void Highlighter::copy()
 		return;
 
 	Rect* r = getHighlitRegion();
-	delete cb;
-	cb = new Clipboard(r->height, r->width);
+	clipBoard.setDimensions(r->height, r->width);
 	
 	int maxY = r->y + r->height;
 	int maxX = r->x + r->width;
@@ -74,38 +74,36 @@ void Highlighter::copy()
 	{
 		for (int j = 0, col = r->x; col < maxX; col++, j++)
 		{
-			int bufferEl = i * cb->cols + j;
-			cb->buffer[bufferEl] = tileMap->getDatum(row, col);
-				// map->getDisplayChar(row, col);
+			chtype tile = tileMap->getDatum(row, col);
+			clipBoard.setDatum(i, j, tile);
 		}
 	}
+	delete r;
 }
 
 
 
 void Highlighter::paste()
 {
-	int maxY = *curY + cb->rows;
-	int maxX = *curX + cb->cols;
+	int maxY = *curY + clipBoard.getRows();
+	int maxX = *curX + clipBoard.getCols();
 
-	int containerWidth = map->getTotalCols();
-	int containerHeight = map->getTotalRows();
+	unsigned int containerWidth = tileMap->getCols();
+	unsigned int containerHeight = tileMap->getRows();
 
-	maxX = cb->cols > containerWidth - *curX ? containerWidth : maxX;
-	maxY = cb->rows > containerHeight - *curY ? containerHeight : maxY;
+	maxX = clipBoard.getCols() > containerWidth - *curX ? containerWidth : maxX;
+	maxY = clipBoard.getRows() > containerHeight - *curY ? containerHeight : maxY;
 
 	for (int i = 0, row = *curY; row < maxY; row++, i++)
 	{
 		for (int j = 0, col = *curX; col < maxX; col++, j++)
 		{
-			int bufferEl = i * cb->cols + j;
-			tileMap->setDatum(row, col, cb->buffer[bufferEl]);
-			//map->setDisplayChar(row, col, cb->buffer[bufferEl]);
+			chtype tile = clipBoard.getDatum(i, j);
+			tileMap->setDatum(row, col, tile);
 		}
 	}
 
-	//r = new Rect(cb->rows, cb->cols, *curY, *curX);
-	pushPin(*curY + cb->rows - 1, *curX + cb->cols - 1);
+	pushPin(*curY + clipBoard.getRows() - 1, *curX + clipBoard.getCols() - 1);
 	highlighting = true;
 }
 
@@ -135,57 +133,53 @@ Rect* Highlighter::getHighlitRegion()
 
 void Highlighter::draw()
 {
-	if (highlighting)
+	if (highlighting == false)
+		return;
+
+	//determine map coordinates of highlit region
+	int minY = *curY < piny ? *curY : piny;
+	int maxY = *curY < piny ? piny: *curY;
+	int minX = *curX < pinx ? *curX : pinx;
+	int maxX = *curX < pinx ? pinx : *curX;
+
+	//translate coordinates to map location in window
+	short offX = img->getUlX();
+	short offY = img->getUlY();
+
+	minY -= offY;
+	maxY -= offY;
+	minX -= offX;
+	maxX -= offX;
+
+	//make sure that new coordinates are onscreen
+	int mapViewHeight = getmaxy(win);
+	int mapViewWidth = getmaxx(win);
+
+	if (minY < 0) minY = 0;
+	if (minX < 0) minX = 0;
+	if (maxY > mapViewHeight) maxY = mapViewHeight;
+	if (maxX > mapViewWidth) maxX = mapViewWidth;
+
+	int rows = maxY - minY;
+	int cols = maxX - minX;
+
+	//iterate through rows/cols of highlit area
+	for (; minY <= maxY; minY++)
 	{
-		//determine map coordinates of highlit region
-		int minY = *curY < piny ? *curY : piny;
-		int maxY = *curY < piny ? piny: *curY;
-		int minX = *curX < pinx ? *curX : pinx;
-		int maxX = *curX < pinx ? pinx : *curX;
-
-		//translate coordinates to map location in window
-		short offX = map->getUlX();
-		short offY = map->getUlY();
-
-		minY -= offY;
-		maxY -= offY;
-		minX -= offX;
-		maxX -= offX;
-
-		//make sure that new coordinates are onscreen
-		int mapViewHeight = getmaxy(win);
-		int mapViewWidth = getmaxx(win);
-
-		if (minY < 0) minY = 0;
-		if (minX < 0) minX = 0;
-		if (maxY > mapViewHeight) maxY = mapViewHeight;
-		if (maxX > mapViewWidth) maxX = mapViewWidth;
-
-		int rows = maxY - minY;
-		int cols = maxX - minX;
-
-		//iterate through rows/cols of highlit area
-		for (; minY <= maxY; minY++)
-		{
-			mvwchgat(win, minY, minX, cols + 1, A_STANDOUT, 0, NULL);
-		}
-		wnoutrefresh(win);
+		mvwchgat(win, minY, minX, cols + 1, A_STANDOUT, 0, NULL);
 	}
+	wnoutrefresh(win);
 }
 
-/*
-If highlighting is turned on then flip the highlit region.
-If highlighting is off, then paste the buffer contents and then flip it
-*/
 
-void Highlighter::flip(int axys)
+void Highlighter::flip(bool axys)
 {
 	//get region to flip
 	Rect* r;
 	if (highlighting == false)
 	{
 		paste();//paste buffer contents first (and turn highlighting back on)
-		r = new Rect(cb->rows, cb->cols, *curY, *curX);
+		r = new Rect(clipBoard.getRows(), clipBoard.getCols(), *curY, *curX);
 	}
 	else
 	{
@@ -204,14 +198,14 @@ void Highlighter::flip(int axys)
 
 	switch (axys)
 	{
-	case HL_HOR:
+	case AXIS_HOR:
 		swapCount = r->width / 2;
 		outerMin = r->y;
 		innerMin = r->x;
 		outerMax = maxY;
 		innerMax = maxX;
 		break;
-	case HL_VER:
+	case AXIS_VER:
 		swapCount = r->height / 2;
 		outerMin = r->x;
 		innerMin = r->y;
@@ -228,7 +222,7 @@ void Highlighter::flip(int axys)
 			int left = inner;
 			int right = innerMax - i;
 
-			if (axys == HL_HOR)
+			if (axys == AXIS_HOR)
 			{
 				swap(outer, inner, outer, right);
 			}
@@ -238,26 +232,19 @@ void Highlighter::flip(int axys)
 			}
 		}
 	}
+
+	delete r;
 }
 
 
 void Highlighter::swap(int y1, int x1, int y2, int x2)
 {
-	/*chtype swap = map->getDisplayChar(y1, x1);
-	chtype rightC = map->getDisplayChar(y2, x2);
-	map->setDisplayChar(y1, x1, rightC);
-	map->setDisplayChar(y2, x2, swap);*/
 	chtype swap = tileMap->getDatum(y1, x1);
 	chtype rightC = tileMap->getDatum(y2, x2);
 	tileMap->setDatum(y1, x1, rightC);
 	tileMap->setDatum(y2, x2, swap);
 }
 
-
-Highlighter::~Highlighter()
-{
-	delete cb;
-}
 
 
 

@@ -27,5 +27,25 @@ namespace PDCurseControlsTester
 			
 			Assert::AreEqual(DT_REG, entry.d_type);
 		}
+
+		TEST_METHOD(addDirToPathTest)
+		{
+			std::string path = "C:\\This is a fake path";
+			FileDirectory dir(path);
+
+			dir.addDirToPath("subfolder");
+			
+			Assert::AreEqual(0, dir.getPath().compare("C:\\This is a fake path\\subfolder"));
+		}
+
+		TEST_METHOD(removeDirFromPathTest)
+		{
+			std::string path = "C:\\This-is_a-fake~path\\subfolder";
+			FileDirectory dir(path);
+
+			dir.removeDirFromPath();
+
+			Assert::AreEqual(0, dir.getPath().compare("C:\\This-is_a-fake~path"));
+		}
 	};
 }

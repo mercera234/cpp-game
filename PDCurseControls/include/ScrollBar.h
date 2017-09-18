@@ -11,12 +11,14 @@ private:
 	vMax = at bottom ; arrow up only
 	*/
 	int vPos; 
-	unsigned short visibleRows; //this will be the same as the height of the window
-
+	
 	void drawDownArrow();
 	void drawUpArrow();
 public:
+	ScrollBar();
 	ScrollBar(Controllable* c);
+	void setTargetControl(Controllable* c);
 	void draw();
 
+	~ScrollBar() { if(win == nullptr) delwin(win); }
 };

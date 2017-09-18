@@ -152,13 +152,13 @@
     <ClInclude Include="include\SpiralBlitAnimation.h" />
     <ClInclude Include="include\Storable.h" />
     <ClInclude Include="include\Table.h" />
-    <ClInclude Include="include\TextDisplay.h" />
     <ClInclude Include="include\TextField.h" />
     <ClInclude Include="include\TextLabel.h" />
     <ClInclude Include="include\TUI.h" />
     <ClInclude Include="include\KeyComparators.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Direction.cpp" />
     <ClCompile Include="src\InputManager.cpp" />
     <ClCompile Include="src\KeyComparators.cpp" />
     <ClCompile Include="src\AbstractMenu.cpp" />
@@ -190,7 +190,6 @@
     <ClCompile Include="src\ScrollBar.cpp" />
     <ClCompile Include="src\SpiralBlitAnimation.cpp" />
     <ClCompile Include="src\Table.cpp" />
-    <ClCompile Include="src\TextDisplay.cpp" />
     <ClCompile Include="src\TextField.cpp" />
     <ClCompile Include="src\TextLabel.cpp" />
     <ClCompile Include="src\TUI.cpp" />

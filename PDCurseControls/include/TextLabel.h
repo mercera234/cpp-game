@@ -15,10 +15,16 @@ private:
 	std::string text;
 	//unsigned short orientation;
 	unsigned short justf; //justification
+	void init();
 public:
-	TextLabel(WINDOW* win, std::string text);
-	void setText(std::string text) { this->text = text; }
+	TextLabel();
+	TextLabel(WINDOW* win, const std::string& text);
+
+	void draw();
+
+	//getters/setters
+	void setText(const std::string& text) { this->text = text; }
 	std::string getText() { return text; }
 	void setJustification(unsigned short justIn) { justf = justIn; }
-	void draw();
+	
 };

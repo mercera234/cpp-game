@@ -5,12 +5,8 @@ GraphMenu::GraphMenu(WINDOW* win, int capacity)
 	setWindow(win);
 
 	setMaxItems(capacity);
-	//this->capacity = capacity; //will grow as items are added
-
-	//allocateItems();
-
+	
 	cursor = defaultCursor;
-//	setMarkSide(LEFT_MARK);
 }
 
 
@@ -30,14 +26,6 @@ void GraphMenu::draw()
 			continue;
 			
 		items[i]->draw();
-
-		//draw mark if 
-		//if (curItem == items[i] || items[i]->selected == true) //draw mark
-		//{
-		//	//only doing left mark for right now!
-		//	mvwaddstr(win, (items[i]->posY - ulY), (items[i]->posX - ulX - mark.length()), mark.c_str()); //print mark
-		//}
-
 	}
 			
 	wnoutrefresh(win);

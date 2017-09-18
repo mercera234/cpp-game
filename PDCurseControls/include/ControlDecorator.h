@@ -8,5 +8,5 @@ protected:
 	Controllable* c;
 public:
 	Controllable* getControl() { return c; }
-	//virtual void draw() = 0;
+	void setControl(Controllable* cIn) { c = cIn; }
 };

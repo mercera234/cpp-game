@@ -1,10 +1,20 @@
 #include "TextLabel.h"
 
-TextLabel::TextLabel(WINDOW* win, std::string text)
+TextLabel::TextLabel()
+{
+	init();
+}
+
+TextLabel::TextLabel(WINDOW* win, const std::string& text)
 {
 	setWindow(win);
 	
 	this->text = text;
+	init();
+}
+
+void TextLabel::init()
+{
 	showing = true;
 	focusable = true;
 

@@ -4,6 +4,9 @@
 #include <iostream>
 using namespace std;
 
+/*
+Class is obsolete. All this functionality can be done in the GridMenu class.
+*/
 struct PaletteItem
 {
 	unsigned short index;
@@ -18,7 +21,7 @@ private:
 	short selectedItem;
 	unsigned short rows, cols;
 	unsigned short itemCount; // rows * cols
-	//chtype* items;
+	
 	PaletteItem* items;
 public:
 	Palette(int rows, int cols, int y, int x);

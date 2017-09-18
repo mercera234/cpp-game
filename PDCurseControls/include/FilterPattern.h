@@ -1,6 +1,7 @@
 #pragma once
 #include "ControlDecorator.h"
 
+/*An interface for applying a method to alter how a particular control is drawn. */
 class FilterPattern : public ControlDecorator
 {
 protected:

@@ -39,7 +39,7 @@ namespace PDCurseControlsTester
 			TUI tui;
 			tui.init();
 			tui.shutdown();
-			Assert::IsTrue(isendwin());
+			Assert::IsTrue(isendwin() != 0);
 		}
 
 	};

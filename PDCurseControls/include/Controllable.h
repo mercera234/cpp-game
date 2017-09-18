@@ -2,6 +2,7 @@
 #include "curses.h"
 #include "Rectangle.h"
 #include "Drawable.h"
+#include "TUI.h"
 
 class ControlManager; //forward declaration
 class Controllable : public Drawable
@@ -9,12 +10,13 @@ class Controllable : public Drawable
 private:
 
 protected:
-	WINDOW* win;
+	WINDOW* win = nullptr;
 	bool focusable; //true if control can accept keyboard input
 	bool showing; //true if should be drawn 
 	bool focus; //true if the controllable is focused
-	
-	Rect* r; //A rectangle to save the true dimensions of the window in case it should go off screen
+	bool acceptsMouseInput; 
+
+	//Rect* r; //A rectangle to save the true dimensions of the window in case it should go off screen
 	
 	int ulY; //the top row that is visible
 	int ulX; //the left most col that is visible
@@ -35,17 +37,22 @@ protected:
 	*/
 	bool modal; 
 	ControlManager* cm;
-	void setWindow(Rect* bounds);
+
+	chtype color; //a color pair that can be used for the entire control if desired
+
+	//void setWindow(Rect* bounds);
 public:
-	void setWindow(WINDOW* win);
-//	virtual void draw() = 0;
 	virtual void move(int y, int x);
-	virtual void setPosition(int y, int x);
-	virtual void setDimensions(unsigned int rows, unsigned int cols);
-	void shift(int y, int x);
+	virtual void setPosition(int y, int x); //set position of control within window
+	virtual void setDimensions(unsigned int rows, unsigned int cols); //set control dimensions (normally >= window dimensions)
+	void shift(int y, int x); //shift control within window
 
 	//getters/setters
+	void setWindow(WINDOW* win);
 	WINDOW* getWindow() { return win; };
+	void setControlManager(ControlManager* cm) { this->cm = cm; }
+	ControlManager* getControlManager() { return cm; }
+
 	bool isFocusable() { return focusable; }
 	virtual void setFocus() {};
 	virtual void setCursorFocus() {}; //for moving the cursor to this component
@@ -54,14 +61,17 @@ public:
 	void setShowing(bool on) { showing = on; }
 	void setModal(bool on) { modal = on; }
 	bool isModal() { return modal; }
-	void setControlManager(ControlManager* cm) { this->cm = cm; }
-	ControlManager* getControlManager() { return cm; }
+	void setAcceptsMouseInput(bool status) { acceptsMouseInput = status; }
+	bool getAcceptsMouseInput() { return acceptsMouseInput; }
+	
 	int getUlY() { return ulY; }
 	int getUlX() { return ulX; }
-	unsigned short getTotalRows() { return totalRows; }
-	unsigned short getTotalCols() { return totalCols; }
+	unsigned int getTotalRows() { return totalRows; }
+	unsigned int getTotalCols() { return totalCols; }
+	unsigned int getTotalTiles() { return totalTiles; }
 	unsigned short getVisibleRows() { return visibleRows; }
 	unsigned short getVisibleCols() { return visibleCols; }
 	
+	void setColor(int bkgdColor, int textColor = COLOR_WHITE);
 };
 

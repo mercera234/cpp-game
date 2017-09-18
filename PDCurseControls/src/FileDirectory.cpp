@@ -34,7 +34,7 @@ std::list<dirent> FileDirectory::getFiles(bool includeDirectories, const std::st
 }
 
 
-bool FileDirectory::checkFilterMatch(std::string fileName, std::string filter)
+bool FileDirectory::checkFilterMatch(const std::string& fileName, const std::string& filter)
 {
 	if (filter.empty())
 		return true; //include all files when filter isn't set
@@ -46,10 +46,24 @@ bool FileDirectory::checkFilterMatch(std::string fileName, std::string filter)
 	return true;
 }
 
+void FileDirectory::addDirToPath(const std::string& newDir)
+{
+	path.append('\\' + newDir);
+}
+
+void FileDirectory::removeDirFromPath()
+{
+	//int pos = path.find_last_of('\\');
+	path.erase(path.find_last_of('\\'));
+	//directory.setPath(directory.getPath().substr(0, pos));
+}
+
+
+
 /*
 Returns size of fileName
 */
-std::streampos FileDirectory::getSize(std::string& fileName) //static
+std::streampos FileDirectory::getSize(const std::string& fileName) //static
 {
 	std::ifstream is (fileName, std::ios::binary | std::ios::ate);
 	std::streampos size = is.tellg();

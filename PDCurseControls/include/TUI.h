@@ -3,7 +3,6 @@
 #include "curses.h"
 #include "panel.h"
 #include <iostream>
-using namespace std;
 
 //ctrl codes(not all of these have been tested!)
 #define CTRL_AT 0x0 //couldn't use the symbol @
@@ -73,6 +72,7 @@ using namespace std;
 //bit masks
 #define BKGDCOLOR_MASK 0xf0000000
 #define TEXTCOLOR_MASK 0x0f000000
+#define COLOR_MASK 0xff000000
 #define ATTR_ONLY_MASK 0x00ff0000
 
 

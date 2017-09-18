@@ -39,6 +39,7 @@ namespace PDCurseControlsTester
 			mmi.link(Dir::RIGHT, &mmi2);
 			
 			Assert::IsTrue(mmi2.getLinkedItem(Dir::LEFT) == &mmi);
+			Assert::IsTrue(mmi.getLinkedItem(Dir::RIGHT) == &mmi2);
 		}
 
 		TEST_METHOD(unlinkTest)
@@ -47,9 +48,32 @@ namespace PDCurseControlsTester
 			MockMenuItem mmi2;
 
 			mmi.link(Dir::UP, &mmi2);
-			mmi2.link(false, Dir::DOWN, &mmi); //unlink
+			mmi2.unlink(Dir::DOWN); //unlink
 
 			Assert::IsFalse(mmi.getLinkedItem(Dir::UP) == &mmi2);
+		}
+
+		TEST_METHOD(setLinkedItemTest)
+		{
+			MockMenuItem mmi;
+			MockMenuItem mmi2;
+
+			mmi.setLinkedItem(Dir::RIGHT, &mmi2);
+
+			Assert::IsTrue(mmi.getLinkedItem(Dir::RIGHT) == &mmi2);
+			Assert::IsFalse(mmi2.getLinkedItem(Dir::LEFT) == &mmi);
+		}
+
+		TEST_METHOD(setLinkedItemNullTest)
+		{
+			MockMenuItem mmi;
+			MockMenuItem mmi2;
+
+			mmi.link(Dir::DOWN, &mmi2);
+			mmi2.setLinkedItem(Dir::UP, nullptr); //only mmi2 is unlinked up with mmi. mmi still points down to mmi2.
+			
+			Assert::IsTrue(mmi2.getLinkedItem(Dir::UP) == nullptr); //mmi2 does not point up to mmi (unlinked)
+			Assert::IsTrue(mmi.getLinkedItem(Dir::DOWN) == &mmi2); //mmi still points down to mmi2
 		}
 
 		TEST_METHOD(clearLinksTest)
@@ -77,9 +101,13 @@ namespace PDCurseControlsTester
 
 			mmi.clear();
 			
-			Assert::IsTrue(mmi.selectable == false && mmi.selected == false && mmi.crossRef == -1 && mmi.index == -1 && mmi.hidden == false);
+			Assert::IsTrue(mmi.selectable == false);
+			Assert::IsTrue(mmi.selected == false);
+			Assert::IsTrue(mmi.crossRef == -1);
+			Assert::IsTrue(mmi.index == -1);
+			Assert::IsTrue(mmi.hidden == false);
 		}
 
-
+		
 	};
 }

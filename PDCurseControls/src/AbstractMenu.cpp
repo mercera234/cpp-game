@@ -1,24 +1,19 @@
 #include <algorithm>
+#include <utility>
 #include "AbstractMenu.h"
 
 AbstractMenu::AbstractMenu()
 {
 	//set defaults here
+	resetCurrentItem();
+}
+
+void AbstractMenu::resetCurrentItem()
+{
+	curIndex = NO_CUR_ITEM;
 	curItem = nullptr;
 }
 
-void AbstractMenu::allocateItems()
-{
-	/*items = new MenuItem*[capacity];
-	for (int i = 0; i < capacity; i++)
-	{
-		items[i] = NULL;
-	}
-	itemCount = 0;
-*/
-
-
-}
 
 void AbstractMenu::setMaxCapacity(size_t value)
 {
@@ -35,7 +30,7 @@ void AbstractMenu::setMaxItems(unsigned short value)
 	{
 		//delete vectors on the end
 
-		for (int i = value; i < items.size(); i++) //value is new size and index of element after new size
+		for (int i = value; i < (int)items.size(); i++) //value is new size and index of element after new size
 		{
 			delete items[i];
 		}
@@ -56,12 +51,11 @@ bool AbstractMenu::setItem(MenuItem* item)
 
 	if (oldItem != nullptr) //no deletion is needed
 	{
-		//transfer links
-		item->link(Dir::UP, oldItem->getLinkedItem(Dir::UP));
-		item->link(Dir::DOWN, oldItem->getLinkedItem(Dir::DOWN));
-		item->link(Dir::RIGHT, oldItem->getLinkedItem(Dir::RIGHT));
-		item->link(Dir::LEFT, oldItem->getLinkedItem(Dir::LEFT));
-
+		for each (Dir dir in allDirs)
+		{
+			if (item->getLinkedItem(dir) != nullptr)
+				item->link(dir, oldItem->getLinkedItem(dir));
+		}
 		delete oldItem;
 	}
 
@@ -70,7 +64,11 @@ bool AbstractMenu::setItem(MenuItem* item)
 
 	items[item->index] = item;
 	if (curItem == nullptr) //set first added item to current item by default
+	{
 		setCurrentItem(item->index);
+		curIndex = item->index;
+	}
+		
 
 	return true;
 
@@ -92,7 +90,11 @@ bool AbstractMenu::clearItem(int index)
 	delete items[index];
 
 	if (curItem == items[index])
-		curItem = nullptr;
+	{
+		//should iterate through all items to set to another one, 
+		resetCurrentItem();
+	}
+		
 
 	items[index] = nullptr;
 	return true;
@@ -114,15 +116,28 @@ bool AbstractMenu::setSelected(int index, bool selected)
 }
 
 
+bool AbstractMenu::setSelectable(int index, bool selectable)
+{
+	if (validateIndex(index) == false)
+		return false;
+
+	items[index]->selectable = selectable;
+	return true;
+}
+
+
 bool AbstractMenu::setCurrentItem(int index)
 {
 	if (validateIndex(index) == false) //can't set an out of bounds index
 		return false;
 
+	curIndex = index;
 	curItem = items[index];
 
 	return true;
 }
+
+
 
 void AbstractMenu::clearItems()
 {
@@ -135,7 +150,7 @@ void AbstractMenu::clearItems()
 		items[i] = nullptr;
 	}
 	
-	curItem = nullptr;
+	resetCurrentItem();
 }
 
 
@@ -150,7 +165,11 @@ MenuItem* AbstractMenu::basicMenuDriver(int input, AbstractMenu* m) //static
 	case KEY_UP: retval = m->driver(REQ_UP_ITEM); break;
 	case KEY_LEFT: retval = m->driver(REQ_LEFT_ITEM); break;
 	case KEY_RIGHT: retval = m->driver(REQ_RIGHT_ITEM); break;
-	/*case KEY_PPAGE: m->driver(REQ_SCR_DPAGE); break;
+	case KEY_MOUSE: m->driver(input); 
+		item = m->getCurrentItem();
+		break;
+	
+		/*case KEY_PPAGE: m->driver(REQ_SCR_DPAGE); break;
 	case KEY_NPAGE: m->driver(REQ_SCR_UPAGE); break;*/
 	case '\n':
 	case '\r':

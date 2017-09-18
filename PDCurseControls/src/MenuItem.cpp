@@ -13,17 +13,17 @@ MenuItem::MenuItem(unsigned short y, unsigned short x)
 
 void MenuItem::init(unsigned short y, unsigned short x)
 {
-	upItem = NULL;
-	downItem = NULL;
-	leftItem = NULL;
-	rightItem = NULL;
+	upItem = nullptr;
+	downItem = nullptr;
+	leftItem = nullptr;
+	rightItem = nullptr;
 	setPosition(y, x);
 	clear();
 }
 
 MenuItem* MenuItem::getLinkedItem(Dir link)
 {
-	MenuItem* item = NULL;
+	MenuItem* item = nullptr;
 	switch (link)
 	{
 	case Dir::UP:
@@ -43,6 +43,25 @@ MenuItem* MenuItem::getLinkedItem(Dir link)
 	return item;
 }
 
+void MenuItem::setLinkedItem(Dir link, MenuItem* item)
+{
+	switch (link)
+	{
+	case Dir::UP:
+		upItem = item;
+		break;
+	case Dir::DOWN:
+		downItem = item;
+		break;
+	case Dir::LEFT:
+		leftItem = item;
+		break;
+	case Dir::RIGHT:
+		rightItem = item;
+		break;
+	}
+}
+
 void MenuItem::setPosition(unsigned short y, unsigned short x)
 {
 	posY = y;
@@ -54,48 +73,26 @@ void MenuItem::setHidden(bool hidden)
 	this->hidden = hidden;
 }
 
-void MenuItem::link(Dir link, MenuItem* item)
+void MenuItem::link(Dir linkDir, MenuItem* item)
 {
-	this->link(true, link, item);
+	Dir oppDir = getOppositeDir(linkDir);
+
+	setLinkedItem(linkDir, item);
+
+	if(item != nullptr)
+		item->setLinkedItem(oppDir, this);
 }
 
-void MenuItem::link(bool setLink, Dir link, MenuItem* item)
+void MenuItem::unlink(Dir linkDir)
 {
-	MenuItem** linkA = NULL;
-	MenuItem** linkB = NULL;
+	Dir oppDir = getOppositeDir(linkDir);
+	MenuItem* item = getLinkedItem(linkDir);
 
-	switch (link)
-	{
-	case Dir::UP:
-		linkA = &upItem;
-		linkB = &item->downItem;
-		break;
-	case Dir::DOWN:
-		linkA = &downItem;
-		linkB = &item->upItem;
-		break;
-	case Dir::LEFT:
-		linkA = &leftItem;
-		linkB = &item->rightItem;
-		break;
-	case Dir::RIGHT:
-		linkA = &rightItem;
-		linkB = &item->leftItem;
-		break;
-	}
-
-	if (setLink)
-	{
-		*linkA = item;
-		*linkB = this;
-	}
-	else
-	{
-		*linkA = NULL;
-		*linkB = NULL;
-	}
-
+	setLinkedItem(linkDir, nullptr);
+	if(item != nullptr)
+		item->setLinkedItem(oppDir, nullptr);
 }
+
 
 void MenuItem::clear()
 {
@@ -103,7 +100,7 @@ void MenuItem::clear()
 	selected = false;
 	crossRef = -1;
 	index = -1;
-	menu = NULL;
+	menu = nullptr;
 	hidden = false;
 
 	clearLinks();
@@ -111,18 +108,12 @@ void MenuItem::clear()
 
 void MenuItem::clearLinks()
 {
-	if (upItem != NULL)
-		link(false, Dir::UP, upItem);
-
-	if (downItem != NULL)
-		link(false, Dir::DOWN, downItem);
-
-	if (leftItem != NULL)
-		link(false, Dir::LEFT, leftItem);
-
-	if (rightItem != NULL)
-		link(false, Dir::RIGHT, rightItem);
+	for each (Dir dir in allDirs)
+	{
+		unlink(dir);
+	}
 }
+
 
 /*
 Links all items in group sequentially according to link passed in

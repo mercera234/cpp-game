@@ -3,38 +3,59 @@
 #include "TextLabel.h"
 #include "ScrollBar.h"
 #include "TextField.h"
+#include "FileDirectory.h"
 /*
 General rule of thumb when using a FileChooser
 'ENTER' accept
 'CTRL-Q' cancel (until I ever decide to use buttons)
 */
-#define OPEN_DIALOG 0
-#define SAVE_DIALOG 1
+
+enum class FileDialogType
+{
+	OPEN_DIALOG,
+	SAVE_DIALOG
+};
+
+//const int OPEN_DIALOG = 0;
+//const int SAVE_DIALOG = 1;
 
 class FileChooser : public Controllable
 {
 protected:
-	GridMenu* fileMenu;
-	string workingDir;
-	TextLabel* purposeLbl;
-	TextLabel* pathLbl;
-	ScrollBar* vScroller;
-	TextField* fileNameField;
-	string filter;
-	unsigned short type;
+	FileDirectory directory;
+	GridMenu fileMenu;
+	//std::string workingDir;
+	TextLabel purposeLbl;
+	TextLabel pathLbl;
+	ScrollBar vScroller;
+	TextField fileNameField;
+	std::string filter;
+	FileDialogType type;
 
 	//alignment variables
-	int indent;
+	//int indent;
 	int pathWidth;
-	bool checkFilterMatch(string fileName);
+	bool checkFilterMatch(const std::string& fileName);
+	void init(std::string workingDir, FileDialogType type, std::string filter = "");
+
+	bool navigateUpDirectory();
+	bool navigateDownDirectory(const std::string& dirName);
 public:
-	FileChooser(WINDOW* win, string workingDir, int type, string filter = "");
+	FileChooser(std::string workingDir, FileDialogType type, std::string filter = "");
+	void setupChooser(WINDOW* win);
+
+	FileChooser(WINDOW* win, std::string workingDir, FileDialogType type, std::string filter = "");
 	void resetDirEntries();
-	void setFocus() { fileNameField->setCursorFocus(); }
-	void setFilter(string filter) { this->filter = filter; }
-	unsigned short getType() { return type; }
-	GridMenu* getMenu() { return fileMenu; }
-	void draw();
+	
 	void driver(int input);
-	string filePathDriver();
+	std::string filePathDriver();
+	void draw();
+
+	//~FileChooser();
+
+	//getters/setters
+	void setFocus() { fileNameField.setCursorFocus(); }
+	void setFilter(const std::string& filter) { this->filter = filter; }
+	FileDialogType getType() { return type; }
+	//GridMenu* getMenu() { return fileMenu; }
 };

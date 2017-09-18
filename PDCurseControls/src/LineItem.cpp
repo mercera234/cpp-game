@@ -10,10 +10,6 @@ LineItem::LineItem(std::string name, int element, int crossRefNdx)
 	selected = false;
 }
 
-//void LineItem::draw(WINDOW* win, int offY, int offX)
-//{
-//	mvwaddstr(win, posY + offY, posX + offX, name.c_str()); //get item name
-//}
 
 void LineItem::draw()
 {
@@ -22,26 +18,33 @@ void LineItem::draw()
 
 	int markPosX = 0;
 	int itemPosX = 0;
-	//for now, our main focus will be on getting the left mark working
-	/*switch (menu->getMarkSide())
-	{
-	case LEFT_MARK: */
-		markPosX = posX - offX;
-		itemPosX = markPosX + 2;
-	//	break;
-	//case RIGHT_MARK: 
-	//	itemPosX = posX - offX;
-	//	markPosX = itemPosX + name.length(); //should maybe use width of the item, but this is not an abstract property currently
-	//	break;
-	//}
-
+	
+	markPosX = posX - offX;
+	itemPosX = markPosX + menu->getCursor().length();
+	
+	WINDOW* win = menu->getWindow();
+	if (selected)
+		wattron(win, A_REVERSE);
+	else
+		wattroff(win, A_REVERSE);
 	
 	if (this == menu->getCurrentItem()) //draw mark
 	{
-		mvwaddstr(menu->getWindow(), posY - offY, markPosX, menu->getCursor().c_str()); //get item name
+		mvwaddstr(win, posY - offY, markPosX, menu->getCursor().c_str()); 
 	}
+
 	//draw item
-	mvwaddstr(menu->getWindow(), posY - offY, itemPosX, name.c_str()); //get item name
+	switch (field)
+	{
+	case Fielddraw::DRAW_ICON: 
+		mvwaddch(win, posY - offY, itemPosX, icon); 
+		break;
+
+	case Fielddraw::DRAW_NAME: 
+		mvwaddstr(win, posY - offY, itemPosX, name.c_str());	
+		break;
+	}
+	
 	
 }
 

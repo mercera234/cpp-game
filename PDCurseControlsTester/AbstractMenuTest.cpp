@@ -89,6 +89,24 @@ namespace PDCurseControlsTester
 			Assert::AreEqual(index, (int)mmi2->index);
 		}
 
+		TEST_METHOD(overwriteAfterSetItemTest)
+		{
+			MockMenu menu;
+			menu.setMaxItems(1);
+
+			MockMenuItem* mmi = new MockMenuItem();
+			int index = 0;
+			mmi->index = index;
+
+			menu.setItem(mmi);
+
+			MockMenuItem* mmi2 = new MockMenuItem();
+			mmi2->index = index;
+			menu.setItem(mmi2);
+
+			Assert::IsTrue(menu.getItem(index) == mmi2);
+		}
+
 		TEST_METHOD(clearItemTest)
 		{
 			MockMenu menu;
@@ -137,5 +155,7 @@ namespace PDCurseControlsTester
 			MenuItem* mi = menu.getItem(0);
 			Assert::IsTrue(mi->selected);
 		}
+
+		
 	};
 }

@@ -10,7 +10,10 @@ private:
 	unsigned int cols;
 	std::vector<T> data;
 public:
+	TwoDStorage() {};
 	TwoDStorage(unsigned int rows, unsigned int cols);
+
+	void setDimensions(unsigned int rows, unsigned int cols);
 
 	void fill(T datum); //fill all elements in storage with T
 	void copyFrom(TwoDStorage<T>& fromStorage);
@@ -25,10 +28,18 @@ public:
 
 	bool setDatum(unsigned int element, const T &datum);
 	bool setDatum(unsigned int y, unsigned int x, const T &datum);
+
+	std::vector<T>& getData() { return data; }
 };
 
 template <class T>
 TwoDStorage<T>::TwoDStorage(unsigned int rows, unsigned int cols)
+{
+	setDimensions(rows, cols);
+}
+
+template <class T>
+void TwoDStorage<T>::setDimensions(unsigned int rows, unsigned int cols)
 {
 	this->rows = rows;
 	this->cols = cols;

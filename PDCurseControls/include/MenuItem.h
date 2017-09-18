@@ -18,9 +18,8 @@ protected:
 	MenuItem* rightItem;
 
 	void init(unsigned short y, unsigned short x);
-
 public:
-	short index;
+	short index; //the index is the unique identifier for the item. This cannot be removed from this object
 	int crossRef;
 	bool selected;
 	bool selectable;
@@ -31,21 +30,21 @@ public:
 	MenuItem();
 	MenuItem(unsigned short y, unsigned short x);
 	
-	/*
-	Resets all properties to default
-	*/
+	/*Resets all properties to default*/
 	void clear();
 
-	/*
-	Clear all adjacent links to this item
-	*/
+	/*Clear all adjacent links to this item*/
 	void clearLinks();
 
-	void link(bool setLink, Dir link, MenuItem* item);
-	void link(Dir link, MenuItem* item);
-	
+	/*Sets up a bi-directional link with another item*/
+	void link(Dir linkDir, MenuItem* item);
+
+	/*Tears down a bi-directional link with another item. Safe to use on single linked items as well*/
+	void unlink(Dir linkDir);
+
 	//getters/setters
 	MenuItem* getLinkedItem(Dir link);
+	void setLinkedItem(Dir link, MenuItem* item); //simple 1-way link method
 	void setHidden(bool hidden);
 	void setPosition(unsigned short y, unsigned short x);
 	void setMenu(AbstractMenu* menu) { this->menu = menu; }
