@@ -5,7 +5,7 @@
 using namespace std;
 
 /*
-Class is obsolete. All this functionality can be done in the GridMenu class.
+We can repurpose this class to hold a gridmenu, title and icon identifer
 */
 struct PaletteItem
 {

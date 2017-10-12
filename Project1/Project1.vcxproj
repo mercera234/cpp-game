@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{BBFD0DD1-4C9C-4958-A059-DB8BE6CD6D6B}</ProjectGuid>
     <RootNamespace>Project1</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
     <ProjectName>Project1</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -70,7 +70,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>F:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\Project1\include;$(IncludePath)</IncludePath>
+    <IncludePath>F:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\RPGLib\include;F:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\Project1\include;F:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\PDCurseControls\include\external;F:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\PDCurseControls\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -80,7 +80,8 @@
       <PreprocessorDefinitions>D_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>$(ProjectDir)lib\pdcurses.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>F:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\PDCurseControls\lib\pdcurses.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>F:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\PDCurseControls\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -117,123 +118,44 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AbstractMenu.cpp" />
-    <ClCompile Include="Actor.cpp" />
-    <ClCompile Include="ActorCard.cpp" />
     <ClCompile Include="ActorEditor.cpp" />
-    <ClCompile Include="Animation.cpp" />
-    <ClCompile Include="BattleAlgorithm.cpp" />
     <ClCompile Include="BattleProcessor.cpp" />
-    <ClCompile Include="BlitAnimation.cpp" />
-    <ClCompile Include="BWFilter.cpp" />
-    <ClCompile Include="ChtypeFilter.cpp" />
     <ClCompile Include="Editor.cpp" />
     <ClCompile Include="Factory.cpp" />
-    <ClCompile Include="FilterPattern.cpp" />
-    <ClCompile Include="Form.cpp" />
-    <ClCompile Include="FormControl.cpp" />
-    <ClCompile Include="FormField.cpp" />
-    <ClCompile Include="GraphMenu.cpp" />
-    <ClCompile Include="GridMenu.cpp" />
-    <ClCompile Include="Highlighter.cpp" />
-    <ClCompile Include="Controllable.cpp" />
-    <ClCompile Include="ControlManager.cpp" />
-    <ClCompile Include="CursesAttributeController.cpp" />
-    <ClCompile Include="DataPkg.cpp" />
-    <ClCompile Include="FileChooser.cpp" />
-    <ClCompile Include="Frame.cpp" />
-    <ClCompile Include="AutoMap.cpp" />
-    <ClCompile Include="Image.cpp" />
-    <ClCompile Include="LineItem.cpp" />
-    <ClCompile Include="Map.cpp" />
     <ClCompile Include="MapEditor.cpp" />
-    <ClCompile Include="MapEffectFilterPattern.cpp" />
-    <ClCompile Include="MapRepository.cpp" />
     <ClCompile Include="MasterEditor.cpp" />
     <ClCompile Include="MegaMap.cpp" />
-    <ClCompile Include="CursesPanel.cpp" />
-    <ClCompile Include="MenuItem.cpp" />
-    <ClCompile Include="FreeMovementProcessor.cpp" />
-    <ClCompile Include="MovementProcessor.cpp" />
-    <ClCompile Include="Palette.cpp" />
     <ClCompile Include="pdcursetest.cpp" />
-    <ClCompile Include="RandomBlitAnimation.cpp" />
-    <ClCompile Include="RGBControl.cpp" />
-    <ClCompile Include="ScrollBar.cpp" />
     <ClCompile Include="ExplorationProcessor.cpp" />
-    <ClCompile Include="SpiralBlitAnimation.cpp" />
     <ClCompile Include="stateManager.cpp" />
-    <ClCompile Include="Table.cpp" />
-    <ClCompile Include="TextDisplay.cpp" />
-    <ClCompile Include="TextField.cpp" />
-    <ClCompile Include="TextLabel.cpp" />
-    <ClCompile Include="TUI.cpp" />
-    <ClCompile Include="TurnTracker2.cpp" />
+    <ClCompile Include="TestState.cpp" />
+    <ClCompile Include="TitleScreenState.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="2DStorage.h" />
-    <ClInclude Include="AbstractMenu.h" />
-    <ClInclude Include="Actor.h" />
-    <ClInclude Include="ActorCard.h" />
     <ClInclude Include="ActorEditor.h" />
-    <ClInclude Include="Animation.h" />
-    <ClInclude Include="BattleAlgorithm.h" />
     <ClInclude Include="BattleProcessor.h" />
-    <ClInclude Include="BlitAnimation.h" />
-    <ClInclude Include="BWFilter.h" />
-    <ClInclude Include="ChtypeFilter.h" />
-    <ClInclude Include="ControlDecorator.h" />
     <ClInclude Include="Editor.h" />
     <ClInclude Include="Factory.h" />
-    <ClInclude Include="AutoMap.h" />
-    <ClInclude Include="MapExit.h" />
-    <ClInclude Include="FilterPattern.h" />
-    <ClInclude Include="Form.h" />
-    <ClInclude Include="FormControl.h" />
-    <ClInclude Include="FormField.h" />
-    <ClInclude Include="GraphMenu.h" />
-    <ClInclude Include="GridMenu.h" />
-    <ClInclude Include="Highlighter.h" />
-    <ClInclude Include="Controllable.h" />
-    <ClInclude Include="ControlManager.h" />
-    <ClInclude Include="CursesAttributeController.h" />
-    <ClInclude Include="DataPkg.h" />
-    <ClInclude Include="FileChooser.h" />
-    <ClInclude Include="Frame.h" />
-    <ClInclude Include="Image.h" />
-    <ClInclude Include="LineItem.h" />
-    <ClInclude Include="Map.h" />
     <ClInclude Include="MapEditor.h" />
-    <ClInclude Include="MapEffectFilterPattern.h" />
     <ClInclude Include="MapMetadata.h" />
-    <ClInclude Include="MapRepository.h" />
     <ClInclude Include="MasterEditor.h" />
     <ClInclude Include="MegaMap.h" />
-    <ClInclude Include="CursesPanel.h" />
-    <ClInclude Include="MenuItem.h" />
-    <ClInclude Include="FreeMovementProcessor.h" />
-    <ClInclude Include="MovementProcessor.h" />
-    <ClInclude Include="Palette.h" />
-    <ClInclude Include="RandomBlitAnimation.h" />
-    <ClInclude Include="Rectangle.h" />
-    <ClInclude Include="Repository.h" />
-    <ClInclude Include="RGBControl.h" />
-    <ClInclude Include="ScrollBar.h" />
     <ClInclude Include="ExplorationProcessor.h" />
-    <ClInclude Include="Spell.h" />
-    <ClInclude Include="SpiralBlitAnimation.h" />
     <ClInclude Include="stateManager.h" />
-    <ClInclude Include="Storable.h" />
-    <ClInclude Include="Table.h" />
-    <ClInclude Include="TextDisplay.h" />
-    <ClInclude Include="TextField.h" />
-    <ClInclude Include="TextLabel.h" />
-    <ClInclude Include="Tile.h" />
-    <ClInclude Include="TUI.h" />
-    <ClInclude Include="TurnTracker2.h" />
+    <ClInclude Include="TemplateTest.h" />
+    <ClInclude Include="TestState.h" />
+    <ClInclude Include="TitleScreenState.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PDCurseControls\PDCurseControls.vcxproj">
+      <Project>{e3d14357-39d4-446e-b228-1ecce4b70488}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\RPGLib\RPGLib.vcxproj">
+      <Project>{c52c8a11-cbcc-444c-95e2-391f2288828a}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

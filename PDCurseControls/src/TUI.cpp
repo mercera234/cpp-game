@@ -1,7 +1,41 @@
-#include "TUI.h"
 #include <iostream>
-using namespace std;
+#include "TUI.h"
 
+chtype setBkgdColor(int color)
+{
+	if (color < 0 || color >= TOTAL_COLORS)
+		return (chtype)color; //return what was passed if an error
+
+	return color << BKGDCOLOR_OFFSET;
+}
+
+int getBkgdColor(chtype tile)
+{
+	int color = tile >> BKGDCOLOR_OFFSET;
+
+	if (color < 0 || color >= TOTAL_COLORS)
+		return COLOR_BLACK; //return black if not a valid color
+
+	return color;
+}
+
+chtype setTextColor(int color)
+{
+	if (color < 0 || color >= TOTAL_COLORS)
+		return (chtype)color; //return what was passed if an error
+
+	return color << TEXTCOLOR_OFFSET;
+}
+
+int getTextColor(chtype tile)
+{
+	int color = tile >> TEXTCOLOR_OFFSET;
+
+	if (color < 0 || color >= TOTAL_COLORS)
+		return COLOR_BLACK; //return black if not a valid color
+
+	return color;
+}
 
 
 TUI::TUI()

@@ -1,378 +1,63 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Class Name="AbstractMenu" Collapsed="true">
-    <Position X="4.5" Y="4.25" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAEAGgAQRAAAEgAoAkACEAAAAAEAAAAQIAAgAgIA=</HashCode>
-      <FileName>AbstractMenu.h</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="Controllable" Collapsed="true">
-    <Position X="4.5" Y="0.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>CICAAAAKSAASQASAAAIAAAASAIgAgAAACKAJAIiAEAQ=</HashCode>
-      <FileName>Controllable.h</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="_2DStorage&lt;T&gt;" Collapsed="true">
-    <Position X="38.5" Y="0.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAEQAAAAAIAIgAAAAIBAAAAAAACAAAAAACAQAAAAAAA=</HashCode>
-      <FileName>2DStorage.h</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="ActorCard" Collapsed="true">
-    <Position X="12" Y="7.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAIIAAAAAAAEAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>ActorCard.h</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="BWFilter" Collapsed="true">
-    <Position X="27" Y="5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAEAAAAAAAAAA=</HashCode>
-      <FileName>BWFilter.h</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="ChtypeFilter" Collapsed="true">
-    <Position X="40.25" Y="0.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAACAAAAAAAAAAAAAIAAAAAAAAACAAAAAAAAAAAAAA=</HashCode>
-      <FileName>ChtypeFilter.h</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="ControlDecorator" Collapsed="true">
-    <Position X="28.25" Y="2" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAEAAAAIAAAAAAAAAAACAAAAAAAAAAAA=</HashCode>
-      <FileName>ControlDecorator.h</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="ControlManager" Collapsed="true">
-    <Position X="42" Y="0.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AIEiBAAAAAAABACBAAIEAQAAAAEAACAAAAAIAAigAAA=</HashCode>
-      <FileName>ControlManager.h</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="CursesAttributeController" Collapsed="true">
-    <Position X="43.75" Y="0.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAACAAAAAACAAAEAAAAACAGAAIAAAAAAAAAQgAABQAA=</HashCode>
-      <FileName>CursesAttributeController.h</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="CursesPanel" Collapsed="true">
-    <Position X="38.5" Y="1.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAIAABAAAAQBAAAAIAABgAAAAAAABABAAQAAgIAAQ=</HashCode>
-      <FileName>CursesPanel.h</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="DataPkg" Collapsed="true">
-    <Position X="40.25" Y="1.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAgAAAICAAAAAAIAAAAAAAAAAAAAQAABAAAAAAAA=</HashCode>
-      <FileName>DataPkg.h</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="FileChooser" Collapsed="true">
-    <Position X="13.5" Y="1.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AIAgAAAAARBAAAAAhAIYEAGAARABAAEAAAAAAAAAAgI=</HashCode>
-      <FileName>FileChooser.h</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="FilterPattern" Collapsed="true">
-    <Position X="28.25" Y="3.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAQAAAAKAAAAAAAAAAAAAFAAAgAAAAAA=</HashCode>
-      <FileName>FilterPattern.h</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="Frame" Collapsed="true">
-    <Position X="31.5" Y="3.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAQAAAAAAAAAAAAAIAAA3AAAAAAAAIAAAAAAAAAAE=</HashCode>
-      <FileName>Frame.h</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="GraphMenu" Collapsed="true">
-    <Position X="3" Y="6" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAEAAIAAACAEAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>GraphMenu.h</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="GridMenu" Collapsed="true">
-    <Position X="6.25" Y="6" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>kgFgSAAGQIIBBACUiCIQgADAACAAwggUBNkCAAAAIIA=</HashCode>
-      <FileName>GridMenu.h</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="Highlighter" Collapsed="true">
-    <Position X="33.75" Y="2" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAGEgACAAAAAgAAAQIIAAADgASAKALAAQoAEAAAAAQ=</HashCode>
-      <FileName>Highlighter.h</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="Image" Collapsed="true">
-    <Position X="6.75" Y="1.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAgEAICAACAAAAIAAAAAABAAAJIAAQIAAAABAAA=</HashCode>
-      <FileName>Image.h</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="Map" Collapsed="true">
-    <Position X="18" Y="1.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>EABAgAAEAJCAgAAAAAMAEAAAABEECIAAAQAMAAAAQgA=</HashCode>
-      <FileName>Map.h</FileName>
-    </TypeIdentifier>
-  </Class>
   <Class Name="MapEditor" Collapsed="true">
-    <Position X="42" Y="1.5" Width="1.5" />
+    <Position X="10.25" Y="1.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>SIAmHYEGCAAAkIwgHAoqWDhKOFIACEAggFoqBcEQCsA=</HashCode>
+      <HashCode>SIAGHYEGCICAgIhgBAoCWDjIOFIACAAiAAoKB8UQCsA=</HashCode>
       <FileName>MapEditor.h</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="MapEffectFilterPattern" Collapsed="true">
-    <Position X="29.25" Y="5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAACAAAgAAAAAAAAAAAAAAAAAAACAEAAAgAgAAAA=</HashCode>
-      <FileName>MapEffectFilterPattern.h</FileName>
-    </TypeIdentifier>
-  </Class>
   <Class Name="MegaMap" Collapsed="true">
-    <Position X="9" Y="1.75" Width="1.5" />
+    <Position X="8.5" Y="2.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AIAAAIAAAAAAAAADAAKAAEAAAAAAAAAAAAEAAAAAgAA=</HashCode>
+      <HashCode>gIAAAIAAAAAAAAADAAKAAGAAAAAAAAAQAAEAAQAApgA=</HashCode>
       <FileName>MegaMap.h</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Menu" Collapsed="true">
-    <Position X="15.75" Y="1.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>kkFCCCCGQIZBAACUiAoQkADAACAIwgAEAMmAAAgIoIg=</HashCode>
-      <FileName>Menu.h</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="MovementProcessor" Collapsed="true">
-    <Position X="43.75" Y="1.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AEAGAAAAAAAAAAAAABAwACAASAAAAADCAAEhA0QACBA=</HashCode>
-      <FileName>MovementProcessor.h</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="Palette" Collapsed="true">
-    <Position X="20.25" Y="1.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAEAAABAAAAAApAACAAAACIAAAAAAAAAAAQkAA=</HashCode>
-      <FileName>Palette.h</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="RGBControl" Collapsed="true">
-    <Position X="38.5" Y="2.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAABAAEAAIAAAAAAAAAAAAAAAAAAAAAAAgAgAAAAQA=</HashCode>
-      <FileName>RGBControl.h</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="ScrollBar" Collapsed="true">
-    <Position X="24.75" Y="3.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>IAAAAAAAAAAAAAAAAAIAAAAAAAAAQAAAAAAIAACCAAA=</HashCode>
-      <FileName>ScrollBar.h</FileName>
-    </TypeIdentifier>
-  </Class>
   <Class Name="StateManager" Collapsed="true">
-    <Position X="40.25" Y="2.5" Width="1.5" />
+    <Position X="10.25" Y="2.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAEAAgAAAAgAEAIoAAIEACAAAAAAIAAAAAAA=</HashCode>
       <FileName>stateManager.h</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Table" Collapsed="true">
-    <Position X="22.5" Y="1.75" Width="1.5" />
+  <Class Name="ExplorationProcessor" Collapsed="true">
+    <Position X="3" Y="1.75" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>EAAABIAABAAAAACRAAIAQIACAAAAAAAAAABkAAAAIAA=</HashCode>
-      <FileName>Table.h</FileName>
+      <HashCode>AAAAAAAYAABAAAAAAAAAACAAAAAAAAAAAAAAAQAAIgA=</HashCode>
+      <FileName>ExplorationProcessor.h</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TextField" Collapsed="true">
-    <Position X="36" Y="2" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AMAAAAAAAAAAQAAAAEIgCACAAAAAAAKKAABgAgCIAAA=</HashCode>
-      <FileName>TextField.h</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="TextLabel" Collapsed="true">
-    <Position X="11.25" Y="1.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAQAAAAAAAAAAIAAACAAAAAAAAIAAAAAAAAAAA=</HashCode>
-      <FileName>TextLabel.h</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="Tile" Collapsed="true">
-    <Position X="42" Y="2.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAACAAAAAwAgAAAAAEAAAAAAAEAAAgAAAAAAAAAEQA=</HashCode>
-      <FileName>Tile.h</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="TUI" Collapsed="true">
-    <Position X="43.75" Y="2.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AABAAAAAAAAAQEABAAAAAAQAABACAAIAQAAAAAAAAAA=</HashCode>
-      <FileName>TUI.h</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Struct Name="ActorDef" Collapsed="true">
-    <Position X="40.25" Y="3.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>EAIIIBAAAICAAAgAAEAAAQAAAAEEAAAAQAAAAAAAEgY=</HashCode>
-      <FileName>Actor.h</FileName>
-    </TypeIdentifier>
-  </Struct>
-  <Struct Name="Actor" Collapsed="true">
-    <Position X="38.5" Y="3.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AACAAAAAAAAAQAAAAAAAiAAAAAABAAAAAABgACAQAAA=</HashCode>
-      <FileName>Actor.h</FileName>
-    </TypeIdentifier>
-  </Struct>
-  <Struct Name="Registration" Collapsed="true">
-    <Position X="38.5" Y="5.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AABAAAAAAAAAAAQAAAAAAAAAAAAAAACAAABAAAIEAAQ=</HashCode>
-      <FileName>ControlManager.h</FileName>
-    </TypeIdentifier>
-  </Struct>
-  <Struct Name="KeyAccelerator" Collapsed="true">
-    <Position X="43.75" Y="3.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AABAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>ControlManager.h</FileName>
-    </TypeIdentifier>
-  </Struct>
-  <Struct Name="MapExit" Collapsed="true">
-    <Position X="11.25" Y="4" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAACAAAAA=</HashCode>
-      <FileName>Exit.h</FileName>
-    </TypeIdentifier>
-  </Struct>
-  <Struct Name="InMapExit" Collapsed="true">
-    <Position X="12" Y="5.25" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AEAAAAAAAAAAAAIAAAAIAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Exit.h</FileName>
-    </TypeIdentifier>
-  </Struct>
-  <Struct Name="BorderExit" Collapsed="true">
-    <Position X="9.75" Y="5.25" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAgAEAAAAAAAAAAAAAAAAQACAAAAAA=</HashCode>
-      <FileName>Exit.h</FileName>
-    </TypeIdentifier>
-  </Struct>
-  <Struct Name="Clipboard" Collapsed="true">
-    <Position X="42" Y="3.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AEAAAAAAAAAAABAAAIBAAAAAAACAAAAAAABAAAAAAAA=</HashCode>
-      <FileName>Highlighter.h</FileName>
-    </TypeIdentifier>
-  </Struct>
-  <Struct Name="LineItem" Collapsed="true">
-    <Position X="9.75" Y="7.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AEAAAAAAAAAAAAAAAAICAAAAAAAEAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>LineItem.h</FileName>
-    </TypeIdentifier>
-  </Struct>
   <Struct Name="UnitMap" Collapsed="true">
-    <Position X="43.75" Y="5.75" Width="1.5" />
+    <Position X="8.5" Y="5.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>MapMetadata.h</FileName>
     </TypeIdentifier>
   </Struct>
   <Struct Name="MapMetadata" Collapsed="true">
-    <Position X="38.5" Y="4.75" Width="1.5" />
+    <Position X="8.5" Y="4.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>EAAAAQIAAAAAAAAABAAAAAAAAAAQAAgAgAAABAAAAAA=</HashCode>
+      <HashCode>kAAAEAIAgAAAAAAABAAAAAAAAAAQAAAAgAAABAAAAAA=</HashCode>
       <FileName>MapMetadata.h</FileName>
     </TypeIdentifier>
   </Struct>
-  <Struct Name="MenuSelector" Collapsed="true">
-    <Position X="40.25" Y="4.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>QAAAAAAAAAAAAAEAAAAAAAAAAAABAAAAAAAAAAAAgAA=</HashCode>
-      <FileName>Menu.h</FileName>
-    </TypeIdentifier>
-  </Struct>
-  <Struct Name="MenuItem" Collapsed="true">
-    <Position X="11" Y="6.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AEAAAAAAAAAAABEQgAIAABgCAABAAAAAAARAwgABEEA=</HashCode>
-      <FileName>MenuItem.h</FileName>
-    </TypeIdentifier>
-  </Struct>
-  <Struct Name="PaletteItem" Collapsed="true">
-    <Position X="42" Y="4.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAQAAAAABAAA=</HashCode>
-      <FileName>Palette.h</FileName>
-    </TypeIdentifier>
-  </Struct>
-  <Struct Name="Rectangle" Collapsed="true">
-    <Position X="43.75" Y="4.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAQAQAAAAAAAAAAgAAAAAABgAAAAAAA=</HashCode>
-      <FileName>Rectangle.h</FileName>
-    </TypeIdentifier>
-  </Struct>
   <Struct Name="state" Collapsed="true">
-    <Position X="40.25" Y="5.75" Width="1.5" />
+    <Position X="10.25" Y="4.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAgAAEAAAAAAAAAAEAAAAAAIAAAA=</HashCode>
       <FileName>stateManager.h</FileName>
     </TypeIdentifier>
   </Struct>
-  <Struct Name="TileEffect" Collapsed="true">
-    <Position X="42" Y="5.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAABAAAAAAAAAAAABACAAAAAAAAAAAAA=</HashCode>
-      <FileName>Tile.h</FileName>
-    </TypeIdentifier>
-  </Struct>
-  <Typedef Name="mapEffect" Collapsed="true">
-    <Position X="40.25" Y="8" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Map.h</FileName>
-    </TypeIdentifier>
-  </Typedef>
   <Typedef Name="func" Collapsed="true">
-    <Position X="38.5" Y="8" Width="1.5" />
+    <Position X="8.5" Y="8" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>stateManager.h</FileName>
     </TypeIdentifier>
   </Typedef>
-  <Enum Name="__unnamed_enum_0002_1" Collapsed="true">
-    <Position X="38.5" Y="7" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>QAAAAAAAAAAAgAAAAAAAAAAAQAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Actor.h</FileName>
-    </TypeIdentifier>
-  </Enum>
-  <Enum Name="__unnamed_enum_0039_1" Collapsed="true">
-    <Position X="40.25" Y="7" Width="1.5" />
+  <Enum Name="__unnamed_enum_0064_1" Collapsed="true">
+    <Position X="10.25" Y="7" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAIAAAAAAAAAAAAAAAAAAACQAAAAAAAAAAAA=</HashCode>
       <FileName>stateManager.h</FileName>

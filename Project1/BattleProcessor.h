@@ -7,7 +7,7 @@ using namespace std;
 #include "GraphMenu.h"
 #include "GridMenu.h"
 #include "TextLabel.h"
-#include "TurnTracker2.h"
+#include "TurnTracker.h"
 #include "ActorCard.h"
 #include "Frame.h"
 

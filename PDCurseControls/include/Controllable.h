@@ -11,7 +11,7 @@ private:
 
 protected:
 	WINDOW* win = nullptr;
-	bool focusable; //true if control can accept keyboard input
+	bool focusable; //true if this should be the focused item after receiving input
 	bool showing; //true if should be drawn 
 	bool focus; //true if the controllable is focused
 	bool acceptsMouseInput; 
@@ -54,6 +54,7 @@ public:
 	ControlManager* getControlManager() { return cm; }
 
 	bool isFocusable() { return focusable; }
+	void setFocusable(bool canFocus) { focusable = canFocus; }
 	virtual void setFocus() {};
 	virtual void setCursorFocus() {}; //for moving the cursor to this component
 	virtual void setFocus(bool focusIn) { focus = focusIn; }

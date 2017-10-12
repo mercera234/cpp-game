@@ -101,16 +101,17 @@ void ActorEditor::createNew()
 
 bool ActorEditor::processInput(int input)
 {
-	return cm->handleInput(input);
+	cm->handleInput(input);
+	return cm->isActive();
 }
 
 
 void ActorEditor::load(string fileName)
 {
 	//load the actor from file
-	ifstream* is = new ifstream(fileName, ios::binary);
+	ifstream is(fileName, std::ios::binary);
 	actor->def->load(is);
-	is->close();
+	is.close();
 
 	//populate each field with actor data
 	for (list<FormField*>::iterator it = fields->begin(); it != fields->end(); it++)
@@ -171,9 +172,9 @@ void ActorEditor::save(string fileName)
 	}
 
 	//save the Actor to file
-	ofstream* os = new ofstream(fileName, ios::binary | ios::trunc);
+	ofstream os(fileName, ios::binary | ios::trunc);
 	actor->def->save(os);
-	os->close();
+	os.close();
 }
 
 

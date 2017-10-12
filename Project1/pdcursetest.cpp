@@ -4,25 +4,19 @@
 #include "DataPkg.h"
 #include "Table.h"
 #include <sstream>
-#include <dirent.h>
-#include "FileChooser.h"
 #include <ctime>
 #include "BWFilter.h"
 #include "MapEffectFilterPattern.h"
-#include "Tile.h"
 #include "FreeMovementProcessor.h"
 #include "MegaMap.h"
 #include "ActorCard.h"
 #include "LineItem.h"
-#include "GridMenu.h"
 #include "GraphMenu.h"
 #include "ActorEditor.h"
-#include "TextDisplay.h"
 #include "FormField.h"
 #include "MasterEditor.h"
 #include "BattleProcessor.h"
-#include "TurnTracker2.h"
-//#include "TurnTracker.h"
+#include "TurnTracker.h"
 #include "Spell.h"
 #include "TestCommand.h"
 #include "BattleAlgorithm.h"
@@ -33,6 +27,20 @@
 #include "AutoMap.h"
 #include "RandomBlitAnimation.h"
 #include "SpiralBlitAnimation.h"
+#include "WadDatabase.h"
+#include "DataPkgFactory.h"
+#include "FileDirectory.h"
+#include "TemplateTest.h"
+#include "Repository2.h"
+#include "KeyComparators.h"
+#include "TitleScreenState.h"
+#include "GameStateManager.h"
+#include "TestState.h"
+//#include "menu_tests.h"
+//#include "text_tests.h"
+//#include "file_chooser_tests.h"
+//#include "image_tests.h"
+#include "Actor.h"
 
 void mockFightTest()
 {
@@ -225,92 +233,6 @@ MenuItem* confirmDriver(int input, AbstractMenu* m)
 }
 
 
-void gridMenuTest()
-{
-	int rows = 12;
-	int cols = 1;
-	WINDOW* win = newwin(3, 1 * 19, 1, 1);
-
-	GridMenu menu(win, rows, cols);
-
-	menu.setItem(new LineItem("0123456789012345", 0, 'N'));
-	menu.setItem(new LineItem("TOGGLE WRAP", 1, 'L'));
-	menu.setItem(new LineItem("QUIT", 2, 'Q'));
-	menu.setItem(new LineItem("", 3, -1));
-	menu.setItem(new LineItem("4123456789012345", 4, '?'));
-	menu.setItem(new LineItem("Clear", 5, 'N'));
-	menu.setItem(new LineItem("Flip Mark", 6, 'L'));
-	menu.setItem(new LineItem("7123456789012345", 7, 'Q'));
-	menu.setItem(new LineItem("Reset Items", 8, 'T'));
-	menu.setItem(new LineItem("0 capacity", 9, '?'));
-	menu.setItem(new LineItem("a123456789012345", 10, 'N'));
-	menu.setItem(new LineItem("b123456789012345", 11, 'L'));
-
-	menu.setCurrentItem(0);
-	int markSide = LEFT_MARK;
-	menu.setMarkSide(markSide);
-	bool wrap = true;
-	//menu.setRowSepLength(1);
-	menu.setColorPair(COLOR_PAIR(COLOR_GREEN_BOLD) | COLOR_GREEN << 28);
-	menu.post(true);
-	bool usingMenu = true;
-	while (usingMenu)
-	{
-		menu.draw();
-		doupdate();
-		int input = getch();
-
-		switch (input) //process global input
-		{
-		case KEY_ESC: usingMenu = false; break;
-		default:
-		{
-			MenuItem* item = absMenuDriver(input, &menu);
-
-			if (item == NULL)
-			{
-				continue;
-			}
-
-			switch (item->index)
-			{
-
-			case 1:
-				menu.setWrapAround(wrap = !wrap); break;
-			case 2:
-				usingMenu = false;
-				break;
-			
-			case 5:
-				menu.clearItems();
-				break;
-			case 6:
-				menu.setMarkSide(markSide = !markSide); break;
-			case 8:
-				menu.resetItems(2, 2); 
-				menu.setItem(new LineItem("A", 0, -1));
-				menu.setItem(new LineItem("B", 1, -1));
-				menu.setItem(new LineItem("C", 2, -1));
-				menu.setItem(new LineItem("D", 3, -1));
-				menu.setCurrentItem(0);
-				menu.post(true);
-				break;
-			case 9:
-				//menu.resetItems(0, 0); //both of these statements work the same
-				menu.resetItems(0, 1);
-
-				break;
-			default:
-				mvaddch(7, 30, (chtype)item->crossRef);
-				break;
-			}
-		}
-		break;
-		}
-	}
-}
-
-
 void resizeTest()
 {
 	int x = getmaxx(stdscr);
@@ -359,134 +281,6 @@ void actorEditorTest()
 		editing = ae->processInput(input);
 	}
 }
-
-
-//void mainMenuTest()
-//{
-//	short totalRows = 23;
-//	short totalCols = 51;
-//	resize_term(totalRows, totalCols);
-//	init_pair(2, COLOR_WHITE, COLOR_BLUE);
-//	
-//	//setup character panel
-//	WINDOW* frame = newwin(totalRows, 26, 0, 0);
-//	WINDOW* charDisplay = derwin(frame, totalRows - 2, 24, 1, 1);
-//
-//	//setup main menu
-//	int mainWidth = 11;
-//
-//	WINDOW* menuFrame = newwin(10, mainWidth, 0, totalCols - mainWidth);
-//	WINDOW* menuWin = derwin(menuFrame, 8, 8, 1, 1);
-//
-//	Menu* main = new Menu(menuWin, 8, 1);
-//
-//	main->setColor(2);
-//
-//	main->setItem("Item", "", 0, 0);
-//	main->setItem("Equip", "", 1, 1);
-//	main->setItem("Status", "", 2, 2);
-//	main->setItem("Skill", "", 3, 3);
-//	main->setItem("Config", "", 4, 4);
-//	main->setItem("Map", "", 5, 5);
-//	main->setItem("Save", "", 6, 6);
-//	main->setItem("Quit", "", 7, 7);
-//
-//	//create hidden confirmation window
-//	int confirmFrameRows = 4;
-//	int confirmFrameCols = 24;
-//	WINDOW* confirmFrame = newwin(confirmFrameRows, confirmFrameCols, (totalRows - confirmFrameRows) / 2, (totalCols - confirmFrameCols) / 2);
-//	string confirmMsg = "Quit - are you sure?";
-//	WINDOW* confirmMenuWin = derwin(confirmFrame, 1, confirmFrameCols - 2, 2, 1);
-//
-//	Menu* confirmMenu = new Menu(confirmMenuWin, 1, 2);
-//
-//	confirmMenu->setColor(2);
-//	confirmMenu->setMaxNameLength(6);
-//	confirmMenu->setItem("No", "", 0, 2);
-//	confirmMenu->setItem("Yes", "", 1, 3);
-//	
-//
-//
-//	bool inMenu = true;
-//
-//	bool displayConfirm = false;
-//
-//	while (inMenu)
-//	{
-//		//draw charDisplay
-//		wattron(frame, COLOR_PAIR(2));
-//		box(frame, 0, 0);
-//		wbkgd(frame, ' ' | COLOR_PAIR(2));
-//		wattron(charDisplay, COLOR_PAIR(2));
-//		string fakeCharStr = "abcdeabcdeabcde";
-//		string lvStr = "Level 14";
-//		string hpStr = "HP 200/225";
-//		string mpStr = "MP 45/50";
-//		for (int i = 0; i < 4; i++)
-//		{
-//			int row = i * 5;
-//			mvwaddstr(charDisplay, row, 0, fakeCharStr.c_str());
-//			mvwaddstr(charDisplay, row + 1, 0, lvStr.c_str());
-//			mvwaddstr(charDisplay, row + 2, 0, hpStr.c_str());
-//			mvwaddstr(charDisplay, row + 3, 0, mpStr.c_str());
-//		}
-//
-//		wnoutrefresh(frame);
-//		wnoutrefresh(charDisplay);
-//
-//		//draw menu
-//		box(menuFrame, 0, 0);
-//		wnoutrefresh(menuFrame);
-//		main->draw();
-//
-//		//if Confirmation Dialog is here then draw it
-//		if(displayConfirm)
-//		{
-//			box(confirmFrame, 0, 0);
-//			mvwaddstr(confirmFrame, 1, 1, confirmMsg.c_str());
-//			wnoutrefresh(confirmFrame);
-//			confirmMenu->draw();
-//		}
-//
-//		doupdate();
-//		int c = getch();
-//
-//		//handle input
-//		MenuResponse* resp;
-//		if (displayConfirm)
-//		{
-//			resp = menuDriver(c, confirmMenu);
-//
-//			if(resp->itemChosen)
-//			{
-//				switch (resp->crossref)
-//				{
-//				case 2: displayConfirm = false;  break; //no
-//				case 3: inMenu = false; break; //yes
-//				}
-//			}
-//		}
-//		else
-//		{
-//			resp = menuDriver(c, main);
-//			if (resp->itemChosen)
-//			{
-//				switch (resp->index)
-//				{
-//				case -2: inMenu = false; break;
-//				case 7: displayConfirm = true;  break;
-//				}
-//			}
-//		}
-//
-//		
-//
-//
-//		
-//	}
-//
-//	
-//}
 
 
 void testPanel()
@@ -1382,10 +1176,13 @@ void callBackTest(void* caller, void* ptr, int input)
 void callBackTest2(void* caller, void* ptr, int input)
 {
 	Palette* p = (Palette*)ptr;
-	int colorY, colorX;
+	
 	MEVENT event;
 	nc_getmouse(&event);
-	p->translateCoords(event.y, event.x, colorY, colorX);
+
+	int colorY = event.y;
+	int colorX = event.x;
+	bool retval = wmouse_trafo(p->getWindow(), &colorY, &colorX, false);
 	p->pickItem(colorY, colorX);
 }
 
@@ -1414,6 +1211,112 @@ void textCallback(void* caller, void* ptr, int input)
 	
 }
 
+
+void gameTestScreen()
+{
+	clear();
+
+	int nameRow = 5;
+	int heroCol = 0;
+	int enemyCol = 25;
+	int hpRow = 6;
+
+
+	mvaddstr(nameRow, heroCol, "Hero");
+	mvaddstr(hpRow, heroCol, "HP 4/25");
+
+	mvaddstr(nameRow, enemyCol, "Enemy");
+	mvaddstr(hpRow, enemyCol, "HP 16/16");
+
+	attron(COLOR_PAIR(12));
+	mvaddstr(nameRow, 35, "-5");
+
+	doupdate();
+	getch();
+
+	attroff(COLOR_PAIR(12));
+	mvaddstr(nameRow, 35, "  ");
+	mvaddstr(hpRow, enemyCol, "HP 11/16");
+	attron(COLOR_PAIR(10));
+	mvaddstr(nameRow, 10, "+20");
+
+	doupdate();
+	getch();
+
+
+}
+
+void testPrint()
+{
+	int range = 256;
+
+	resize_term(range, 100);
+	//resize_window(stdscr, range, 100);
+
+	int offset = 10;
+	int col = 0;
+	int row = 0;
+	for (int i = 0; i < range; i++)
+	{
+		mvaddch(row, col, i);
+		addch(' ');
+		printw("0x%x", i);
+		row++;
+		if (row > 25)
+		{
+			row = 0;
+			col += offset;
+		}
+
+	}
+
+	refresh();                    /* Print it on to the real screen */
+	getch();                      /* Wait for user input */
+}
+
+void testColors()
+{
+	string text = "Color Test";
+
+	int row = 0;
+
+
+
+	int color_pairs = COLORS;
+
+	for (int row = 0; row < color_pairs; row++)
+	{
+		attron(COLOR_PAIR(row));
+		mvprintw(row, 0, "%u %s", row, text.c_str());
+		attroff(COLOR_PAIR(row));
+	}
+
+	attron(A_BOLD);
+	for (int row = 0; row < color_pairs; row++)
+	{
+		attron(COLOR_PAIR(row));
+		mvprintw(row, 16, "%u %s", row, text.c_str());
+		attroff(COLOR_PAIR(row));
+	}
+
+	refresh();                    /* Print it on to the real screen */
+	getch();
+
+	init_pair(1, COLOR_RED, 14);
+	for (int row = 0; row < color_pairs; row++)
+	{
+		attron(COLOR_PAIR(row));
+		mvprintw(row, 32, "%u %s", row, text.c_str());
+		attroff(COLOR_PAIR(row));
+	}
+
+
+	refresh();
+
+	getch();                      /* Wait for user input */
+}
+
+
 void controlManagerTest()
 {
 	WINDOW* win = newwin(2, 20, 1, 1);
@@ -1433,7 +1336,7 @@ void controlManagerTest()
 		chtype c = ' ' | (i << 28) & A_COLOR;
 		int x = i % cols;
 		int y = i / cols;
-		palette->setItem(TUI::colorNames[i], c, y, x);
+		palette->setItem(colorNames[i], c, y, x);
 	}
 
 	TextField* field1 = new TextField(15, 1, 30);
@@ -1446,18 +1349,16 @@ void controlManagerTest()
 	cm->registerShortcutKey(CTRL_N, newCallback);
 	cm->registerShortcutKey(KEY_ESC, quitCallback);
 	
-	bool inMenus = true;
-	while (inMenus)
+	while (cm->isActive())
 	{
 		wnoutrefresh(stdscr);
 		cm->draw();
-		
 		
 		doupdate();
 		int c = getch();
 
 		clear();
-		inMenus = cm->handleInput(c);
+		cm->handleInput(c);
 	}
 	cm->shutdown();
 
@@ -1492,25 +1393,6 @@ void commandTest()
 
 }
 
-
-
-void templateTest()
-{
-
-	list<GridMenu*> aList;
-
-
-
-	WINDOW* win = newwin(2, 20, 1, 1);
-	GridMenu* m1 = new GridMenu(win, 2, 1);
-
-	//m1->setItem("Item A", "", 0, 5);
-	//m1->setItem("Item B", "", 1, 7);
-
-	aList.push_back(m1);
-
-	int x = 3;
-}
 
 
 void mouseTest()
@@ -1554,110 +1436,6 @@ void mouseTest()
 }
 
 
-void colorPaletteTest()
-{
-	//setup color palette
-	/*int rows;
-	int cols;
-	rows = cols = 4;
-	Palette palette(rows, cols, 1, 1);
-	for (int i = 0; i < TOTAL_COLORS; i++)
-	{
-		chtype c = ' ' | (i << 28) & A_COLOR;
-		int x = i % cols;
-		int y = i / cols;
-		palette.setItem(TUI::colorNames[i], c, y, x);
-	}
-
-	MEVENT event;
-	mousemask(ALL_MOUSE_EVENTS, NULL);
-
-	bool in = true;
-	while (in)
-	{
-		palette.draw();
-
-		doupdate();
-
-		int c = getch();
-
-		switch (c)
-		{
-		case KEY_MOUSE:
-			nc_getmouse(&event);
-			if (event.bstate == BUTTON1_CLICKED)
-			{
-				if (MouseHelper::isInWindow(palette.getWindow(), event.y, event.x))
-				{
-					int colorY, colorX;
-					MouseHelper::translateCoords(palette.getWindow(), event.y, event.x, colorY, colorX);
-
-					PaletteItem* item = palette.pickItem(colorY, colorX);
-					chtype color = item->icon;
-					mvaddch(7, 7, 'A' | color);
-				}
-
-
-			}
-			break;
-		}
-		wnoutrefresh(stdscr);
-	}*/
-}
-
-
-void filterPaletteTest()
-{
-	//setup color palette
-	/*int rows = 2;
-	int cols = 4;
-	
-	Palette palette(rows, cols, 1, 1);
-	
-	palette.setItem("Obstr", 'O', 0, 0);
-	palette.setItem("Jumpable", 'J', 0, 1);
-	palette.setItem("Const Dmg", 'd', 0, 2);
-	palette.setItem("Inc Dmg", 'D', 0, 3);
-	palette.setItem("Ailment", 'A', 1, 0);
-	palette.setItem("Save", 'S', 1, 1);
-	palette.setItem("Exit", 'E', 1, 2);
-	
-
-
-	MEVENT event;
-	mousemask(ALL_MOUSE_EVENTS, NULL);
-
-	bool in = true;
-	while (in)
-	{
-		palette.draw();
-
-		doupdate();
-
-		int c = getch();
-
-		switch (c)
-		{
-		case KEY_MOUSE:
-			nc_getmouse(&event);
-			if (event.bstate == BUTTON1_CLICKED)
-			{
-				if (MouseHelper::isInWindow(palette.getWindow(), event.y, event.x))
-				{
-					int toolY, toolX;
-					MouseHelper::translateCoords(palette.getWindow(), event.y, event.x, toolY, toolX);
-
-					palette.pickItem(toolY, toolX);
-				}
-
-
-			}
-			break;
-		}
-		wnoutrefresh(stdscr);
-	}*/
-}
-
 Actor* buildActorFromDef(ActorDef* def, int type)
 {
 	Actor* actor = new Actor();
@@ -1678,12 +1456,12 @@ Actor* createActor(string filename, int type)
 {
 	ActorDef* def = new ActorDef();
 
-	ifstream* is = new ifstream();
-	is->open("data\\" + filename, ios::binary);
+	ifstream is;
+	is.open("data\\" + filename, ios::binary);
 
 	def->load(is);
 
-	is->close();
+	is.close();
 
 	return buildActorFromDef(def, type);
 }
@@ -1930,7 +1708,7 @@ void simpleFightTest()
 
 void realMapTest()
 {
-	/*int rows = 8;
+	int rows = 8;
 	int cols = 8;
 
 	WINDOW* frame = newwin(rows + 2, cols + 2, 1, 1);
@@ -1943,6 +1721,7 @@ void realMapTest()
 	m.setPosition(y, x);
 
 	bool playing = true;
+	Image* img = m.getDisplay();
 
 	while (playing)
 	{
@@ -1960,49 +1739,13 @@ void realMapTest()
 		case KEY_RIGHT: x++; break;
 		default: playing = false;
 		}
+	
 		m.setPosition(y, x);
 	}
 
-	*/
+	
 }
 
-void textFieldtest()
-{
-	TextField field(15, 1, 1);
-	field.setText("Default text");
-	field.setColor(COLOR_BLUE, COLOR_MAGENTA_BOLD);
-
-	bool playing = true;
-	while (playing)
-	{
-		curs_set(0);
-		field.draw();
-		field.setCursorFocus();
-		doupdate();
-		int c = getch();
-
-		switch (c)
-		{
-		case KEY_ESC:
-			playing = false;
-			break;
-		case CTRL_N:
-			field.clear();
-			break;
-		case '\r':
-		case '\n':
-		case KEY_ENTER:
-		{
-			string text = field.getText();
-			mvaddstr(3, 1, text.c_str());
-		}
-			break;
-		default:
-			field.inputChar(c);
-		}
-	}
-
-}
 
 bool saveActorDef(string fileName, ActorDef* def)
 {
@@ -2033,138 +1776,53 @@ bool saveActorDef(string fileName, ActorDef* def)
 }
 
 
-void dataPkgTest()
+void dataPkgLoadTest()
 {
 	DataPkg pkg;
+	std::ifstream is("data\\datapkg.dat", std::ios::binary); //this file was created from dataPkgTest()
 
-	ActorDef* def = new ActorDef();// (ActorDef*) pkg.create(sizeof(ActorDef));
-	def->name = "P1Test";
-	def->symbol = (chtype) '@' | 0x0e000000;
-	def->level = 1;
-	def->exp = 0;
-	def->money = 50;
-	def->maxHp = 25;
-	def->maxMp = 10;
-	def->strength = 8;
-	def->defense = 5;
-	def->agility = 4;
-	def->accuracy = .9f;
-	def->luck = .05f;
+	pkg.load(&is);
+
+	ActorDef* def = new ActorDef();
 	
-//	pkg.save("Testpkg.bin");
+	pkg.readData(def->name.c_str(), 16, 0);
 
-	//pkg.free();
+	int size = 130;
+	char* testArr = new char[size];
+	memset(testArr, 0, size);
+	pkg.readNextData(testArr, size);
 
-	saveActorDef("Actor.bin", def);
+	
+	is.close();
 }
 
-void textLabelTest()
+
+void dataPkgFactoryTest()
 {
-	WINDOW* win = newwin(1, 10, 2, 2);
-	TextLabel* label = new TextLabel(win, "12345678901");
+	DataPkgFactory factory;
 
-	label->draw();
-	doupdate();
-	getch();
-}
+	//create pkg from actor and persist to file
+	Actor* actor = createActor("hero.actr", AT_HUMAN);
 
-GridMenu* m1driver(AbstractMenu* m, int input) //simulated callback for menu
-{
-	WINDOW* win2 = newwin(1, 40, 1, 1);
-	GridMenu* m2 = new GridMenu(win2, 1, 2);
+	DataPkg* pkg = factory.createActorDefPackage(actor->def);
 
-	/*m2->setItem("Yes2", "", 0, 0);
-	m2->setItem("No2", "", 1, 1);
-	*/return m2;
-}
+	std::ofstream os("data\\actorpkg.dat", std::ios::binary);
+	pkg->save(&os);
 
-void m2driver(Menu* m, int input) //simulated callback for menu
-{
+	os.close();
 
+	//load actor definition from same file and package
+	std::ifstream is("data\\actorpkg.dat", std::ios::binary);
+	DataPkg* pkg2 = new DataPkg();
+	pkg2->load(&is);
 
-}
+	ActorDef* def = factory.getActorDefFromPkg(pkg2);
 
-
-void menuTest2()
-{
-	WINDOW* win1 = newwin(1, 40, 1, 1);
-	GridMenu* m1 = new GridMenu(win1, 1, 2);
-
-	/*m1->setItem("Yes", "", 0, 0);
-	m1->setItem("No", "", 1, 1);*/
-
-	GridMenu* menus[2];
-	menus[0] = m1;
-	int totalMenus = 1;
-	GridMenu* activeMenu = m1;
-
-	bool playing = true;
-
-	while (playing)
-	{
-		for (int i = 0; i < totalMenus; i++)
-		{
-			menus[i]->draw(); //draw all potential objects
-		}
-		doupdate();
-		int c = getch();
-
-		if (activeMenu == m1) //this section should be the callback! We call a specific routine based on what the Controllable object is
-		{
-			switch (c)
-			{
-			case KEY_LEFT: activeMenu->driver(REQ_LEFT_ITEM); break;
-			case KEY_RIGHT: activeMenu->driver(REQ_RIGHT_ITEM); break;
-			case '\r': activeMenu->driver(REQ_TOGGLE_ITEM); break;
-			}
-			
-			MenuItem* mi = activeMenu->getCurrentItem();
-			if(mi != NULL)
-			{
-				switch (mi->index)
-				{
-				case 0: //create pop-up window
-					activeMenu = m1driver(activeMenu, c);
-					menus[1] = activeMenu;
-					totalMenus++;
-					break;
-				case 1: playing = false; //quit on no
-					break;
-				}
-			}
-			
-		}
-		else //callback for second method
-		{
-			switch (c)
-			{
-			case KEY_LEFT: activeMenu->driver(REQ_LEFT_ITEM); break;
-			case KEY_RIGHT: activeMenu->driver(REQ_RIGHT_ITEM); break;
-			case '\r': activeMenu->driver(REQ_TOGGLE_ITEM); break;
-			}
-
-			MenuItem* mi = activeMenu->getCurrentItem();
-			if (mi != NULL)
-			{
-				switch (mi->index)
-				{
-				case 0: //quit on yes
-					playing = false;
-					break;
-				case 1:   //backout on no (the callback that handles this portion can deallocate the memory)
-					delete activeMenu;
-					activeMenu = menus[0];
-					totalMenus--;
-					break;
-				}			
-			}
-		}
-
-		
-	}
-
+	is.close();
 
 }
+
+
 
 void frameTest()
 {
@@ -2187,149 +1845,6 @@ void frameTest()
 	getch();
 }
 
-
-void openFileTest()
-{
-	char buf[256];
-	GetFullPathName(".", 256, buf, NULL);
-	string fullPath(buf);
-	
-	TextLabel* openFile = new TextLabel(newwin(1, 10, 0, 0), "Open from:");
-
-	int openPathSpace = 30;
-	TextLabel* openPath = new TextLabel(newwin(1, openPathSpace, 0, 11), fullPath);
-
-
-	GridMenu* diskNavigator = new GridMenu(newwin(8, 40, 2, 0), 255, 1);
-	diskNavigator->setItemWidth(40);
-	//diskNavigator->setMaxNameLength(40);
-
-	bool playing = true;
-	bool newDir = true;
-
-	while (playing)
-	{
-		if (newDir)
-		{
-			diskNavigator->clearItems();
-
-			//get list of files in current dir to display in Menu
-			int currElement = 0;
-
-			DIR* dir = opendir(fullPath.c_str());
-			dirent* entry;
-			while ((entry = readdir(dir)) != NULL)
-			{				
-				diskNavigator->setItem(new LineItem(entry->d_name, currElement++, entry->d_type));
-			}
-
-
-			//truncate path name so we can see as much of the end as possible
-			string openPathStr;
-			openPathStr.assign(fullPath);
-
-			if (openPathStr.length() > openPathSpace)
-			{
-				ostringstream oss;
-				oss << "..." << openPathStr.substr(openPathStr.length() - openPathSpace + 3);
-				openPathStr = oss.str();
-			}
-			openPath->setText(openPathStr);
-
-			newDir = false;
-		}
-
-
-		mvaddnstr(1, 0, "--------------------------------------------------------------------", 40);
-
-
-		openFile->draw();
-		openPath->draw();
-		diskNavigator->draw();
-		doupdate();
-		int c = getch();
-
-		switch (c)
-		{
-		case KEY_DOWN: diskNavigator->driver(REQ_DOWN_ITEM);   break;
-		case KEY_UP: diskNavigator->driver(REQ_UP_ITEM); break;
-		case 'q': playing = false; break;
-		case '\r':
-			diskNavigator->driver(REQ_TOGGLE_ITEM);
-			break;
-		}
-
-		//MenuItem* choice = diskNavigator->getSelectedItem();
-		LineItem* choice = (LineItem*)diskNavigator->getCurrentItem();
-
-		if (choice != NULL)
-		{
-			if (choice->name.compare("..") == 0)
-			{
-				//navigate up one dir
-				int pos = fullPath.find_last_of('\\');
-				fullPath = fullPath.substr(0, pos);
-				newDir = true;
-			}
-			else //check if directory was chosen
-			{
-				if (choice->crossRef == DT_DIR) //dir was chosen
-				{
-					fullPath.append(1, '\\');
-					fullPath.append(choice->name);
-					newDir = true;
-				}
-			}
-		}
-	}
-}
-
-void wdirectoryTest()
-{
-	DIR* dir = opendir(".");
-	
-	//DIR* dir = opendir("F:\\Users\\Alex Mercer\\Documents\\Visual Studio 2015\\Projects\\Project1\\Project1");
-	WDIR* wDir = dir->wdirp;
-	
-	mvaddwstr(1, 1, wDir->patt);
-	
-	wnoutrefresh(stdscr);
-	doupdate();
-	getch();
-
-	wdirent* entry;
-	while ((entry = wreaddir(wDir)) != NULL)
-	{
-		clear();
-		mvaddwstr(1, 1, entry->d_name);
-		wnoutrefresh(stdscr);
-		doupdate();
-		getch();
-	}
-	
-
-
-}
-
-void directoryTest()
-{
-	DIR* dir = opendir(".");
-
-	//DIR* dir = opendir("F:\\Users\\Alex Mercer\\Documents\\Visual Studio 2015\\Projects\\Project1\\Project1");
-
-	dirent* entry;
-
-	char buf[256];
-	
-	while ((entry = readdir(dir)) != NULL)
-	{
-		clear();
-		mvaddstr(1, 1, entry->d_name);
-		wnoutrefresh(stdscr);
-		doupdate();
-		getch();
-	}
-}
 
 void tableTest()
 {
@@ -2467,214 +1982,6 @@ void wideTest()
 }
 
 
-void fileChooserTest(int dialogType)
-{
-	char buf[256];
-	GetFullPathName(".", 256, buf, NULL);
-	string fullPath(buf);
-
-	int height = 14; //height required is a minimum of 7 for enclosing FileChooser, which requires minimum of 5
-	int width = 42; //min of 15 required
-
-	WINDOW* main = newwin(height, width, (getmaxy(stdscr) - height) / 2, (getmaxx(stdscr) - width) / 2);
-	WINDOW* sub = derwin(main, height - 2, width - 2, 1, 1);
-
-	FileChooser* fd = new FileChooser(sub, fullPath, dialogType, ".map");
-
-	Frame* f = new Frame(main, fd);
-	string fileChosen;
-	bool playing = true;
-	while (playing)
-	{
-		f->draw();
-		fd->setFocus();
-		doupdate();
-
-		int c = getch();
-
-		//driver here
-		switch (c)
-		{
-		case KEY_DOWN: fd->driver(REQ_DOWN_ITEM);   break;
-		case KEY_UP: fd->driver(REQ_UP_ITEM); break;
-		case KEY_ESC: playing = false; break;
-		case '\r':
-			fileChosen = fd->filePathDriver();
-			break;
-		default:
-			fd->driver(c);
-			break;
-		}
-
-		if (fileChosen.empty() == false)
-		{
-			//success!
-			mvaddstr(0, 0, fileChosen.c_str());
-		}
-
-	}
-}
-
-void saveDialogTest()
-{
-	fileChooserTest(SAVE_DIALOG);
-}
-
-void openDialogTest()
-{
-	fileChooserTest(OPEN_DIALOG);
-}
-
-void scrollTest()
-{
-	int rows = 12;
-	int cols = 1;
-	WINDOW* win = newwin(4, (cols) * 19, 1, 1);
-
-	GridMenu menu(win, rows, cols);
-	menu.setItem(new LineItem("0123456789012345", 0, 'N'));
-	menu.setItem(new LineItem("TOGGLE WRAP", 1, 'L'));
-	menu.setItem(new LineItem("QUIT", 2, 'Q'));
-	//menu.setItem("3123456789012345", "", 3, 'T');
-	menu.setItem(new LineItem("4123456789012345", 4, '?'));
-	menu.setItem(new LineItem("Clear", 5, 'N'));
-	menu.setItem(new LineItem("Flip Mark", 6, 'L'));
-	menu.setItem(new LineItem("7123456789012345", 7, 'Q'));
-	menu.setItem(new LineItem("8123456789012345", 8, 'T'));
-	menu.setItem(new LineItem("9123456789012345", 9, '?'));
-	menu.setItem(new LineItem("a123456789012345", 10, 'N'));
-	menu.setItem(new LineItem("b123456789012345", 11, 'L'));
-
-	menu.setItemWidth(16);
-	//menu.disableItem(8, 0);
-	bool markSide = RIGHT_MARK;
-	menu.setMarkSide(markSide);
-	bool wrap = true;
-
-	bool usingMenu = true;
-	
-	ScrollBar* sb = new ScrollBar(&menu);
-	
-	while (usingMenu)
-	{
-		//menu.draw();
-		sb->draw();
-		doupdate();
-		int input = getch();
-
-		MenuItem* item = menuDriver(input, &menu);
-
-		if (item == NULL)
-		{
-			continue;
-		}
-
-		switch (item->index)
-		{
-
-		case 2:
-			usingMenu = false;
-			break;
-		case 1:
-			menu.setWrapAround(wrap = !wrap); break;
-		case 5:
-			menu.clearItems();
-			break;
-		case 6:
-			menu.setMarkSide(markSide = !markSide); break;
-
-		default:
-
-			mvaddch(7, 30, (chtype)item->crossRef);
-			break;
-		}
-	}
-}
-
-void highlighterTest()
-{
-	//int height = getmaxy(stdscr);
-	//int width = getmaxx(stdscr);
-
-	//short y, x;
-	//y = height / 2;
-	//x = width / 2;
-
-	//int totalTiles = height * width;
-	//chtype* testMap = new chtype[totalTiles];
-	//char asciiStart = ' ';
-	//char asciiEnd = '~';
-	//char asciiPtr = asciiStart;
-	//for (int i = 0; i < totalTiles; i++)
-	//{
-	//	testMap[i] = (chtype)asciiPtr++;
-
-	//	if (asciiPtr >= asciiEnd)
-	//		asciiPtr = asciiStart;
-	//}
-
-	//Highlighter* hl = new Highlighter(stdscr, testMap, &y, &x);
-
-	//bool playing = true;
-	//
-	//while (playing)
-	//{
-	//	clear();
-
-	//	for (int i = 0; i < totalTiles; i++)
-	//	{
-	//		int tileY = i / width;
-	//		int tileX = i % width;
-	//		chtype c = testMap[i];
-	//		
-	//		mvaddch(tileY, tileX, c);
-	//	
-	//	}
-
-	//	mvaddch(y, x, '@');
-	//	wnoutrefresh(stdscr);
-	//	hl->draw();
-
-	//	doupdate();
-	//	int input = getch();
-	//	
-	//	switch(input)
-	//	{
-	//	case KEY_LEFT: x--;	
-	//		hl->setHighlighting(false);
-	//		break;
-	//	case KEY_RIGHT: x++; hl->setHighlighting(false); break;
-	//	case KEY_UP: y--; hl->setHighlighting(false); break;
-	//	case KEY_DOWN: y++; hl->setHighlighting(false); break;
-	//	case KEY_ESC: playing = false; break;
-	//	case KEY_SLEFT: hl->setHighlighting(true); x--; break;
-	//	case KEY_SRIGHT: hl->setHighlighting(true); x++; break;
-	//	case KEY_SUP: hl->setHighlighting(true); y--; break;
-	//	case KEY_SDOWN: hl->setHighlighting(true); y++; break;
-	//	case CTRL_C: 
-	//		hl->copy();
-	//		hl->setHighlighting(false);	
-	//		break;
-	//	case CTRL_V:
-	//		hl->paste(y, x);
-	//		break;
-	//	case KEY_DC: //delete highlit region			
-	//		hl->erase();
-	//		break;
-	//	default: //fill with printable character
-	//		hl->fill(input);
-	//		break;
-	//	}
-
-
-
-
-	//}
-
-
-
-}
-
 void mapHighlighterTest()
 {
 	WINDOW* viewport = dupwin(stdscr);
@@ -2682,7 +1989,7 @@ void mapHighlighterTest()
 	Map* map = new Map("test", 10, 30, viewport);
 	Image* img = map->getDisplay();
 
-	_2DStorage<chtype>* tileMap = img->getTileMap();
+	TwoDStorage<chtype>* tileMap = img->getTileMap();
 	//chtype* layer = map->getDisplayLayer();
 	
 	short centerY = getmaxy(viewport) / 2;
@@ -2752,11 +2059,11 @@ void mapHighlighterTest()
 			break;
 		case CTL_UP:
 		case CTL_DOWN:
-			hl->flip(HL_VER);
+			hl->flip(AXIS_VER);
 			break;
 		case CTL_LEFT:
 		case CTL_RIGHT:
-			hl->flip(HL_HOR);
+			hl->flip(AXIS_HOR);
 			break;
 		default: //fill with printable character
 			hl->fill(input);
@@ -2765,15 +2072,6 @@ void mapHighlighterTest()
 
 		img->setPosition(y, x);
 	}
-
-
-}
-
-
-void getRandomColor()
-{
-	srand(time(NULL));
-
 
 
 }
@@ -2845,126 +2143,7 @@ void filterTest()
 }
 
 
-void mapEffectFilterTest()
-{
-	//WINDOW* viewport = dupwin(stdscr);
 
-	//Map* map = new Map("test", 10, 30, viewport);
-
-	///*chtype* layer = map->getDisplayLayer();
-	//short* eLayer = map->getEffectsLayer();*/
-	//_2DStorage<int>* dLayer = map->getLayer(LAYER_DISPLAY);
-	//_2DStorage<int>* eLayer = map->getLayer(LAYER_EFFECT);
-
-	//short centerY = getmaxy(viewport) / 2;
-	//short centerX = getmaxx(viewport) / 2;
-	//short y = -centerY;
-	//short x = -centerX;
-	//short curY = 0;
-	//short curX = 0;
-
-	//map->setPosition(y, x);
-
-	//char asciiStart = ' ';
-	//char asciiEnd = '~';
-	//char asciiPtr = asciiStart;
-	//int totalTiles = 10 * 30;
-	//for (int i = 0; i < totalTiles; i++)
-	//{
-	//	int y = i / map->getWidth();
-	//	int x = i % map->getWidth();
-
-	//	if (x < 10)
-	//		dLayer->setDatum(i, (chtype)asciiPtr++ | COLOR_PAIR(COLOR_YELLOW));
-	//	else if (x >= 10 && x < 20)
-	//		dLayer->setDatum(i, (chtype)asciiPtr++ | (COLOR_YELLOW << 28)); //yellow background
-	//	else if (x < 30)
-	//		dLayer->setDatum(i, (chtype)asciiPtr++ | (COLOR_YELLOW_BOLD << 28)); //yellow background
-
-	//	if (asciiPtr >= asciiEnd)
-	//		asciiPtr = asciiStart;
-
-	//	//give frame obstructed effect
-	//	if (y == 0 || x == 0 || y == map->getHeight() - 1 || x == map->getWidth() - 1)
-	//		eLayer->setDatum(i, E_OBSTR);
-
-	//	//make one line jumpable
-	//	if (x == 15)
-	//		eLayer->setDatum(i, E_JUMPABLE);
-
-	//		
-	//}
-
-	//MapEffectFilterPattern* f = new MapEffectFilterPattern(map);
-
-	//bool playing = true;
-	//bool filterStatus = false;
-	//while (playing)
-	//{
-	//	wclear(viewport);
-	//	wbkgd(viewport, '%');
-	//	wnoutrefresh(viewport);
-	//	f->draw();
-
-	//	mvwaddch(viewport, centerY, centerX, '@' | 0x0f000000);
-	//	wnoutrefresh(viewport);
-	//	doupdate();
-	//	int input = getch();
-
-
-	//	switch (input)
-	//	{
-	//	case KEY_UP: y--; curY--;
-	//	{
-	//		//check the eLayer to see if the step can be taken
-	//		int e = eLayer->getDatum(curY, curX);
-	//		if (e == E_OBSTR)
-	//		{
-	//			y++; curY++; //reverse movement
-	//		}		
-	//	}			
-	//		break;
-	//	case KEY_DOWN: y++; curY++; break;
-	//	case KEY_LEFT: x--; curX--; break;
-	//	case KEY_RIGHT: x++; curX++; 
-	//	{
-	//		//check the eLayer to see if jumpable
-	//		int e = eLayer->getDatum(curY, curX);
-	//		if (e == E_JUMPABLE)
-	//		{
-	//			x++; curX++; //increment an additional step
-	//		}
-	//	}
-	//		
-	//		
-	//		break;
-	//	case KEY_ESC: playing = false; break;
-	//	default: //fill with printable character
-	//			 //toggle filter
-	//		f->setEnabled(filterStatus = !filterStatus);
-	//		break;
-	//	}
-
-	//	map->setPosition(y, x);
-	//}
-
-
-}
-
-void storageTest()
-{
-	_2DStorage<int>* displayData = new _2DStorage<int>(5, 3);
-
-	displayData->setDatum(0, 8);
-	displayData->setDatum(3, 1, 9);
-
-
-	int a = displayData->getDatum(3, 1);
-
-	int* b = displayData->getData();
-
-	system("pause");
-}
 
 
 void simpleMapTest()
@@ -2991,7 +2170,7 @@ void simpleMapTest()
 	char asciiPtr = asciiStart;
 	int totalTiles = height * width;
 
-	_2DStorage<chtype>* data = display->getTileMap();
+	TwoDStorage<chtype>* data = display->getTileMap();
 
 	for (int i = 0; i < totalTiles; i++)
 	{
@@ -3041,179 +2220,179 @@ void simpleMapTest()
 			break;
 		}
 
-		display->setPosition(y, x);
+		map->setPosition(y, x);
 	}
 }
 
-void tileTest()
-{
-	_2DStorage<Tile>* tileMap = new _2DStorage<Tile>(3, 2);
+//void tileTest()
+//{
+//	_2DStorage<Tile>* tileMap = new _2DStorage<Tile>(3, 2);
+//
+//	Tile t('%');
+//
+//	Tile t2('$' | COLOR_PAIR(COLOR_YELLOW_BOLD));
+//
+//	mvaddch(3, 3, t.getDisplay());
+//	mvaddch(6, 6, t2.getDisplay());
+//
+//	tileMap->setDatum(0, t);
+//	tileMap->setDatum(1, t2);
+//	tileMap->setDatum(2, t);
+//	tileMap->setDatum(3, t2);
+//	tileMap->setDatum(4, t);
+//	tileMap->setDatum(5, t2);
+//
+//	for (int i = 0; i < 6; i++)
+//	{
+//		Tile* tileTracker = tileMap->getData();
+//		
+//		mvaddch(0, i, tileTracker[i].getDisplay());
+//	}
+//	wnoutrefresh(stdscr);
+//	doupdate();
+//	getch();
+//
+//	//Tile** newTiles = new Tile*[6];
+//	////for (int i = 0; i < 6; i++)
+//	//	newTiles[0] = new Tile('m');
+//
+//	////newTiles[0]->setDisplay('m');
+//	//newTiles[1] = newTiles[0];
+//
+//	//mvaddch(5, 0, newTiles[0]->getDisplay());
+//	//mvaddch(5, 1, newTiles[1]->getDisplay());
+//
+//	//wnoutrefresh(stdscr);
+//	//doupdate();
+//	//getch();
+//
+//}
 
-	Tile t('%');
-
-	Tile t2('$' | COLOR_PAIR(COLOR_YELLOW_BOLD));
-
-	mvaddch(3, 3, t.getDisplay());
-	mvaddch(6, 6, t2.getDisplay());
-
-	tileMap->setDatum(0, t);
-	tileMap->setDatum(1, t2);
-	tileMap->setDatum(2, t);
-	tileMap->setDatum(3, t2);
-	tileMap->setDatum(4, t);
-	tileMap->setDatum(5, t2);
-
-	for (int i = 0; i < 6; i++)
-	{
-		Tile* tileTracker = tileMap->getData();
-		
-		mvaddch(0, i, tileTracker[i].getDisplay());
-	}
-	wnoutrefresh(stdscr);
-	doupdate();
-	getch();
-
-	//Tile** newTiles = new Tile*[6];
-	////for (int i = 0; i < 6; i++)
-	//	newTiles[0] = new Tile('m');
-
-	////newTiles[0]->setDisplay('m');
-	//newTiles[1] = newTiles[0];
-
-	//mvaddch(5, 0, newTiles[0]->getDisplay());
-	//mvaddch(5, 1, newTiles[1]->getDisplay());
-
-	//wnoutrefresh(stdscr);
-	//doupdate();
-	//getch();
-
-}
-
-void tileMapTest()
-{
-	WINDOW* viewport = dupwin(stdscr);
-
-	int height = 10;
-	int width = 30;
-	_2DStorage<Tile>* tileMap = new _2DStorage<Tile>(height, width);
-
-	short centerY = getmaxy(viewport) / 2;
-	short centerX = getmaxx(viewport) / 2;
-	short y = -centerY;
-	short x = -centerX;
-	short curY = 1;
-	short curX = 1;
-
-	char asciiStart = ' ';
-	char asciiEnd = '~';
-	char asciiPtr = asciiStart;
-	int totalTiles = height * width;
-
-	Tile* tileTracker = tileMap->getData();
-	for (int i = 0; i < totalTiles; i++)
-	{
-		int y = i / width;
-		int x = i % width;
-
-
-		if (x < 10)
-			tileTracker[i].setDisplay((chtype)asciiPtr++ | COLOR_PAIR(COLOR_YELLOW));
-		else if (x >= 10 && x < 20)
-			tileTracker[i].setDisplay((chtype)asciiPtr++ | (COLOR_YELLOW << 28));
-		else if (x < 30)
-			tileTracker[i].setDisplay((chtype)asciiPtr++ | (COLOR_YELLOW_BOLD << 28));
-
-		if (asciiPtr >= asciiEnd)
-			asciiPtr = asciiStart;
-
-		//give frame obstructed effect
-		if (y == 0 || x == 0 || y == height - 1 || x == width - 1)
-			tileTracker[i].setEffectType(E_OBSTR);		
-
-		if (x == 15)
-			tileTracker[i].setEffectType(E_JUMPABLE);
-
-		if (x == 17)
-		{
-			tileTracker[i].setEffectType(E_HP_ALT_CONST);
-			tileTracker[i].setEffectValue(-5);
-		}
-
-		if (y == height - 2 && x == width - 2)
-			tileTracker[i].setEffectType(E_EXIT);
-			
-	}
-
-	bool playing = true;
-	bool filterStatus = false;
-
-	int hp = 200;
-	while (playing)
-	{
-		wclear(viewport);
-		wbkgd(viewport, ' ');
-		wnoutrefresh(viewport);
-
-		for (int i = 0; i < totalTiles; i++)
-		{
-			int y = i / width;
-			int x = i % width;
-			mvwaddch(viewport, y, x, tileTracker[i].getDisplay());
-		}
-
-		mvwaddch(viewport, curY, curX, '@' | 0x0f000000);
-
-		char buf[20];
-		
-		_itoa_s(hp, buf, 10);
-		mvwaddstr(viewport, 0, width + 2, buf);
-		
-		wnoutrefresh(viewport);
-		doupdate();
-		int input = getch();
-
-		switch (input)
-		{
-		case KEY_UP: y--; curY--;
-		{
-			//check the eLayer to see if the step can be taken
-			Tile t = tileMap->getDatum(curY, curX);
-			int e = t.getEffect()->type;
-			int val = t.getEffect()->value;
-			switch(e)
-			{
-			case E_OBSTR: y++; curY++; break; //reverse movement 
-			case E_JUMPABLE: y--; curY--; break; //take additional step
-			case E_HP_ALT_CONST: hp += val; break; //take additional step
-			case E_EXIT: playing = false; break; //quit
-			}
-		}
-
-
-		break;
-		case KEY_DOWN: y++; curY++; break;
-		case KEY_LEFT: x--; curX--; break;
-		case KEY_RIGHT: x++; curX++; 
-		{
-			Tile t = tileMap->getDatum(curY, curX);
-			int e = t.getEffect()->type;
-			int val = t.getEffect()->value;
-			switch (e)
-			{
-			case E_OBSTR: x--; curX--; break; //reverse movement 
-			case E_JUMPABLE: x++; curX++; break; //take additional step
-			case E_HP_ALT_CONST: hp += val; break; //alter hp
-			case E_EXIT: playing = false; break; //quit
-			}
-		}			
-			break;
-		case KEY_ESC: playing = false; break;
-		default: //fill with printable character
-				 //toggle filter
-			break;
-		}
-	}
-}
+//void tileMapTest()
+//{
+//	WINDOW* viewport = dupwin(stdscr);
+//
+//	int height = 10;
+//	int width = 30;
+//	_2DStorage<Tile>* tileMap = new _2DStorage<Tile>(height, width);
+//
+//	short centerY = getmaxy(viewport) / 2;
+//	short centerX = getmaxx(viewport) / 2;
+//	short y = -centerY;
+//	short x = -centerX;
+//	short curY = 1;
+//	short curX = 1;
+//
+//	char asciiStart = ' ';
+//	char asciiEnd = '~';
+//	char asciiPtr = asciiStart;
+//	int totalTiles = height * width;
+//
+//	Tile* tileTracker = tileMap->getData();
+//	for (int i = 0; i < totalTiles; i++)
+//	{
+//		int y = i / width;
+//		int x = i % width;
+//
+//
+//		if (x < 10)
+//			tileTracker[i].setDisplay((chtype)asciiPtr++ | COLOR_PAIR(COLOR_YELLOW));
+//		else if (x >= 10 && x < 20)
+//			tileTracker[i].setDisplay((chtype)asciiPtr++ | (COLOR_YELLOW << 28));
+//		else if (x < 30)
+//			tileTracker[i].setDisplay((chtype)asciiPtr++ | (COLOR_YELLOW_BOLD << 28));
+//
+//		if (asciiPtr >= asciiEnd)
+//			asciiPtr = asciiStart;
+//
+//		//give frame obstructed effect
+//		if (y == 0 || x == 0 || y == height - 1 || x == width - 1)
+//			tileTracker[i].setEffectType(E_OBSTR);		
+//
+//		if (x == 15)
+//			tileTracker[i].setEffectType(E_JUMPABLE);
+//
+//		if (x == 17)
+//		{
+//			tileTracker[i].setEffectType(E_HP_ALT_CONST);
+//			tileTracker[i].setEffectValue(-5);
+//		}
+//
+//		if (y == height - 2 && x == width - 2)
+//			tileTracker[i].setEffectType(E_EXIT);
+//			
+//	}
+//
+//	bool playing = true;
+//	bool filterStatus = false;
+//
+//	int hp = 200;
+//	while (playing)
+//	{
+//		wclear(viewport);
+//		wbkgd(viewport, ' ');
+//		wnoutrefresh(viewport);
+//
+//		for (int i = 0; i < totalTiles; i++)
+//		{
+//			int y = i / width;
+//			int x = i % width;
+//			mvwaddch(viewport, y, x, tileTracker[i].getDisplay());
+//		}
+//
+//		mvwaddch(viewport, curY, curX, '@' | 0x0f000000);
+//
+//		char buf[20];
+//		
+//		_itoa_s(hp, buf, 10);
+//		mvwaddstr(viewport, 0, width + 2, buf);
+//		
+//		wnoutrefresh(viewport);
+//		doupdate();
+//		int input = getch();
+//
+//		switch (input)
+//		{
+//		case KEY_UP: y--; curY--;
+//		{
+//			//check the eLayer to see if the step can be taken
+//			Tile t = tileMap->getDatum(curY, curX);
+//			int e = t.getEffect()->type;
+//			int val = t.getEffect()->value;
+//			switch(e)
+//			{
+//			case E_OBSTR: y++; curY++; break; //reverse movement 
+//			case E_JUMPABLE: y--; curY--; break; //take additional step
+//			case E_HP_ALT_CONST: hp += val; break; //take additional step
+//			case E_EXIT: playing = false; break; //quit
+//			}
+//		}
+//
+//
+//		break;
+//		case KEY_DOWN: y++; curY++; break;
+//		case KEY_LEFT: x--; curX--; break;
+//		case KEY_RIGHT: x++; curX++; 
+//		{
+//			Tile t = tileMap->getDatum(curY, curX);
+//			int e = t.getEffect()->type;
+//			int val = t.getEffect()->value;
+//			switch (e)
+//			{
+//			case E_OBSTR: x--; curX--; break; //reverse movement 
+//			case E_JUMPABLE: x++; curX++; break; //take additional step
+//			case E_HP_ALT_CONST: hp += val; break; //alter hp
+//			case E_EXIT: playing = false; break; //quit
+//			}
+//		}			
+//			break;
+//		case KEY_ESC: playing = false; break;
+//		default: //fill with printable character
+//				 //toggle filter
+//			break;
+//		}
+//	}
+//}
 
 void freeMovementProcessorTest()
 {
@@ -3226,7 +2405,7 @@ void freeMovementProcessorTest()
 	int mapWidth = 11;//width + (width / 2);
 	//Map* map = new Map("test", mapHeight, mapWidth, viewport);
 	Image* map = new Image(mapHeight, mapWidth, viewport);
-	_2DStorage<chtype>* tileMap = map->getTileMap();
+	TwoDStorage<chtype>* tileMap = map->getTileMap();
 	
 	short centerY = getmaxy(viewport) / 2;
 	short centerX = getmaxx(viewport) / 2;
@@ -3288,29 +2467,7 @@ void freeMovementProcessorTest()
 }
 
 
-void imageTest()
-{
-	Image* img = new Image(stdscr);
 
-	ifstream* is = new ifstream();
-	is->open("data\\itest.map", ios::binary);
-
-	img->load(is);
-	is->close();
-
-	img->draw();
-
-	doupdate();
-	int c = getch();
-
-	if (c == 's')
-	{
-		ofstream* os = new ofstream();
-		os->open("data\\itest.map", ios::trunc | ios::binary);
-		img->save(os);
-		os->close();
-	}
-}
 
 //void exitMapTest()
 //{
@@ -3623,31 +2780,31 @@ void graphMenuTest2()
 
 
 	//link players together
-	p1->link(DOWN_LINK, p2);
-	p2->link(DOWN_LINK, p3);
-	p3->link(DOWN_LINK, p4);
+	p1->link(Dir::DOWN, p2);
+	p2->link(Dir::DOWN, p3);
+	p3->link(Dir::DOWN, p4);
 
 	//link enemies together
-	e1->link(DOWN_LINK, e2);
-	e2->link(DOWN_LINK, e3);
-	e3->link(DOWN_LINK, e4);
+	e1->link(Dir::DOWN, e2);
+	e2->link(Dir::DOWN, e3);
+	e3->link(Dir::DOWN, e4);
 
 	//link players to enemies
-	p1->link(RIGHT_LINK, e1);
-	p2->link(RIGHT_LINK, e2);
-	p3->link(RIGHT_LINK, e3);
-	p4->link(RIGHT_LINK, e4);
+	p1->link(Dir::RIGHT, e1);
+	p2->link(Dir::RIGHT, e2);
+	p3->link(Dir::RIGHT, e3);
+	p4->link(Dir::RIGHT, e4);
 
 	//link hidden items
-	e1->link(RIGHT_LINK, eh1);
-	e2->link(RIGHT_LINK, eh2);
-	e3->link(RIGHT_LINK, eh3);
-	e4->link(RIGHT_LINK, eh4);
+	e1->link(Dir::RIGHT, eh1);
+	e2->link(Dir::RIGHT, eh2);
+	e3->link(Dir::RIGHT, eh3);
+	e4->link(Dir::RIGHT, eh4);
 
-	p1->link(LEFT_LINK, ph1);
-	p2->link(LEFT_LINK, ph2);
-	p3->link(LEFT_LINK, ph3);
-	p4->link(LEFT_LINK, ph4);
+	p1->link(Dir::LEFT, ph1);
+	p2->link(Dir::LEFT, ph2);
+	p3->link(Dir::LEFT, ph3);
+	p4->link(Dir::LEFT, ph4);
 
 	//add all items to menu
 	targetMenu->setItem(p1);
@@ -3685,28 +2842,28 @@ void graphMenuTest2()
 			absMenuDriver(input, targetMenu);
 
 			MenuItem* item = targetMenu->getCurrentItem();
-			if (item == NULL)
+			if (item == nullptr)
 			{
 				continue;
 			}
 			else if (item == eh1 || item == eh2 || item == eh3 || item == eh4)
 			{
-				targetMenu->selectItem(1);
-				targetMenu->selectItem(3);
-				targetMenu->selectItem(5);
-				targetMenu->selectItem(7);
+				targetMenu->setSelected(1, true);
+				targetMenu->setSelected(3, true);
+				targetMenu->setSelected(5, true);
+				targetMenu->setSelected(7, true);
 			}
 			else if (item == ph1 || item == ph2 || item == ph3 || item == ph4)
 			{
-				targetMenu->selectItem(0);
-				targetMenu->selectItem(2);
-				targetMenu->selectItem(4);
-				targetMenu->selectItem(6);
+				targetMenu->setSelected(0, true);
+				targetMenu->setSelected(2, true);
+				targetMenu->setSelected(4, true);
+				targetMenu->setSelected(6, true);
 			}
 			else
 			{
 				for(int i = 0; i < 8; i++) //clear all non-hidden items
-					targetMenu->deSelectItem(i);
+					targetMenu->setSelected(i, false);
 			}
 
 
@@ -3723,17 +2880,39 @@ void battleProcessorTest()
 	bool testing = true;
 	while (testing)
 	{
+		//retrieve all actors from a wad file (just for testing, this should be refined)
+		WadDatabase wd;
+		std::string wadFileName = "data\\mainwad.dat";
+		std::ifstream is(wadFileName, std::ios::binary);
+		wd.load(&is);
+		
+		std::map<std::string, ActorDef*, function<bool(std::string, std::string)>> actorRepo(stringCompare);
+		wd.getActorRepository(actorRepo, is);
+		is.close();
+		ActorDef p1Def, p2Def,p3Def,p4Def;
+		ActorDef e1Def, e2Def, e3Def, e4Def;
+
+		p1Def = *(actorRepo.find("Hero")->second);
+		p2Def = *(actorRepo.find("Lab Tech")->second);
+		p3Def = *(actorRepo.find("Navigator")->second);
+		p4Def = *(actorRepo.find("Mechanic")->second);
+
 		list<Actor*> players;
-		players.push_back(createActor("hero.actr", AT_HUMAN));
-		players.push_back(createActor("hero2.actr", AT_HUMAN));
-		players.push_back(createActor("hero3.actr", AT_HUMAN));
-		players.push_back(createActor("hero4.actr", AT_HUMAN));
+		players.push_back(buildActorFromDef(&p1Def, AT_HUMAN));
+		players.push_back(buildActorFromDef(&p2Def, AT_HUMAN));
+		players.push_back(buildActorFromDef(&p3Def, AT_HUMAN));
+		players.push_back(buildActorFromDef(&p4Def, AT_HUMAN));
+		
+		e1Def = *(actorRepo.find("Toadie")->second);
+		e2Def = *(actorRepo.find("Bigbug")->second);
+		e3Def = *(actorRepo.find("Skittler")->second);
+		e4Def = *(actorRepo.find("Wispwing")->second);
 
 		list<Actor*> enemies;
-		enemies.push_back(createActor("toadie.actr", AT_CPU));
-		enemies.push_back(createActor("bigbug.actr", AT_CPU));
-		enemies.push_back(createActor("skittler.actr", AT_CPU));
-		enemies.push_back(createActor("wispwing.actr", AT_CPU));
+		enemies.push_back(buildActorFromDef(&e1Def, AT_CPU));
+		enemies.push_back(buildActorFromDef(&e2Def, AT_CPU));
+		enemies.push_back(buildActorFromDef(&e3Def, AT_CPU));
+		enemies.push_back(buildActorFromDef(&e4Def, AT_CPU));
 
 		int totalRows = 23;
 		int totalCols = 51;
@@ -3777,15 +2956,15 @@ void actorCardTest()
 	Actor* a = new Actor();
 	a->def = def;
 
-	ifstream* is = new ifstream();
-	is->open("test.atr", ios::binary);
+	ifstream is;
+	is.open("test.atr", ios::binary);
 	
 	a->def->load(is);
 
 
 	ActorCard* card = new ActorCard(a, 0, -1);
 
-	card->draw(stdscr);
+	card->draw();
 	wnoutrefresh(stdscr);
 	doupdate();
 
@@ -3803,7 +2982,7 @@ void graphMenuTest()
 	menu->setItem(ac);
 	
 	menu->setCurrentItem(1);
-	ac->link(UP_LINK, li);
+	ac->link(Dir::UP, li);
 
 	bool playing = true;
 	while (playing)
@@ -3880,34 +3059,6 @@ void objectFormTest()
 	int input = getch();
 
 	is.close();
-}
-
-void textDisplaytest()
-{
-	WINDOW* textWin = newwin(5, 15, 1, 1);
-	string text = "01234567890123456789";
-	TextDisplay display(textWin, 5, 15, text.length());
-	
-	display.setText(text);
-	display.setColor(COLOR_BLUE, COLOR_MAGENTA_BOLD);
-	curs_set(CURSOR_INVISIBLE);
-	display.setEditable(true);
-	bool playing = true;
-	while (playing)
-	{
-		display.draw();
-		display.setFocus();
-		doupdate();
-		int c = getch();
-
-		if (c == KEY_ESC)
-		{
-			playing = false;
-		}
-		else
-			display.inputChar(c);
-	}
-
 }
 
 
@@ -4002,49 +3153,49 @@ void masterEditorTest()
 
 void turnTrackerTest2()
 {
-	list<MenuItem*> players;
-	
-	players.push_back(new ActorCard(createActor("hero.actr", AT_HUMAN), 0, -1));
-	
+	//list<MenuItem*> players;
+	//
+	//players.push_back(new ActorCard(createActor("hero.actr", AT_HUMAN), 0, -1));
+	//
 
-	list<MenuItem*> enemies;
-	enemies.push_back(new ActorCard(createActor("toadie.actr", AT_CPU), 1, -1));
-	enemies.push_back(new ActorCard(createActor("bigbug.actr", AT_CPU), 2, -1));
-	enemies.push_back(new ActorCard(createActor("Skittler.actr", AT_CPU), 3, -1));
-	enemies.push_back(new ActorCard(createActor("wispwing.actr", AT_CPU), 4, -1));
+	//list<MenuItem*> enemies;
+	//enemies.push_back(new ActorCard(createActor("toadie.actr", AT_CPU), 1, -1));
+	//enemies.push_back(new ActorCard(createActor("bigbug.actr", AT_CPU), 2, -1));
+	//enemies.push_back(new ActorCard(createActor("Skittler.actr", AT_CPU), 3, -1));
+	//enemies.push_back(new ActorCard(createActor("wispwing.actr", AT_CPU), 4, -1));
 
-	int turns = players.size() + enemies.size();
-	TurnTracker tracker;
+	//int turns = players.size() + enemies.size();
+	//TurnTracker tracker;
 
-	tracker.addPlayers(players);
-	tracker.addPlayers(enemies);
+	//tracker.addPlayers(players);
+	//tracker.addPlayers(enemies);
 
-	int rounds = 4;
-	for (int round = 0; round < rounds; round++)
-	{
-		for (int i = 0; i < tracker.getPlayerCount(); i++)
-		{
-			Actor* next = tracker.getNext()->getActor();
-			cout << next->def->name << endl;
-		}
+	//int rounds = 4;
+	//for (int round = 0; round < rounds; round++)
+	//{
+	//	for (int i = 0; i < tracker.getPlayerCount(); i++)
+	//	{
+	//		Actor* next = tracker.getNext()->getActor();
+	//		cout << next->def->name << endl;
+	//	}
 
-		switch (round)
-		{
-		case 0:
-		{
-			tracker.removePlayer((ActorCard*)enemies.back());
-			enemies.pop_back();
-		}
-			break;
-		case 1:
-		{
-			ActorCard* toDie = (ActorCard*)enemies.back();
-			toDie->getActor()->currHp = 0; //kill enemy
-		}	
-			break;
-		}
-		system("pause");
-	}
+	//	switch (round)
+	//	{
+	//	case 0:
+	//	{
+	//		tracker.removePlayer((ActorCard*)enemies.back());
+	//		enemies.pop_back();
+	//	}
+	//		break;
+	//	case 1:
+	//	{
+	//		ActorCard* toDie = (ActorCard*)enemies.back();
+	//		toDie->getActor()->currHp = 0; //kill enemy
+	//	}	
+	//		break;
+	//	}
+	//	system("pause");
+	//}
 		
 }
 
@@ -4056,7 +3207,7 @@ void itemGroupTest()
 	cards.push_back(new ActorCard(NULL, 1, 0));
 	cards.push_back(new ActorCard(NULL, 2, 0));
 
-	MenuItem::linkItemGroup(cards, DOWN_LINK);
+	MenuItem::linkItemGroup(cards, Dir::DOWN);
 }
 
 
@@ -4145,7 +3296,7 @@ void exploreTest()
 	mainC->x = 45;
 	mainC->y = 37;
 	
-	map0.controlActor = mainC;
+	map0.setControlActor(mainC);
 	
 	curs_set(CURSOR_INVISIBLE);
 
@@ -4371,7 +3522,7 @@ void animationTest()
 	//copy image on screen to new image
 	//RandomBlitAnimation anim(img);
 	SpiralBlitAnimation anim(img);
-	anim.setSpeed(1);
+	anim.setSpeed(4); //4 is optimum speed for spiral
 
 	curs_set(CURSOR_INVISIBLE);
 	bool playing = true;
@@ -4436,36 +3587,200 @@ void invisibleAttrTest()
 	int input = getch();
 }
 
+
+void wadDatabaseTest()
+{
+	WadDatabase wd;
+
+	std::string dataDir = "data";
+	std::string wadFileName = "data\\mainwad.dat";
+	wd.buildWad(dataDir);
+
+	std::ofstream os(wadFileName, std::ios::binary);
+	wd.save(&os);
+	os.close();
+	
+	wd.print();
+
+	WadDatabase wd2;
+	std::ifstream is(wadFileName, std::ios::binary);
+	wd2.load(&is);
+	is.close();
+
+	wd2.print();
+}
+
+
+
+
+void stringCompareTest()
+{
+	std::string str1 = "Apple";
+
+	cout << str1.compare("Apple") << endl; //0
+	cout << str1.compare("apple") << endl; //-1 caps comes before lower case
+	cout << str1.compare("Apple ") << endl; //-1 Apple is shorter
+	cout << str1.compare("Apple}") << endl; //-1
+
+	cout << str1.compare("Bapple") << endl; //-1
+	cout << str1.compare("Aapple") << endl; //1
+
+	std::string str2 = "Aapple";
+	cout << stringCompare(str1, str2) << endl;
+}
+
+template <class T>
+void templateTest()
+{
+	TemplateTest<int> tt;
+
+	TemplateStruct<int> ts;
+
+	TemplateTest<T>* tt2;
+
+	tt2 = new TTChild<T>();
+
+	tt2 = new TTChild2();
+
+}
+
+void repositoryTest()
+{
+	/*Repository2<unsigned short, Map> mapRepo(lessThan);
+
+	Factory f;
+	Map* m = f.createMap(stdscr, 0, screenHeight, screenWidth, 'Y', 0, 0);
+	
+	unsigned short id = 0;
+	mapRepo.add(id, *m);
+
+	Map* m2 = mapRepo.find(id);
+
+	_ASSERT(m == m2);*/
+
+
+	//Repository2<std::string, ActorDef> actorRepo;
+
+	//Actor* actor = createActor("data\\hero.actr", AT_HUMAN);
+	//actorRepo.add(actor->def->name, *(actor->def));
+
+	//ActorDef* act2 = actorRepo.find(actor->def->name);
+
+
+}
+
+void gameStateManagerTest2()
+{
+	//WINDOW* menuWin = newwin(4, 25, 1, 1);
+
+	//GameStateManager stateMngr;
+	//GameState* titleScreen = new TitleScreenState(menuWin);
+	//stateMngr.push(titleScreen);
+
+	//bool playing = true;
+
+	//while (playing)
+	//{
+	//	//draw
+	//	stateMngr.draw();
+	//	doupdate();
+
+	//	//input
+	//	int input = getch();
+
+	//	//process
+	//	switch (input)
+	//	{
+	//	case KEY_ESC: playing = false; break;
+	//	default:
+	//		playing = stateMngr.processInput(input);
+	//		break;
+	//	}
+	//}
+
+}
+
+
+void gameStateManagerEmptyTest()
+{
+	GameStateManager stateMngr;
+	
+	bool playing = true;
+
+	while (playing)
+	{
+		//draw
+		stateMngr.draw();
+		doupdate();
+
+		//input
+		int input = getch();
+
+		//process
+		switch (input)
+		{
+		case KEY_ESC: playing = false; break;
+		default:
+			playing = stateMngr.processInput(input);
+			break;
+		}
+	}
+
+}
+
+void gameStateManagerTest()
+{
+	GameStateManager stateMngr;
+
+	stateMngr.setState(TestState::getInstance());
+
+	bool playing = true;
+
+	while (playing)
+	{
+		//draw
+		stateMngr.draw();
+		doupdate();
+
+		//input
+		int input = getch();
+
+		//process
+		switch (input)
+		{
+		case KEY_ESC: playing = false; break;
+		default:
+			playing = stateMngr.processInput(input);
+			break;
+		}
+	}
+
+}
+
 int main()
 {
-	//tests above TUI for non curses testing
-//	turnTrackerTest2();
-//	attackAlgorithmTest();
-//	system("pause");
-
-	TUI* tui = new TUI();
-	tui->init();
-	
-//	controlManagerTest();
-//	mapEditorTest();
-//	exploreTest();
-//	hiLevelMapTest();
-	animationTest();
-
-//	autoMapTest();
-//	factoryTest();
-//	mapRepositoryTest();
-//	freeMovementProcessorTest();
-//	actorEditorTest();
-//	masterEditorTest();
-//	battleProcessorTest();
-//	colorStringTest();
-//	commandTest();
+	bool t = true;
+	bool f = false;
+	bool TUItest = t;
+	if (TUItest)
+	{
+		TUI* tui = new TUI();
+		tui->init();
+		//insert test method here
+		mapEditorTest();
+		
+		tui->shutdown();
+		delete tui;
+	}
+	else //non curses testing
+	{
+		//insert test method here
+		
+		system("pause");
+	}
 	
 
-
-	tui->shutdown();
-	delete tui;
+	
 	return 0;
 }
 

@@ -18,7 +18,7 @@ void ExplorationProcessor::setCurrMap(unsigned short id)
 }
 
 
-bool ExplorationProcessor::processStep2(short * axis, int step, int dirInput)
+bool ExplorationProcessor::processStep2(short * axis, int step, Direction dirInput)
 {
 	//move cursor by step
 	*axis += step;
@@ -54,7 +54,7 @@ bool ExplorationProcessor::processStep2(short * axis, int step, int dirInput)
 	return true;
 }
 
-bool ExplorationProcessor::processStep(short * axis, int step, int dirInput)
+bool ExplorationProcessor::processStep(short * axis, int step, Direction dirInput)
 {
 	//move cursor by step
 	*axis += step;
@@ -93,7 +93,7 @@ bool ExplorationProcessor::processStep(short * axis, int step, int dirInput)
 
 void ExplorationProcessor::moveActorAcrossMapSeam(MapExit& fromMap, MapExit& toMap)
 {
-	Actor* controlActor = currMap->controlActor; //save controlActor
+	Actor* controlActor = currMap->getControlActor(); //save controlActor
 
 	setCurrMap(toMap.mapId);
 
@@ -125,7 +125,7 @@ void ExplorationProcessor::moveActorAcrossMapSeam(MapExit& fromMap, MapExit& toM
 	}
 
 	setViewMode(VM_DYNAMIC);
-	currMap->controlActor = controlActor; //make sure new map has the same controlActor
+	currMap->setControlActor(controlActor); //make sure new map has the same controlActor
 }
 
 

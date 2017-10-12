@@ -1,0 +1,173 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{C52C8A11-CBCC-444C-95E2-391F2288828A}</ProjectGuid>
+    <RootNamespace>RPGLib</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>F:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\PDCurseControls\include\external;F:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\PDCurseControls\include;F:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\RPGLib\include;$(IncludePath)</IncludePath>
+    <OutDir>$(ProjectDir)Debug\</OutDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PDCurseControls\PDCurseControls.vcxproj">
+      <Project>{e3d14357-39d4-446e-b228-1ecce4b70488}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\Actor.h" />
+    <ClInclude Include="include\ActorDefRepository.h" />
+    <ClInclude Include="include\AutoMap.h" />
+    <ClInclude Include="include\DataPkg.h" />
+    <ClInclude Include="include\DataPkgFactory.h" />
+    <ClInclude Include="include\FreeMovementProcessor.h" />
+    <ClInclude Include="include\GameState.h" />
+    <ClInclude Include="include\GameStateManager.h" />
+    <ClInclude Include="include\Lump.h" />
+    <ClInclude Include="include\Map.h" />
+    <ClInclude Include="include\ActorCard.h" />
+    <ClInclude Include="include\BattleAlgorithm.h" />
+    <ClInclude Include="include\MapEffectFilterPattern.h" />
+    <ClInclude Include="include\MapExit.h" />
+    <ClInclude Include="include\MapKeyComparators.h" />
+    <ClInclude Include="include\MapRepository.h" />
+    <ClInclude Include="include\MovementProcessor.h" />
+    <ClInclude Include="include\Player.h" />
+    <ClInclude Include="include\PlayerActor.h" />
+    <ClInclude Include="include\Repository.h" />
+    <ClInclude Include="include\Repository2.h" />
+    <ClInclude Include="include\Spell.h" />
+    <ClInclude Include="include\TileEffect.h" />
+    <ClInclude Include="include\TurnTracker.h" />
+    <ClInclude Include="include\WadDatabase.h" />
+    <ClInclude Include="include\WadDatabaseQuery.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Actor.cpp" />
+    <ClCompile Include="src\ActorCard.cpp" />
+    <ClCompile Include="src\ActorDefRepository.cpp" />
+    <ClCompile Include="src\AutoMap.cpp" />
+    <ClCompile Include="src\BattleAlgorithm.cpp" />
+    <ClCompile Include="src\DataPkg.cpp" />
+    <ClCompile Include="src\DataPkgFactory.cpp" />
+    <ClCompile Include="src\FreeMovementProcessor.cpp" />
+    <ClCompile Include="src\GameStateManager.cpp" />
+    <ClCompile Include="src\Map.cpp" />
+    <ClCompile Include="src\MapEffectFilterPattern.cpp" />
+    <ClCompile Include="src\mapKeyComparators.cpp" />
+    <ClCompile Include="src\MapRepository.cpp" />
+    <ClCompile Include="src\MovementProcessor.cpp" />
+    <ClCompile Include="src\PlayerActor.cpp" />
+    <ClCompile Include="src\TurnTracker.cpp" />
+    <ClCompile Include="src\WadDatabase.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

@@ -24,5 +24,5 @@ public:
 	//getters/setters
 	void setField(Fielddraw field) { this->field = field; }
 	void setIcon(chtype c) { icon = c; }
-	
+	chtype getIcon() { return icon; }
 };

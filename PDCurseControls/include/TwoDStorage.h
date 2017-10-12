@@ -15,7 +15,7 @@ public:
 
 	void setDimensions(unsigned int rows, unsigned int cols);
 
-	void fill(T datum); //fill all elements in storage with T
+	void fill(const T datum); //fill all elements in storage with T
 	void copyFrom(TwoDStorage<T>& fromStorage);
 
 	//getters/setters
@@ -48,7 +48,7 @@ void TwoDStorage<T>::setDimensions(unsigned int rows, unsigned int cols)
 	data.resize(size);
 }
 
-//TODO alter the next 2 methods to return T* so that nullptr can be returned instead of throwing an exception
+//TODO alter the next 2 methods to return T& so that nullptr can be returned instead of throwing an exception
 template <class T>
 T TwoDStorage<T>::getDatum(unsigned int y, unsigned int x)
 {
@@ -88,7 +88,7 @@ bool TwoDStorage<T>::setDatum(unsigned int element, const T &datum)
 }
 
 template <class T>
-void TwoDStorage<T>::fill(T datum)
+void TwoDStorage<T>::fill(const T datum)
 {
 	std::fill(data.begin(), data.end(), datum);
 }

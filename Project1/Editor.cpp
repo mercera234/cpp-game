@@ -1,6 +1,5 @@
 #include "Editor.h"
 #include "TUI.h"
-#include "FileChooser.h"
 #include "LineItem.h"
 
 void Editor::setModified(bool mod)
@@ -50,7 +49,7 @@ void Editor::processGlobalInput(int input)
 		}
 		else
 		{
-			setupFileDialog(OPEN_DIALOG);
+			setupFileDialog(FileDialogType::OPEN_DIALOG);
 		}
 
 		break;
@@ -58,7 +57,7 @@ void Editor::processGlobalInput(int input)
 		if (modified) //save only if there are changes
 		{
 			if(fileName.compare(DEF_FILENAME) == 0) //bring up filechooser if default name is still used 
-				setupFileDialog(SAVE_DIALOG);
+				setupFileDialog(FileDialogType::SAVE_DIALOG);
 			else
 			{
 				save(dialogDefPath + '\\' + fileName);
@@ -68,7 +67,7 @@ void Editor::processGlobalInput(int input)
 		}
 		break;
 	case CTRL_A:
-		setupFileDialog(SAVE_DIALOG);
+		setupFileDialog(FileDialogType::SAVE_DIALOG);
 		break;
 	}
 }
@@ -141,7 +140,7 @@ void Editor::confirmDialogDriver(Controllable* c, int input, int confirmMethod)
 			case E_NEW: createNew(); 
 				//cm->setFocus(map); 
 				break;
-			case E_OPEN: setupFileDialog(OPEN_DIALOG); break;
+			case E_OPEN: setupFileDialog(FileDialogType::OPEN_DIALOG); break;
 			case E_QUIT:
 				cm->popControl();
 				cm->setActive(false);
@@ -170,8 +169,8 @@ Frame* Editor::createConfirmDialog(string confirmMsg)
 	f->setModal(true);
 	return f;
 }
-
-void Editor::setupFileDialog(int dialogType)
+	   
+void Editor::setupFileDialog(FileDialogType dialogType)
 {
 	int height = 12;
 	int width = 42;
@@ -197,6 +196,10 @@ void Editor::fileDialogDriver(Controllable* dialog, int input)
 	{
 	case KEY_DOWN: fd->driver(REQ_DOWN_ITEM);   break;
 	case KEY_UP: fd->driver(REQ_UP_ITEM); break;
+	case KEY_PGDN: fd->driver(REQ_SCR_DPAGE); break;
+	case KEY_PGUP: fd->driver(REQ_SCR_UPAGE); break;
+	case KEY_HOME: fd->driver(REQ_FIRST_ITEM); break;
+	case KEY_END: fd->driver(REQ_LAST_ITEM); break;
 	case CTRL_Q: cm->popControl(); 
 		break;
 	case '\r':
@@ -211,8 +214,8 @@ void Editor::fileDialogDriver(Controllable* dialog, int input)
 	{
 		switch (fd->getType())
 		{
-		case OPEN_DIALOG: load(fileChosen); break;
-		case SAVE_DIALOG: save(fileChosen); break;
+		case FileDialogType::OPEN_DIALOG: load(fileChosen); break;
+		case FileDialogType::SAVE_DIALOG: save(fileChosen); break;
 		}
 		int pos = fileChosen.find_last_of('\\');
 		fileName = fileChosen.substr(pos + 1, fileChosen.length());

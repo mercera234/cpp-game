@@ -1,11 +1,8 @@
 #pragma once
 #include "curses.h"
-#include "Menu.h"
 #include "Palette.h"
 #include "TextField.h"
 #include "TextLabel.h"
-#include <iostream>
-using namespace std;
 #include "ControlManager.h"
 #include "Frame.h"
 #include "Map.h"
@@ -13,20 +10,6 @@ using namespace std;
 #include "MapEffectFilterPattern.h"
 #include "FreeMovementProcessor.h"
 #include "Editor.h"
-
-#define DOT 0
-#define FILL 1
-#define BRUSH 2
-
-//filter choices
-#define F_NO_FILTER '-'
-#define F_OBSTR 'O'
-#define F_JUMPABLE 'J'
-#define F_DMG_CONST 'd'
-#define F_DMG_INC 'D'
-#define F_AILMENT 'A'
-#define F_SAVEABLE 'S'
-#define F_EXIT 'E'
 
 #define DEF_MAP_EXTENSION ".map"
 
@@ -58,41 +41,49 @@ private:
 
 	Map* map;
 	Image* image;
-	_2DStorage<chtype>* tileMap;
+	TwoDStorage<chtype>* tileMap;
 
 	char drawChar;
 
 	//Labels
-	TextLabel* topRuler;
-	TextLabel* sideRuler;
-	TextLabel* textTitle;
-	TextLabel* bkgdTitle;
-	TextLabel* filterTitle;
-	TextLabel* toolTitle;
-	TextLabel* xyLbl;
+	TextLabel topRuler;
+	TextLabel sideRuler;
+	TextLabel textTitle;
+	TextLabel bkgdTitle;
+	TextLabel filterTitle;
+	TextLabel toolTitle;
+	TextLabel xyLbl;
 	
-	TextLabel* hLbl;
-	TextLabel* wLbl;
+	TextLabel hLbl;
+	TextLabel wLbl;
+	TextLabel resizeBtn;
 
 	//Canvas dimension fields
-	TextField* canvasRowsInput;
-	TextField* canvasColsInput;
+	TextField canvasRowsInput;
+	TextField canvasColsInput;
 
 	//what is this for?
 	short layer;
 
 	/*Palette*/
-	Palette* textPalette;
-	Palette* bkgdPalette;
-	Palette* toolPalette;
-	Palette* filterPalette;
+	GridMenu textPalette;
+	TextLabel textPaletteSelection;
+	
+	GridMenu bkgdPalette;
+	TextLabel bkgdPaletteSelection;
+
+	GridMenu toolPalette;
+	TextLabel toolPaletteSelection;
+
+	GridMenu filterPalette;
+	TextLabel filterPaletteSelection;
 	
 	
 	int paletteLeftEdge; //
 	int textColor;
 	int bkgdColor;
 	short tool;
-	int filter;
+	EffectType filter;
 
 	/*global*/
 	MapEffectFilterPattern* mapEffectFilterPattern;
@@ -100,19 +91,18 @@ private:
 
 	void setupPalettes();
 	void setupRulers();
-//	void drawRulers();
+	void setCanvasSize(int rows, int cols);
+	void setConvenienceVariables();
+
 	bool processMapInput(int input);
 	void processMouseInput(int input);
 
 	void processShiftDirectionalInput(int input);
 
-	void processPaletteInput(Palette* p, int input);
+	void processPaletteInput(GridMenu* p, int input);
 	void processFilterPaletteInput(chtype icon);
-	//void processGlobalInput(int input);
+	void resizeButtonDriver();
 	
-	//Frame* createConfirmDialog();
-	//void confirmDialogDriver(Controllable* dialog, int input, int confirmMethod);
-	//void fileDialogDriver(Controllable* dialog, int input);
 	void canvasInputDriver(TextField* field, int input);
 	void setupControlManager();
 
@@ -120,22 +110,21 @@ private:
 	void createNew();
 	void load(string fileName);
 	void save(string fileName);
-	//void setupFileDialog(int dialogType);
+	
 	void fill(int sourceRow, int sourceCol);
+
+	void driver(Controllable* control, int input);
 public:
 
 	
 	MapEditor();
+	~MapEditor();
 	bool processInput(int input);
 	void draw();
 
 	//static callback methods
 	static void paletteCallback(void*, void*, int);
 	static void mapCallback(void* caller, void* ptr, int input); 
-	/*static void globalCallback(void* caller, void* ptr, int input);
-	static void confirmNewCallback(void* caller, void* ptr, int input); 
-	static void confirmOpenCallback(void* caller, void* ptr, int input);
-	static void confirmQuitCallback(void* caller, void* ptr, int input);*/
-	//static void fileDialogCallback(void* caller, void* ptr, int input);
 	static void canvasInputCallback(void* caller, void* ptr, int input);
+	static void controlCallback(void*, void*, int);
 };

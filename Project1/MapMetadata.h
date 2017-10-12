@@ -1,5 +1,5 @@
 #pragma once
-#include "2DStorage.h"
+#include "TwoDStorage.h"
 #include "Map.h"
 
 struct UnitMap
@@ -26,7 +26,7 @@ struct MapMetadata
 
 	
 	char visualId; //a character used to help distinguish one map within the megamap from the adjoining maps
-	_2DStorage<UnitMap>* units;
+	TwoDStorage<UnitMap>* units;
 };
 
 //discovered (submap): true - submap has been visited and is showing on automap (dark) | false - submap is not visible at all

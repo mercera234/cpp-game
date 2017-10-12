@@ -34,8 +34,9 @@ void BattleProcessor::initTurnTracker()
 	int totalPlayers = humanActors.size() + cpuActors.size();
 	turnTracker = new TurnTracker();
 	
-	turnTracker->addPlayers(humanActors);
-	turnTracker->addPlayers(cpuActors);
+	//TODO class is broken now
+	//turnTracker->addPlayers(humanActors);
+	//turnTracker->addPlayers(cpuActors);
 }
 
 
@@ -57,10 +58,10 @@ void BattleProcessor::initTargetMenu()
 	//link cards
 	/*MenuItem::linkItemGroup(humanCards, DOWN_LINK);
 	MenuItem::linkItemGroup(cpuCards, DOWN_LINK);*/
-	MenuItem::linkItemGroup(humanActors, DOWN_LINK);
-	MenuItem::linkItemGroup(cpuActors, DOWN_LINK);
+	MenuItem::linkItemGroup(humanActors, Dir::DOWN);
+	MenuItem::linkItemGroup(cpuActors, Dir::DOWN);
 
-	MenuItem::linkItemGroups(humanActors, cpuActors, RIGHT_LINK);
+	MenuItem::linkItemGroups(humanActors, cpuActors, Dir::RIGHT);
 	
 	//position cards
 	int pLeft = 2;
@@ -154,7 +155,8 @@ void BattleProcessor::initControlManager()
 
 void BattleProcessor::advanceTurn()
 {
-	turnHolder = turnTracker->getNext();
+	//TODO class is broken
+	//turnHolder = turnTracker->getNext();
 	
 	if (turnHolder == NULL)	return;
 
@@ -392,7 +394,8 @@ bool BattleProcessor::processInput(int input)
 	if (turnHolder == NULL)
 		return false; 
 
-	return cm->handleInput(input);	
+	cm->handleInput(input);
+	return cm->isActive();
 }
 
 void BattleProcessor::processCPUTurn()

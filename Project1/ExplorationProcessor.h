@@ -10,8 +10,8 @@ class ExplorationProcessor : public MovementProcessor
 {
 private:
 	Map* currMap;
-	bool processStep(short* axis, int step, int dirInput);
-	bool processStep2(short* axis, int step, int dirInput);
+	bool processStep(short* axis, int step, Direction dirInput);
+	bool processStep2(short* axis, int step, Direction dirInput);
 
 	MapRepository* mapRepo;
 

@@ -56,8 +56,11 @@ void MasterEditor::draw()
 
 bool MasterEditor::processInput(int input)
 {
-	if(curEditor == NULL)
-		return cm->handleInput(input);
+	if (curEditor == NULL)
+	{
+		cm->handleInput(input);
+		return cm->isActive();
+	}
 
 	bool usingEditor = curEditor->processInput(input);
 

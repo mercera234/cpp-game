@@ -75,9 +75,17 @@
 #define COLOR_MASK 0xff000000
 #define ATTR_ONLY_MASK 0x00ff0000
 
+/* Return a chtype tile with the background set to 'color' */
+chtype setBkgdColor(int color);
 
-#define getBkgdColor(c) (c >> BKGDCOLOR_OFFSET)
-#define getTextColor(c) ((c & TEXTCOLOR_MASK) >> TEXTCOLOR_OFFSET)
+/* Return the background color value from the tile*/
+int getBkgdColor(chtype tile);
+
+/* Return a chtype tile with the text set to 'color' */
+chtype setTextColor(int color);
+
+/* Return the text color value from the tile*/
+int getTextColor(chtype tile);
 
 //cursor states (for use with curs_set function)
 #define CURSOR_INVISIBLE 0

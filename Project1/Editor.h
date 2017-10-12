@@ -2,6 +2,7 @@
 #include "ControlManager.h"
 #include "Frame.h"
 #include "TextLabel.h"
+#include "FileChooser.h"
 
 #define DEF_FILENAME "<Untitled>" //will add open/close arrows later
 
@@ -28,7 +29,7 @@ protected:
 	void confirmDialogDriver(Controllable* dialog, int input, int confirmMethod);
 	void setupConfirmDialog(void(*callback) (void*, void*, int));
 	void fileDialogDriver(Controllable* dialog, int input);
-	void setupFileDialog(int dialogType);
+	void setupFileDialog(FileDialogType dialogType);
 	virtual void load(string fileName) = 0;
 	virtual void save(string fileName) = 0;
 	virtual void createNew() = 0; //for creating a new instance of whatever is being edited

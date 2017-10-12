@@ -1,21 +1,37 @@
+#include <cctype>
+#include <dirent.h>
+#include <string>
 #include "MapEditor.h"
 #include "TUI.h"
 #include "FileChooser.h"
-#include <dirent.h>
-#include <string>
-#include "2DStorage.h"
+#include "TwoDStorage.h"
 #include "LineItem.h"
+#include "Factory.h"
+
+const int DOT = 0;
+const int FILL = 1;
+const int BRUSH = 2;
+
+//filter choices
+const int F_NO_FILTER = '-';
+const int F_OBSTR = 'O';
+const int F_JUMPABLE = 'J';
+const int F_DMG_CONST = 'd';
+const int F_DMG_INC = 'D';
+const int F_AILMENT = 'A';
+const int F_SAVEABLE = 'S';
+const int F_EXIT ='E';
 
 MapEditor::MapEditor()
 {
-	canvasRows = 64;
-	canvasCols = 64;
-
 	topRulerRow = 2;
 	sideRulerCol = 19;
 
-	visibleRows = 23;
-	visibleCols = 51;
+	visibleRows = screenHeight;
+	visibleCols = screenWidth;
+
+	//TODO canvas default size is same as visible window? is this true?
+	setCanvasSize(64, 64);
 
 	//setup map labels
 	setupRulers();
@@ -52,27 +68,30 @@ MapEditor::MapEditor()
 	
 	map = new Map(fileName, canvasRows, canvasCols, viewport);
 	
-	image = map->getDisplay();
-	tileMap = image->getTileMap();
+	setConvenienceVariables();
 
-	mp = new FreeMovementProcessor(image, &curY, &curX);
+	mp = new FreeMovementProcessor(map, &curY, &curX);
 	int bottomRow = visibleRows + 2 + topRulerRow + 1;
 
-	//mvprintw(bottom + topRulerRow + 1, sideRulerCol + 1, "x: %+4d  y: %+4d", x, y); //%+4d always render sign, 4 char field, int
-	xyLbl = new TextLabel(newwin(1, 16, bottomRow, sideRulerCol + 1), "");
+	xyLbl.setWindow(newwin(1, 16, bottomRow, sideRulerCol + 1));
 
 	int hLeftEdge = sideRulerCol + 1 + 25;
-	hLbl = new TextLabel(newwin(1, 2, bottomRow, hLeftEdge), "H:");
-	canvasRowsInput = new TextField(newwin(1, 3, bottomRow, hLeftEdge + 3));
-	canvasRowsInput->setText(canvasRows);
-	
+	hLbl.setWindow(newwin(1, 2, bottomRow, hLeftEdge));
+	hLbl.setText("H:");
 
-	wLbl = new TextLabel(newwin(1, 2, bottomRow, hLeftEdge + 10), "W:");
-	canvasColsInput = new TextField(newwin(1, 3, bottomRow, hLeftEdge + 13));
-	canvasColsInput->setText(canvasCols);
-
+	canvasRowsInput.setupField(3, bottomRow, hLeftEdge + 3);
+	canvasRowsInput.setText(canvasRows);
 	
-	//hl = new Highlighter(map->getWindow(), map->getDisplayLayer(), &centerY, &centerX); //map->getMapY(), map->getMapX());
+	wLbl.setWindow(newwin(1, 2, bottomRow, hLeftEdge + 10));
+	wLbl.setText("W:");
+
+	canvasColsInput.setupField(3, bottomRow, hLeftEdge + 13);
+	canvasColsInput.setText(canvasCols);
+
+	resizeBtn.setWindow(newwin(1, 6, bottomRow, hLeftEdge + 18));
+	resizeBtn.setText("RESIZE");
+	
+	
 	hl = new Highlighter(image, &curY, &curX);
 	mapEffectFilterPattern = new MapEffectFilterPattern(map);
 	mapEffectFilterPattern->setEnabled(false);
@@ -80,28 +99,42 @@ MapEditor::MapEditor()
 	setupControlManager();
 }
 
+/*
+This should be called any time a new map/image is loaded
+*/
+void MapEditor::setConvenienceVariables()
+{
+	image = map->getDisplay();
+	tileMap = image->getTileMap();
+}
+
 void MapEditor::setupControlManager()
 {
 	cm = new ControlManager(this);
-	cm->registerControl(textPalette, MOUSE_LISTENER, paletteCallback);
-	cm->registerControl(bkgdPalette, MOUSE_LISTENER, paletteCallback);
-	cm->registerControl(toolPalette, MOUSE_LISTENER, paletteCallback);
-	cm->registerControl(filterPalette, MOUSE_LISTENER, paletteCallback);
-	cm->registerControl(canvasRowsInput, KEY_LISTENER | MOUSE_LISTENER, canvasInputCallback);
-	cm->registerControl(canvasColsInput, KEY_LISTENER | MOUSE_LISTENER, canvasInputCallback);
+	cm->registerControl(&textPalette, MOUSE_LISTENER, paletteCallback);
+	cm->registerControl(&textPaletteSelection, 0, 0);
+	cm->registerControl(&bkgdPalette, MOUSE_LISTENER, paletteCallback);
+	cm->registerControl(&bkgdPaletteSelection, 0, 0);
+	cm->registerControl(&toolPalette, MOUSE_LISTENER, paletteCallback);
+	cm->registerControl(&toolPaletteSelection, 0, 0);
+	cm->registerControl(&filterPalette, MOUSE_LISTENER, paletteCallback);
+	cm->registerControl(&filterPaletteSelection, 0, 0);
+	cm->registerControl(&canvasRowsInput, KEY_LISTENER | MOUSE_LISTENER, canvasInputCallback);
+	cm->registerControl(&canvasColsInput, KEY_LISTENER | MOUSE_LISTENER, canvasInputCallback);
 	cm->registerControl(map, KEY_LISTENER | MOUSE_LISTENER, mapCallback);
 	cm->setFocus(map);
 	cm->registerControl(mapEffectFilterPattern, 0, 0);
-	cm->registerControl(hl, 0, 0);
+
 	cm->registerControl(fileNameLbl, 0, 0);
-	cm->registerControl(topRuler, 0, 0);
-	cm->registerControl(textTitle, 0, 0);
-	cm->registerControl(bkgdTitle, 0, 0);
-	cm->registerControl(toolTitle, 0, 0);
-	cm->registerControl(filterTitle, 0, 0);
-	cm->registerControl(xyLbl, 0, 0);
-	cm->registerControl(hLbl, 0, 0);
-	cm->registerControl(wLbl, 0, 0);
+	cm->registerControl(&topRuler, 0, 0);
+	cm->registerControl(&textTitle, 0, 0);
+	cm->registerControl(&bkgdTitle, 0, 0);
+	cm->registerControl(&toolTitle, 0, 0);
+	cm->registerControl(&filterTitle, 0, 0);
+	cm->registerControl(&xyLbl, 0, 0);
+	cm->registerControl(&hLbl, 0, 0);
+	cm->registerControl(&wLbl, 0, 0);
+	cm->registerControl(&resizeBtn, MOUSE_LISTENER, controlCallback);
 	
 	cm->registerShortcutKey(KEY_ESC, globalCallback);
 	cm->registerShortcutKey(CTRL_N, globalCallback);
@@ -114,56 +147,74 @@ void MapEditor::setupPalettes()
 	//setup palette labels
 	paletteLeftEdge = sideRulerCol + 1 + visibleCols + 5;
 
-	WINDOW* tLwin = newwin(1, 4, topRulerRow, paletteLeftEdge);
-	textTitle = new TextLabel(tLwin, "TEXT");
-
-	WINDOW* bLwin = newwin(1, 4, topRulerRow + 7, paletteLeftEdge);
-	bkgdTitle = new TextLabel(bLwin, "BKGD");
-
-	WINDOW* toLwin = newwin(1, 4, topRulerRow + 14, paletteLeftEdge);
-	toolTitle = new TextLabel(toLwin, "TOOL");
-
-	WINDOW* fLwin = newwin(1, 6, topRulerRow + 18, paletteLeftEdge);
-	filterTitle = new TextLabel(fLwin, "FILTER");
-
-
-
+	textTitle.setWindow(newwin(1, 4, topRulerRow, paletteLeftEdge));
+	textTitle.setText("TEXT");
+	
+	bkgdTitle.setWindow(newwin(1, 4, topRulerRow + 7, paletteLeftEdge));
+	bkgdTitle.setText("BKGD");
+	
+	toolTitle.setWindow(newwin(1, 4, topRulerRow + 14, paletteLeftEdge));
+	toolTitle.setText("TOOL");
+	
+	filterTitle.setWindow(newwin(1, 6, topRulerRow + 18, paletteLeftEdge));
+	filterTitle.setText("FILTER");
+	
 	//setup color palettes
 	int rows = 4;
 	int cols = 4;
-	textPalette = new Palette(rows, cols, topRulerRow + 1, paletteLeftEdge);
-	bkgdPalette = new Palette(rows, cols, topRulerRow + 8, paletteLeftEdge);
+
+	Factory f;
+	f.initPaletteMenu(textPalette, rows, cols, topRulerRow + 1, paletteLeftEdge);
+	f.initPaletteMenu(bkgdPalette, rows, cols, topRulerRow + 8, paletteLeftEdge);
 
 	for (int i = 0; i < TOTAL_COLORS; i++)
 	{
 		chtype c = ' ' | (i << 28) & A_COLOR;
 		int x = i % cols;
 		int y = i / cols;
-		textPalette->setItem(TUI::colorNames[i], c, y, x);
-		bkgdPalette->setItem(TUI::colorNames[i], c, y, x);
+
+		textPalette.setItem(f.createPaletteItem(colorNames[i], c, i));
+		bkgdPalette.setItem(f.createPaletteItem(colorNames[i], c, i));
 	}
+	textPalette.post(true);
+	textPaletteSelection.setWindow(newwin(1, 16, topRulerRow + rows + 1, paletteLeftEdge));
+	textPaletteSelection.setText(colorNames[0]);
+
+	bkgdPalette.post(true);
+	bkgdPaletteSelection.setWindow(newwin(1, 16, topRulerRow + rows + 8, paletteLeftEdge));
+	bkgdPaletteSelection.setText(colorNames[0]);
 
 	textColor = 0; //blank out the color(white)
 	bkgdColor = 0; //blank out the color(white)
 
 	//setup tool palette
-	toolPalette = new Palette(1, 3, topRulerRow + 15, paletteLeftEdge);
-	toolPalette->setItem("Dot", '.', 0, 0);
-	toolPalette->setItem("Fill", 'F', 0, 1);
-	toolPalette->setItem("Brush", 'B', 0, 2);
+
+	f.initPaletteMenu(toolPalette, 1, 3, topRulerRow + 15, paletteLeftEdge);
+	
+	toolPalette.setItem(f.createPaletteItem("Dot", '.', 0));
+	toolPalette.setItem(f.createPaletteItem("Fill", 'F', 1));
+	toolPalette.setItem(f.createPaletteItem("Brush", 'B', 2));
+	toolPalette.post(true);
 	tool = DOT;
 
-	//setup filter palette
-	filterPalette = new Palette(2, 4, topRulerRow + 19, paletteLeftEdge);
+	toolPaletteSelection.setWindow(newwin(1, 16, topRulerRow + 15 + 1, paletteLeftEdge));
+	toolPaletteSelection.setText("Dot");
 
-	filterPalette->setItem("<no filter>", F_NO_FILTER, 0, 0);
-	filterPalette->setItem("Obstr", F_OBSTR | COLOR_PAIR(COLOR_RED_BOLD) , 0, 1);
-	filterPalette->setItem("Jumpable", F_JUMPABLE | COLOR_PAIR(COLOR_CYAN_BOLD), 0, 2);
-	filterPalette->setItem("Const Dmg", F_DMG_CONST | COLOR_PAIR(COLOR_MAGENTA), 0, 3);
-	filterPalette->setItem("Inc Dmg", F_DMG_INC | COLOR_PAIR(COLOR_MAGENTA_BOLD), 1, 0);
-	filterPalette->setItem("Ailment", F_AILMENT | COLOR_PAIR(COLOR_YELLOW), 1, 1);
-	filterPalette->setItem("Save", F_SAVEABLE | COLOR_PAIR(COLOR_BLUE_BOLD), 1, 2);
-	filterPalette->setItem("Exit", F_EXIT | COLOR_PAIR(COLOR_GREEN_BOLD), 1, 3);
+	//setup filter palette
+	f.initPaletteMenu(filterPalette, 2, 4, topRulerRow + 19, paletteLeftEdge);
+	
+	filterPalette.setItem(f.createPaletteItem("<no filter>", F_NO_FILTER, 0));
+	filterPalette.setItem(f.createPaletteItem("Obstr", F_OBSTR | COLOR_PAIR(COLOR_RED_BOLD), 1));
+	filterPalette.setItem(f.createPaletteItem("Jumpable", F_JUMPABLE | COLOR_PAIR(COLOR_CYAN_BOLD), 2));
+	filterPalette.setItem(f.createPaletteItem("Const Dmg", F_DMG_CONST | COLOR_PAIR(COLOR_MAGENTA), 3));
+	filterPalette.setItem(f.createPaletteItem("Inc Dmg", F_DMG_INC | COLOR_PAIR(COLOR_MAGENTA_BOLD), 4));
+	filterPalette.setItem(f.createPaletteItem("Ailment", F_AILMENT | COLOR_PAIR(COLOR_YELLOW), 5));
+	filterPalette.setItem(f.createPaletteItem("Save", F_SAVEABLE | COLOR_PAIR(COLOR_BLUE_BOLD), 6));
+	filterPalette.setItem(f.createPaletteItem("Exit", F_EXIT | COLOR_PAIR(COLOR_GREEN_BOLD), 7));
+	filterPalette.post(true);
+
+	filterPaletteSelection.setWindow(newwin(1, 16, topRulerRow + 19 + 2, paletteLeftEdge));
+	filterPaletteSelection.setText("<no filter>");
 }
 
 
@@ -180,7 +231,9 @@ void MapEditor::setupRulers()
 	}
 
 	WINDOW* tRWin = newwin(1, topRulerText.length(), topRulerRow, sideRulerCol + 1);
-	topRuler = new TextLabel(tRWin, topRulerText);
+
+	topRuler.setWindow(tRWin);
+	topRuler.setText(topRulerText);
 
 	/*TODO I need a vertical label to draw this component */
 
@@ -195,7 +248,8 @@ void MapEditor::setupRulers()
 
 bool MapEditor::processInput(int input)
 {
-	return cm->handleInput(input);
+	cm->handleInput(input);
+	return cm->isActive();
 }
 
 
@@ -207,12 +261,28 @@ void MapEditor::createNew()
 	cm->setFocus(map);
 }
 
+void MapEditor::controlCallback(void* caller, void* ptr, int input) //static
+{
+	MapEditor* me = (MapEditor*)caller;
+	me->driver((Controllable*)ptr, input);
+}
+
+void MapEditor::driver(Controllable* control, int input)
+{
+	if (control == &resizeBtn)
+		resizeButtonDriver(); //input is discarded, it is just the value of the mouse key
+	/*else if (control == targetMenu)
+		targetMenuDriver(input);
+	else if (control == msgDisplay)
+		displayDriver(input);*/
+}
+
 
 
 void MapEditor::paletteCallback(void* caller, void* ptr, int input) //static
 {
 	MapEditor* me = (MapEditor*) caller;
-	me->processPaletteInput((Palette*)ptr, input);
+	me->processPaletteInput((GridMenu*)ptr, input);
 }
 
 void MapEditor::mapCallback(void* caller, void* ptr, int input) //static
@@ -234,15 +304,9 @@ void MapEditor::canvasInputDriver(TextField* field, int input)
 	{
 	case KEY_MOUSE: //cm->setFocus(field); 
 		break;
-	case '\t': 
-		//reset dimensions on map !!!this may just be a stub, I may want to add a button to update later
-		canvasRows = stoi(canvasRowsInput->getText());
-		canvasCols = stoi(canvasColsInput->getText());
-		map->resize(canvasRows, canvasCols);
-
-		cm->setFocus(map); //switch focus back to map
-		break;
 	default: 
+		if (isalpha(input)) break; //do not accept alphabetic characters
+
 		field->inputChar(input);
 		break;
 	}
@@ -251,10 +315,38 @@ void MapEditor::canvasInputDriver(TextField* field, int input)
 
 }
 
+void MapEditor::resizeButtonDriver()
+{
+	int rows = stoi(canvasRowsInput.getText());
+	int cols = stoi(canvasColsInput.getText());
+	setCanvasSize(rows, cols);
+	map->resize(canvasRows, canvasCols);
+
+	//make sure cursor is still in bounds
+	curY = curY > (short)map->getTotalRows() ? map->getTotalRows() : curY;
+	curX = curX > (short)map->getTotalCols() ? map->getTotalCols() : curX;
+
+	mp->setViewMode(VM_CENTER); //reset the view to center
+	setConvenienceVariables();
+
+	cm->setFocus(map); //switch focus back to map
+}
+
+void MapEditor::setCanvasSize(int rows, int cols)
+{
+	canvasRows = rows;
+	canvasCols = cols;
+}
 
 void MapEditor::load(string fileName)
 {
 	map->load(fileName);
+	
+	//resize canvas to loaded image
+	setConvenienceVariables();
+
+	setCanvasSize(map->getTotalRows(), map->getTotalCols());
+	
 	cm->setFocus(map);
 }
 
@@ -264,53 +356,59 @@ void MapEditor::save(string fileName)
 }
 
 
-void MapEditor::processPaletteInput(Palette* p, int input)
+void MapEditor::processPaletteInput(GridMenu* p, int input)
 {
-	int pY, pX;
 	MEVENT event;
 	nc_getmouse(&event);
-	p->translateCoords(event.y, event.x, pY, pX);
 
-	PaletteItem* item = p->pickItem(pY, pX);
+	int pY = event.y;
+	int	pX = event.x;
+	wmouse_trafo(p->getWindow(), &pY, &pX, false);
 
-	if (p == textPalette)
+	p->driver(input);
+	LineItem* item = (LineItem*)p->getCurrentItem();
+
+	if (p == &textPalette)
 	{
 		textColor = (item->index << 24) & A_COLOR; //it might make more sense to use the icon, but this is backwards compatible with what I had
+		textPaletteSelection.setText(item->name);
 	}
-	else if (p == bkgdPalette)
+	else if (p == &bkgdPalette)
 	{
 		bkgdColor = (item->index << 28) & A_COLOR; //it might make more sense to use the icon, but this is backwards compatible with what I had
+		bkgdPaletteSelection.setText(item->name);
 	}
-	else if (p == toolPalette)
+	else if (p == &toolPalette)
 	{
 		tool = item->index;
+		toolPaletteSelection.setText(item->name);
 	}
-	else if (p == filterPalette)
+	else if (p == &filterPalette)
 	{
-		filter = item->index; //do I need this?
-		processFilterPaletteInput(item->icon);
+		//filter = item->index; //do I need this?
+		
+		processFilterPaletteInput(item->getIcon());
+		filterPaletteSelection.setText(item->name);
 	}
 }
 
 
 void MapEditor::processFilterPaletteInput(chtype icon)
 {
-	int color = (icon & 0x0f000000) >> 24;
-	int filter = 0;
-	int symbol = icon & 0x0000ffff;
+	filter = EffectType::NONE;
+	int symbol = (icon & 0x0000ffff);
 	switch (symbol)
 	{
 	case F_NO_FILTER: mapEffectFilterPattern->setEnabled(false); return; break;
-	case F_OBSTR: filter = E_OBSTR; break;
-	case F_JUMPABLE: filter = E_JUMPABLE; break;
-	case F_DMG_CONST: filter = E_HP_ALT_CONST; break;
+	case F_OBSTR: filter = EffectType::OBSTR; break;
+	case F_JUMPABLE: filter = EffectType::JUMPABLE; break;
+//	case F_DMG_CONST: filter = E_HP_ALT_CONST; break;
 //	case F_DMG_INC: filter = E_HP_ALT_INC; break;
 	//case F_AILMENT: filter = E_AILMENT; break;
 	//case F_SAVEABLE: filter = E_SAVEABLE; break;
-	case F_EXIT: filter = E_EXIT; break;
+//	case F_EXIT: filter = E_EXIT; break;
 	}
 	mapEffectFilterPattern->setEnabled(true);
-//	mapEffectFilterPattern->setEffectColorPair(color, filter);
 }
 
 
@@ -320,8 +418,9 @@ void MapEditor::processMouseInput(int input)
 	nc_getmouse(&event);
 	if (event.bstate & BUTTON1_CLICKED)
 	{
-		int pY, pX;
-		map->translateCoords(event.y, event.x, pY, pX);
+		int pY = event.y;
+		int	pX = event.x;
+		wmouse_trafo(map->getWindow(), &pY, &pX, false);
 
 		applyTool(curY - centerY + pY, curX - centerX + pX);
 	}
@@ -337,7 +436,8 @@ void MapEditor::applyTool(int y, int x)
 	{
 		if (mapEffectFilterPattern->isEnabled())
 		{
-			map->setEffect(y, x, mapEffectFilterPattern->getEffect());
+			TwoDStorage<EffectType>& el = map->getEffectsLayer();
+			el.setDatum(y, x, filter);
 		}
 		else
 		{
@@ -348,6 +448,10 @@ void MapEditor::applyTool(int y, int x)
 	break;
 
 	case FILL:
+		if (mapEffectFilterPattern->isEnabled())
+		{
+			break;
+		}
 		fill(y, x);
 		break;
 	}
@@ -409,8 +513,7 @@ bool MapEditor::processMapInput(int input)
 		{
 			if (mapEffectFilterPattern->isEnabled())
 			{
-				map->getLayer(LAYER_EFFECT)->setDatum(curY, curX, E_NONE);
-				//map->removeEffect(curY, curX, mapEffectFilterPattern->getEffect());
+				map->getEffectsLayer().setDatum(curY, curX, EffectType::NONE);
 			}
 			else
 				tileMap->setDatum(curY, curX, ' ');
@@ -426,12 +529,12 @@ bool MapEditor::processMapInput(int input)
 		break;
 	case CTL_UP:
 	case CTL_DOWN:
-		hl->flip(HL_VER);
+		hl->flip(AXIS_VER);
 		setModified(true);
 		break;
 	case CTL_LEFT:
 	case CTL_RIGHT:
-		hl->flip(HL_HOR);
+		hl->flip(AXIS_HOR);
 		setModified(true);
 		break;
 
@@ -548,7 +651,7 @@ void MapEditor::draw()
 	
 	char buf[20];
 	sprintf_s(buf, "x: %+4d  y: %+4d", curX, curY);
-	xyLbl->setText(buf);
+	xyLbl.setText(buf);
 	
 	
 	//mvprintw(bottom + topRulerRow + 1, sideRulerCol + 25, "H:", map->getTotalRows());
@@ -559,7 +662,7 @@ void MapEditor::draw()
 
 	
 	cm->draw();
-	
+	hl->draw();
 	chtype cursorChar = mvwinch(viewport, curY - image->getUlY(), curX - image->getUlX());
 	waddch(viewport, cursorChar | A_REVERSE);
 	wnoutrefresh(viewport);
@@ -567,3 +670,9 @@ void MapEditor::draw()
 
 
 
+MapEditor::~MapEditor()
+{
+	delwin(viewport);
+	delwin(frame);
+	
+}

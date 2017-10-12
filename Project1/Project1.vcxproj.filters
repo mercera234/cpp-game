@@ -18,31 +18,16 @@
     <ClCompile Include="pdcursetest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Map.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DataPkg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="stateManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MapEditor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MapEffectFilterPattern.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="MegaMap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ActorCard.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ActorEditor.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Actor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Editor.cpp">
@@ -51,16 +36,7 @@
     <ClCompile Include="MasterEditor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="BattleAlgorithm.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="BattleProcessor.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="FreeMovementProcessor.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MovementProcessor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ExplorationProcessor.cpp">
@@ -69,63 +45,24 @@
     <ClCompile Include="Factory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MapRepository.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="AutoMap.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="WadDatabase.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DataPkgFactory.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ActorDefRepository.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TurnTracker.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GameStateManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="TitleScreenState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TestState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="mapKeyComparators.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Actor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Map.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DataPkg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="stateManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MapEditor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MapEffectFilterPattern.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="MapMetadata.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MegaMap.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ActorCard.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ActorEditor.h">
@@ -137,22 +74,7 @@
     <ClInclude Include="MasterEditor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Spell.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="BattleAlgorithm.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="BattleProcessor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FreeMovementProcessor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MovementProcessor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MapExit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ExplorationProcessor.h">
@@ -161,52 +83,13 @@
     <ClInclude Include="Factory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MapRepository.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Repository.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="AutoMap.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="WadDatabase.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Lump.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DataPkgFactory.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ActorDefRepository.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="TemplateTest.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="WadDatabaseQuery.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Repository2.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TurnTracker.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GameState.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GameStateManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TitleScreenState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TestState.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MapKeyComparators.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
