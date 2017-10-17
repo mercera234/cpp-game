@@ -3,6 +3,7 @@
 #include "GridMenu.h"
 #include "LineItem.h"
 #include "ScrollBar.h"
+#include "Palette.h"
 
 void gridMenuTest()
 {
@@ -256,6 +257,60 @@ void paletteTest()
 	int rows = 4;
 	int cols = 4;
 
+	Palette palette(1, 1, "Test", rows, cols);
+
+	for (int i = 0; i < TOTAL_COLORS; i++)
+	{
+		chtype c = ' ' | (i << 28) & A_COLOR;		
+		palette.setItem(colorNames[i], c, i);
+	}
+
+	
+	palette.post(true);
+
+	bool usingMenu = true;
+	while (usingMenu)
+	{
+		palette.draw();
+		doupdate();
+		int input = getch();
+
+		switch (input)
+		{
+		case KEY_ESC: usingMenu = false; break;
+		case '\r':
+		case '\n':
+		case KEY_ENTER:
+		{
+			palette.driver(input);
+			
+			LineItem* item = palette.getCurrentItem();
+			
+			if (item == nullptr)
+			{
+				continue;
+			}
+
+			
+		}
+		break;
+		case KEY_MOUSE:
+		{
+			palette.driver(input);
+		}
+		break;
+		default:
+			palette.driver(input);
+			break;
+		}
+	}
+}
+
+void palettePrototypeTest()
+{
+	int rows = 4;
+	int cols = 4;
+
 	//might make sense to use a factory method
 	WINDOW* win = newwin(rows, cols * 3, 0, 0);
 	WINDOW* label = newwin(1, 16, rows, 0);
@@ -264,7 +319,7 @@ void paletteTest()
 	palette.setItemWidth(1);
 	palette.setAcceptsMouseInput(true);
 	palette.setWrapAround(false);
-	
+
 
 	for (int i = 0; i < TOTAL_COLORS; i++)
 	{
@@ -273,11 +328,11 @@ void paletteTest()
 
 		chtype c = ' ' | (i << 28) & A_COLOR;
 		item->setIcon(c);
-		
+
 		palette.setItem(item);
 	}
 
-	
+
 	palette.post(true);
 
 	bool usingMenu = true;
@@ -301,7 +356,7 @@ void paletteTest()
 				continue;
 			}
 
-			
+
 		}
 		break;
 		case KEY_MOUSE:
@@ -320,6 +375,7 @@ void paletteTest()
 	}
 
 	delwin(label);
+
 }
 
 

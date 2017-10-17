@@ -177,6 +177,7 @@
     <ClCompile Include="MockFileDirectory.cpp" />
     <ClCompile Include="MockMenu.cpp" />
     <ClCompile Include="MockStorable.cpp" />
+    <ClCompile Include="PaletteTest.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

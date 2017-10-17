@@ -147,7 +147,7 @@ void Map::resize(int rows, int cols)
 
 	setDimensions(rows, cols);
 	display.setDimensions(rows, cols);
-	effectsLayer.setDimensions(rows, cols);
+	effectsLayer.setDimensions(rows, cols, EffectType::NONE);
 }
 
 

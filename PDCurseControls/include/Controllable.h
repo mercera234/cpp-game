@@ -18,17 +18,17 @@ protected:
 
 	//Rect* r; //A rectangle to save the true dimensions of the window in case it should go off screen
 	
-	int ulY; //the top row that is visible
-	int ulX; //the left most col that is visible
+	int ulY = 0; //the top row that is visible
+	int ulX = 0; //the left most col that is visible
 
 	//The window dimensions are like the viewport on the screen
 	//These are for holding the true dimensions of the control, useful for maps, menus, anything that contains more data that can actually be shown at a time
-	unsigned int totalRows; //total rows control has whether visible or not
-	unsigned int totalCols; //total cols control has whether visible or not
-	unsigned int totalTiles; //will only be set if total rows or cols are modified
+	unsigned int totalRows = 0; //total rows control has whether visible or not
+	unsigned int totalCols = 0; //total cols control has whether visible or not
+	unsigned int totalTiles = 0; //will only be set if total rows or cols are modified
 
-	unsigned short visibleRows; //total rows that can be displayed on screen
-	unsigned short visibleCols; //total cols that can be displayed on screen
+	unsigned short visibleRows = 0; //total rows that can be displayed on screen
+	unsigned short visibleCols = 0; //total cols that can be displayed on screen
 	
 
 	/*

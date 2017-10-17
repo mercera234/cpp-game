@@ -36,10 +36,6 @@
 #include "TitleScreenState.h"
 #include "GameStateManager.h"
 #include "TestState.h"
-//#include "menu_tests.h"
-//#include "text_tests.h"
-//#include "file_chooser_tests.h"
-//#include "image_tests.h"
 #include "Actor.h"
 
 void mockFightTest()
@@ -1175,7 +1171,7 @@ void callBackTest(void* caller, void* ptr, int input)
 
 void callBackTest2(void* caller, void* ptr, int input)
 {
-	Palette* p = (Palette*)ptr;
+	/*Palette* p = (Palette*)ptr;
 	
 	MEVENT event;
 	nc_getmouse(&event);
@@ -1183,7 +1179,7 @@ void callBackTest2(void* caller, void* ptr, int input)
 	int colorY = event.y;
 	int colorX = event.x;
 	bool retval = wmouse_trafo(p->getWindow(), &colorY, &colorX, false);
-	p->pickItem(colorY, colorX);
+	p->pickItem(colorY, colorX);*/
 }
 
 void newCallback(void* caller, void* ptr, int input)
@@ -1319,7 +1315,7 @@ void testColors()
 
 void controlManagerTest()
 {
-	WINDOW* win = newwin(2, 20, 1, 1);
+	/*WINDOW* win = newwin(2, 20, 1, 1);
 	GridMenu* m1 = new GridMenu(win, 2, 1);
 
 	m1->setItem(new LineItem("Yes", 0, 0));
@@ -1360,7 +1356,7 @@ void controlManagerTest()
 		clear();
 		cm->handleInput(c);
 	}
-	cm->shutdown();
+	cm->shutdown();*/
 
 }
 

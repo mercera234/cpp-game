@@ -112,13 +112,13 @@ void MapEditor::setupControlManager()
 {
 	cm = new ControlManager(this);
 	cm->registerControl(&textPalette, MOUSE_LISTENER, paletteCallback);
-	cm->registerControl(&textPaletteSelection, 0, 0);
+	//cm->registerControl(&textPaletteSelection, 0, 0);
 	cm->registerControl(&bkgdPalette, MOUSE_LISTENER, paletteCallback);
-	cm->registerControl(&bkgdPaletteSelection, 0, 0);
+//	cm->registerControl(&bkgdPaletteSelection, 0, 0);
 	cm->registerControl(&toolPalette, MOUSE_LISTENER, paletteCallback);
-	cm->registerControl(&toolPaletteSelection, 0, 0);
+	//cm->registerControl(&toolPaletteSelection, 0, 0);
 	cm->registerControl(&filterPalette, MOUSE_LISTENER, paletteCallback);
-	cm->registerControl(&filterPaletteSelection, 0, 0);
+//	cm->registerControl(&filterPaletteSelection, 0, 0);
 	cm->registerControl(&canvasRowsInput, KEY_LISTENER | MOUSE_LISTENER, canvasInputCallback);
 	cm->registerControl(&canvasColsInput, KEY_LISTENER | MOUSE_LISTENER, canvasInputCallback);
 	cm->registerControl(map, KEY_LISTENER | MOUSE_LISTENER, mapCallback);
@@ -127,10 +127,10 @@ void MapEditor::setupControlManager()
 
 	cm->registerControl(fileNameLbl, 0, 0);
 	cm->registerControl(&topRuler, 0, 0);
-	cm->registerControl(&textTitle, 0, 0);
-	cm->registerControl(&bkgdTitle, 0, 0);
-	cm->registerControl(&toolTitle, 0, 0);
-	cm->registerControl(&filterTitle, 0, 0);
+	//cm->registerControl(&textTitle, 0, 0);
+//	cm->registerControl(&bkgdTitle, 0, 0);
+////	cm->registerControl(&toolTitle, 0, 0);
+//	cm->registerControl(&filterTitle, 0, 0);
 	cm->registerControl(&xyLbl, 0, 0);
 	cm->registerControl(&hLbl, 0, 0);
 	cm->registerControl(&wLbl, 0, 0);
@@ -147,74 +147,56 @@ void MapEditor::setupPalettes()
 	//setup palette labels
 	paletteLeftEdge = sideRulerCol + 1 + visibleCols + 5;
 
-	textTitle.setWindow(newwin(1, 4, topRulerRow, paletteLeftEdge));
-	textTitle.setText("TEXT");
-	
-	bkgdTitle.setWindow(newwin(1, 4, topRulerRow + 7, paletteLeftEdge));
-	bkgdTitle.setText("BKGD");
-	
-	toolTitle.setWindow(newwin(1, 4, topRulerRow + 14, paletteLeftEdge));
-	toolTitle.setText("TOOL");
-	
-	filterTitle.setWindow(newwin(1, 6, topRulerRow + 18, paletteLeftEdge));
-	filterTitle.setText("FILTER");
-	
-	//setup color palettes
 	int rows = 4;
 	int cols = 4;
 
-	Factory f;
-	f.initPaletteMenu(textPalette, rows, cols, topRulerRow + 1, paletteLeftEdge);
-	f.initPaletteMenu(bkgdPalette, rows, cols, topRulerRow + 8, paletteLeftEdge);
+	textPalette.setTitle("TEXT");
+	textPalette.setWindows(topRulerRow, paletteLeftEdge, rows, cols);
 
+	bkgdPalette.setTitle("BKGD");
+	bkgdPalette.setWindows(topRulerRow + 7, paletteLeftEdge, rows, cols);
+
+	toolPalette.setTitle("TOOL");
+	toolPalette.setWindows(topRulerRow + 14, paletteLeftEdge, 1, 3);
+
+	filterPalette.setTitle("FILTER");
+	filterPalette.setWindows(topRulerRow + 18, paletteLeftEdge, 2, cols);
+
+	//setup color palettes
 	for (int i = 0; i < TOTAL_COLORS; i++)
 	{
 		chtype c = ' ' | (i << 28) & A_COLOR;
 		int x = i % cols;
 		int y = i / cols;
 
-		textPalette.setItem(f.createPaletteItem(colorNames[i], c, i));
-		bkgdPalette.setItem(f.createPaletteItem(colorNames[i], c, i));
+		textPalette.setItem(colorNames[i], c, i);
+		bkgdPalette.setItem(colorNames[i], c, i);
 	}
 	textPalette.post(true);
-	textPaletteSelection.setWindow(newwin(1, 16, topRulerRow + rows + 1, paletteLeftEdge));
-	textPaletteSelection.setText(colorNames[0]);
-
 	bkgdPalette.post(true);
-	bkgdPaletteSelection.setWindow(newwin(1, 16, topRulerRow + rows + 8, paletteLeftEdge));
-	bkgdPaletteSelection.setText(colorNames[0]);
-
+	
 	textColor = 0; //blank out the color(white)
 	bkgdColor = 0; //blank out the color(white)
 
 	//setup tool palette
+	toolPalette.setItem("Dot", '.', 0);
+	toolPalette.setItem("Fill", 'F', 1);
+	toolPalette.setItem("Brush", 'B', 2);
 
-	f.initPaletteMenu(toolPalette, 1, 3, topRulerRow + 15, paletteLeftEdge);
-	
-	toolPalette.setItem(f.createPaletteItem("Dot", '.', 0));
-	toolPalette.setItem(f.createPaletteItem("Fill", 'F', 1));
-	toolPalette.setItem(f.createPaletteItem("Brush", 'B', 2));
 	toolPalette.post(true);
 	tool = DOT;
 
-	toolPaletteSelection.setWindow(newwin(1, 16, topRulerRow + 15 + 1, paletteLeftEdge));
-	toolPaletteSelection.setText("Dot");
-
 	//setup filter palette
-	f.initPaletteMenu(filterPalette, 2, 4, topRulerRow + 19, paletteLeftEdge);
-	
-	filterPalette.setItem(f.createPaletteItem("<no filter>", F_NO_FILTER, 0));
-	filterPalette.setItem(f.createPaletteItem("Obstr", F_OBSTR | COLOR_PAIR(COLOR_RED_BOLD), 1));
-	filterPalette.setItem(f.createPaletteItem("Jumpable", F_JUMPABLE | COLOR_PAIR(COLOR_CYAN_BOLD), 2));
-	filterPalette.setItem(f.createPaletteItem("Const Dmg", F_DMG_CONST | COLOR_PAIR(COLOR_MAGENTA), 3));
-	filterPalette.setItem(f.createPaletteItem("Inc Dmg", F_DMG_INC | COLOR_PAIR(COLOR_MAGENTA_BOLD), 4));
-	filterPalette.setItem(f.createPaletteItem("Ailment", F_AILMENT | COLOR_PAIR(COLOR_YELLOW), 5));
-	filterPalette.setItem(f.createPaletteItem("Save", F_SAVEABLE | COLOR_PAIR(COLOR_BLUE_BOLD), 6));
-	filterPalette.setItem(f.createPaletteItem("Exit", F_EXIT | COLOR_PAIR(COLOR_GREEN_BOLD), 7));
-	filterPalette.post(true);
+	filterPalette.setItem("<no filter>", F_NO_FILTER, 0);
+	filterPalette.setItem("Obstr", F_OBSTR | COLOR_PAIR(COLOR_RED_BOLD), 1);
+	filterPalette.setItem("Jumpable", F_JUMPABLE | COLOR_PAIR(COLOR_CYAN_BOLD), 2);
+	filterPalette.setItem("Const Dmg", F_DMG_CONST | COLOR_PAIR(COLOR_MAGENTA), 3);
+	filterPalette.setItem("Inc Dmg", F_DMG_INC | COLOR_PAIR(COLOR_MAGENTA_BOLD), 4);
+	filterPalette.setItem("Ailment", F_AILMENT | COLOR_PAIR(COLOR_YELLOW), 5);
+	filterPalette.setItem("Save", F_SAVEABLE | COLOR_PAIR(COLOR_BLUE_BOLD), 6);
+	filterPalette.setItem("Exit", F_EXIT | COLOR_PAIR(COLOR_GREEN_BOLD), 7);
 
-	filterPaletteSelection.setWindow(newwin(1, 16, topRulerRow + 19 + 2, paletteLeftEdge));
-	filterPaletteSelection.setText("<no filter>");
+	filterPalette.post(true);
 }
 
 
@@ -282,7 +264,7 @@ void MapEditor::driver(Controllable* control, int input)
 void MapEditor::paletteCallback(void* caller, void* ptr, int input) //static
 {
 	MapEditor* me = (MapEditor*) caller;
-	me->processPaletteInput((GridMenu*)ptr, input);
+	me->processPaletteInput((Palette*)ptr, input);
 }
 
 void MapEditor::mapCallback(void* caller, void* ptr, int input) //static
@@ -356,7 +338,7 @@ void MapEditor::save(string fileName)
 }
 
 
-void MapEditor::processPaletteInput(GridMenu* p, int input)
+void MapEditor::processPaletteInput(Palette* p, int input)
 {
 	MEVENT event;
 	nc_getmouse(&event);
@@ -371,24 +353,18 @@ void MapEditor::processPaletteInput(GridMenu* p, int input)
 	if (p == &textPalette)
 	{
 		textColor = (item->index << 24) & A_COLOR; //it might make more sense to use the icon, but this is backwards compatible with what I had
-		textPaletteSelection.setText(item->name);
 	}
 	else if (p == &bkgdPalette)
 	{
 		bkgdColor = (item->index << 28) & A_COLOR; //it might make more sense to use the icon, but this is backwards compatible with what I had
-		bkgdPaletteSelection.setText(item->name);
 	}
 	else if (p == &toolPalette)
 	{
 		tool = item->index;
-		toolPaletteSelection.setText(item->name);
 	}
 	else if (p == &filterPalette)
 	{
-		//filter = item->index; //do I need this?
-		
 		processFilterPaletteInput(item->getIcon());
-		filterPaletteSelection.setText(item->name);
 	}
 }
 

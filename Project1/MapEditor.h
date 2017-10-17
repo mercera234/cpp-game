@@ -48,10 +48,6 @@ private:
 	//Labels
 	TextLabel topRuler;
 	TextLabel sideRuler;
-	TextLabel textTitle;
-	TextLabel bkgdTitle;
-	TextLabel filterTitle;
-	TextLabel toolTitle;
 	TextLabel xyLbl;
 	
 	TextLabel hLbl;
@@ -66,18 +62,10 @@ private:
 	short layer;
 
 	/*Palette*/
-	GridMenu textPalette;
-	TextLabel textPaletteSelection;
-	
-	GridMenu bkgdPalette;
-	TextLabel bkgdPaletteSelection;
-
-	GridMenu toolPalette;
-	TextLabel toolPaletteSelection;
-
-	GridMenu filterPalette;
-	TextLabel filterPaletteSelection;
-	
+	Palette textPalette;
+	Palette bkgdPalette;
+	Palette toolPalette;
+	Palette filterPalette;
 	
 	int paletteLeftEdge; //
 	int textColor;
@@ -99,7 +87,7 @@ private:
 
 	void processShiftDirectionalInput(int input);
 
-	void processPaletteInput(GridMenu* p, int input);
+	void processPaletteInput(Palette* p, int input);
 	void processFilterPaletteInput(chtype icon);
 	void resizeButtonDriver();
 	

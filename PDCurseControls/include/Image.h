@@ -9,7 +9,7 @@ class Image : public Controllable, public Storable
 {
 private:
 	/*The array of tiles that make up the image.*/
-	TwoDStorage<chtype>* tileMap = nullptr;
+	TwoDStorage<chtype> tileMap;
 	
 	/*
 	True if a border is to be drawn around the image within the control space. 
@@ -40,7 +40,7 @@ public:
 	int load(std::ifstream& loadFile);
 
 	//getters/setters
-	TwoDStorage<chtype>* getTileMap() { return tileMap; }
+	TwoDStorage<chtype>* getTileMap() { return &tileMap; }
 	void setBordered(bool bordered) { this->bordered = bordered; }
 	bool isBordered() { return bordered; }
 

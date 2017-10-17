@@ -1,34 +1,40 @@
 #pragma once
+#include <iostream>
 #include "curses.h"
 #include "Controllable.h"
-#include <iostream>
-using namespace std;
+#include "GridMenu.h"
+#include "TextLabel.h"
+#include "LineItem.h"
+
 
 /*
-We can repurpose this class to hold a gridmenu, title and icon identifer
+A palette is a special menu that allows the user to select particular icons usually as tools
 */
-struct PaletteItem
-{
-	unsigned short index;
-	string name;
-	chtype icon;
-};
-
 class Palette : public Controllable
 {
 private:
-	char mark;
-	short selectedItem;
-	unsigned short rows, cols;
-	unsigned short itemCount; // rows * cols
-	
-	PaletteItem* items;
+	TextLabel title;
+	GridMenu menu;
+	TextLabel selection;
 public:
-	Palette(int rows, int cols, int y, int x);
-	void setItem(string name, chtype icon, int row, int col);
+	Palette() {}
+	Palette(unsigned short y, unsigned short x, const std::string& titleText, unsigned short menuRows, unsigned short menuCols);
+	
 
-	void draw();
-	~Palette();
-	//chtype pickItem(int y, int x);
-	PaletteItem* pickItem(int y, int x);
+	/*Set the placement of the palette, and the amount of rows, cols that the menu will have. 
+	The title and selection will automatically get 1 row and be the same width as the menu*/
+	void setWindows(unsigned short y, unsigned short x, unsigned short menuRows, unsigned short menuCols);
+
+	void setItem(const std::string& name, chtype icon, unsigned short index);
+
+	void draw(); //override
+	void driver(int input);
+	bool post(bool post);
+	
+	LineItem* getItem(int menuRow, int menuCol);
+	LineItem* getCurrentItem();
+
+	//getters/setters
+	void setTitle(const std::string& text);
+	std::string getTitle() { return title.getText(); }
 };

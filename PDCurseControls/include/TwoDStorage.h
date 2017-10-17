@@ -6,15 +6,19 @@ template <class T>
 class TwoDStorage
 {
 private:
-	unsigned int rows;
-	unsigned int cols;
+	unsigned int rows = 0;
+	unsigned int cols = 0;
 	std::vector<T> data;
+
+	//resize the underlying vector but maintain the 2d layout. Use fillValue if the size is larger in either dimension for unintialized data
+	void resize(unsigned int newRows, unsigned int newCols, std::vector<T>& copyData);
 public:
 	TwoDStorage() {};
 	TwoDStorage(unsigned int rows, unsigned int cols);
 
+	/*Set the 2d dimensions of storage. If resizing from a previous size, retains the layout of the individual data elements.*/
 	void setDimensions(unsigned int rows, unsigned int cols);
-
+	void setDimensions(unsigned int rows, unsigned int cols, const T fillValue); //same as setDimensions but uses a fillValue to initialize all elements
 	void fill(const T datum); //fill all elements in storage with T
 	void copyFrom(TwoDStorage<T>& fromStorage);
 
@@ -39,14 +43,60 @@ TwoDStorage<T>::TwoDStorage(unsigned int rows, unsigned int cols)
 }
 
 template <class T>
-void TwoDStorage<T>::setDimensions(unsigned int rows, unsigned int cols)
+void TwoDStorage<T>::setDimensions(unsigned int newRows, unsigned int newCols)
 {
-	this->rows = rows;
-	this->cols = cols;
-
-	int size = rows * cols;
-	data.resize(size);
+	if (data.empty())//nothing to save so initialize
+	{
+		data.resize(newRows * newCols);
+	}
+	else
+	{
+		std::vector<T> copyData(newRows * newCols);
+		resize(newRows, newCols, copyData);
+	}
+		
+	rows = newRows;
+	cols = newCols;
 }
+
+
+template <class T>
+void TwoDStorage<T>::setDimensions(unsigned int newRows, unsigned int newCols, const T fillValue)
+{
+	if (data.empty())//nothing to save so initialize
+	{
+		data.resize(newRows * newCols, fillValue);
+	}
+	else
+	{
+		std::vector<T> copyData(newRows * newCols, fillValue);
+		resize(newRows, newCols, copyData);
+	}
+		
+	rows = newRows;
+	cols = newCols;
+}
+
+
+template <class T>
+void TwoDStorage<T>::resize(unsigned int newRows, unsigned int newCols, std::vector<T>& copyData)
+{
+	int copyRows = std::min(newRows, rows); //copy only what will fit in the current data storage
+	int copyCols = std::min(newCols, cols);
+
+	for (int row = 0; row < copyRows; row++)
+	{
+		for (int col = 0; col < copyCols; col++)
+		{
+			int newElement = row * newCols + col;
+			copyData[newElement] = getDatum(row, col);
+		}
+	}
+
+	//now resize data and copy data back from copyData vector
+	data = copyData;
+}
+
 
 //TODO alter the next 2 methods to return T& so that nullptr can be returned instead of throwing an exception
 template <class T>
@@ -111,5 +161,4 @@ void TwoDStorage<T>::copyFrom(TwoDStorage<T>& fromStorage)
 		}
 	}
 }
-
 

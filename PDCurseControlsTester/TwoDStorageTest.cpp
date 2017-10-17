@@ -95,5 +95,53 @@ namespace PDCurseControlsTester
 			displayData.setDimensions(1, 2);
 			Assert::AreEqual(2, (int)displayData.getSize());
 		}
+
+		TEST_METHOD(setDimensionsWithFillCharSmallerTest)
+		{
+			int rows = 2;
+			int cols = 3;
+		
+			TwoDStorage<int> displayData(rows, cols);
+			for (unsigned int i = 0; i < displayData.getSize(); i++)
+			{
+				displayData.setDatum(i, i + 10);
+			}
+
+
+			displayData.setDimensions(2, 2, 0);
+			Assert::AreEqual(14, displayData.getDatum(3));
+		}
+
+		TEST_METHOD(setDimensionsWithFillCharLargerTest)
+		{
+			int rows = 2;
+			int cols = 3;
+
+			TwoDStorage<int> displayData(rows, cols);
+			for (unsigned int i = 0; i < displayData.getSize(); i++)
+			{
+				displayData.setDatum(i, i + 10);
+			}
+
+			int fillchar = 99;
+			displayData.setDimensions(2, 4, fillchar);
+			Assert::AreEqual(fillchar, displayData.getDatum(3));
+			Assert::AreEqual(15, displayData.getDatum(6));
+		}
+
+		TEST_METHOD(resizeCheckDimensionsTest)
+		{
+			int rows = 2;
+			int cols = 3;
+
+			TwoDStorage<int> displayData(rows, cols);
+
+			int newRows = 3;
+			int newCols = 4;
+			displayData.setDimensions(newRows, newCols, 0);
+			
+			Assert::IsTrue((int)displayData.getRows() == newRows);
+			Assert::IsTrue((int)displayData.getCols() == newCols);
+		}
 	};
 }

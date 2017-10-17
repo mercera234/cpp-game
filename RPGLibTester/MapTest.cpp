@@ -90,7 +90,27 @@ namespace PDCurseControlsTester
 			Assert::AreEqual(newRows * newCols, (int)tileEffects.getSize());
 		}
 
-		//new maps set all tile effects to nullptr by default
+		TEST_METHOD(resizeLayersDataTest)
+		{
+			int rows = 4;
+			int cols = 3;
+			WINDOW* win = newwin(rows, cols, 0, 0); //the window dimensions do not have to match the map
+
+			std::string name = "test map";
+			Map theMap(name, rows, cols, win);
+
+			int newRows = 3;
+			int newCols = 1;
+			theMap.resize(newRows, newCols);
+
+			TwoDStorage<chtype>* img = theMap.getDisplay()->getTileMap();
+			TwoDStorage<EffectType> tileEffects = theMap.getEffectsLayer();
+
+			Assert::AreEqual(newRows * newCols, (int)img->getSize());
+			Assert::AreEqual(newRows * newCols, (int)tileEffects.getSize());
+		}
+
+		//new maps set all tile effects to NONE by default
 		TEST_METHOD(newMapTileEffectTest)
 		{
 			int rows = 1;

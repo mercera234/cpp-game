@@ -36,7 +36,7 @@ void Image::reset()
 	{
 		for (unsigned int col = 0; col < totalCols; col++)
 		{
-			tileMap->setDatum(row, col, ' ');
+			tileMap.setDatum(row, col, ' ');
 		}
 	}
 }
@@ -67,7 +67,7 @@ void Image::drawTileChar(unsigned short row, unsigned short col, int mapY, int m
 	chtype c = ' ';
 	if (mapX >= 0 && mapY >= 0 && mapX < (int)totalCols && mapY < (int)totalRows) //in the grid
 	{
-		c = tileMap->getDatum(mapY, mapX);
+		c = tileMap.getDatum(mapY, mapX);
 	}
 	else if(bordered)//if negative or beyond the canvas then we are outside the array so draw a box like boundary around the map
 	{
@@ -130,15 +130,13 @@ int Image::save(std::ofstream& saveFile)
 	saveFile.write((char*)&totalRows, sizeof(short));
 	saveFile.write((char*)&totalCols, sizeof(short));
 	
-	//TODO class is broken now
 	chtype c;
 	for (unsigned int i = 0; i < totalTiles; i++)
 	{
-		c = tileMap->getDatum(i);
+		c = tileMap.getDatum(i);
 		saveFile.write((char*)&c, sizeof(chtype));
 	}
-	//saveFile.write((char*)tileMap->getData(), sizeof(chtype) * totalTiles);
-
+	
 	std::streampos endPos = saveFile.tellp();
 
 	return (int)(endPos - startPos);
@@ -154,69 +152,32 @@ int Image::load(std::ifstream& loadFile)
 
 	loadFile.read((char*)&totalRows, sizeof(short));
 	loadFile.read((char*)&totalCols, sizeof(short));
-	Controllable::setDimensions(totalRows, totalCols); //this sets the variables twice, but that's ok
-
-	if (tileMap == nullptr || totalTiles != tileMap->getSize()) //if image is new, or a resize is occurring
-	{
-		if(tileMap != nullptr)
-			tileMap->~TwoDStorage(); //if display was already setup then delete the data
-			
-		tileMap = new TwoDStorage<chtype>(totalRows, totalCols);
-	}
-
+	
+	tileMap.setDimensions(totalRows, totalCols);
 	
 	chtype c;
 	for (unsigned int i = 0; i < totalTiles; i++)
 	{
 		loadFile.read((char*)&c, sizeof(chtype));
-		tileMap->setDatum(i, c);
+		tileMap.setDatum(i, c);
 	}
-
-	//loadFile.read((char*)tileMap->getData(), sizeof(chtype) * totalTiles);
 
 	std::streampos endPos = loadFile.tellg();
 
 	return (int)(endPos - startPos);
 }
 
-/*
-//so far works only for resizing the amount of rows. If number of cols changes then the data cannot be copied exactly
 
-*/
 void Image::setDimensions(int rows, int cols)
 {
-	int prevTotalTiles = totalTiles;
-
+	tileMap.setDimensions(rows, cols, ' ');
 	Controllable::setDimensions(rows, cols);
-
-	if (tileMap == nullptr) //don't resize tileMap if not initialized (like on first use)
-	{
-		tileMap = new TwoDStorage<chtype>(totalRows, totalCols);
-		reset();
-		return;
-	}
-		
-
-	TwoDStorage<chtype>* oldTileMap = tileMap;
-	TwoDStorage<chtype>* newTileMap = new TwoDStorage<chtype>(rows, cols);
-
-	//for now we will resize to the preferred size, but later on we will only do dynamic resizing to particular sizes
-	for (unsigned int i = 0; i < totalTiles; i++)
-	{
-		newTileMap->fill(' ');
-	}
-
-	newTileMap->copyFrom(*oldTileMap);
-	tileMap = newTileMap;
-
-	delete oldTileMap;
 }
-
 
 
 Image::~Image()
 {
-	delete tileMap;
+	//delete tileMap;
 }
 
 

@@ -1,77 +1,78 @@
 #include "Palette.h"
 
-Palette::Palette(int rows, int cols, int y, int x)
+Palette::Palette(unsigned short y, unsigned short x, const std::string& titleText, unsigned short menuRows, unsigned short menuCols)
 {
-	this->rows = rows;
-	this->cols = cols;
-	win = newwin(rows + 1, cols * 3, y, x); //an extra row is added for the display text of the selected tool
-	mark = '>';
-	selectedItem = 0;
-	itemCount = rows * cols;
-	//items = new chtype[itemCount];
-	items = new PaletteItem[itemCount];
+	setWindows(y, x, menuRows, menuCols);
+	setTitle(titleText);
 }
 
-void Palette::setItem(string name, chtype icon, int row, int col)
+void Palette::setTitle(const std::string& text)
 {
-	int element = row * cols + col;
-	items[element].index = element;
-	items[element].name = name;
-	items[element].icon = icon;
+	title.setText(text);
 }
+
+void Palette::setWindows(unsigned short y, unsigned short x, unsigned short menuRows, unsigned short menuCols)
+{
+	int paletteWidth = menuCols * 3;
+	setWindow(newwin(menuRows + 2, paletteWidth, y, x));//not sure if I need this or not
+
+	title.setWindow(newwin(1, paletteWidth, y, x));
+
+	menu.setCursor(shortCursor);
+
+	int menuY = y + 1;
+	menu.setWindow(newwin(menuRows, paletteWidth, menuY, x));
+	menu.setItemWidth(1);
+	menu.setFocusable(false);
+	menu.setAcceptsMouseInput(true);
+	menu.resetItems(menuRows, menuCols);
+
+	selection.setWindow(newwin(1, paletteWidth, menuY + menuRows, x));
+}
+
+
+void Palette::setItem(const std::string& name, chtype icon, unsigned short index)
+{
+	LineItem* dotItem = new LineItem(name, index, -1);
+	dotItem->setField(Fielddraw::DRAW_ICON);
+	dotItem->setIcon(icon);
+
+	menu.setItem(dotItem);
+}
+
 
 void Palette::draw()
 {
-	int scale = 3;
-	wclear(win);
-
-	string displayName;
-	//cycle through each tool
-	for (int row = 0; row < rows; row++) 
-	{
-		for (int col = 0; col < cols; col++)
-		{
-			int element = row * cols + col;
-			chtype c = items[element].icon;
-
-			if (element == selectedItem)
-			{
-				mvwaddch(win, row, col * scale, mark);
-				displayName = items[element].name;
-			}
-			else
-			{
-				mvwaddch(win, row, col * scale, ' ');
-			}
-
-			mvwaddch(win, row, (col * scale) + 1, c);
-		}
-	}
-	
-	mvwaddstr(win, rows, 0, displayName.c_str());
-	wnoutrefresh(win);
+	title.draw();
+	menu.draw();
+	selection.draw();
 }
 
 
-
-Palette::~Palette()
+LineItem* Palette::getItem(int menuRow, int menuCol)
 {
-	delwin(win);
+	return (LineItem*)menu.getItem(menuRow, menuCol);
 }
 
-
-PaletteItem* Palette::pickItem(int y, int x) //returns the raw color and sets that to the selected color
+LineItem* Palette::getCurrentItem()
 {
-	int row = y;
-	int col = x / 3;
-	selectedItem = row * cols + col;
-	return &items[selectedItem];
+	return (LineItem*)menu.getCurrentItem();
 }
 
-//WINDOW* Palette::getWindow()
-//{
-//	return win;
-//}
+void Palette::driver(int input)
+{
+	menu.driver(input);
+	LineItem* item = (LineItem*)menu.getCurrentItem();
+	selection.setText(item->name);
+}
+
+bool Palette::post(bool post)
+{
+	bool retval = menu.post(post);
+	LineItem* item = (LineItem*)menu.getCurrentItem();
+	selection.setText(item->name);
+	return retval;
+}
 
 
 
