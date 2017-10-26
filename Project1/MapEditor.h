@@ -34,14 +34,13 @@ private:
 	short centerX, centerY;
 
 	//The position of the cursor in the map
-	short curX; 
-	short curY;
+	int curX; 
+	int curY;
 
-	FreeMovementProcessor* mp;
+	FreeMovementProcessor mp;
 
-	Map* map;
-	Image* image;
-	TwoDStorage<chtype>* tileMap;
+	Map map;
+	Image* image;//a convenience pointer to the map's image
 
 	char drawChar;
 
@@ -73,9 +72,8 @@ private:
 	short tool;
 	EffectType filter;
 
-	/*global*/
-	MapEffectFilterPattern* mapEffectFilterPattern;
-	Highlighter* hl;
+	MapEffectFilterPattern mapEffectFilterPattern;
+	Highlighter highlighter;
 
 	void setupPalettes();
 	void setupRulers();
@@ -104,7 +102,6 @@ private:
 	void driver(Controllable* control, int input);
 public:
 
-	
 	MapEditor();
 	~MapEditor();
 	bool processInput(int input);

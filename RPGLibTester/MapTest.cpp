@@ -55,6 +55,21 @@ namespace PDCurseControlsTester
 			Assert::AreEqual(' ', (char)tileMap->getDatum(0));
 		}
 
+		TEST_METHOD(setDimensionsTest)
+		{
+			int rows = 3;
+			int cols = 4;
+			Map theMap;
+			theMap.setDimensions(rows, cols);
+
+			Image* display = theMap.getDisplay();
+
+			Assert::AreEqual(rows, (int)theMap.getTotalRows());
+			Assert::AreEqual(cols, (int)theMap.getTotalCols());
+			Assert::AreEqual(rows, (int)display->getTotalRows());
+			Assert::AreEqual(cols, (int)display->getTotalCols());
+		}
+
 		TEST_METHOD(resizeTest)
 		{
 			int rows = 1;

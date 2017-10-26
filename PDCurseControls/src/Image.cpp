@@ -127,8 +127,8 @@ int Image::save(std::ofstream& saveFile)
 
 	std::streampos startPos = saveFile.tellp();
 
-	saveFile.write((char*)&totalRows, sizeof(short));
-	saveFile.write((char*)&totalCols, sizeof(short));
+	saveFile.write((char*)&totalRows, sizeof(int));
+	saveFile.write((char*)&totalCols, sizeof(int));
 	
 	chtype c;
 	for (unsigned int i = 0; i < totalTiles; i++)
@@ -150,11 +150,14 @@ int Image::load(std::ifstream& loadFile)
 
 	std::streampos startPos = loadFile.tellg();
 
-	loadFile.read((char*)&totalRows, sizeof(short));
-	loadFile.read((char*)&totalCols, sizeof(short));
+	unsigned int rows = 0;
+	unsigned int cols = 0;
+
+	loadFile.read((char*)&rows, sizeof(int));
+	loadFile.read((char*)&cols, sizeof(int));
 	
-	tileMap.setDimensions(totalRows, totalCols);
-	
+	setDimensions(rows, cols);
+
 	chtype c;
 	for (unsigned int i = 0; i < totalTiles; i++)
 	{
@@ -175,9 +178,14 @@ void Image::setDimensions(int rows, int cols)
 }
 
 
-Image::~Image()
+void Image::setTile(unsigned int row, unsigned int col, const chtype &datum)
 {
-	//delete tileMap;
+	tileMap.setDatum(row, col, datum);
+}
+
+chtype Image::getTile(unsigned int row, unsigned int col)
+{
+	return tileMap.getDatum(row, col);
 }
 
 

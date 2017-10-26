@@ -1,64 +1,72 @@
 #include "FreeMovementProcessor.h"
 #include "TUI.h" 
 
-/*
-Controllable c should be something like an Image object, where is like a grid of tiles
-The cursor does not have to have any relation to the controllable itself.
-*/
-FreeMovementProcessor::FreeMovementProcessor(Controllable* c, short* curY, short* curX)
+
+FreeMovementProcessor::FreeMovementProcessor(Controllable* c, int* curY, int* curX)
 {
-	this->moveControl = c;
-	this->curY = curY;
-	this->curX = curX;
-
-	bounded = true;
-
-	setViewMode(VM_CENTER);
+	setMoveControl(c);
+	setCursor(curY, curX);
+	setViewMode(ViewMode::CENTER);
 }
 
 
-
-/*
-return true if step was successful
-*/
-bool FreeMovementProcessor::processStep(short* axis, int step, Direction dirInput)
+bool FreeMovementProcessor::processMovement(Movement& move)
 {
-	//move cursor by step
-	*axis += step;
+	//save start pos
+	int prevY = *curY;
+	int prevX = *curX;
+
+	setConvenienceVariables(); //do this for every movement in case dimensions change
+
+	moveCursor(move);
 
 	//verify that cursor is within bounds
-	if (bounded)
+	if (bounded && (inBounds() != Boundary::IN_BOUNDS))
 	{
-		if (inBounds() != IN_BOUNDS)
-		{
-			*axis -= step; 
-			return false; //reverse step and quit
-		}
+		bringCursorInBounds();
 	}
 
+	if (viewMode == ViewMode::LOCK && inWindow() == false) //just make sure move doesn't go out of window
+	{
+		bringCursorInWindow();
+	}
 
-	switch (viewMode)
-	{
-	case VM_LOCK:
-		//just make sure step doesn't go out of window
-	{
-		if (inWindow() == false)
-		{
-			*axis -= step; 
-			return false;//reverse step and quit
-		}
-	}
-	break;
-	case VM_CENTER: //shift control along the appropriate axis
-		axis == curY ? moveControl->shift(step, 0) : moveControl->shift(0, step);
-		break;
-	case VM_DYNAMIC:
-	{
-		//shift control only if not too close to edge of control
-		adjustDynamicView(step, dirInput);
-	}
-	break;
-	}
+	if (prevY == *curY && prevX == *curX)
+		return false;
+
+	adjustView();
 
 	return true;
+}
+
+void FreeMovementProcessor::bringCursorInBounds()
+{
+	if (*curX < 0)
+		*curX = 0;
+	else if (*curY < 0)
+		*curY = 0;
+	else if (*curX >= moveControl->getTotalCols())
+		*curX = moveControl->getTotalCols() - 1;
+	else if (*curY >= moveControl->getTotalRows())
+		*curY = moveControl->getTotalRows() - 1;
+	
+}
+
+void FreeMovementProcessor::bringCursorInWindow()
+{
+	int ulY = moveControl->getUlY();
+	int ulX = moveControl->getUlX();
+
+	int winX, winY; //window relative coordinate
+	winX = *curX - ulX;
+	winY = *curY - ulY;
+
+	if (winX < 0)
+		*curX = ulX;
+	else if (winY < 0)
+		*curY = ulY;
+	else if (winX >= viewWidth)
+		*curX = viewWidth - 1 + ulX;
+	else if (winY >= viewHeight)
+		*curY = viewHeight - 1 + ulY;
 }

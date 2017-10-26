@@ -62,7 +62,7 @@ struct TargetScheme
 	char side;
 };
 
-class Actor;
+struct Actor;
 struct Spell
 {
 	string name;

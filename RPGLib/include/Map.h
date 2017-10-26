@@ -19,11 +19,11 @@ class Map : public Controllable
 private:
 	//meta members
 	std::string name;
-	unsigned short id; 
+	unsigned short id = 0; 
 
 	//data storage
 	Image display;
-	bool brightness; //true - bright, false - dark
+	bool brightness = true; //true - bright, false - dark
 
 	TwoDStorage<EffectType> effectsLayer;
 	//saveable data
@@ -40,15 +40,15 @@ private:
 
 	//overlay data (eventually this should be private)
 	
-	Actor* controlActor; //the actor controlled by the player and moved around on the map
+	Actor* controlActor = nullptr; //the actor controlled by the player and moved around on the map
 
-
-
-	void setDefaults();
 public:
+	Map() {}
 	Map(const std::string& name, int rows, int cols, WINDOW* win); //create new map
 	Map(WINDOW* win, const std::string& fileName); //load map from file
 
+	void setWindow(WINDOW* win);
+	void setDimensions(unsigned int rows, unsigned int cols);
 	/*Clear the map (set all tiles to spaces)
 	Clear all effects from effect layer.*/
 	void reset(); 
@@ -76,6 +76,7 @@ public:
 	unsigned short getUnitHeight() { return unitsHigh; }
 	TwoDStorage<char>* getUnitMaps() { return unitMaps; }
 
+	void setName(const std::string& name) { this->name = name; }
 	std::string getName() { return name; }
 	void setPosition(int y, int x);
 

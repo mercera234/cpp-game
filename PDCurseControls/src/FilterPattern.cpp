@@ -2,9 +2,7 @@
 
 FilterPattern::FilterPattern(Controllable* c)
 {
-	this->c = c;
-	//filter and controllable will share window
-	win = c->getWindow();
+	setControl(c);
 }
 
 void FilterPattern::draw()
@@ -19,3 +17,9 @@ void FilterPattern::draw()
 	}
 }
 
+void FilterPattern::setControl(Controllable* c)
+{
+	this->c = c;
+	//filter and controllable will share window
+	win = c->getWindow();
+}

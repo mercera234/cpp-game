@@ -38,8 +38,8 @@ namespace PDCurseControlsTester
 
 		TEST_METHOD(setHighlightingTest)
 		{
-			short y = 1;
-			short x = 2;
+			int y = 1;
+			int x = 2;
 			Highlighter hl(&img, &y, &x);
 			hl.setHighlighting(true);
 
@@ -48,8 +48,8 @@ namespace PDCurseControlsTester
 
 		TEST_METHOD(fillTest)
 		{
-			short y = 0;
-			short x = 0;
+			int y = 0;
+			int x = 0;
 			Highlighter hl(&img, &y, &x);
 			hl.setHighlighting(true);
 
@@ -64,8 +64,8 @@ namespace PDCurseControlsTester
 
 		TEST_METHOD(fillOutOfBoundsTest)
 		{
-			short y = 0;
-			short x = 1;
+			int y = 0;
+			int x = 1;
 			Highlighter hl(&img, &y, &x);
 			hl.setHighlighting(true);
 
@@ -80,8 +80,8 @@ namespace PDCurseControlsTester
 
 		TEST_METHOD(eraseTest)
 		{
-			short y = 0;
-			short x = 1;
+			int y = 0;
+			int x = 1;
 			Highlighter hl(&img, &y, &x);
 			hl.setHighlighting(true);
 
@@ -93,8 +93,8 @@ namespace PDCurseControlsTester
 
 		TEST_METHOD(copyPasteTest)
 		{
-			short y = 0;
-			short x = 0;
+			int y = 0;
+			int x = 0;
 			Highlighter hl(&img, &y, &x);
 			hl.setHighlighting(true);
 
@@ -117,8 +117,8 @@ namespace PDCurseControlsTester
 
 		TEST_METHOD(flipTest)
 		{
-			short y = 0;
-			short x = 0;
+			int y = 0;
+			int x = 0;
 			Highlighter hl(&img, &y, &x);
 			hl.setHighlighting(true);
 

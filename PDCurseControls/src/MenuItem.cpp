@@ -120,7 +120,7 @@ Links all items in group sequentially according to link passed in
 */
 void MenuItem::linkItemGroup(std::vector<MenuItem*>& group, Dir link)
 {
-	for (int i = 0; i < group.size() - 1; i++)
+	for (int i = 0; i < (int)(group.size() - 1); i++)
 	{
 		group[i]->link(link, group[i + 1]);
 	}

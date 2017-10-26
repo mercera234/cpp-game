@@ -8,9 +8,8 @@ class GameStateManager : public Drawable
 private:
 	GameState* state;
 public:
-	void setState(GameState* state);// { this->state = state; }
+	void setState(GameState* state); 
+	GameState* getState() { return state; }
 	bool processInput(int input);
 	void draw();
-	/*bool isAltered();
-	void setStateAltered(bool);*/
 };

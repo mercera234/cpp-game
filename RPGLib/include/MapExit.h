@@ -1,5 +1,5 @@
 #pragma once
-
+#include "MovementProcessor.h"
 //
 //struct InMapExit : public MapExit
 //{
@@ -35,7 +35,7 @@
 struct MapExit
 {
 	int mapId;
-	int edge;
+	Boundary edge;
 	int unit; //identifies a piece of the edge (characters axis coordinate divided by map unit size)
 };
 

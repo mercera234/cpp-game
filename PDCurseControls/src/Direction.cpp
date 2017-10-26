@@ -12,3 +12,8 @@ Dir getOppositeDir(Dir dir)
 	}
 	return returnDir;
 }
+
+Axis getAxis(Dir dir)
+{
+	return (dir == Dir::LEFT || dir == Dir::RIGHT) ? Axis::HORIZONTAL : Axis::VERTICAL;
+}

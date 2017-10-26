@@ -19,10 +19,10 @@ private:
 	bool highlighting;
 	bool pinPushed;
 	int piny, pinx; //location of pin (where highlighting originates)
-	short* curY;
-	short* curX; //location of cursor
-	short* offY;
-	short* offX;
+	int* curY;
+	int* curX; //location of cursor
+	int* offY;
+	int* offX;
 
 	//temporary storage for copy/paste operations
 	TwoDStorage<chtype> clipBoard;
@@ -40,10 +40,12 @@ private:
 	void swap(int y1, int x1, int y2, int x2);
 	void pushPin(int y, int x);
 public:
-	/*
-	Construct highlighter for imgIn using y and x and coordinates for a cursor.
-	*/
-	Highlighter(Image* imgIn, short* y, short* x);
+	Highlighter() {};
+
+	void positionHighlighter(Image* imgIn, int* y, int* x);
+	
+	/*Construct highlighter for imgIn using y and x and coordinates for a cursor.*/
+	Highlighter(Image* imgIn, int* y, int* x);
 	
 	//Erase the highlit region within image. Erasing is filling the highlit region with spaces.
 	void erase();

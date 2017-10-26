@@ -8,7 +8,9 @@ protected:
 	bool enabled;
 	virtual void applyFilterPattern() = 0;
 public:
+	FilterPattern() {};
 	FilterPattern(Controllable* c);
+	void setControl(Controllable* c);
 	void draw();
 	void setEnabled(bool enabled) { this->enabled = enabled; }
 	bool isEnabled() { return enabled; }

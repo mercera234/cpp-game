@@ -1,18 +1,18 @@
 #pragma once
+#include <string>
 #include "Drawable.h"
 
 class GameStateManager;
 class GameState : public Drawable
 {
 protected:
-	GameStateManager* manager;
 	bool active = true;
-	//static GameState* instance;
+	std::string name;
+	void setName(const std::string& nameIn) { this->name = nameIn; } //only derived states should be allowed to use this method
 public:
-	//virtual GameState* getInstance() = 0;
-	virtual void processInput(int input) = 0;
-	void setGameStateManager(GameStateManager* manager) { this->manager = manager; }
-	GameStateManager* getGameStateManager() { return manager; }
-
+	virtual void processInput(GameStateManager& manager, int input) = 0;
 	bool isActive() { return active; }
+
+	//getters/setters
+	std::string& getName() { return name; }
 };

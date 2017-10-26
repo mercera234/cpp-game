@@ -11,7 +11,7 @@ private:
 
 protected:
 	WINDOW* win = nullptr;
-	bool focusable; //true if this should be the focused item after receiving input
+	bool focusable = true; //true if this should be the focused item after receiving input
 	bool showing; //true if should be drawn 
 	bool focus; //true if the controllable is focused
 	bool acceptsMouseInput; 
@@ -48,7 +48,7 @@ public:
 	void shift(int y, int x); //shift control within window
 
 	//getters/setters
-	void setWindow(WINDOW* win);
+	virtual void setWindow(WINDOW* win);
 	WINDOW* getWindow() { return win; };
 	void setControlManager(ControlManager* cm) { this->cm = cm; }
 	ControlManager* getControlManager() { return cm; }

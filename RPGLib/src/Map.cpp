@@ -3,20 +3,35 @@
 #include "TUI.h"
 
 
-
-/*
-Create a new map from scratch
-*/
 Map::Map(const std::string& name, int rows, int cols, WINDOW* win) :
 	display(rows, cols, win) //Image uses same window as map, but the Image is responsible for destroying it
 {
-	setDefaults();
-
-	setWindow(win);
-
 	this->name = name;
 
+	Controllable::setWindow(win);
+
 	setDimensions(rows, cols);
+}
+
+
+Map::Map(WINDOW* win, const std::string& fileName)
+{
+	Controllable::setWindow(win);
+	load(fileName);
+}
+
+void Map::setWindow(WINDOW* win)
+{
+	Controllable::setWindow(win);
+	display.setWindow(win);
+}
+
+
+void Map::setDimensions(unsigned int rows, unsigned int cols)
+{
+	Controllable::setDimensions(rows, cols);
+	display.setDimensions(rows, cols);
+	effectsLayer.setDimensions(rows, cols);
 
 	//set hi-level map data
 	unitsHigh = totalRows / unitHeight;
@@ -28,30 +43,6 @@ Map::Map(const std::string& name, int rows, int cols, WINDOW* win) :
 	{
 		unitMaps->setDatum(i, (char)0x0); //
 	}
-
-	effectsLayer.setDimensions(rows, cols);
-	effectsLayer.fill(EffectType::NONE);
-
-	reset();
-}
-
-
-Map::Map(WINDOW* win, const std::string& fileName)
-{
-	setDefaults();
-
-	setWindow(win);
-	load(fileName);
-}
-
-
-void Map::setDefaults()
-{
-	id = 0;
-	brightness = true;
-	focusable = true;
-
-	controlActor = nullptr;
 }
 
 
@@ -96,6 +87,8 @@ bool Map::save(const std::string& fileName)
 	});
 
 	gFile.close();
+
+	return true;
 }
 
 bool Map::load(const std::string& fileName)
@@ -117,7 +110,7 @@ bool Map::load(const std::string& fileName)
 	setDimensions(display.getTotalRows(), display.getTotalCols());
 
 	effectsLayer.setDimensions(totalRows, totalCols);
-	for (int i = 0; i < totalTiles; i++)
+	for (unsigned int i = 0; i < totalTiles; i++)
 	{
 		EffectType type;
 		gFile.read((char*)&type, sizeof(EffectType));
@@ -130,6 +123,8 @@ bool Map::load(const std::string& fileName)
 	//! these parameters are not saved and loaded yet
 	brightness = true;
 	focusable = true;
+
+	return true;
 }
 
 

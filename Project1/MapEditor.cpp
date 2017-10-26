@@ -6,7 +6,7 @@
 #include "FileChooser.h"
 #include "TwoDStorage.h"
 #include "LineItem.h"
-#include "Factory.h"
+//#include "Factory.h"
 
 const int DOT = 0;
 const int FILL = 1;
@@ -65,12 +65,16 @@ MapEditor::MapEditor()
 	dialogDefPath = buf;
 	extensionFilter = DEF_MAP_EXTENSION;
 
-	
-	map = new Map(fileName, canvasRows, canvasCols, viewport);
+	map.setName(fileName);
+	map.setWindow(viewport);
+	map.setDimensions(canvasRows, canvasCols);
 	
 	setConvenienceVariables();
 
-	mp = new FreeMovementProcessor(map, &curY, &curX);
+	mp.setMoveControl(&map);
+	mp.setCursor(&curY, &curX);
+	mp.setViewMode(ViewMode::CENTER); //default view mode
+
 	int bottomRow = visibleRows + 2 + topRulerRow + 1;
 
 	xyLbl.setWindow(newwin(1, 16, bottomRow, sideRulerCol + 1));
@@ -92,9 +96,9 @@ MapEditor::MapEditor()
 	resizeBtn.setText("RESIZE");
 	
 	
-	hl = new Highlighter(image, &curY, &curX);
-	mapEffectFilterPattern = new MapEffectFilterPattern(map);
-	mapEffectFilterPattern->setEnabled(false);
+	highlighter.positionHighlighter(image, &curY, &curX);
+	mapEffectFilterPattern.setMap(&map);
+	mapEffectFilterPattern.setEnabled(false);
 
 	setupControlManager();
 }
@@ -104,33 +108,24 @@ This should be called any time a new map/image is loaded
 */
 void MapEditor::setConvenienceVariables()
 {
-	image = map->getDisplay();
-	tileMap = image->getTileMap();
+	image = map.getDisplay();
 }
 
 void MapEditor::setupControlManager()
 {
 	cm = new ControlManager(this);
 	cm->registerControl(&textPalette, MOUSE_LISTENER, paletteCallback);
-	//cm->registerControl(&textPaletteSelection, 0, 0);
 	cm->registerControl(&bkgdPalette, MOUSE_LISTENER, paletteCallback);
-//	cm->registerControl(&bkgdPaletteSelection, 0, 0);
 	cm->registerControl(&toolPalette, MOUSE_LISTENER, paletteCallback);
-	//cm->registerControl(&toolPaletteSelection, 0, 0);
 	cm->registerControl(&filterPalette, MOUSE_LISTENER, paletteCallback);
-//	cm->registerControl(&filterPaletteSelection, 0, 0);
 	cm->registerControl(&canvasRowsInput, KEY_LISTENER | MOUSE_LISTENER, canvasInputCallback);
 	cm->registerControl(&canvasColsInput, KEY_LISTENER | MOUSE_LISTENER, canvasInputCallback);
-	cm->registerControl(map, KEY_LISTENER | MOUSE_LISTENER, mapCallback);
-	cm->setFocus(map);
-	cm->registerControl(mapEffectFilterPattern, 0, 0);
+	cm->registerControl(&map, KEY_LISTENER | MOUSE_LISTENER, mapCallback);
+	cm->setFocus(&map);
+	cm->registerControl(&mapEffectFilterPattern, 0, 0);
 
 	cm->registerControl(fileNameLbl, 0, 0);
 	cm->registerControl(&topRuler, 0, 0);
-	//cm->registerControl(&textTitle, 0, 0);
-//	cm->registerControl(&bkgdTitle, 0, 0);
-////	cm->registerControl(&toolTitle, 0, 0);
-//	cm->registerControl(&filterTitle, 0, 0);
 	cm->registerControl(&xyLbl, 0, 0);
 	cm->registerControl(&hLbl, 0, 0);
 	cm->registerControl(&wLbl, 0, 0);
@@ -152,15 +147,19 @@ void MapEditor::setupPalettes()
 
 	textPalette.setTitle("TEXT");
 	textPalette.setWindows(topRulerRow, paletteLeftEdge, rows, cols);
+	textPalette.setFocusable(false);
 
 	bkgdPalette.setTitle("BKGD");
 	bkgdPalette.setWindows(topRulerRow + 7, paletteLeftEdge, rows, cols);
+	bkgdPalette.setFocusable(false);
 
 	toolPalette.setTitle("TOOL");
 	toolPalette.setWindows(topRulerRow + 14, paletteLeftEdge, 1, 3);
+	toolPalette.setFocusable(false);
 
 	filterPalette.setTitle("FILTER");
 	filterPalette.setWindows(topRulerRow + 18, paletteLeftEdge, 2, cols);
+	filterPalette.setFocusable(false);
 
 	//setup color palettes
 	for (int i = 0; i < TOTAL_COLORS; i++)
@@ -237,10 +236,10 @@ bool MapEditor::processInput(int input)
 
 void MapEditor::createNew()
 {
-	map->reset();
+	map.reset();
 	fileName = DEF_FILENAME;
 	setModified(false);
-	cm->setFocus(map);
+	cm->setFocus(&map);
 }
 
 void MapEditor::controlCallback(void* caller, void* ptr, int input) //static
@@ -302,16 +301,16 @@ void MapEditor::resizeButtonDriver()
 	int rows = stoi(canvasRowsInput.getText());
 	int cols = stoi(canvasColsInput.getText());
 	setCanvasSize(rows, cols);
-	map->resize(canvasRows, canvasCols);
+	map.resize(canvasRows, canvasCols);
 
 	//make sure cursor is still in bounds
-	curY = curY > (short)map->getTotalRows() ? map->getTotalRows() : curY;
-	curX = curX > (short)map->getTotalCols() ? map->getTotalCols() : curX;
+	curY = curY > (short)map.getTotalRows() ? map.getTotalRows() : curY;
+	curX = curX > (short)map.getTotalCols() ? map.getTotalCols() : curX;
 
-	mp->setViewMode(VM_CENTER); //reset the view to center
+	mp.setViewMode(ViewMode::CENTER); //reset the view to center
 	setConvenienceVariables();
 
-	cm->setFocus(map); //switch focus back to map
+	cm->setFocus(&map); //switch focus back to map
 }
 
 void MapEditor::setCanvasSize(int rows, int cols)
@@ -322,19 +321,19 @@ void MapEditor::setCanvasSize(int rows, int cols)
 
 void MapEditor::load(string fileName)
 {
-	map->load(fileName);
+	map.load(fileName);
 	
 	//resize canvas to loaded image
 	setConvenienceVariables();
 
-	setCanvasSize(map->getTotalRows(), map->getTotalCols());
+	setCanvasSize(map.getTotalRows(), map.getTotalCols());
 	
-	cm->setFocus(map);
+	cm->setFocus(&map);
 }
 
 void MapEditor::save(string fileName)
 {
-	map->save(fileName);
+	map.save(fileName);
 }
 
 
@@ -375,7 +374,7 @@ void MapEditor::processFilterPaletteInput(chtype icon)
 	int symbol = (icon & 0x0000ffff);
 	switch (symbol)
 	{
-	case F_NO_FILTER: mapEffectFilterPattern->setEnabled(false); return; break;
+	case F_NO_FILTER: mapEffectFilterPattern.setEnabled(false); return; break;
 	case F_OBSTR: filter = EffectType::OBSTR; break;
 	case F_JUMPABLE: filter = EffectType::JUMPABLE; break;
 //	case F_DMG_CONST: filter = E_HP_ALT_CONST; break;
@@ -384,7 +383,7 @@ void MapEditor::processFilterPaletteInput(chtype icon)
 	//case F_SAVEABLE: filter = E_SAVEABLE; break;
 //	case F_EXIT: filter = E_EXIT; break;
 	}
-	mapEffectFilterPattern->setEnabled(true);
+	mapEffectFilterPattern.setEnabled(true);
 }
 
 
@@ -396,7 +395,7 @@ void MapEditor::processMouseInput(int input)
 	{
 		int pY = event.y;
 		int	pX = event.x;
-		wmouse_trafo(map->getWindow(), &pY, &pX, false);
+		wmouse_trafo(map.getWindow(), &pY, &pX, false);
 
 		applyTool(curY - centerY + pY, curX - centerX + pX);
 	}
@@ -410,21 +409,21 @@ void MapEditor::applyTool(int y, int x)
 	case BRUSH:
 	case DOT:
 	{
-		if (mapEffectFilterPattern->isEnabled())
+		if (mapEffectFilterPattern.isEnabled())
 		{
-			TwoDStorage<EffectType>& el = map->getEffectsLayer();
+			TwoDStorage<EffectType>& el = map.getEffectsLayer();
 			el.setDatum(y, x, filter);
 		}
 		else
 		{
 			chtype c = (chtype)drawChar;
-			tileMap->setDatum(y, x, c | textColor | bkgdColor);
+			image->setTile(y, x, c | textColor | bkgdColor);
 		}
 	}
 	break;
 
 	case FILL:
-		if (mapEffectFilterPattern->isEnabled())
+		if (mapEffectFilterPattern.isEnabled())
 		{
 			break;
 		}
@@ -437,7 +436,7 @@ void MapEditor::applyTool(int y, int x)
 
 void MapEditor::processShiftDirectionalInput(int input)
 {
-	hl->setHighlighting(true);
+	highlighter.setHighlighting(true);
 	switch (input)
 	{
 	case KEY_SUP: input = KEY_UP; break;
@@ -446,7 +445,7 @@ void MapEditor::processShiftDirectionalInput(int input)
 	case KEY_SRIGHT: input = KEY_RIGHT; break;
 	}
 
-	mp->processMovementInput(input);
+	mp.processMovementInput(input);
 }
 
 
@@ -466,8 +465,8 @@ bool MapEditor::processMapInput(int input)
 	case KEY_END: //all the way right
 	case CTL_HOME://upper left corner
 	case CTL_END: //lower right corner
-		hl->setHighlighting(false);
-		mp->processMovementInput(input);
+		highlighter.setHighlighting(false);
+		mp.processMovementInput(input);
 
 		if (tool == BRUSH)
 			applyTool(curY, curX);
@@ -483,41 +482,41 @@ bool MapEditor::processMapInput(int input)
 
 	case KEY_BACKSPACE:
 	case KEY_DC:
-		if (hl->isHighlighting())
-			hl->erase();
+		if (highlighter.isHighlighting())
+			highlighter.erase();
 		else
 		{
-			if (mapEffectFilterPattern->isEnabled())
+			if (mapEffectFilterPattern.isEnabled())
 			{
-				map->getEffectsLayer().setDatum(curY, curX, EffectType::NONE);
+				map.getEffectsLayer().setDatum(curY, curX, EffectType::NONE);
 			}
 			else
-				tileMap->setDatum(curY, curX, ' ');
+				image->setTile(curY, curX, ' ');
 		}
 		break;
 	case CTRL_C:
-		hl->copy(); 
-		hl->setHighlighting(false); 
+		highlighter.copy(); 
+		highlighter.setHighlighting(false); 
 		break;
 	case CTRL_V:
-		hl->paste(); 
+		highlighter.paste(); 
 		setModified(true);
 		break;
 	case CTL_UP:
 	case CTL_DOWN:
-		hl->flip(AXIS_VER);
+		highlighter.flip(AXIS_VER);
 		setModified(true);
 		break;
 	case CTL_LEFT:
 	case CTL_RIGHT:
-		hl->flip(AXIS_HOR);
+		highlighter.flip(AXIS_HOR);
 		setModified(true);
 		break;
 
-	//case CTRL_B: mp->setBounded(bounded = !bounded); break;
-	case CTRL_D: mp->setViewMode(VM_DYNAMIC); break;
-	case CTRL_L: mp->setViewMode(VM_LOCK); break;
-	case CTRL_P: mp->setViewMode(VM_CENTER); break;
+	//case CTRL_B: mp.setBounded(bounded = !bounded); break;
+	case CTRL_D: mp.setViewMode(ViewMode::DYNAMIC); break;
+	case CTRL_L: mp.setViewMode(ViewMode::LOCK); break;
+	case CTRL_P: mp.setViewMode(ViewMode::CENTER); break;
 
 	case KEY_MOUSE:
 		processMouseInput(input);
@@ -527,8 +526,8 @@ bool MapEditor::processMapInput(int input)
 		{
 			drawChar = input;
 
-			if (hl->isHighlighting())
-				hl->fill(drawChar | bkgdColor | textColor);
+			if (highlighter.isHighlighting())
+				highlighter.fill(drawChar | bkgdColor | textColor);
 			
 			applyTool(curY, curX);
 		}
@@ -543,7 +542,7 @@ void MapEditor::fill(int sourceRow, int sourceCol)
 {
 	list<int> fillPoints;
 
-	chtype replaceTile = tileMap->getDatum(sourceRow, sourceCol);
+	chtype replaceTile = image->getTile(sourceRow, sourceCol);
 		//mvwinch(viewport, sourceRow, sourceCol); //make sure this isn't reversed
 	chtype fillTile = drawChar | bkgdColor | textColor;
 	if (drawChar == ' ')
@@ -551,8 +550,8 @@ void MapEditor::fill(int sourceRow, int sourceCol)
 		fillTile = drawChar | bkgdColor; //we don't need the text color for blank spaces
 	}
 	
-	int totalCols = map->getTotalCols();
-	int totalRows = map->getTotalRows();
+	int totalCols = map.getTotalCols();
+	int totalRows = map.getTotalRows();
 
 	if (replaceTile != fillTile) //meaning we have chosen the same fill character as what the cursor is currently over
 		fillPoints.push_back(sourceRow * totalCols + sourceCol);
@@ -566,46 +565,46 @@ void MapEditor::fill(int sourceRow, int sourceCol)
 		int y = editTile / totalCols;
 		int x = editTile % totalCols;
 
-		tileMap->setDatum(y, x, fillTile);
+		image->setTile(y, x, fillTile);
 
 		//check adjacent positions to see if they have the replace character
 		int rightTile = x + 1;
 		if (rightTile < totalCols)//make sure it is on fillable map area
 		{
-			if(tileMap->getDatum(y, rightTile) == replaceTile)
+			if(image->getTile(y, rightTile) == replaceTile)
 			{
 				fillPoints.push_back(y * totalCols + rightTile);
-				tileMap->setDatum(y, rightTile, fillTile);
+				image->setTile(y, rightTile, fillTile);
 			}
 		}
 
 		int leftTile = x - 1;
 		if (leftTile >= 0)//make sure it is on fillable map area
 		{
-			if (tileMap->getDatum(y, leftTile) == replaceTile)
+			if (image->getTile(y, leftTile) == replaceTile)
 			{
 				fillPoints.push_back(y * totalCols + leftTile);
-				tileMap->setDatum(y, leftTile, fillTile);
+				image->setTile(y, leftTile, fillTile);
 			}
 		}
 
 		int downTile = y + 1;
 		if (downTile < totalRows)//make sure it is on fillable map area
 		{
-			if (tileMap->getDatum(downTile, x) == replaceTile)
+			if (image->getTile(downTile, x) == replaceTile)
 			{
 				fillPoints.push_back(downTile * totalCols + x);
-				tileMap->setDatum(downTile, x, fillTile);
+				image->setTile(downTile, x, fillTile);
 			}
 		}
 		
 		int upTile = y - 1;
 		if (upTile >= 0)//make sure it is on fillable map area
 		{
-			if (tileMap->getDatum(upTile, x) == replaceTile)
+			if (image->getTile(upTile, x) == replaceTile)
 			{
 				fillPoints.push_back(upTile * totalCols + x);
-				tileMap->setDatum(upTile, x, fillTile);
+				image->setTile(upTile, x, fillTile);
 			}
 		}
 	}
@@ -629,16 +628,12 @@ void MapEditor::draw()
 	sprintf_s(buf, "x: %+4d  y: %+4d", curX, curY);
 	xyLbl.setText(buf);
 	
-	
-	//mvprintw(bottom + topRulerRow + 1, sideRulerCol + 25, "H:", map->getTotalRows());
-	//mvprintw(bottom + topRulerRow + 1, sideRulerCol + 35, "W:", map->getTotalCols());
-	
 	wnoutrefresh(stdscr);
 	wnoutrefresh(frame);
 
 	
 	cm->draw();
-	hl->draw();
+	highlighter.draw();
 	chtype cursorChar = mvwinch(viewport, curY - image->getUlY(), curX - image->getUlX());
 	waddch(viewport, cursorChar | A_REVERSE);
 	wnoutrefresh(viewport);

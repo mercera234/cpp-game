@@ -2,9 +2,15 @@
 #include "Highlighter.h"
 
 
-Highlighter::Highlighter(Image* mapIn, short* y, short* x)
+Highlighter::Highlighter(Image* imgIn, int* y, int* x)
 {
-	img = mapIn;
+	positionHighlighter(imgIn, y, x);
+}
+
+
+void Highlighter::positionHighlighter(Image* imgIn, int* y, int* x)
+{
+	img = imgIn;
 	tileMap = img->getTileMap();
 	highlighting = false;
 	pinPushed = false;
@@ -14,6 +20,7 @@ Highlighter::Highlighter(Image* mapIn, short* y, short* x)
 	curY = y; //by using the address, it is always in sync with whatever is being used as the cursor
 	curX = x;
 }
+
 
 void Highlighter::setHighlighting(bool status)
 {

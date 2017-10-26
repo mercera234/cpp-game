@@ -45,10 +45,10 @@
     <ClCompile Include="Factory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TitleScreenState.cpp">
+    <ClCompile Include="TestState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TestState.cpp">
+    <ClCompile Include="TitleScreenState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -86,10 +86,10 @@
     <ClInclude Include="TemplateTest.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TitleScreenState.h">
+    <ClInclude Include="TestState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TestState.h">
+    <ClInclude Include="TitleScreenState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

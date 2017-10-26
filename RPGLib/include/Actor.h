@@ -1,25 +1,8 @@
 #pragma once
 
-//#include "charICS.h"
-//#include "item.h"
-//#include "ability.h"
-//#include "AI.h"
-#include "curses.h"
 #include <iostream>
+#include "curses.h"
 #include "Storable.h"
-
-//not sure if this should be here!!!
-//bool actorKeyCompare(const std::string& first, const std::string& second);
-
-
-/*need a serial number assigning system where
- 0-just pick some in the random range(the scripts couldn't handle a negative value)
- 1-255 is reserved
- 255-RAND_MAX are free game
- RAND_MAX = SIGNED_INT_MAX 2 billion something
- */ 
-//#define MAX_RESERVED 256 //also the lowest random serial number that can be generated
-//#define GenerateRandomSerialNo() (rand() % (RAND_MAX - MAX_RESERVED)) + MAX_RESERVED
 
 //character types
 #define AT_HUMAN 0
@@ -29,12 +12,12 @@
 
 
 //maximums
-#define MAX_LEVELS 99
-#define MAX_PLAYER_HP 9999
-#define MAX_EXP 9999999
-#define MAX_PLAYERS 4
+const int MAX_LEVELS = 99;
+const int MAX_PLAYER_HP = 9999;
+const int MAX_EXP = 9999999;
+const int MAX_PLAYERS = 4;
 
-#define MAX_NAME_LENGTH 16 //max characters in string
+const int MAX_NAME_LENGTH = 16; //max characters in string
 
 //statuses
 #define ALIVE 0
@@ -42,7 +25,7 @@
 #define IS_ALIVE(a) (a->currHp > 0) //takes a pointer to an actor
 #define IS_DEAD(a) (a->currHp <= 0) //takes a pointer to an actor
 
-//effect results
+//effect results (this shouldn't be here!)
 #define F_ESCAPE_FIGHT 0
 #define F_SUCCESS 1
 #define F_FAILED 2
@@ -55,11 +38,10 @@ enum
 	STRENGTH
 };
 
-#define EASY
 
 /*
-CharDef - a struct containing a character blueprint
-All CharDefs will be originally stored in a file and only one copy of each is read into memory
+ActorDef - a struct containing a character blueprint
+All ActorDefs will be originally stored in a file and only one copy of each is read into memory
 This is everything that would be setup in an editor for a character
 */
 struct ActorDef : public Storable
@@ -101,6 +83,7 @@ struct ActorDef : public Storable
 	float accuracy;
 	float luck;
 
+	//do this differently!
 	int skills; //each bit represents 1 ability so, there are a max of 32
 	
 	//int weapon; //number is a reference to weapon in MIL
@@ -121,11 +104,10 @@ struct Actor
 	unsigned int defIndex; //index of chardefinition
 	ActorDef* def; //actual definition
 
-	//unsigned int serialNo; //unique id
 	//CharICS* charICS; //handles inventory for character
     short type;
-    short currHp;
-	short currMp;
+    int currHp;
+	int currMp;
     short x, y;//relative to map window
 	short prevX, prevY; //previous position
 	/*bool save(ofstream* saveFile);

@@ -126,9 +126,25 @@
   <ItemGroup>
     <ClCompile Include="driver.cpp" />
     <ClCompile Include="map_ui_tests.cpp" />
+    <ClCompile Include="MockFight.cpp" />
+    <ClCompile Include="MockMainMenu.cpp" />
+    <ClCompile Include="MockStatus.cpp" />
+    <ClCompile Include="MockTitle.cpp" />
+    <ClCompile Include="MockExplore.cpp" />
+    <ClCompile Include="movement_tests.cpp" />
+    <ClCompile Include="state_machine_tests.cpp" />
+    <ClCompile Include="turntracker_tests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="map_ui_tests.h" />
+    <ClInclude Include="MockFight.h" />
+    <ClInclude Include="MockMainMenu.h" />
+    <ClInclude Include="MockStatus.h" />
+    <ClInclude Include="MockTitle.h" />
+    <ClInclude Include="MockExplore.h" />
+    <ClInclude Include="movement_tests.h" />
+    <ClInclude Include="state_machine_tests.h" />
+    <ClInclude Include="turntracker_tests.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

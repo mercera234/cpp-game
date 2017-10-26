@@ -27,11 +27,11 @@ void MapRepository::addMapSeam(Map& negMap, Map& posMap, //negative map is eithe
 	MapExit* posExit = new MapExit();
 
 	negExit->mapId = negMap.getId();
-	negExit->edge = xAxis ? B_EAST : B_SOUTH;
+	negExit->edge = xAxis ? Boundary::EAST : Boundary::SOUTH;
 	negExit->unit = negUnit;
 
 	posExit->mapId = posMap.getId();
-	posExit->edge = xAxis ? B_WEST : B_NORTH;
+	posExit->edge = xAxis ? Boundary::WEST : Boundary::NORTH;
 	posExit->unit = posUnit;
 
 	addExit(negExit, posExit);

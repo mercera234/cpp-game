@@ -27,7 +27,6 @@ public:
 	Image();
 	Image(WINDOW* win);
 	Image(int rows, int cols, WINDOW* win);
-	~Image();
 
 	
 	void reset(); //wipe all data out of the map
@@ -38,6 +37,9 @@ public:
 	//Storable override
 	int save(std::ofstream& saveFile);
 	int load(std::ifstream& loadFile);
+
+	void setTile(unsigned int row, unsigned int col, const chtype &datum);
+	chtype getTile(unsigned int row, unsigned int col);
 
 	//getters/setters
 	TwoDStorage<chtype>* getTileMap() { return &tileMap; }

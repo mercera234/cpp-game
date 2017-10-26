@@ -45,5 +45,18 @@ namespace PDCurseControlsTester
 
 			Assert::IsTrue(' ' == map->getDatum(0,1));
 		}
+
+		TEST_METHOD(setTileTest)
+		{
+			Image img;
+			int rows = 1;
+			int cols = 2;
+			img.setDimensions(rows, cols);
+
+			chtype c = 'A';
+			img.setTile(0, 1, c);
+
+			Assert::IsTrue(c == img.getTile(0, 1));
+		}
 	};
 }

@@ -34,7 +34,7 @@ void highlighterTest()
 	int height = getmaxy(stdscr);
 	int width = getmaxx(stdscr);
 
-	short curY, curX;
+	int curY, curX;
 	curY = height / 2;
 	curX = width / 2;
 

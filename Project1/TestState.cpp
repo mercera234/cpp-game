@@ -5,15 +5,6 @@
 
 GameState* TestState::instance = nullptr;
 
-void TestState::processInput(int input)
-{
-	if (input == 'q')
-	{
-		manager->setState(TitleScreenState::getInstance());
-		//manager->setState(nullptr);
-	}
-}
-
 GameState* TestState::getInstance()
 {
 	if (instance == nullptr)
@@ -22,6 +13,14 @@ GameState* TestState::getInstance()
 	return instance;
 }
 
+void TestState::processInput(GameStateManager& manager, int input)
+{
+	if (input == 'q')
+	{
+		manager.setState(TitleScreenState::getInstance());
+		//manager->setState(nullptr);
+	}
+}
 
 void TestState::draw()
 {

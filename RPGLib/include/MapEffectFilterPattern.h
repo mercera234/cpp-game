@@ -9,5 +9,7 @@ private:
 	void applyFilterPattern(); //override
 	short getColor(EffectType effect);
 public:
+	MapEffectFilterPattern() {};
 	MapEffectFilterPattern(Map* m) : FilterPattern(m) {};
+	void setMap(Map* m);
 };

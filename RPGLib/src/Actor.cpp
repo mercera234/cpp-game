@@ -62,8 +62,3 @@ int ActorDef::load(std::ifstream& loadFile)
 	return (int)(endPos - startPos);
 }
 
-//return true if first is before second alphabetically or equal
-//bool actorKeyCompare(const std::string& first, const std::string& second)
-//{
-//	return first.compare(second) < 0;
-//}

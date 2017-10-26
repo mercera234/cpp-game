@@ -8,6 +8,6 @@ private:
 	static GameState* instance;
 public:
 	static GameState* getInstance(); //since static, cannot be virtual in super class
-	void processInput(int input);
+	void processInput(GameStateManager& manager, int input);
 	void draw();
 };

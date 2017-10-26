@@ -2,57 +2,92 @@
 #include "Controllable.h"
 #include "Direction.h"
 
-#define VM_LOCK 0 //lock map in place, cursor cannot move outside of window
-#define VM_CENTER 1 //cursor stays in center of screen, maps moves around it constantly
-#define VM_DYNAMIC 2 //cursor stays in center of screen, until it gets close to map edge
+enum class ViewMode
+{
+	LOCK, //lock map in place, cursor cannot move outside of window
+	CENTER, //cursor stays in center of screen, maps moves around it constantly
+	DYNAMIC //cursor stays in center of screen, until it gets close to map edge
+};
 
-#define B_NORTH -1
-#define B_SOUTH 1
-#define IN_BOUNDS 0
-#define B_WEST  -2
-#define B_EAST  2
+
+struct Movement
+{
+	int magnitude = 0;
+	Dir dir;
+
+	Movement() {}
+	Movement(Dir d, int mag) {
+		dir = d; magnitude = mag;
+	}
+
+	Movement getOppositeMove()
+	{
+		Movement m;
+		m.dir = getOppositeDir(dir);
+		m.magnitude = magnitude;
+		return m;
+	}
+};
+
 
 class MovementProcessor
 {
 protected:
 	//The cursor to be moved by this object
-	short* curY;
-	short* curX;
+	int* curY;
+	int* curX;
 	
-	int viewMode;
-
-	//if bounded by the control (not the window, it would always be bounded in that)
-	bool bounded;
-
 	//the controllable that the cursor is being moved within
-	Controllable* moveControl;
+	Controllable* moveControl = nullptr;
+
+	//the way the control is being viewed. A valid control and cursor must be set before this can be setup
+	ViewMode viewMode;
+
+	//True if movement outside the edges of the control is disallowed. (not the window, it would always be bounded in that)
+	bool bounded = true;
 
 	//convenience variables
-	int viewHeight;
-	int viewWidth;
-	int widthCenter;
-	int heightCenter;
+	int viewHeight = 0;
+	int viewWidth = 0;
+	int widthCenter = 0;
+	int heightCenter = 0;
 
-	//set to 1 if dimension is odd
-	short oddOffsetX;
-	short oddOffsetY;
+	//offsets that are set to 1 if dimension is odd
+	int oddOffsetX = 0;
+	int oddOffsetY = 0;
 
 	void setConvenienceVariables();
 
-	int  getMoveMagnitudeFromKey(int key);
-	Direction  getDirectionFromKey(int key);
-	void processDirectionalInput(Direction input, int magnitude);
+	int getMoveMagnitudeFromKey(int key);
+	Direction getDirectionFromKey(int key);
+	void processDirectionalInput(Dir input, int magnitude);
+	void moveCursor(Movement& move);
+
+	void adjustView();
 	void centerView();
-	int inBounds();
+	void dynamicView();
+
+	/* Return whether cursor is in bounds by returning edge boundary cursor has gone beyond */
+	Boundary inBounds();
+
+	/* Return true if coordinates are not less than the controls upper left coordinate, and within the visible area */
 	bool inWindow();
-	void adjustDynamicView(int step, Direction dirInput);
 
-	virtual bool processStep(short* axis, int step, Direction dirInput) = 0;
+	/* Adjust the view if viewMode is set to dynamic. Adjustment occurs when cursor is too close to the boundaries of control.*/
+	//void adjustDynamicView(int step, Dir dirInput);
 
-public:
+	//virtual bool processStep(int* axis, int step, Dir dirInput) = 0;
+	virtual bool processMovement(Movement& move) = 0;
 	
+public:
 	void processMovementInput(int input);
+
+	//getters/setters
+	void setViewMode(ViewMode mode);
+	ViewMode getViewMode() { return viewMode; }
+	void setMoveControl(Controllable* control) { moveControl = control; }
+	Controllable* getMoveControl() { return moveControl; }
+	void setCursor(int* y, int* x) { curY = y; curX = x; }
 	void setBounded(bool bounded) { this->bounded = bounded; }
-	void setViewMode(int mode);
-	int getViewMode() { return viewMode; }
+	bool getBounded() { return bounded; }
 };

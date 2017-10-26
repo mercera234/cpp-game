@@ -33,10 +33,8 @@
 #include "TemplateTest.h"
 #include "Repository2.h"
 #include "KeyComparators.h"
-#include "TitleScreenState.h"
-#include "GameStateManager.h"
-#include "TestState.h"
 #include "Actor.h"
+#include "actor_helper.h"
 
 void mockFightTest()
 {
@@ -1432,65 +1430,6 @@ void mouseTest()
 }
 
 
-Actor* buildActorFromDef(ActorDef* def, int type)
-{
-	Actor* actor = new Actor();
-	actor->def = def;
-	actor->currHp = def->maxHp;
-	actor->currMp = def->maxMp;
-	actor->defIndex = 1;
-	actor->prevX = -1;
-	actor->prevY = -1;
-	actor->x = 30;
-	actor->y = 5;
-	actor->type = type;
-	return actor;
-}
-
-
-Actor* createActor(string filename, int type)
-{
-	ActorDef* def = new ActorDef();
-
-	ifstream is;
-	is.open("data\\" + filename, ios::binary);
-
-	def->load(is);
-
-	is.close();
-
-	return buildActorFromDef(def, type);
-}
-
-
-Actor* createNPCActor()
-{
-	ActorDef* def = new ActorDef();
-	def->name = "NPC1";
-	def->symbol = (chtype) '&' | 0x0e000000;
-	def->level = 5;
-	def->exp = 0;
-	def->money = 0;
-	def->maxHp = 1;
-	def->maxMp = 1;
-	def->strength = 1;
-	def->defense = 1;
-	def->agility = 1;
-	def->accuracy = .9f;
-	def->luck = .05f;
-
-	Actor* actor = new Actor();
-	actor->def = def;
-	actor->currHp = def->maxHp;
-	actor->currMp = def->maxMp;
-	actor->defIndex = 1;
-	actor->prevX = -1;
-	actor->prevY = -1;
-	actor->x = 40;
-	actor->y = 4;
-	actor->type = AT_CPU; //not sure if we'll use npc actors yet
-	return actor;
-}
 
 
 /*Checks for directional key by checking hex values*/
@@ -1702,45 +1641,7 @@ void simpleFightTest()
 
 }
 
-void realMapTest()
-{
-	int rows = 8;
-	int cols = 8;
 
-	WINDOW* frame = newwin(rows + 2, cols + 2, 1, 1);
-	WINDOW* win = derwin(frame, rows, cols, 1, 1);
-
-	Map m("A map", rows, cols, win);
-
-	int y = 0;
-	int x = 0;
-	m.setPosition(y, x);
-
-	bool playing = true;
-	Image* img = m.getDisplay();
-
-	while (playing)
-	{
-		box(frame, 0, 0);
-		wnoutrefresh(frame);
-		m.draw();
-		doupdate();
-		int c = getch();
-
-		switch (c)
-		{
-		case KEY_UP: y--;  break;
-		case KEY_DOWN: y++; break;
-		case KEY_LEFT: x--; break;
-		case KEY_RIGHT: x++; break;
-		default: playing = false;
-		}
-	
-		m.setPosition(y, x);
-	}
-
-	
-}
 
 
 bool saveActorDef(string fileName, ActorDef* def)
@@ -1978,99 +1879,7 @@ void wideTest()
 }
 
 
-void mapHighlighterTest()
-{
-	WINDOW* viewport = dupwin(stdscr);
-		//newwin(10, 15, 1, 1);
-	Map* map = new Map("test", 10, 30, viewport);
-	Image* img = map->getDisplay();
 
-	TwoDStorage<chtype>* tileMap = img->getTileMap();
-	//chtype* layer = map->getDisplayLayer();
-	
-	short centerY = getmaxy(viewport) / 2;
-	short centerX = getmaxx(viewport) / 2;
-	short y = -centerY;
-	short x = -centerX;
-	short curY = 0;
-	short curX = 0;
-
-	map->setPosition(y, x);
-	
-	char asciiStart = ' ';
-	char asciiEnd = '~';
-	char asciiPtr = asciiStart;
-	int totalTiles = 10 * 30;
-	for (int i = 0; i < totalTiles; i++)
-	{
-		tileMap->setDatum(i, (chtype)asciiPtr++);
-		//layer[i] = (chtype)asciiPtr++;
-
-		if (asciiPtr >= asciiEnd)
-			asciiPtr = asciiStart;
-	}
-
-	//Highlighter* hl = new Highlighter(viewport, layer, &curY, &curX);
-	Highlighter* hl = new Highlighter(img, &curY, &curX);
-
-	//hl->setOffset(map->getUlYPtr(), map->getUlXPtr());
-
-	
-	bool playing = true;
-	while (playing)
-	{
-		/*clear();
-		wnoutrefresh(stdscr);*/
-		wclear(viewport);
-		wbkgd(viewport, '%');
-		wnoutrefresh(viewport);
-		map->draw();
-		hl->draw();
-		mvwaddch(viewport, centerY, centerX, '@' | 0x0f000000);
-		wnoutrefresh(viewport);
-		doupdate();
-		int input = getch();
-
-
-		switch (input)
-		{
-		case KEY_UP: y--; curY--; hl->setHighlighting(false); break;
-		case KEY_DOWN: y++; curY++; hl->setHighlighting(false); break;
-		case KEY_LEFT: x--; curX--; hl->setHighlighting(false); break;
-		case KEY_RIGHT: x++; curX++; hl->setHighlighting(false); break;
-		case KEY_SLEFT: hl->setHighlighting(true); x--; curX--; break;
-		case KEY_SRIGHT: hl->setHighlighting(true); x++; curX++; break;
-		case KEY_SUP: hl->setHighlighting(true); y--; curY--; break;
-		case KEY_SDOWN: hl->setHighlighting(true); y++; curY++; break;
-		case KEY_ESC: playing = false; break;
-		case CTRL_C:
-			hl->copy();
-			hl->setHighlighting(false);
-			break;
-		case CTRL_V:
-			hl->paste();
-			break;
-		case KEY_DC: //delete highlit region			
-			hl->erase();
-			break;
-		case CTL_UP:
-		case CTL_DOWN:
-			hl->flip(AXIS_VER);
-			break;
-		case CTL_LEFT:
-		case CTL_RIGHT:
-			hl->flip(AXIS_HOR);
-			break;
-		default: //fill with printable character
-			hl->fill(input);
-			break;
-		}
-
-		img->setPosition(y, x);
-	}
-
-
-}
 
 
 void filterTest()
@@ -2137,331 +1946,6 @@ void filterTest()
 
 
 }
-
-
-
-
-
-void simpleMapTest()
-{
-	WINDOW* viewport = dupwin(stdscr);
-
-	int height = 10;
-	int width = 30;
-	Map* map = new Map("test", height, width, viewport);
-
-	Image* display = map->getDisplay();
-
-	short centerY = getmaxy(viewport) / 2;
-	short centerX = getmaxx(viewport) / 2;
-	short y = -centerY;
-	short x = -centerX;
-	short curY = 1;
-	short curX = 1;
-
-	display->setPosition(y, x);
-
-	char asciiStart = ' ';
-	char asciiEnd = '~';
-	char asciiPtr = asciiStart;
-	int totalTiles = height * width;
-
-	TwoDStorage<chtype>* data = display->getTileMap();
-
-	for (int i = 0; i < totalTiles; i++)
-	{
-		int y = i / width;
-		int x = i % width;
-
-		chtype c;
-		if (x < 10)
-			c = (chtype)asciiPtr++ | COLOR_PAIR(COLOR_YELLOW);
-		else if (x >= 10 && x < 20)
-			c = (chtype)asciiPtr++ | (COLOR_YELLOW << 28); //yellow background
-		else if (x < 30)
-			c = (chtype)asciiPtr++ | (COLOR_YELLOW_BOLD << 28); //yellow background
-
-		data->setDatum(i, c);
-		
-		if (asciiPtr >= asciiEnd)
-			asciiPtr = asciiStart;
-
-	}
-
-	bool playing = true;
-	bool filterStatus = false;
-	while (playing)
-	{
-		wclear(viewport);
-		wbkgd(viewport, '%');
-		wnoutrefresh(viewport);
-		
-		map->draw();
-		mvwaddch(viewport, centerY + 1, centerX + 1, '@' | 0x0f000000);
-		wnoutrefresh(viewport);
-		doupdate();
-		int input = getch();
-
-
-		switch (input)
-		{
-		case KEY_UP: y--; curY--; 
-			break;
-		case KEY_DOWN: y++; curY++; break;
-		case KEY_LEFT: x--; curX--; break;
-		case KEY_RIGHT: x++; curX++; break;
-		case KEY_ESC: playing = false; break;
-		default: //fill with printable character
-				 //toggle filter
-			break;
-		}
-
-		map->setPosition(y, x);
-	}
-}
-
-//void tileTest()
-//{
-//	_2DStorage<Tile>* tileMap = new _2DStorage<Tile>(3, 2);
-//
-//	Tile t('%');
-//
-//	Tile t2('$' | COLOR_PAIR(COLOR_YELLOW_BOLD));
-//
-//	mvaddch(3, 3, t.getDisplay());
-//	mvaddch(6, 6, t2.getDisplay());
-//
-//	tileMap->setDatum(0, t);
-//	tileMap->setDatum(1, t2);
-//	tileMap->setDatum(2, t);
-//	tileMap->setDatum(3, t2);
-//	tileMap->setDatum(4, t);
-//	tileMap->setDatum(5, t2);
-//
-//	for (int i = 0; i < 6; i++)
-//	{
-//		Tile* tileTracker = tileMap->getData();
-//		
-//		mvaddch(0, i, tileTracker[i].getDisplay());
-//	}
-//	wnoutrefresh(stdscr);
-//	doupdate();
-//	getch();
-//
-//	//Tile** newTiles = new Tile*[6];
-//	////for (int i = 0; i < 6; i++)
-//	//	newTiles[0] = new Tile('m');
-//
-//	////newTiles[0]->setDisplay('m');
-//	//newTiles[1] = newTiles[0];
-//
-//	//mvaddch(5, 0, newTiles[0]->getDisplay());
-//	//mvaddch(5, 1, newTiles[1]->getDisplay());
-//
-//	//wnoutrefresh(stdscr);
-//	//doupdate();
-//	//getch();
-//
-//}
-
-//void tileMapTest()
-//{
-//	WINDOW* viewport = dupwin(stdscr);
-//
-//	int height = 10;
-//	int width = 30;
-//	_2DStorage<Tile>* tileMap = new _2DStorage<Tile>(height, width);
-//
-//	short centerY = getmaxy(viewport) / 2;
-//	short centerX = getmaxx(viewport) / 2;
-//	short y = -centerY;
-//	short x = -centerX;
-//	short curY = 1;
-//	short curX = 1;
-//
-//	char asciiStart = ' ';
-//	char asciiEnd = '~';
-//	char asciiPtr = asciiStart;
-//	int totalTiles = height * width;
-//
-//	Tile* tileTracker = tileMap->getData();
-//	for (int i = 0; i < totalTiles; i++)
-//	{
-//		int y = i / width;
-//		int x = i % width;
-//
-//
-//		if (x < 10)
-//			tileTracker[i].setDisplay((chtype)asciiPtr++ | COLOR_PAIR(COLOR_YELLOW));
-//		else if (x >= 10 && x < 20)
-//			tileTracker[i].setDisplay((chtype)asciiPtr++ | (COLOR_YELLOW << 28));
-//		else if (x < 30)
-//			tileTracker[i].setDisplay((chtype)asciiPtr++ | (COLOR_YELLOW_BOLD << 28));
-//
-//		if (asciiPtr >= asciiEnd)
-//			asciiPtr = asciiStart;
-//
-//		//give frame obstructed effect
-//		if (y == 0 || x == 0 || y == height - 1 || x == width - 1)
-//			tileTracker[i].setEffectType(E_OBSTR);		
-//
-//		if (x == 15)
-//			tileTracker[i].setEffectType(E_JUMPABLE);
-//
-//		if (x == 17)
-//		{
-//			tileTracker[i].setEffectType(E_HP_ALT_CONST);
-//			tileTracker[i].setEffectValue(-5);
-//		}
-//
-//		if (y == height - 2 && x == width - 2)
-//			tileTracker[i].setEffectType(E_EXIT);
-//			
-//	}
-//
-//	bool playing = true;
-//	bool filterStatus = false;
-//
-//	int hp = 200;
-//	while (playing)
-//	{
-//		wclear(viewport);
-//		wbkgd(viewport, ' ');
-//		wnoutrefresh(viewport);
-//
-//		for (int i = 0; i < totalTiles; i++)
-//		{
-//			int y = i / width;
-//			int x = i % width;
-//			mvwaddch(viewport, y, x, tileTracker[i].getDisplay());
-//		}
-//
-//		mvwaddch(viewport, curY, curX, '@' | 0x0f000000);
-//
-//		char buf[20];
-//		
-//		_itoa_s(hp, buf, 10);
-//		mvwaddstr(viewport, 0, width + 2, buf);
-//		
-//		wnoutrefresh(viewport);
-//		doupdate();
-//		int input = getch();
-//
-//		switch (input)
-//		{
-//		case KEY_UP: y--; curY--;
-//		{
-//			//check the eLayer to see if the step can be taken
-//			Tile t = tileMap->getDatum(curY, curX);
-//			int e = t.getEffect()->type;
-//			int val = t.getEffect()->value;
-//			switch(e)
-//			{
-//			case E_OBSTR: y++; curY++; break; //reverse movement 
-//			case E_JUMPABLE: y--; curY--; break; //take additional step
-//			case E_HP_ALT_CONST: hp += val; break; //take additional step
-//			case E_EXIT: playing = false; break; //quit
-//			}
-//		}
-//
-//
-//		break;
-//		case KEY_DOWN: y++; curY++; break;
-//		case KEY_LEFT: x--; curX--; break;
-//		case KEY_RIGHT: x++; curX++; 
-//		{
-//			Tile t = tileMap->getDatum(curY, curX);
-//			int e = t.getEffect()->type;
-//			int val = t.getEffect()->value;
-//			switch (e)
-//			{
-//			case E_OBSTR: x--; curX--; break; //reverse movement 
-//			case E_JUMPABLE: x++; curX++; break; //take additional step
-//			case E_HP_ALT_CONST: hp += val; break; //alter hp
-//			case E_EXIT: playing = false; break; //quit
-//			}
-//		}			
-//			break;
-//		case KEY_ESC: playing = false; break;
-//		default: //fill with printable character
-//				 //toggle filter
-//			break;
-//		}
-//	}
-//}
-
-void freeMovementProcessorTest()
-{
-	int height = 5;
-	int width = 7;
-	resize_term(height, width);
-	WINDOW* viewport = dupwin(stdscr);
-
-	int mapHeight = 9; //height + (height / 2);
-	int mapWidth = 11;//width + (width / 2);
-	//Map* map = new Map("test", mapHeight, mapWidth, viewport);
-	Image* map = new Image(mapHeight, mapWidth, viewport);
-	TwoDStorage<chtype>* tileMap = map->getTileMap();
-	
-	short centerY = getmaxy(viewport) / 2;
-	short centerX = getmaxx(viewport) / 2;
-	short y = -centerY;
-	short x = -centerX;
-	short curY = 7;
-	short curX = 7;
-
-	tileMap->setDatum(0, 0, '1'); //upper left
-	tileMap->setDatum(0, mapWidth - 1, '2'); //upper right
-	tileMap->setDatum(mapHeight - 1, 0, '3'); //lower left
-	tileMap->setDatum(mapHeight - 1, mapWidth - 1, '4'); //lower right
-
-	FreeMovementProcessor* mp = new FreeMovementProcessor(map, &curY, &curX);
-	
-
-	bool playing = true;
-	bool bounded = true;
-
-	while (playing)
-	{
-		map->draw();
-
-		//mvwaddch(viewport, centerY + 1, centerX + 1, '@' | 0x0f000000); //for always drawing cursor in center of screen
-		mvwaddch(viewport, curY - map->getUlY(), curX - map->getUlX(), '@' | 0x0f000000); //for always drawing cursor in center of screen
-		wnoutrefresh(viewport);
-		doupdate();
-		int input = getch();
-
-
-
-
-		switch (input)
-		{
-		case KEY_UP:
-		case KEY_DOWN:
-		case KEY_LEFT:
-		case KEY_RIGHT:
-		case KEY_PGUP://up down paging
-		case KEY_PGDN:
-		case CTL_PGUP://left right paging
-		case CTL_PGDN:
-		case KEY_HOME://all the way left
-		case KEY_END: //all the way right
-		case CTL_HOME://upper left corner
-		case CTL_END: //lower right corner
-			mp->processMovementInput(input); break;
-		case KEY_ESC: playing = false; break;
-
-		case 'b': mp->setBounded(bounded = !bounded); break;
-		case 'd': mp->setViewMode(VM_DYNAMIC); break;
-		case 'l': mp->setViewMode(VM_LOCK); break;
-		case 'c': mp->setViewMode(VM_CENTER); break;
-		}
-
-		
-	}
-	
-}
-
 
 
 
@@ -3097,103 +2581,6 @@ void masterEditorTest()
 	}
 }
 
-//void turnTrackerTest()
-//{
-//	list<Actor*> players;
-//	players.push_back(createActor("hero.actr", AT_HUMAN));
-//
-//
-//	list<Actor*> enemies;
-//	enemies.push_back(createActor("toadie.actr", AT_CPU));
-//	enemies.push_back(createActor("bigbug.actr", AT_CPU));
-//	enemies.push_back(createActor("Skittler.actr", AT_CPU));
-//	enemies.push_back(createActor("wispwing.actr", AT_CPU));
-//
-//	int turns = players.size() + enemies.size();
-//	TurnTracker tracker(turns);
-//
-//	tracker.addPlayers(players);
-//	tracker.addPlayers(enemies);
-//
-//	int rounds = 4;
-//	for (int round = 0; round < rounds; round++)
-//	{
-//		for (int i = 0; i < turns; i++)
-//		{
-//			cout << tracker.getNext()->def->name << endl;
-//		}
-//
-//		switch (round)
-//		{
-//		case 0:
-//		{
-//			Actor* runaway = enemies.back(); //remove one entirely
-//			delete runaway;
-//			enemies.pop_back();
-//		}
-//		break;
-//		case 1:
-//		{
-//			Actor* toDie = enemies.back();
-//			toDie->currHp = 0; //kill enemy
-//		}
-//		break;
-//		}
-//
-//
-//
-//		system("pause");
-//	}
-//
-//}
-
-void turnTrackerTest2()
-{
-	//list<MenuItem*> players;
-	//
-	//players.push_back(new ActorCard(createActor("hero.actr", AT_HUMAN), 0, -1));
-	//
-
-	//list<MenuItem*> enemies;
-	//enemies.push_back(new ActorCard(createActor("toadie.actr", AT_CPU), 1, -1));
-	//enemies.push_back(new ActorCard(createActor("bigbug.actr", AT_CPU), 2, -1));
-	//enemies.push_back(new ActorCard(createActor("Skittler.actr", AT_CPU), 3, -1));
-	//enemies.push_back(new ActorCard(createActor("wispwing.actr", AT_CPU), 4, -1));
-
-	//int turns = players.size() + enemies.size();
-	//TurnTracker tracker;
-
-	//tracker.addPlayers(players);
-	//tracker.addPlayers(enemies);
-
-	//int rounds = 4;
-	//for (int round = 0; round < rounds; round++)
-	//{
-	//	for (int i = 0; i < tracker.getPlayerCount(); i++)
-	//	{
-	//		Actor* next = tracker.getNext()->getActor();
-	//		cout << next->def->name << endl;
-	//	}
-
-	//	switch (round)
-	//	{
-	//	case 0:
-	//	{
-	//		tracker.removePlayer((ActorCard*)enemies.back());
-	//		enemies.pop_back();
-	//	}
-	//		break;
-	//	case 1:
-	//	{
-	//		ActorCard* toDie = (ActorCard*)enemies.back();
-	//		toDie->getActor()->currHp = 0; //kill enemy
-	//	}	
-	//		break;
-	//	}
-	//	system("pause");
-	//}
-		
-}
 
 void itemGroupTest()
 {
@@ -3271,80 +2658,80 @@ void colorStringTest()
 
 void exploreTest()
 {
-	int scrHeight = 23;
-	int scrWidth = 51;
-	resize_term(scrHeight, scrWidth);
-
-	bool playing = true;
-
-	WINDOW* screen = newwin(scrHeight, scrWidth, 0, 0);
-
-	//create 2 maps
-	Map map0(screen, "data\\water_templ.map");
-	Map map1(screen, "data\\water_templ2.map");
-	Map map2(screen, "data\\labyrinth.map");
-//	Map map2 (screen, "data\\crypt.map");
-
-	//setup main character
-	Actor* mainC = createActor("hero.actr", AT_HUMAN);
-	mainC->def->symbol = 'A';
-
-	mainC->x = 45;
-	mainC->y = 37;
-	
-	map0.setControlActor(mainC);
-	
-	curs_set(CURSOR_INVISIBLE);
-
-	MapRepository* repo = new MapRepository(64, 64);
-	
-	ExplorationProcessor* mp = new ExplorationProcessor(&(mainC->y), &(mainC->x), repo);
-	unsigned short id0 = 0;
-	unsigned short id1 = 1;
-	unsigned short id2 = 2;
-	map0.setId(id0);
-	map1.setId(id1);
-	map2.setId(id2);
-
-	repo->addMapSeam(map0, map1, true, 0, 1, 1);
-	repo->addMapSeam(map2, map0, false, 0, 0, 1);
-	repo->addMapSeam(map2, map1, true, 0, 0, 1);
-	repo->add(map0); //could combine this without previous method
-	repo->add(map1);
-	repo->add(map2);
-
-	mp->setCurrMap(map0.getId());
-	mp->setViewMode(VM_DYNAMIC); //position map so character is visible (not sure if this is the best way to do this)
-	
-	while (playing)
-	{
-		//draw map
-		mp->getCurrMap()->draw();
-		
-		//add y,x coordinates to screen
-		mvwprintw(screen, scrHeight - 2, scrWidth - 16, "y:%+4u x:%+4u", mainC->y, mainC->x);
-		wnoutrefresh(screen);
-
-		doupdate();
-
-		//process input
-		int input = getch();		
-		switch (input)
-		{
-		case KEY_ESC: playing = false; break;
-		case KEY_RIGHT:
-		case KEY_LEFT:
-		case KEY_UP:
-		case KEY_DOWN:
-			mp->processMovementInput(input); break;
-		case '\t': //toggle automap
-			break;
-		default:
-			break;
-		}
-	}
-
-	delwin(screen); //when a window is shared by multiple controllable objects, they cannot be responsible for deleting the window, because other objects can't tell that it is deleted
+//	int scrHeight = 23;
+//	int scrWidth = 51;
+//	resize_term(scrHeight, scrWidth);
+//
+//	bool playing = true;
+//
+//	WINDOW* screen = newwin(scrHeight, scrWidth, 0, 0);
+//
+//	//create 2 maps
+//	Map map0(screen, "data\\water_templ.map");
+//	Map map1(screen, "data\\water_templ2.map");
+//	Map map2(screen, "data\\labyrinth.map");
+////	Map map2 (screen, "data\\crypt.map");
+//
+//	//setup main character
+//	Actor* mainC = createActor("hero.actr", AT_HUMAN);
+//	mainC->def->symbol = 'A';
+//
+//	mainC->x = 45;
+//	mainC->y = 37;
+//	
+//	map0.setControlActor(mainC);
+//	
+//	curs_set(CURSOR_INVISIBLE);
+//
+//	MapRepository* repo = new MapRepository(64, 64);
+//	
+//	ExplorationProcessor* mp = new ExplorationProcessor(&(mainC->y), &(mainC->x), repo);
+//	unsigned short id0 = 0;
+//	unsigned short id1 = 1;
+//	unsigned short id2 = 2;
+//	map0.setId(id0);
+//	map1.setId(id1);
+//	map2.setId(id2);
+//
+//	repo->addMapSeam(map0, map1, true, 0, 1, 1);
+//	repo->addMapSeam(map2, map0, false, 0, 0, 1);
+//	repo->addMapSeam(map2, map1, true, 0, 0, 1);
+//	repo->add(map0); //could combine this without previous method
+//	repo->add(map1);
+//	repo->add(map2);
+//
+//	mp->setCurrMap(map0.getId());
+//	mp->setViewMode(ViewMode::DYNAMIC); //position map so character is visible (not sure if this is the best way to do this)
+//	
+//	while (playing)
+//	{
+//		//draw map
+//		mp->getCurrMap()->draw();
+//		
+//		//add y,x coordinates to screen
+//		mvwprintw(screen, scrHeight - 2, scrWidth - 16, "y:%+4u x:%+4u", mainC->y, mainC->x);
+//		wnoutrefresh(screen);
+//
+//		doupdate();
+//
+//		//process input
+//		int input = getch();		
+//		switch (input)
+//		{
+//		case KEY_ESC: playing = false; break;
+//		case KEY_RIGHT:
+//		case KEY_LEFT:
+//		case KEY_UP:
+//		case KEY_DOWN:
+//			mp->processMovementInput(input); break;
+//		case '\t': //toggle automap
+//			break;
+//		default:
+//			break;
+//		}
+//	}
+//
+//	delwin(screen); //when a window is shared by multiple controllable objects, they cannot be responsible for deleting the window, because other objects can't tell that it is deleted
 }
 
 
@@ -3455,14 +2842,14 @@ void hiLevelMapTest()
 	autoMap.setCurrMap(0);
 	autoMap.updateDisplay();
 
-	short curY = 0;
-	short curX = 0;
+	int curY = 0;
+	int curX = 0;
 
 	Image* img = autoMap.getDisplay();
 	
 	curs_set(CURSOR_INVISIBLE);
-	FreeMovementProcessor mp(autoMap.getDisplay(), &curY, &curX);
-	mp.setViewMode(VM_CENTER);
+	FreeMovementProcessor mp(img, &curY, &curX);
+	mp.setViewMode(ViewMode::CENTER);
 	bool playing = true;
 
 	while (playing)
@@ -3665,93 +3052,6 @@ void repositoryTest()
 
 }
 
-void gameStateManagerTest2()
-{
-	//WINDOW* menuWin = newwin(4, 25, 1, 1);
-
-	//GameStateManager stateMngr;
-	//GameState* titleScreen = new TitleScreenState(menuWin);
-	//stateMngr.push(titleScreen);
-
-	//bool playing = true;
-
-	//while (playing)
-	//{
-	//	//draw
-	//	stateMngr.draw();
-	//	doupdate();
-
-	//	//input
-	//	int input = getch();
-
-	//	//process
-	//	switch (input)
-	//	{
-	//	case KEY_ESC: playing = false; break;
-	//	default:
-	//		playing = stateMngr.processInput(input);
-	//		break;
-	//	}
-	//}
-
-}
-
-
-void gameStateManagerEmptyTest()
-{
-	GameStateManager stateMngr;
-	
-	bool playing = true;
-
-	while (playing)
-	{
-		//draw
-		stateMngr.draw();
-		doupdate();
-
-		//input
-		int input = getch();
-
-		//process
-		switch (input)
-		{
-		case KEY_ESC: playing = false; break;
-		default:
-			playing = stateMngr.processInput(input);
-			break;
-		}
-	}
-
-}
-
-void gameStateManagerTest()
-{
-	GameStateManager stateMngr;
-
-	stateMngr.setState(TestState::getInstance());
-
-	bool playing = true;
-
-	while (playing)
-	{
-		//draw
-		stateMngr.draw();
-		doupdate();
-
-		//input
-		int input = getch();
-
-		//process
-		switch (input)
-		{
-		case KEY_ESC: playing = false; break;
-		default:
-			playing = stateMngr.processInput(input);
-			break;
-		}
-	}
-
-}
 
 int main()
 {
