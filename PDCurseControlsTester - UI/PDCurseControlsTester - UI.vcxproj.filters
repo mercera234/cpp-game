@@ -30,6 +30,27 @@
     <ClCompile Include="text_tests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="pdcurses_tests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="panel_tests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="misc_tests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tui_tests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="filter_tests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="frame_tests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="control_manager_tests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="file_chooser_tests.h">
@@ -42,6 +63,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="text_tests.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="pdcurses_tests.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="panel_tests.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tui_tests.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

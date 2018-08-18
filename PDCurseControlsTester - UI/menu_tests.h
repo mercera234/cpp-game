@@ -11,3 +11,5 @@ void paletteTest();
 
 //scrollbar on menu test
 void scrollMenuTest();
+
+void RGBTest();

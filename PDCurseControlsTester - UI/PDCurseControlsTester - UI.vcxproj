@@ -116,17 +116,27 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="control_manager_tests.cpp" />
     <ClCompile Include="driver.cpp" />
     <ClCompile Include="file_chooser_tests.cpp" />
+    <ClCompile Include="filter_tests.cpp" />
+    <ClCompile Include="frame_tests.cpp" />
     <ClCompile Include="image_tests.cpp" />
     <ClCompile Include="menu_tests.cpp" />
+    <ClCompile Include="misc_tests.cpp" />
+    <ClCompile Include="panel_tests.cpp" />
+    <ClCompile Include="pdcurses_tests.cpp" />
     <ClCompile Include="text_tests.cpp" />
+    <ClCompile Include="tui_tests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="file_chooser_tests.h" />
     <ClInclude Include="image_tests.h" />
     <ClInclude Include="menu_tests.h" />
+    <ClInclude Include="panel_tests.h" />
+    <ClInclude Include="pdcurses_tests.h" />
     <ClInclude Include="text_tests.h" />
+    <ClInclude Include="tui_tests.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PDCurseControls\PDCurseControls.vcxproj">
