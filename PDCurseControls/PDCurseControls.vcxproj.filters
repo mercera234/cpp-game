@@ -129,10 +129,13 @@
     <ClInclude Include="include\TwoDStorage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\KeyComparators.h">
+    <ClInclude Include="include\InputManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\InputManager.h">
+    <ClInclude Include="include\MenuItem2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ObjectLinkedItem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -231,9 +234,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\CursesAttributeController.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\KeyComparators.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\InputManager.cpp">

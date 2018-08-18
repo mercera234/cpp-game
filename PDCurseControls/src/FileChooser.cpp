@@ -199,7 +199,8 @@ void FileChooser::driver(int input)
 		if (choice == nullptr)
 			return;
 
-		switch (choice->crossRef) //this is done only when moving up and down in a file chooser
+		
+		switch (choice->getCrossRef()) //this is done only when moving up and down in a file chooser
 		{
 		case DT_REG: 
 			fileNameField.setText(choice->name);

@@ -2,14 +2,13 @@
 #include "ControlDecorator.h"
 #include "curses.h"
 #include <iostream>
-using namespace std;
 
 class Frame : public ControlDecorator
 {
 private:
 	unsigned short border;
 	
-	string text; 
+	std::string text; 
 	unsigned short textY, textX; //where to position the text
 public:
 	Frame(WINDOW* win, Controllable* c);

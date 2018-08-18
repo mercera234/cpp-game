@@ -39,7 +39,7 @@ private:
 	//private methods
 	void init();
 
-	void drawMenu();
+	//void drawMenu();
 	
 	int getElement(int row, int col);
 

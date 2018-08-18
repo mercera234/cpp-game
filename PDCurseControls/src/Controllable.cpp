@@ -13,6 +13,36 @@ void Controllable::setWindow(WINDOW* win)
 }
 
 
+void Controllable::move(int y, int x)
+{
+	mvwin(win, y, x);
+}
+
+void Controllable::setPosition(int y, int x)
+{
+	ulY = y;
+	ulX = x;
+}
+
+void Controllable::setDimensions(unsigned int rows, unsigned int cols)
+{
+	totalRows = rows;
+	totalCols = cols;
+	totalTiles = rows * cols;
+}
+
+
+void Controllable::shift(int y, int x)
+{
+	setPosition(ulY + y, ulX + x);
+}
+
+void Controllable::setColor(int bkgdColor, int textColor)
+{
+	color = bkgdColor << BKGDCOLOR_OFFSET | textColor << TEXTCOLOR_OFFSET;
+	color &= COLOR_MASK;
+}
+
 //void Controllable::setWindow(Rect* bounds)
 //{
 //	r = bounds;
@@ -85,33 +115,3 @@ void Controllable::setWindow(WINDOW* win)
 //		getbegyx(win, r->y, r->x);
 //	}
 //}
-
-void Controllable::move(int y, int x)
-{
-	mvwin(win, y, x);
-}
-
-void Controllable::setPosition(int y, int x)
-{
-	ulY = y;
-	ulX = x;
-}
-
-void Controllable::setDimensions(unsigned int rows, unsigned int cols)
-{
-	totalRows = rows;
-	totalCols = cols;
-	totalTiles = rows * cols;
-}
-
-
-void Controllable::shift(int y, int x)
-{
-	setPosition(ulY + y, ulX + x);
-}
-
-void Controllable::setColor(int bkgdColor, int textColor)
-{
-	color = bkgdColor << BKGDCOLOR_OFFSET | textColor << TEXTCOLOR_OFFSET;
-	color &= COLOR_MASK;
-}

@@ -195,24 +195,25 @@ void GridMenu::wrapLinks()
 }
 
 
-void GridMenu::drawMenu()
-{ 
-	//clear the submenu
-	wclear(win);
-	wbkgd(win, ' ' | colorPair);
-
-	wattron(win, colorPair);
-	//render each item
-
-	for (int i = 0; i < (int)items.size(); i++)
-	{
-		if (items[i] != NULL && items[i]->hidden) //hidden items are not drawn
-			continue;
-		
-		items[i]->draw();
-	}
-
-}
+//this may be obsolete!!
+//void GridMenu::drawMenu()
+//{ 
+//	//clear the submenu
+//	wclear(win);
+//	wbkgd(win, ' ' | colorPair);
+//
+//	wattron(win, colorPair);
+//	//render each item
+//
+//	for (int i = 0; i < (int)items.size(); i++)
+//	{
+//		if (items[i] != NULL && items[i]->hidden) //hidden items are not drawn
+//			continue;
+//		
+//		items[i]->draw();
+//	}
+//
+//}
 
 
 /*Get element from row and col

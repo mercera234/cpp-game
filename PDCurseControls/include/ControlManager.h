@@ -3,7 +3,6 @@
 #include <list>
 #include <map>
 #include <functional>
-#include "KeyComparators.h"
 #include "Command.h"
 
 #define KEY_LISTENER 0x0001

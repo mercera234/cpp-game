@@ -35,7 +35,8 @@ class AbstractMenu : public Controllable
 {
 protected:
 	/* The container for the items.
-	The current size is the same as the maximum items the menu can have currently */
+	The current size is the same as the maximum items the menu can have currently. 
+	All menu items being added should be pointers to heap allocated objects, not references.*/
 	std::vector<MenuItem*> items; 
 	
 	short curIndex; //index of currently selected item

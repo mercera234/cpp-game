@@ -116,7 +116,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="include\MenuItem2.h" />
     <ClInclude Include="include\InputManager.h" />
+    <ClInclude Include="include\ObjectLinkedItem.h" />
     <ClInclude Include="include\TwoDStorage.h" />
     <ClInclude Include="include\AbstractMenu.h" />
     <ClInclude Include="include\Animation.h" />
@@ -155,12 +157,10 @@
     <ClInclude Include="include\TextField.h" />
     <ClInclude Include="include\TextLabel.h" />
     <ClInclude Include="include\TUI.h" />
-    <ClInclude Include="include\KeyComparators.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Direction.cpp" />
     <ClCompile Include="src\InputManager.cpp" />
-    <ClCompile Include="src\KeyComparators.cpp" />
     <ClCompile Include="src\AbstractMenu.cpp" />
     <ClCompile Include="src\Animation.cpp" />
     <ClCompile Include="src\BlitAnimation.cpp" />

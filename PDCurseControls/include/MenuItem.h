@@ -3,11 +3,13 @@
 #include <iostream>
 #include <vector>
 #include <list>
+#include <memory>
 #include "Drawable.h"
 #include "curses.h"
 #include "direction.h"
 
 class AbstractMenu;
+
 class MenuItem : public Drawable
 {
 protected:
@@ -16,20 +18,34 @@ protected:
 	MenuItem* downItem;
 	MenuItem* leftItem;
 	MenuItem* rightItem;
+	
+	//variables for drawing
+	int offY, offX; //position of containing menu relative to screen
+	int topRow;
+	int cursorX;
+	int cursorLen;
+	int itemX;
+	WINDOW* win; //window of containing menu. MenuItems don't get their own individual windows.
 
 	void init(unsigned short y, unsigned short x);
+	void calcDrawingVars();
+	void drawCursor();
 public:
 	short index; //the index is the unique identifier for the item. This cannot be removed from this object
-	int crossRef;
+
 	bool selected;
 	bool selectable;
 	bool hidden; //do not draw hidden items, they have functional purpose only
 
-	unsigned short posY, posX;
+	unsigned short posY, posX; //position of item in menu
+	
 	
 	MenuItem();
 	MenuItem(unsigned short y, unsigned short x);
 	
+	/*Sets up location to draw item and draws the cursor*/
+	void draw(); 
+
 	/*Resets all properties to default*/
 	void clear();
 

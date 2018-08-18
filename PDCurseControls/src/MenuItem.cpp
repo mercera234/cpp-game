@@ -1,4 +1,5 @@
 #include "MenuItem.h"
+#include "AbstractMenu.h"
 #include <algorithm>
 
 MenuItem::MenuItem()
@@ -19,6 +20,51 @@ void MenuItem::init(unsigned short y, unsigned short x)
 	rightItem = nullptr;
 	setPosition(y, x);
 	clear();
+}
+
+void MenuItem::calcDrawingVars()
+{
+	if (menu == NULL) //item is not in a menu. This is ok for testing
+	{
+		offY = 0;
+		offX = 0;
+		win = stdscr;
+		topRow = posY;
+		cursorX = posX;
+		cursorLen = 0;
+		itemX = cursorX;
+	}
+	else //item is in menu
+	{
+		offY = menu->getUlY();
+		offX = menu->getUlX();
+		win = menu->getWindow();
+		topRow = posY - offY;
+		cursorX = posX - offX;
+		cursorLen = menu->getCursor().length();
+		itemX = cursorX + cursorLen;
+	}
+}
+
+void MenuItem::draw()
+{
+	calcDrawingVars();
+
+	if (menu != NULL &&
+		menu->isFocused() &&
+		(this == menu->getCurrentItem() || selected))
+	{
+		drawCursor();
+	}
+}
+
+void MenuItem::drawCursor()
+{
+	if (menu == NULL)
+		return;
+
+	mvwaddstr(win, topRow, cursorX,
+	menu->getCursor().c_str());
 }
 
 MenuItem* MenuItem::getLinkedItem(Dir link)
@@ -98,7 +144,7 @@ void MenuItem::clear()
 {
 	selectable = false;
 	selected = false;
-	crossRef = -1;
+//	crossRef = -1;
 	index = -1;
 	menu = nullptr;
 	hidden = false;
