@@ -4,7 +4,7 @@
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
-namespace PDCurseControlsTester
+namespace RPGLibTester
 {
 	TEST_CLASS(MapTest)
 	{

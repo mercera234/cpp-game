@@ -75,7 +75,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>F:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\PDCurseControls\include;F:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\PDCurseControls\include\external;F:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\RPGLib\include;$(IncludePath)</IncludePath>
+    <IncludePath>F:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\PDCurseControls\include;F:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\PDCurseControls\include\external;F:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\RPGLib\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -153,6 +153,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="MockMovementProcessor.h" />
+    <ClInclude Include="MockMusicPlayer.h" />
     <ClInclude Include="MockPlayer.h" />
     <ClInclude Include="MockState1.h" />
     <ClInclude Include="MockState2.h" />
@@ -160,13 +161,21 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ActorTest.cpp" />
+    <ClCompile Include="BattleAlgorithmTest.cpp" />
+    <ClCompile Include="BoundIntTest.cpp" />
     <ClCompile Include="FreeMovementProcessorTest.cpp" />
     <ClCompile Include="GameStateManagerTest.cpp" />
+    <ClCompile Include="InventoryTest.cpp" />
     <ClCompile Include="MapTest.cpp" />
     <ClCompile Include="MockMovementProcessor.cpp" />
+    <ClCompile Include="MockMusicPlayer.cpp" />
     <ClCompile Include="MockState1.cpp" />
     <ClCompile Include="MockState2.cpp" />
     <ClCompile Include="MovementProcessorTest.cpp" />
+    <ClCompile Include="MusicPlayerTest.cpp" />
+    <ClCompile Include="PickupTest.cpp" />
+    <ClCompile Include="PlayerActorTest.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

@@ -6,7 +6,7 @@
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
-namespace PDCurseControlsTester
+namespace RPGLibTester
 {
 	bool predTest()
 	{
@@ -73,7 +73,7 @@ namespace PDCurseControlsTester
 
 
 		/*
-		It is possible to request for the next player
+		It is possible to request the next player
 		*/
 		TEST_METHOD(getNextTest)
 		{
@@ -89,7 +89,7 @@ namespace PDCurseControlsTester
 		*/
 		TEST_METHOD(getNextOneDeadTest)
 		{
-			player2.mockOn = false; //can't play
+			player2.playStatus = false;
 			tt.addPlayer(&player1);
 			tt.addPlayer(&player2);
 
@@ -106,7 +106,7 @@ namespace PDCurseControlsTester
 		*/
 		TEST_METHOD(getNextFailTest)
 		{
-			player1.mockOn = false; //can't play
+			player1.playStatus = false;
 			tt.addPlayer(&player1);
 
 			Player* p = tt.getNext();
@@ -116,18 +116,18 @@ namespace PDCurseControlsTester
 		}
 
 		/*
-		Inactive player should be added to round if not able to play
+		Inactive player should be added to round if able to play in mid-game
 		*/
 		TEST_METHOD(getNextRevivedTest)
 		{
-			player1.mockOn = false; //can't play
+			player1.playStatus = false; 
 			
 			tt.addPlayer(&player1);
 			tt.addPlayer(&player2);
 
 			Player* p = tt.getNext();//guaranteed to be player2 since player1 can't play
 
-			player1.mockOn = true;
+			player1.playStatus = true;
 
 			MockPlayer* p2 = (MockPlayer*)tt.getNext();//guaranteed to be player1 since player2 was already removed from queue
 
@@ -142,7 +142,7 @@ namespace PDCurseControlsTester
 			tt.addPlayer(&player1);
 			tt.addPlayer(&player2);
 
-			player1.mockOn = false; //player1 can't play now
+			player1.playStatus = false; //player1 can't play now
 
 			Player* p = tt.getNext();//guaranteed to be player2 since player1 can't play
 

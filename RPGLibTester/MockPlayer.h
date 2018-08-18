@@ -6,7 +6,7 @@ class MockPlayer : public Player
 private:
 public:
 	int id;
-	bool mockOn = true;
-	bool canPlay() { return mockOn; }
+	bool playStatus = true;
+	bool canPlay() { return playStatus; }
 
 };
