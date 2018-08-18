@@ -40,7 +40,7 @@ MasterEditor::MasterEditor()
 	curEditor = NULL; //by default no editor is loaded
 
 	editors.push_back((Editor*)new MapEditor());
-	editors.push_back((Editor*)new ActorEditor());
+	//editors.push_back((Editor*)new ActorEditor());
 }
 
 void MasterEditor::draw()

@@ -10,15 +10,14 @@ class ExplorationProcessor : public MovementProcessor
 {
 private:
 	Map* currMap;
-	bool processStep(short* axis, int step, Direction dirInput);
-	bool processStep2(short* axis, int step, Direction dirInput);
+	bool processMovement(Movement& move);
 
 	MapRepository* mapRepo;
 
 	void moveActorAcrossMapSeam(MapExit& fromMap, MapExit& toMap);
-
+	bool bounded = true;
 public:
-	ExplorationProcessor(short* curY, short* curX, MapRepository* repo);
+	ExplorationProcessor(int* curY, int* curX, MapRepository* repo);
 	
 	void setCurrMap(unsigned short id);
 	Map* getCurrMap() { return currMap; }

@@ -94,8 +94,8 @@ private:
 
 	void applyTool(int y, int x);
 	void createNew();
-	void load(string fileName);
-	void save(string fileName);
+	void load(std::string fileName);
+	void save(std::string fileName);
 	
 	void fill(int sourceRow, int sourceCol);
 

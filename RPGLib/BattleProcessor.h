@@ -10,6 +10,7 @@ using namespace std;
 #include "TurnTracker.h"
 #include "ActorCard.h"
 #include "Frame.h"
+#include "PlayerActor.h"
 
 class BattleProcessor : public Controllable
 {
@@ -32,12 +33,13 @@ private:
 	void createActorCards(list<Actor*>& actors, int startNdx, list<MenuItem*>& cards);
 	void addCardsToTargetMenu(list<MenuItem*>& cards);
 
-	void attack(ActorCard * attacker, ActorCard * target);
+	void attack(Actor * attacker, Actor * target);
 	//checkForVictory
 	//checkForDeath
 	void setupVictory();
 	void calcRewards(int& totalExp, int &totalMoney);
 	void transferRewards(int totalExp, int totalMoney);
+	bool checkIfDefeated(list<MenuItem*>& cards);
 
 	void setupDeath();
 public:
@@ -45,12 +47,15 @@ public:
 	list<MenuItem*> cpuActors; //cpu combatants
 	list<string> messages;
 	
+	//display elements
 	GraphMenu* targetMenu;
 	Frame* skillMenuFrame;
 	GridMenu* skillMenu;
 	TextLabel* msgDisplay;
+
+	//turntracking elements
 	TurnTracker* turnTracker;
-	ActorCard* turnHolder;
+	PlayerActor* turnHolder;
 
 	BattleProcessor(WINDOW* win, list<Actor*>& players, list<Actor*>& enemies);
 	void draw();

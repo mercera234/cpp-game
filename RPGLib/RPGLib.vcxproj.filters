@@ -15,141 +15,219 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Actor.cpp">
+    <ClCompile Include="Actor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Map.cpp">
+    <ClCompile Include="actor_helper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\ActorCard.cpp">
+    <ClCompile Include="ActorCard.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\BattleAlgorithm.cpp">
+    <ClCompile Include="AutoMap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\TurnTracker.cpp">
+    <ClCompile Include="BattleAlgorithm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\WadDatabase.cpp">
+    <ClCompile Include="DataPkg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\MovementProcessor.cpp">
+    <ClCompile Include="FreeMovementProcessor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\mapKeyComparators.cpp">
+    <ClCompile Include="GameStateManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\MapEffectFilterPattern.cpp">
+    <ClCompile Include="Map.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\FreeMovementProcessor.cpp">
+    <ClCompile Include="MapEffectFilterPattern.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\GameStateManager.cpp">
+    <ClCompile Include="mapKeyComparators.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\AutoMap.cpp">
+    <ClCompile Include="MapRepository.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\DataPkg.cpp">
+    <ClCompile Include="MovementProcessor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\DataPkgFactory.cpp">
+    <ClCompile Include="MusicPlayer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\ActorDefRepository.cpp">
+    <ClCompile Include="PlayerActor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\MapRepository.cpp">
+    <ClCompile Include="TurnTracker.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\PlayerActor.cpp">
+    <ClCompile Include="WadDatabase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\actor_helper.cpp">
+    <ClCompile Include="BoundInt.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Inventory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GameItemMenuRecord.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="KeyComparators.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MegaMap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Factory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ExplorationProcessor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BattleProcessor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MasterEditor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MapEditor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Editor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\Actor.h">
+    <ClInclude Include="Actor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Map.h">
+    <ClInclude Include="actor_helper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\ActorCard.h">
+    <ClInclude Include="ActorCard.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\BattleAlgorithm.h">
+    <ClInclude Include="AutoMap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\TurnTracker.h">
+    <ClInclude Include="BattleAlgorithm.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\WadDatabaseQuery.h">
+    <ClInclude Include="DataPkg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\WadDatabase.h">
+    <ClInclude Include="FreeMovementProcessor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Spell.h">
+    <ClInclude Include="GameState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\MovementProcessor.h">
+    <ClInclude Include="GameStateManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\MapKeyComparators.h">
+    <ClInclude Include="IMusicPlayer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\MapEffectFilterPattern.h">
+    <ClInclude Include="Lump.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Lump.h">
+    <ClInclude Include="Map.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\GameStateManager.h">
+    <ClInclude Include="MapEffectFilterPattern.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\GameState.h">
+    <ClInclude Include="MapExit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\FreeMovementProcessor.h">
+    <ClInclude Include="MapKeyComparators.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\AutoMap.h">
+    <ClInclude Include="MapRepository.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\ActorDefRepository.h">
+    <ClInclude Include="MovementProcessor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\MapRepository.h">
+    <ClInclude Include="MusicPlayer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Repository.h">
+    <ClInclude Include="Pickup.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Repository2.h">
+    <ClInclude Include="Player.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\MapExit.h">
+    <ClInclude Include="PlayerActor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\DataPkg.h">
+    <ClInclude Include="Repository.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\DataPkgFactory.h">
+    <ClInclude Include="Repository2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Player.h">
+    <ClInclude Include="Spell.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\PlayerActor.h">
+    <ClInclude Include="Thing.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\TileEffect.h">
+    <ClInclude Include="TileEffect.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\actor_helper.h">
+    <ClInclude Include="TurnTracker.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="WadDatabase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="WadDatabaseQuery.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Money.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BoundInt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Inventory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameItem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameItemMenuRecord.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="KeyComparators.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MegaMap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MapMetadata.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Factory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ExplorationProcessor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BattleProcessor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MasterEditor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MapEditor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Editor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

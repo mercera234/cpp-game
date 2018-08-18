@@ -1,6 +1,42 @@
 #include "Actor.h"
 
-int ActorDef::save(std::ofstream& saveFile)
+void Actor::alterStat(StatType statType, int amount)
+{
+	BoundInt& stat = getStat(statType);
+
+	int startValue = stat.getCurr();
+	stat.setCurr(startValue += amount);
+}
+
+
+BoundInt& Actor::getStat(StatType statType)
+{
+	BoundInt* stat = nullptr;
+	switch (statType)
+	{
+	case StatType::HP: stat = &stats.hp; break;
+	case StatType::MP: stat = &stats.mp; break;
+	case StatType::EXP: stat = &stats.exp; break;
+	case StatType::LEVEL: stat = &stats.level; break;
+	case StatType::MONEY: stat = &money; break;
+	case StatType::STRENGTH: stat = &stats.strength; break;
+	case StatType::DEFENSE: stat = &stats.defense; break;
+	case StatType::INTELLIGENCE: stat = &stats.intelligence; break;
+	case StatType::WILL: stat = &stats.will; break;
+	case StatType::AGILITY: stat = &stats.agility; break;
+			
+	}
+
+	return *stat;
+}
+
+
+
+
+
+
+
+int Actor::save(std::ofstream& saveFile)
 {
 	if (saveFile.is_open() == false)
 		return false;
@@ -13,7 +49,7 @@ int ActorDef::save(std::ofstream& saveFile)
 
 	saveFile.write(buf, MAX_NAME_LENGTH);
 	saveFile.write((char*)&symbol, sizeof(char));
-	saveFile.write((char*)&level, sizeof(short));
+	/*saveFile.write((char*)&level, sizeof(short));
 	saveFile.write((char*)&exp, sizeof(int));
 	saveFile.write((char*)&money, sizeof(int));
 	saveFile.write((char*)&maxHp, sizeof(int));
@@ -24,7 +60,7 @@ int ActorDef::save(std::ofstream& saveFile)
 	saveFile.write((char*)&will, sizeof(short));
 	saveFile.write((char*)&agility, sizeof(short));
 	saveFile.write((char*)&accuracy, sizeof(float));
-	saveFile.write((char*)&luck, sizeof(float));
+	saveFile.write((char*)&luck, sizeof(float));*/
 	
 	std::streampos endPos = saveFile.tellp();
 
@@ -32,7 +68,7 @@ int ActorDef::save(std::ofstream& saveFile)
 }
 
 
-int ActorDef::load(std::ifstream& loadFile)
+int Actor::load(std::ifstream& loadFile)
 {
 	if (loadFile.is_open() == false)
 		return false;
@@ -44,7 +80,7 @@ int ActorDef::load(std::ifstream& loadFile)
 	name.assign(buf);
 
 	loadFile.read((char*)&symbol, sizeof(char));
-	loadFile.read((char*)&level, sizeof(short));
+	/*loadFile.read((char*)&level, sizeof(short));
 	loadFile.read((char*)&exp, sizeof(int));
 	loadFile.read((char*)&money, sizeof(int));
 	loadFile.read((char*)&maxHp, sizeof(int));
@@ -55,7 +91,7 @@ int ActorDef::load(std::ifstream& loadFile)
 	loadFile.read((char*)&will, sizeof(short));
 	loadFile.read((char*)&agility, sizeof(short));
 	loadFile.read((char*)&accuracy, sizeof(float));
-	loadFile.read((char*)&luck, sizeof(float));
+	loadFile.read((char*)&luck, sizeof(float));*/
 
 	std::streampos endPos = loadFile.tellg();
 

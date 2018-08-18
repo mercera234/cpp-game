@@ -152,7 +152,7 @@ void Editor::confirmDialogDriver(Controllable* c, int input, int confirmMethod)
 	}
 }
 
-Frame* Editor::createConfirmDialog(string confirmMsg)
+Frame* Editor::createConfirmDialog(std::string confirmMsg)
 {
 	//setup menu for dialog
 	int width, height;  getmaxyx(stdscr, height, width);
@@ -191,7 +191,7 @@ void Editor::fileDialogDriver(Controllable* dialog, int input)
 	Frame* f = (Frame*)dialog;
 	FileChooser* fd = (FileChooser*)f->getControl();
 
-	string fileChosen;
+	std::string fileChosen;
 	switch (input)
 	{
 	case KEY_DOWN: fd->driver(REQ_DOWN_ITEM);   break;
@@ -231,7 +231,7 @@ void Editor::fileDialogDriver(Controllable* dialog, int input)
 
 void Editor::updateFileNameLabel()
 {
-	string lblTxt;
+	std::string lblTxt;
 	lblTxt = modified ? fileName.substr(0, 14) + "*" : fileName;
 
 	fileNameLbl->setText(lblTxt);

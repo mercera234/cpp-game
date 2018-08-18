@@ -201,7 +201,7 @@ void MapEditor::setupPalettes()
 
 void MapEditor::setupRulers()
 {
-	string topRulerText;
+	std::string topRulerText;
 
 	//draw top ruler
 	for (int i = 0; i <= visibleCols; i++)
@@ -319,7 +319,7 @@ void MapEditor::setCanvasSize(int rows, int cols)
 	canvasCols = cols;
 }
 
-void MapEditor::load(string fileName)
+void MapEditor::load(std::string fileName)
 {
 	map.load(fileName);
 	
@@ -331,7 +331,7 @@ void MapEditor::load(string fileName)
 	cm->setFocus(&map);
 }
 
-void MapEditor::save(string fileName)
+void MapEditor::save(std::string fileName)
 {
 	map.save(fileName);
 }
@@ -540,7 +540,7 @@ bool MapEditor::processMapInput(int input)
 
 void MapEditor::fill(int sourceRow, int sourceCol)
 {
-	list<int> fillPoints;
+	std::list<int> fillPoints;
 
 	chtype replaceTile = image->getTile(sourceRow, sourceCol);
 		//mvwinch(viewport, sourceRow, sourceCol); //make sure this isn't reversed

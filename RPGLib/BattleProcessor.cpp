@@ -3,6 +3,7 @@
 #include <sstream>
 #include "MenuItem.h"
 #include "BattleAlgorithm.h"
+#include "actor_helper.h"
 
 BattleProcessor::BattleProcessor(WINDOW* win, list<Actor*>& players, list<Actor*>& enemies)
 {
@@ -34,9 +35,19 @@ void BattleProcessor::initTurnTracker()
 	int totalPlayers = humanActors.size() + cpuActors.size();
 	turnTracker = new TurnTracker();
 	
-	//TODO class is broken now
-	//turnTracker->addPlayers(humanActors);
-	//turnTracker->addPlayers(cpuActors);
+	for each (ActorCard* card in humanActors)
+	{
+		PlayerActor* player = new PlayerActor();
+		player->setActor(card->getActor());
+		turnTracker->addPlayer(player);
+	}
+
+	for each (ActorCard* card in cpuActors)
+	{
+		PlayerActor* player = new PlayerActor();
+		player->setActor(card->getActor());
+		turnTracker->addPlayer(player);
+	}
 }
 
 
@@ -64,7 +75,7 @@ void BattleProcessor::initTargetMenu()
 	MenuItem::linkItemGroups(humanActors, cpuActors, Dir::RIGHT);
 	
 	//position cards
-	int pLeft = 2;
+	int pLeft = 0;
 	int eLeft = pLeft + (visibleCols / 2); //midway across screen
 
 	MenuItem::positionItemGroup(humanActors, 0, pLeft);
@@ -88,18 +99,25 @@ void BattleProcessor::addCardsToTargetMenu(list<MenuItem*>& cards)
 	}*/
 }
 
-void BattleProcessor::attack(ActorCard * attacker, ActorCard * target)
+void BattleProcessor::attack(Actor * attacker, Actor * target)
 {
-	Actor* attackerActor = attacker->getActor();
-	Actor* targetActor = target->getActor();
-	int damage = BattleAlgorithm::calcAttackDamage(attackerActor->def->strength, targetActor->def->defense);
-	targetActor->currHp -= damage;
-	if (targetActor->currHp < 0)
-		targetActor->currHp = 0;
-	target->setDamage(damage);
+	int attackerStrength = attacker->stats.strength.getCurr();
 
+	int damage = calcAttackDamage(attackerStrength, target->stats.defense.getCurr());
+
+	int agilityAdvantage = calcAgilityAdvantage(attacker->getStat(StatType::AGILITY).getCurr(),
+		attackerStrength,
+		target->getStat(StatType::AGILITY).getCurr()
+	);
+
+	damage += agilityAdvantage;
+
+	damage += calcVariance(damage, 20);
+
+	alterStatValue(target->getStat(StatType::HP), -damage);
+	
 	ostringstream attackMsg;
-	attackMsg << attackerActor->def->name << " hits " << targetActor->def->name;
+	attackMsg << attacker->name << " hits " << target->name;
 
 	messages.push_back(attackMsg.str());
 }
@@ -155,19 +173,18 @@ void BattleProcessor::initControlManager()
 
 void BattleProcessor::advanceTurn()
 {
-	//TODO class is broken
-	//turnHolder = turnTracker->getNext();
+	turnHolder = (PlayerActor*)turnTracker->getNext();
 	
 	if (turnHolder == NULL)	return;
 
 	Actor* next = turnHolder->getActor();
 	switch (next->type)
 	{
-	case AT_HUMAN:
-		skillMenuFrame->setText(next->def->name, 0, 4);
+	case ActorType::HUMAN:
+		skillMenuFrame->setText(next->name, 0, 4);
 		cm->setFocus(skillMenuFrame);
 		break;
-	case AT_CPU:
+	case ActorType::CPU:
 		processCPUTurn();
 		cm->setFocus(msgDisplay);
 		setMessage();
@@ -252,8 +269,7 @@ void BattleProcessor::targetMenuDriver(int input)
 	case 'c':
 		item = targetMenu->getCurrentItem();
 		break;
-	case 'x':
-		//cm->setFocus(skillMenu); 
+	case 'x': 
 		cm->setFocus(skillMenuFrame);
 		break;
 	default: break;
@@ -265,15 +281,22 @@ void BattleProcessor::targetMenuDriver(int input)
 		//only skill right now is attack so use that
 		ActorCard* target = (ActorCard*)item;
 		
-		attack(turnHolder, target);
+		attack(turnHolder->getActor(), target->getActor());
 
 		//check if enemies are defeated
-		bool allDead = true;
+
+		if (checkIfDefeated(cpuActors))
+		{
+			setupVictory();
+		}
+
+	/*	bool allDead = true;
 		for (list<MenuItem*>::iterator it = cpuActors.begin(); it != cpuActors.end(); it++)
 		{
 			ActorCard* card = (ActorCard*)*it;
 			Actor* enemy = card->getActor();
-			if (IS_DEAD(enemy) == false)
+
+			if (isAlive(*enemy))
 			{
 				allDead = false; break;
 			}
@@ -283,7 +306,7 @@ void BattleProcessor::targetMenuDriver(int input)
 		if (allDead)
 		{
 			setupVictory();
-		}
+		}*/
 
 		skillMenuFrame->setText("", 0, 4); //clear human's name from the frame
 		cm->setFocus(msgDisplay);
@@ -328,8 +351,9 @@ void BattleProcessor::calcRewards(int& totalExp, int &totalMoney)
 	{
 		ActorCard* card = (ActorCard*)*it;
 		Actor* enemy = card->getActor();
-		totalExp += enemy->def->exp;
-		totalMoney += enemy->def->money;
+
+		totalExp += enemy->getStat(StatType::EXP).getCurr();
+		totalMoney += enemy->getStat(StatType::MONEY).getCurr();
 	}
 }
 
@@ -339,7 +363,9 @@ void BattleProcessor::transferRewards(int totalExp, int totalMoney)
 	{
 		ActorCard* card = (ActorCard*)*it;
 		Actor* player = card->getActor();
-		player->def->exp += totalExp;
+
+		alterStatValue(player->stats.exp, totalExp);
+		//player->def->exp += totalExp;
 
 		//not sure how to handle money just yet
 
@@ -350,7 +376,8 @@ void BattleProcessor::transferRewards(int totalExp, int totalMoney)
 		if (levelsGained > 0)
 		{
 			ostringstream gainLevelMsg;
-			gainLevelMsg << player->def->name;
+			gainLevelMsg << player->name;
+			//gainLevelMsg << player->def->name;
 
 			levelsGained == 1 ? 
 			gainLevelMsg << " gained a level." :
@@ -415,26 +442,30 @@ void BattleProcessor::processCPUTurn()
 	}
 	
 	//apply skill (just attack for now)
-	attack(turnHolder, target);
+	attack(turnHolder->getActor(), target->getActor());
 
-	//check if heros are defeated (this should be merged in with the other one!)
-	bool allDead = true;
-	for (list<MenuItem*>::iterator it = humanActors.begin(); it != humanActors.end(); it++)
-	{
-		ActorCard* card = (ActorCard*)*it;
-		Actor* human = card->getActor();
-		if (IS_DEAD(human) == false)
-		{
-			allDead = false; break;
-		}
-
-	}
-
-	if (allDead)
+	if(checkIfDefeated(humanActors))
 	{
 		setupDeath();
 	}
 
 	cm->setFocus(msgDisplay);
 	setMessage();
+}
+
+bool BattleProcessor::checkIfDefeated(list<MenuItem*>& cards)
+{
+	bool allDead = true;
+	for (list<MenuItem*>::iterator it = cards.begin(); it != cards.end(); it++)
+	{
+		ActorCard* card = (ActorCard*)*it;
+		Actor* actor = card->getActor();
+
+		if (isAlive(*actor))
+		{
+			allDead = false; break;
+		}
+
+	}
+	return allDead;
 }

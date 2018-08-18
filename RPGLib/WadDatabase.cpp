@@ -4,7 +4,7 @@
 #include <dirent.h>
 #include <string>
 #include "DataPkg.h"
-#include "DataPkgFactory.h"
+//#include "DataPkgFactory.h"
 
 
 WadDatabase::WadDatabase()
@@ -188,28 +188,28 @@ bool WadDatabase::load(std::ifstream* loadFile)
 	return true;
 }
 
-void WadDatabase::getActorRepository(std::map<std::string, ActorDef*, std::function<bool(std::string, std::string)>>& actorRepo, std::ifstream& wadFile)
-{
-	//iterate through directory for all actor types
-	for each (WadDirEntry* entry in directory)
-	{
-		if (entry->type != LumpType::ACTOR)
-			continue;
-
-		wadFile.seekg(entry->offset);
-
-		int blocks = entry->lumpSize / BLOCK_SIZE;
-		DataPkg pkg;
-		pkg.load(&wadFile, blocks);
-
-		DataPkgFactory factory;
-		ActorDef* def = factory.getActorDefFromPkg(&pkg);
-
-		std::pair<std::string, ActorDef*> defPair(def->name, def);
-		//pair<std::string, ActorDef*> defPair(aStr, def);
-		actorRepo.insert(defPair);
-	}
-}
+//void WadDatabase::getActorRepository(std::map<std::string, ActorDef*, std::function<bool(std::string, std::string)>>& actorRepo, std::ifstream& wadFile)
+//{
+//	//iterate through directory for all actor types
+//	for each (WadDirEntry* entry in directory)
+//	{
+//		if (entry->type != LumpType::ACTOR)
+//			continue;
+//
+//		wadFile.seekg(entry->offset);
+//
+//		int blocks = entry->lumpSize / BLOCK_SIZE;
+//		DataPkg pkg;
+//		pkg.load(&wadFile, blocks);
+//
+//		DataPkgFactory factory;
+//		ActorDef* def = factory.getActorDefFromPkg(&pkg);
+//
+//		std::pair<std::string, ActorDef*> defPair(def->name, def);
+//		//pair<std::string, ActorDef*> defPair(aStr, def);
+//		actorRepo.insert(defPair);
+//	}
+//}
 
 void WadDatabase::getMapRepository(std::map<unsigned short, Map*>& mapRepo, std::ifstream& wadFile)
 {
@@ -225,7 +225,7 @@ void WadDatabase::getMapRepository(std::map<unsigned short, Map*>& mapRepo, std:
 		DataPkg pkg;
 		pkg.load(&wadFile, blocks);
 
-		DataPkgFactory factory;
+	//	DataPkgFactory factory;
 		//TODO need to pull maps from pkgs
 	//	ActorDef* def = factory.getActorDefFromPkg(&pkg);
 

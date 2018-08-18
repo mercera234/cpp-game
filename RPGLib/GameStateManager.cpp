@@ -14,7 +14,7 @@ bool GameStateManager::processInput(int input)
 
 	state->processInput(*this, input);
 
-	return true;
+	return state != nullptr; //return if state was invalidated during processing
 }
 
 void GameStateManager::draw()
@@ -22,9 +22,5 @@ void GameStateManager::draw()
 	if (state) 
 	{
 		state->draw();
-	}
-	else //nothing to draw
-	{
-		mvprintw(1, 1, "No state set!");
 	}
 }

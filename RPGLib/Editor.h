@@ -17,21 +17,21 @@ protected:
 	ControlManager* cm;
 
 	//file data (this should be moved to Master Editor)
-	string fileName;
-	string dialogDefPath;
+	std::string fileName;
+	std::string dialogDefPath;
 	TextLabel* fileNameLbl;
 	bool modified = false;
-	string extensionFilter;
+	std::string extensionFilter;
 
 	void updateFileNameLabel();
 	void processGlobalInput(int input);
-	Frame* createConfirmDialog(string confirmMsg);
+	Frame* createConfirmDialog(std::string confirmMsg);
 	void confirmDialogDriver(Controllable* dialog, int input, int confirmMethod);
 	void setupConfirmDialog(void(*callback) (void*, void*, int));
 	void fileDialogDriver(Controllable* dialog, int input);
 	void setupFileDialog(FileDialogType dialogType);
-	virtual void load(string fileName) = 0;
-	virtual void save(string fileName) = 0;
+	virtual void load(std::string fileName) = 0;
+	virtual void save(std::string fileName) = 0;
 	virtual void createNew() = 0; //for creating a new instance of whatever is being edited
 	void setModified(bool modified); //all routines to perform when current map has been modified from original state
 public:

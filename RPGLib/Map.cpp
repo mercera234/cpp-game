@@ -60,7 +60,7 @@ void Map::draw()
 	if (controlActor != NULL) //draw actor if present
 	{
 		chtype normalColor = COLOR_PAIR(COLOR_YELLOW_BOLD);
-		chtype mainCImageNormal = controlActor->def->symbol | normalColor;
+		chtype mainCImageNormal = controlActor->symbol | normalColor;
 
 		TUI::printOnBkgd(mainCImageNormal, win, controlActor->y - display.getUlY(), controlActor->x - display.getUlX());
 		wnoutrefresh(win);

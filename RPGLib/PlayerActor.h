@@ -10,5 +10,5 @@ public:
 	PlayerActor();
 	void setActor(Actor* actorIn); 
 	Actor* getActor() { return actor; }
-	bool canPlay();
+	virtual bool canPlay();
 };

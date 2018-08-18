@@ -1,4 +1,5 @@
 #include "PlayerActor.h"
+#include "actor_helper.h"
 
 PlayerActor::PlayerActor()
 {
@@ -8,7 +9,7 @@ PlayerActor::PlayerActor()
 
 bool PlayerActor::canPlay()
 {
-	return IS_ALIVE(actor);
+	return isAlive(*actor);
 }
 
 void PlayerActor::setActor(Actor* actorIn)

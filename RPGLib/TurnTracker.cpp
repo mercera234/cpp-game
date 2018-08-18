@@ -109,7 +109,7 @@ void TurnTracker::free()
 {
 	players.clear();
 	
-	std::queue<Player*>().swap(turnQueue);
+	std::queue<Player*>().swap(turnQueue); //using swap trick to empty queue
 }
 
 TurnTracker::~TurnTracker()

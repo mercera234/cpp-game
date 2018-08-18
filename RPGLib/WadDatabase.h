@@ -7,7 +7,7 @@
 #include "Storable.h"
 #include "FileDirectory.h"
 #include "Lump.h"
-#include "ActorDefRepository.h"
+//#include "ActorDefRepository.h"
 #include "MapRepository.h"
 
 
@@ -52,6 +52,6 @@ public:
 
 	
 	//not sure if I should have this method here!!!
-	void getActorRepository(std::map<std::string, ActorDef*, std::function<bool(std::string, std::string)>>& actorRepo, std::ifstream& wadFile);
+	//void getActorRepository(std::map<std::string, ActorDef*, std::function<bool(std::string, std::string)>>& actorRepo, std::ifstream& wadFile);
 	void getMapRepository(std::map<unsigned short, Map*>& mapRepo, std::ifstream& wadFile);
 };
