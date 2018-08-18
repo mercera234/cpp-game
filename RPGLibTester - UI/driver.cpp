@@ -2,6 +2,8 @@
 #include "map_ui_tests.h"
 #include "movement_tests.h"
 #include "state_machine_tests.h"
+#include "music_player_test.h"
+#include "inventory_tests.h"
 
 //RPG LIB UI TESTER
 int main()
@@ -15,8 +17,9 @@ int main()
 	//simpleMapTest();
 //	realMapTest();
 	//freeMovementProcessorTest();
-	
-	gameStateManagerFullTest();
+	//inventoryTest();
+	//gameStateManagerFullTest();
+	//playFile();
 
 	tui.shutdown();
 		

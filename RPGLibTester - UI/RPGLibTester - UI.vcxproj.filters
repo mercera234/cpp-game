@@ -24,13 +24,19 @@
     <ClCompile Include="movement_tests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="state_machine_tests.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="turntracker_tests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MockTitle.cpp">
+    <ClCompile Include="music_player_test.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="inventory_tests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="comparator_tests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="misc_tests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MockExplore.cpp">
@@ -45,6 +51,9 @@
     <ClCompile Include="MockStatus.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="MockTitle.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="map_ui_tests.h">
@@ -53,13 +62,16 @@
     <ClInclude Include="movement_tests.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="state_machine_tests.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="turntracker_tests.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MockTitle.h">
+    <ClInclude Include="music_player_test.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="inventory_tests.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="comparator_tests.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MockExplore.h">
@@ -72,6 +84,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MockStatus.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MockTitle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

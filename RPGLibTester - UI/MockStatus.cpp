@@ -23,7 +23,7 @@ void MockStatus::processInput(GameStateManager& manager, int input)
 {
 	switch(input)
 	{
-	case 'q':
+	case 'x':
 		manager.setState(MockMainMenu::getInstance()); 
 		break;
 	}

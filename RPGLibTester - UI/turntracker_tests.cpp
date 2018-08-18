@@ -1,49 +1,20 @@
 #include <list>
 #include "turntracker_tests.h"
 #include "Actor.h"
+#include "actor_helper.h"
 #include "TurnTracker.h"
-
-//these top 2 methods should go in a different file
-Actor* buildActorFromDef(ActorDef* def, int type)
-{
-	Actor* actor = new Actor();
-	actor->def = def;
-	actor->currHp = def->maxHp;
-	actor->currMp = def->maxMp;
-	actor->defIndex = 1;
-	actor->prevX = -1;
-	actor->prevY = -1;
-	actor->x = 30;
-	actor->y = 5;
-	actor->type = type;
-	return actor;
-}
-
-Actor* createActor(std::string filename, int type)
-{
-	ActorDef* def = new ActorDef();
-
-	std::ifstream is;
-	is.open("data\\" + filename, std::ios::binary);
-
-	def->load(is);
-
-	is.close();
-
-	return buildActorFromDef(def, type);
-}
 
 void turnTrackerTest()
 {
 	std::list<Actor*> players;
-	players.push_back(createActor("hero.actr", AT_HUMAN));
+	players.push_back(loadActor("hero.actr", ActorType::HUMAN));
 
 
 	std::list<Actor*> enemies;
-	enemies.push_back(createActor("toadie.actr", AT_CPU));
-	enemies.push_back(createActor("bigbug.actr", AT_CPU));
-	enemies.push_back(createActor("Skittler.actr", AT_CPU));
-	enemies.push_back(createActor("wispwing.actr", AT_CPU));
+	enemies.push_back(loadActor("toadie.actr", ActorType::CPU));
+	enemies.push_back(loadActor("bigbug.actr", ActorType::CPU));
+	enemies.push_back(loadActor("Skittler.actr", ActorType::CPU));
+	enemies.push_back(loadActor("wispwing.actr", ActorType::CPU));
 
 	int turns = players.size() + enemies.size();
 	TurnTracker tracker;
