@@ -1,10 +1,25 @@
 #pragma once
+
 #include "GameState.h"
 
-class TestState : public GameState
+
+//Main Menu options
+enum class MainMenuOption
+{
+	INVENTORY,
+	EQUIP,
+	STATUS,
+	SKILL,
+	CONFIG,
+	MAP,
+	SAVE,
+	MAIN_QUIT
+};
+
+class MainMenuState : public GameState
 {
 private:
-	TestState() {}; //private so class is Singleton
+	MainMenuState() {}; //private so class is Singleton
 	static GameState* instance;
 public:
 	static GameState* getInstance(); //since static, cannot be virtual in super class

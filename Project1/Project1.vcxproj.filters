@@ -15,81 +15,39 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="pdcursetest.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="stateManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MapEditor.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MegaMap.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ActorEditor.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Editor.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MasterEditor.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="BattleProcessor.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ExplorationProcessor.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Factory.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TestState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TitleScreenState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GameApp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="driver.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ExploreState.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MainMenuState.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="stateManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MapEditor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MapMetadata.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MegaMap.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ActorEditor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Editor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MasterEditor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="BattleProcessor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ExplorationProcessor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Factory.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TemplateTest.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TestState.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="TitleScreenState.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="gameApp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameInput.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ExploreState.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MainMenuState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

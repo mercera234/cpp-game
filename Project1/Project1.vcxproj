@@ -70,7 +70,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>F:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\RPGLib\include;F:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\Project1\include;F:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\PDCurseControls\include\external;F:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\PDCurseControls\include;$(IncludePath)</IncludePath>
+    <IncludePath>F:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\RPGLib;F:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\Project1\include;F:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\PDCurseControls\include\external;F:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\PDCurseControls\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -80,7 +80,7 @@
       <PreprocessorDefinitions>D_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>F:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\PDCurseControls\lib\pdcurses.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Winmm.lib;F:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\PDCurseControls\lib\pdcurses.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>F:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\PDCurseControls\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -118,32 +118,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ActorEditor.cpp" />
-    <ClCompile Include="BattleProcessor.cpp" />
-    <ClCompile Include="Editor.cpp" />
-    <ClCompile Include="Factory.cpp" />
-    <ClCompile Include="MapEditor.cpp" />
-    <ClCompile Include="MasterEditor.cpp" />
-    <ClCompile Include="MegaMap.cpp" />
-    <ClCompile Include="pdcursetest.cpp" />
-    <ClCompile Include="ExplorationProcessor.cpp" />
+    <ClCompile Include="GameApp.cpp" />
+    <ClCompile Include="MainMenuState.cpp" />
+    <ClCompile Include="driver.cpp" />
     <ClCompile Include="stateManager.cpp" />
-    <ClCompile Include="TestState.cpp" />
+    <ClCompile Include="ExploreState.cpp" />
     <ClCompile Include="TitleScreenState.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ActorEditor.h" />
-    <ClInclude Include="BattleProcessor.h" />
-    <ClInclude Include="Editor.h" />
-    <ClInclude Include="Factory.h" />
-    <ClInclude Include="MapEditor.h" />
-    <ClInclude Include="MapMetadata.h" />
-    <ClInclude Include="MasterEditor.h" />
-    <ClInclude Include="MegaMap.h" />
-    <ClInclude Include="ExplorationProcessor.h" />
-    <ClInclude Include="stateManager.h" />
-    <ClInclude Include="TemplateTest.h" />
-    <ClInclude Include="TestState.h" />
+    <ClInclude Include="GameApp.h" />
+    <ClInclude Include="GameInput.h" />
+    <ClInclude Include="MainMenuState.h" />
+    <ClInclude Include="ExploreState.h" />
     <ClInclude Include="TitleScreenState.h" />
   </ItemGroup>
   <ItemGroup>

@@ -1,0 +1,18 @@
+#pragma once
+
+//Game Inputs
+enum GameInput
+{
+	OK_INPUT,
+	CANCEL_INPUT,
+	UP_INPUT,
+	DOWN_INPUT,
+	LEFT_INPUT,
+	RIGHT_INPUT,
+	CYCLE_LEFT_INPUT,
+	CYCLE_RIGHT_INPUT,
+	//Secret GameInput
+	OPEN_MENU_INPUT,
+	QUIT_INPUT,
+	FIGHT_TRIGGER
+};
