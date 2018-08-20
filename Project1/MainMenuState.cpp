@@ -15,6 +15,12 @@ GameState* MainMenuState::getInstance()
 	return instance;
 }
 
+MainMenuState::MainMenuState()
+{
+	screen = newwin(screenHeight, screenWidth, 0, 0);
+}
+
+
 void MainMenuState::processInput(GameStateManager& manager, int input)
 {
 	switch (input)
@@ -31,6 +37,7 @@ void MainMenuState::processInput(GameStateManager& manager, int input)
 
 void MainMenuState::draw()
 {
-	mvwprintw(stdscr, 0, 1, "MAIN MENU STATE");
-	wnoutrefresh(stdscr);
+	werase(screen);
+	mvwprintw(screen, 0, 1, "MAIN MENU STATE");
+	wnoutrefresh(screen);
 }

@@ -2,6 +2,13 @@
 #include "MovementProcessor.h"
 #include "mapKeyComparators.h"
 
+MapRepository::MapRepository() : exits(mapExitKeyCompare)
+{
+	this->unitMapHeight = 64;
+	this->unitMapWidth = 64;
+}
+
+
 MapRepository::MapRepository(unsigned short unitMapHeight, unsigned short unitMapWidth)
 	: exits(mapExitKeyCompare)
 {

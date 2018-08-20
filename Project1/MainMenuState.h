@@ -1,7 +1,7 @@
 #pragma once
 
 #include "GameState.h"
-
+#include "curses.h"
 
 //Main Menu options
 enum class MainMenuOption
@@ -19,8 +19,9 @@ enum class MainMenuOption
 class MainMenuState : public GameState
 {
 private:
-	MainMenuState() {}; //private so class is Singleton
+	MainMenuState(); //private so class is Singleton
 	static GameState* instance;
+	WINDOW* screen;
 public:
 	static GameState* getInstance(); //since static, cannot be virtual in super class
 	void processInput(GameStateManager& manager, int input);

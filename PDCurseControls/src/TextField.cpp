@@ -108,7 +108,7 @@ bool TextField::inputChar(int c)
 		cursorPos = 0;
 		break;
 	case KEY_END: 
-		cursorPos = text.length();
+		cursorPos = (unsigned short)text.length();
 		break;
 	case KEY_MOUSE: //does nothing right now
 		break;
@@ -127,7 +127,7 @@ void TextField::setText(const std::string& textIn)
 
 	text.assign(textIn, 0, text.capacity());
 
-	cursorPos = textIn.length();
+	cursorPos = (unsigned short)textIn.length();
 }
 
 void TextField::setText(int value)

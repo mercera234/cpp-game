@@ -9,16 +9,21 @@
 class ExplorationProcessor : public MovementProcessor
 {
 private:
-	Map* currMap;
+	Map* currMap = nullptr;
 	bool processMovement(Movement& move);
 
 	MapRepository* mapRepo;
 
+	void init();
 	void moveActorAcrossMapSeam(MapExit& fromMap, MapExit& toMap);
 	bool bounded = true;
 public:
+	ExplorationProcessor();
 	ExplorationProcessor(int* curY, int* curX, MapRepository* repo);
 	
+	void setCursor(int* curY, int* curX);
+	void setMapRepo(MapRepository* repo);
+
 	void setCurrMap(unsigned short id);
 	Map* getCurrMap() { return currMap; }
 };

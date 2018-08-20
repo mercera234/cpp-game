@@ -17,9 +17,11 @@ GameState* TitleScreenState::getInstance()
 	return instance;
 }
 
+
 //Title Menu options
 TitleScreenState::TitleScreenState() 
 {
+	win = newwin(screenHeight, screenWidth, 0, 0);
 	WINDOW* menuWin = newwin(4, 25, 1, 1); //TODO window must be deleted later!!
 	titleMenu.resetItems(3, 1);
 	titleMenu.setWindow(menuWin);
@@ -35,18 +37,29 @@ TitleScreenState::TitleScreenState()
 }
 
 
+void TitleScreenState::loadState()
+{
+	
+}
+
+void TitleScreenState::unloadState()
+{
+
+}
+
 void TitleScreenState::processInput(GameStateManager& manager, int input)
 {
-	LineItem* item = (LineItem*)GameApp::menuDriver(input, &titleMenu);
+	MenuItem* item = GameApp::menuDriver(input, &titleMenu);
 		
 	if (item) //TODO not sure if this will work
 	{
-		switch (item->getCrossRef())
+		switch (((LineItem*)item)->getCrossRef())
 		{
 		case TitleMenuOptions::NEW_GAME:
 			manager.setState(ExploreState::getInstance());
 			
-			return;
+		//	delwin(screen);
+			break;
 		case TitleMenuOptions::LOAD_GAME:
 			break;
 		case TitleMenuOptions::EDIT_GAME:
@@ -55,20 +68,17 @@ void TitleScreenState::processInput(GameStateManager& manager, int input)
 			manager.setState(nullptr);
 			
 			//active = false;
-			return;
+			break;
 		}
-	}
-	else //other input may have been received
-	{
-		if(input == GameInput::QUIT_INPUT) //must be careful here, in case quit input has same value as any title menu options
-			manager.setState(nullptr);
 	}
 }
 
 
 void TitleScreenState::draw()
 {
-	mvwprintw(stdscr, 0, 1, "---TITLE OF GAME---");
-	wnoutrefresh(stdscr);
+	werase(win);
+	mvwprintw(win, 0, 1, "---KILL IMPROVE REPEAT---");
+	wnoutrefresh(win);
 	titleMenu.draw();
 }
+

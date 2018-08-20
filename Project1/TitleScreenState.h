@@ -21,7 +21,10 @@ private:
 
 	GridMenu titleMenu;
 public:
+	//~TitleScreenState();
 	static GameState* getInstance(); //since static, cannot be virtual in super class
 	void processInput(GameStateManager& manager, int input);
+	void loadState();
+	void unloadState();
 	void draw();
 };

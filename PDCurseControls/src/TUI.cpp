@@ -56,6 +56,7 @@ void TUI::init()
 	initColors();
 
 	mousemask(ALL_MOUSE_EVENTS, NULL); //allow mouse usage
+	curs_set(CURSOR_INVISIBLE); //I'd prefer to have this set by default
 	refresh();//do this once so that first call to getch doesn't do this
 }
 

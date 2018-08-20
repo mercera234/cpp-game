@@ -3,9 +3,9 @@
 void BWFilter::applyFilterPattern()
 {
 	//add filter to map
-	for (int row = 0; row < c->getTotalRows(); row++)
+	for (unsigned int row = 0; row < c->getTotalRows(); row++)
 	{
-		for (int col = 0; col < c->getTotalCols(); col++)
+		for (unsigned int col = 0; col < c->getTotalCols(); col++)
 		{
 			chtype ch = mvwinch(win, row, col); //colorless filter
 

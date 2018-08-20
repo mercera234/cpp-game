@@ -119,16 +119,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="GameApp.cpp" />
-    <ClCompile Include="MainMenuState.cpp" />
     <ClCompile Include="driver.cpp" />
-    <ClCompile Include="stateManager.cpp" />
     <ClCompile Include="ExploreState.cpp" />
     <ClCompile Include="TitleScreenState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameApp.h" />
     <ClInclude Include="GameInput.h" />
-    <ClInclude Include="MainMenuState.h" />
     <ClInclude Include="ExploreState.h" />
     <ClInclude Include="TitleScreenState.h" />
   </ItemGroup>

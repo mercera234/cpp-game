@@ -29,7 +29,7 @@ void WadDatabase::print()
 	//undo formatting from previous
 	std::cout << std::dec << std::noshowbase;
 
-	for (int i = 0; i < directory.size(); i++)
+	for (unsigned int i = 0; i < directory.size(); i++)
 	{
 		WadDirEntry* entry = *entryIt;
 		Lump* lump = *lumpIt;

@@ -1,9 +1,16 @@
 #include "GameStateManager.h"
 #include "curses.h"
 
-void GameStateManager::setState(GameState* state)
+void GameStateManager::setState(GameState* newState)
 {
-	this->state = state;
+	//unload old state
+	if(state != nullptr)
+		state->unloadState();
+
+	state = newState;
+	//load new state
+	if(state != nullptr)
+		state->loadState();
 }
 
 

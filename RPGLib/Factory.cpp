@@ -13,7 +13,7 @@ Map* Factory::createMap(unsigned short id, unsigned short height, unsigned short
 
 	TwoDStorage<chtype>* tileMap = display->getTileMap();
 
-	for (int i = 0; i < tileMap->getSize(); i++)//set every tenth character to the pattern, leave rest blank
+	for (unsigned int i = 0; i < tileMap->getSize(); i++)//set every tenth character to the pattern, leave rest blank
 	{
 		chtype tile = i % 10 == 0 ? patternChar : ' ';
 		tileMap->setDatum(i, tile);
@@ -35,7 +35,7 @@ Map* Factory::createMap(WINDOW* win, unsigned short id, unsigned short height, u
 
 	TwoDStorage<chtype>* tileMap = display->getTileMap();
 
-	for (int i = 0; i < tileMap->getSize(); i++)//set every tenth character to the pattern, leave rest blank
+	for (unsigned int i = 0; i < tileMap->getSize(); i++)//set every tenth character to the pattern, leave rest blank
 	{
 		chtype tile = i % 10 == 0 ? patternChar : ' ';
 		tileMap->setDatum(i, tile);

@@ -7,7 +7,7 @@ RandomBlitAnimation::RandomBlitAnimation(Image* background, bool playForwards)
 {
 	init(background, playForwards);
 
-	srand(time(NULL));
+	srand((unsigned int)time(NULL));
 }
 
 void RandomBlitAnimation::frame()

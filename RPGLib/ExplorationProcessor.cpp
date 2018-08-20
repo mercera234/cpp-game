@@ -1,15 +1,33 @@
 #include "ExplorationProcessor.h"
 
+ExplorationProcessor::ExplorationProcessor()
+{
+	init();
+}
+
 ExplorationProcessor::ExplorationProcessor(int* curY, int* curX, MapRepository* repo)
+{
+	setCursor(curY, curX);
+	setMapRepo(repo);
+	
+	init();
+}
+
+void ExplorationProcessor::init()
+{
+	
+}
+
+void ExplorationProcessor::setCursor(int* curY, int* curX)
 {
 	this->curY = curY;
 	this->curX = curX;
-	mapRepo = repo;
-
-	this->currMap = NULL;
-	bounded = false;
 }
 
+void ExplorationProcessor::setMapRepo(MapRepository* repo)
+{
+	mapRepo = repo;
+}
 
 void ExplorationProcessor::setCurrMap(unsigned short id)
 {

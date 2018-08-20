@@ -1,3 +1,5 @@
+#pragma once
+
 #include "TUI.h"
 //#include "stateManager.h"
 #include "GridMenu.h"
@@ -8,19 +10,13 @@ class GameApp
 {
 private:
 	TUI tui;
-	//StateManager stateManager;
 	InputManager inputManager;
 
 	int getInput();
-	
-	//int centerY, centerX;
-	//int y, x; //stub!! character position on map(replaced later by actual character object)
-
-	//bool fightInSession;
-
-	
+	WINDOW* screen;
 public:
 	GameApp();
+	~GameApp();
 
 	/*The method that runs the game*/
 	bool run();

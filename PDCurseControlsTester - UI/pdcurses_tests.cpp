@@ -1,6 +1,7 @@
 #include "pdcurses_tests.h"
 #include "curses.h"
 #include "panel.h"
+//No user made classes should be included here
 #include <iostream>
 #include <dirent.h>
 #include <fstream>
@@ -11,10 +12,14 @@ void resizeTest()
 	int x = getmaxx(stdscr);
 	int y = getmaxy(stdscr);
 
+	doupdate();
+	getch();
+
 	resize_term(y / 2, x / 2);
 
 	doupdate();
 	getch();
+
 }
 
 void testPanel()
@@ -26,8 +31,6 @@ void testPanel()
 	panelWin[0] = newwin(5, 25, 0, 0);
 	panelWin[1] = newwin(5, 25, 2, 16);
 	panelWin[2] = newwin(5, 25, 3, 32);
-
-	WINDOW* subWin = derwin(panelWin[0], 3, 23, 1, 1);
 
 	wattron(panelWin[0], COLOR_PAIR(1));
 	wattron(panelWin[1], COLOR_PAIR(1));
@@ -43,39 +46,140 @@ void testPanel()
 
 	mvwaddch(panelWin[2], 1, 1, 'C');
 	mvwaddch(panelWin[1], 1, 1, 'B');
-	mvwaddch(subWin, 0, 0, 'A');
+	mvwaddch(panelWin[0], 1, 1, 'A');
 
 
 	mvwaddch(panelWin[2], 3, 23, 'C');
 	mvwaddch(panelWin[1], 3, 23, 'B');
-	mvwaddch(subWin, 2, 22, 'A');
-
-
-
+	mvwaddch(panelWin[0], 3, 23, 'A');
 
 
 	panel[0] = new_panel(panelWin[0]);
 	panel[1] = new_panel(panelWin[1]);
 	panel[2] = new_panel(panelWin[2]);
-	//wnoutrefresh(subWin);
 	update_panels();
 
 	doupdate();
 	getch();
 
 	top_panel(panel[1]);
-	//wnoutrefresh(subWin);
 	update_panels();
 	doupdate();
 	getch();
 
 	top_panel(panel[0]);
-	//wnoutrefresh(subWin);
 	update_panels();
 	doupdate();
 	getch();
 
 
+}
+
+void overlapWindowTest()
+{
+	int totalRows = getmaxy(stdscr);
+	int totalCols = getmaxx(stdscr);
+
+	WINDOW* win = newwin(totalRows, totalCols, 0, 0);
+	wbkgd(win, 'A');
+
+	wnoutrefresh(win);
+	doupdate(); //terminal is filled with A
+	getch();
+
+	WINDOW* win2 = newwin(totalRows, totalCols, 0, 0);
+	wbkgd(win2, 'B');
+
+	wnoutrefresh(win2);
+	doupdate(); //terminal is filled with B
+	getch();
+
+	//touchwin must occur before refresh or else the first window won't show up again
+	touchwin(win); 
+	wnoutrefresh(win);
+	doupdate();
+	getch();
+}
+
+void overlapWindowTest2()
+{
+	int totalRows = getmaxy(stdscr);
+	int totalCols = getmaxx(stdscr);
+
+	WINDOW* win = newwin(totalRows, totalCols, 0, 0);
+
+	int totalTiles = totalRows * totalCols;
+	for (int i = 0; i < totalTiles; i++)
+	{
+		waddch(win, 'A');
+	}
+	
+	wnoutrefresh(win);
+	doupdate();
+	getch();
+
+	WINDOW* win2 = newwin(totalRows, totalCols, 0, 0);
+	for (int i = 0; i < totalTiles; i++)
+	{
+		waddch(win2, 'B');
+	}
+
+	wnoutrefresh(win2);
+	doupdate();
+	getch();
+
+	//touchwin must occur before refresh or else the first window won't show up again
+	touchwin(win);
+	wnoutrefresh(win);
+	doupdate();
+	getch();
+}
+
+void overlapWindowTest3()
+{
+	int totalRows = getmaxy(stdscr);
+	int totalCols = getmaxx(stdscr);
+
+	WINDOW* win = newwin(totalRows, 30, 0, 0);
+
+	int totalTiles = totalRows * 30;
+	for (int i = 0; i < totalTiles; i++)
+	{
+		waddch(win, 'A');
+	}
+
+	WINDOW* win2 = newwin(totalRows, 30, 0, 20);
+	for (int i = 0; i < totalTiles; i++)
+	{
+		waddch(win2, 'B');
+	}
+
+	wnoutrefresh(win);
+	wnoutrefresh(win2);
+	
+	doupdate();
+	getch();
+
+	werase(win);
+	for (int i = 0; i < totalTiles; i++)
+	{
+		int x = waddch(win, 'A'); //returns an error if win is not erased!
+		if(x == 0)
+			int y = 3;
+	}
+	wnoutrefresh(win); 
+	doupdate();
+	getch();
+
+	
+	/*using only B is not recognized as a change to the window. 
+	The next refresh statement will not show the B, unless the window is 'touched' first.
+	But even then, everything in win2 is shown overlapping winA, and not just the one B we altered*/
+	mvwaddch(win2, 0, 0, 'B');
+	touchwin(win2); 
+	wnoutrefresh(win2);
+	doupdate();
+	getch();
 }
 
 
@@ -198,9 +302,6 @@ void attrTest()
 	getch();
 }
 
-
-
-
 void colorPairTest()
 {
 	int pair = 0;
@@ -227,41 +328,6 @@ void colorPairTest()
 		}
 
 	}
-}
-
-
-void gameTestScreen()
-{
-	clear();
-
-	int nameRow = 5;
-	int heroCol = 0;
-	int enemyCol = 25;
-	int hpRow = 6;
-
-
-	mvaddstr(nameRow, heroCol, "Hero");
-	mvaddstr(hpRow, heroCol, "HP 4/25");
-
-	mvaddstr(nameRow, enemyCol, "Enemy");
-	mvaddstr(hpRow, enemyCol, "HP 16/16");
-
-	attron(COLOR_PAIR(12));
-	mvaddstr(nameRow, 35, "-5");
-
-	doupdate();
-	getch();
-
-	attroff(COLOR_PAIR(12));
-	mvaddstr(nameRow, 35, "  ");
-	mvaddstr(hpRow, enemyCol, "HP 11/16");
-	attron(COLOR_PAIR(10));
-	mvaddstr(nameRow, 10, "+20");
-
-	doupdate();
-	getch();
-
-
 }
 
 void testPrint()
@@ -494,7 +560,41 @@ void objectFormTest()
 	is.close();
 }
 
-void mockFightTest()
+void mockSimpleFight()
+{
+	clear();
+
+	int nameRow = 5;
+	int heroCol = 0;
+	int enemyCol = 25;
+	int hpRow = 6;
+
+
+	mvaddstr(nameRow, heroCol, "Hero");
+	mvaddstr(hpRow, heroCol, "HP 4/25");
+
+	mvaddstr(nameRow, enemyCol, "Enemy");
+	mvaddstr(hpRow, enemyCol, "HP 16/16");
+
+	attron(COLOR_PAIR(12));
+	mvaddstr(nameRow, 35, "-5");
+
+	doupdate();
+	getch();
+
+	attroff(COLOR_PAIR(12));
+	mvaddstr(nameRow, 35, "  ");
+	mvaddstr(hpRow, enemyCol, "HP 11/16");
+	attron(COLOR_PAIR(10));
+	mvaddstr(nameRow, 10, "+20");
+
+	doupdate();
+	getch();
+
+
+}
+
+void mockBattleScreen()
 {
 	short totalRows = 23;
 	short totalCols = 51;
@@ -584,6 +684,79 @@ void mockExploreTest()
 	mvwaddstr(msgBox, 3, indent, "Alex: OK. Some more words here, blah blah lbah.");
 
 	wnoutrefresh(msgBox);
+	doupdate();
+	getch();
+}
+
+void mockMainMenuTest()
+{
+	short totalRows = 23;
+	short totalCols = 51;
+	resize_term(totalRows, totalCols);
+
+	int leftBoxWidth = 20;
+	int topBoxHeight = 6;
+	int startRow = 0;
+	int startCol = 0;
+	WINDOW* menuFrame = newwin(topBoxHeight, leftBoxWidth, startRow, startCol);
+
+	chtype motif = ' ' | 0x17000000; //blue background, white text
+	wbkgd(menuFrame, motif);
+	box(menuFrame, 0, 0);
+
+	mvwaddstr(menuFrame, 1, 3, "Item");
+	mvwaddstr(menuFrame, 2, 3, "Equip");
+	mvwaddstr(menuFrame, 3, 3, "Status");
+	mvwaddstr(menuFrame, 4, 3, "Skill");
+	mvwaddstr(menuFrame, 1, 11, "Config");
+	mvwaddstr(menuFrame, 2, 11, "Map");
+	mvwaddstr(menuFrame, 3, 11, "Save");
+	mvwaddstr(menuFrame, 4, 11, "Quit");
+	mvwaddstr(menuFrame, 1, 1, "->");
+	
+	int bottomBoxHeight = totalRows - topBoxHeight + 1;
+	WINDOW* charFrame = newwin(bottomBoxHeight, leftBoxWidth, startRow + 5, startCol);
+	wbkgd(charFrame, motif);
+	box(charFrame, 0, 0);
+
+	std::string charName = "Stephanopoulise"; //15 char name max length
+	std::string hpStats = "HP 1000/2000"; //max length of HP
+	std::string mpStats = "MP 1000/2000"; //max length of MP
+
+	
+	for (int i = 0, row = 1; i < 4; i++, row += 4)
+	{
+		mvwaddstr(charFrame, row, 3, charName.c_str());
+		mvwaddstr(charFrame, row + 1, 3, hpStats.c_str());
+		mvwaddstr(charFrame, row + 2, 3, mpStats.c_str());
+	}
+
+	int rightBoxWidth = totalCols - leftBoxWidth;
+	WINDOW* descFrame = newwin(topBoxHeight, rightBoxWidth, startRow, startCol + leftBoxWidth);
+	wbkgd(descFrame, motif);
+	box(descFrame, 0, 0);
+	
+	mvwaddstr(descFrame, 1, 1, "Dungeon 1");
+	mvwaddstr(descFrame, 2, 1, "Level B3");
+
+
+
+	WINDOW* bodyFrame = newwin(bottomBoxHeight, rightBoxWidth, startRow + 5, startCol + leftBoxWidth);
+	wbkgd(bodyFrame, motif);
+	box(bodyFrame, 0, 0);
+
+	mvwaddstr(bodyFrame, 1, 1, "Gold$ 3500");
+	mvwaddstr(bodyFrame, 2, 1, "Steps 10023");
+	mvwaddstr(bodyFrame, 3, 1, "Enemies Killed 380");
+	mvwaddstr(bodyFrame, 4, 1, "Battles Won 250");
+
+
+
+	wnoutrefresh(menuFrame);
+	wnoutrefresh(charFrame);
+	wnoutrefresh(descFrame);
+	wnoutrefresh(bodyFrame);
+	//wnoutrefresh(stdscr);
 	doupdate();
 	getch();
 }

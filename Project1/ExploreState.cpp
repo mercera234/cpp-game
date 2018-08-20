@@ -4,6 +4,7 @@
 #include "TitleScreenState.h"
 #include "GameInput.h"
 #include "MainMenuState.h"
+#include "GameApp.h"
 
 GameState* ExploreState::instance = nullptr;
 
@@ -15,22 +16,50 @@ GameState* ExploreState::getInstance()
 	return instance;
 }
 
+
+ExploreState::ExploreState()
+{
+	win = newwin(screenHeight, screenWidth, 0, 0);
+	map.setWindow(win);
+	map.load("data\\water_templ.map");
+	map.setId(1);
+	mapRepo.add(map);
+	explorationProcessor.setMapRepo(&mapRepo);
+	explorationProcessor.setCursor(&y, &x);
+	explorationProcessor.setCurrMap(map.getId());
+	explorationProcessor.setViewMode(ViewMode::DYNAMIC);
+}
+
+
+void ExploreState::loadState()
+{
+	
+}
+
+void ExploreState::unloadState()
+{
+	
+}
+
+
 void ExploreState::processInput(GameStateManager& manager, int input)
 {
 	switch (input)
 	{	
 	case GameInput::UP_INPUT:
-		y--;
+		explorationProcessor.processMovementInput(KEY_UP);
 		break;
 	case GameInput::DOWN_INPUT:
-		y++;
+		explorationProcessor.processMovementInput(KEY_DOWN);
 		break;
 	case GameInput::LEFT_INPUT:
-		x--;
+		explorationProcessor.processMovementInput(KEY_LEFT);
 		break;
 	case GameInput::RIGHT_INPUT:
-		x++;
+		explorationProcessor.processMovementInput(KEY_RIGHT);
 		break;
+
+
 	case GameInput::FIGHT_TRIGGER: //we will remove this later, but this is for triggering a fight automatically
 		//g->stateManager.push(fight, g);
 		break;
@@ -38,7 +67,8 @@ void ExploreState::processInput(GameStateManager& manager, int input)
 	//	g->stateManager.push(mainMenuState, g);
 		break;
 	case GameInput::CANCEL_INPUT: manager.setState(TitleScreenState::getInstance()); break; //temporary
-	case GameInput::OPEN_MENU_INPUT: manager.setState(MainMenuState::getInstance());  break;
+	case GameInput::OPEN_MENU_INPUT: //manager.setState(MainMenuState::getInstance());  
+		break;
 	//case GameInput::FIGHT_TRIGGER: break;
 	}
 
@@ -49,9 +79,15 @@ void ExploreState::processInput(GameStateManager& manager, int input)
 
 void ExploreState::draw()
 {
-	drawNullMap(y, x);
-
-	wnoutrefresh(stdscr);
+	werase(win);
+	if (map.getId() == 0)
+		drawNullMap(y, x);
+	else
+	{
+		Map* m = explorationProcessor.getCurrMap();
+		m->draw();
+	}
+		
 }
 
 
@@ -75,8 +111,9 @@ void ExploreState::drawNullMap(int y, int x)
 			else {
 				c = ' ';
 			}
-			mvaddch(row, col, c);
+			mvwaddch(win, row, col, c);
 
 		}
 	}
 }
+

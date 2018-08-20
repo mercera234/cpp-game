@@ -9,13 +9,14 @@ int main()
 {
 	TUI tui;
 	tui.init();
+	//DO NOT MODIFY ABOVE THIS LINE
 	
-	clearOKTest();
-	//palettePrototypeTest();
-	//itemMenuTest();
-	//paletteTest();
-	//mainMenuTest();
-
+	
+	mockMainMenuTest();
+	
+	
+	
+	//DO NOT MODIFY BELOW THIS LINE
 	tui.shutdown();
 		
 	return 0;

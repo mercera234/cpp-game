@@ -3,7 +3,7 @@
   <Class Name="TwoDStorage&lt;T&gt;" Collapsed="true">
     <Position X="43.25" Y="2.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAQIABAIIAIgAAAAABAAAAAIACAAAAAAAgQAAAIAAA=</HashCode>
+      <HashCode>AAAQIABAIIAIgAAAAABAAAAAIACAAAAAAQgQAAAIAAA=</HashCode>
       <FileName>include\TwoDStorage.h</FileName>
     </TypeIdentifier>
   </Class>
@@ -108,7 +108,7 @@
   <Class Name="FilterPattern" Collapsed="true">
     <Position X="9.25" Y="4.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAQAAAAKAAAAAAAAAAAAAFAAAgAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAQAAAAKAAAAAAAAAAAAAFAAAgAQAAAA=</HashCode>
       <FileName>include\FilterPattern.h</FileName>
     </TypeIdentifier>
   </Class>
@@ -150,28 +150,28 @@
   <Class Name="GridMenu" Collapsed="true">
     <Position X="16" Y="4.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>EgEgSAAEQoABBCEUSCIQAACAACAAwgoUBBkCQAAAJIA=</HashCode>
+      <HashCode>EgEgSAAEQoABBCEUSCIQAACAAAAAwgoUBBkCQAAAJIA=</HashCode>
       <FileName>include\GridMenu.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Highlighter" Collapsed="true">
     <Position X="40.75" Y="1.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAGAgACAAAAUAAAARIIAAADgASAKALAAQoAAAAAAAQ=</HashCode>
+      <HashCode>AAAGAgACAAAAUAAAARIIAAADgASAKALABQoAAAAAAAQ=</HashCode>
       <FileName>include\Highlighter.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Image" Collapsed="true">
     <Position X="20.5" Y="3.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAgEAoCAACAAAAIBAAAAAAIAAJIACAIAACAIAAA=</HashCode>
+      <HashCode>AAAAAAgEAoCAACAAAAIBAAAAAAIAAJIACAIAACEYAAA=</HashCode>
       <FileName>include\Image.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Palette" Collapsed="true">
     <Position X="34" Y="3.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAEAAABAAAAAApAACAAAACIAAAAAAAAAAAQkAA=</HashCode>
+      <HashCode>AAAAAAAUQAQABEAAAAIAACiAAAAAAAgAAABAAAAAAAA=</HashCode>
       <FileName>include\Palette.h</FileName>
     </TypeIdentifier>
   </Class>
@@ -239,21 +239,35 @@
     </TypeIdentifier>
   </Class>
   <Class Name="MenuItem" Collapsed="true">
-    <Position X="2.5" Y="1.75" Width="1.5" />
+    <Position X="5" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AEAAAAAAAAAAABEQgAAIABgCCADAAQIAAAXAwkABFEA=</HashCode>
       <FileName>include\MenuItem.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="LineItem" Collapsed="true">
-    <Position X="2.5" Y="3.25" Width="1.5" />
+    <Position X="5" Y="3.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>CECAAAAAAAAAAAAAIAICAAAAAAAEAAAAAQAAAAEAAAA=</HashCode>
+      <HashCode>CECAAAAAAAAAAAAAIAICAAAAAAAEAAAAAQAAAAEQAAA=</HashCode>
       <FileName>include\LineItem.h</FileName>
     </TypeIdentifier>
   </Class>
+  <Class Name="ObjectLinkedItem&lt;T&gt;" Collapsed="true">
+    <Position X="2.75" Y="3.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAEAAAAAAAAAAAAAAABAAAAEAAAAAAAAAAA=</HashCode>
+      <FileName>include\ObjectLinkedItem.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ObjectLinkedItem&lt;T*&gt;" Collapsed="true">
+    <Position X="0.5" Y="3.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAEAAAAAAAAAAAAAAABAAAAEAAAAAAAAAAA=</HashCode>
+      <FileName>include\ObjectLinkedItem.h</FileName>
+    </TypeIdentifier>
+  </Class>
   <Struct Name="Registration" Collapsed="true">
-    <Position X="46.75" Y="3.75" Width="1.5" />
+    <Position X="45" Y="3.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AABAAAAAAAAAAAQAAAAAAAAAAAAAAACAAAAAAAAEAAQ=</HashCode>
       <FileName>include\ControlManager.h</FileName>
@@ -267,7 +281,7 @@
     </TypeIdentifier>
   </Struct>
   <Struct Name="Rectangle" Collapsed="true">
-    <Position X="45" Y="3.75" Width="1.5" />
+    <Position X="43.5" Y="4" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAQAQAAAAAAAAAAgAAAAAABgAAAAAAA=</HashCode>
       <FileName>include\Rectangle.h</FileName>

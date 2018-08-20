@@ -4,6 +4,7 @@
 #include <ctime>
 #include "GameStateManager.h"
 #include "TitleScreenState.h"
+#include "ExploreState.h"
 #include "GameInput.h"
 
 GameApp::GameApp()
@@ -28,6 +29,10 @@ GameApp::GameApp()
 
 	tui.init();
 	curs_set(CURSOR_INVISIBLE);
+
+	//screen = newwin(screenHeight, screenWidth, 0, 0);
+
+	TitleScreenState::getInstance();
 }
 
 int GameApp::getInput()
@@ -62,14 +67,18 @@ bool GameApp::run()
 	//input event loop
 	GameStateManager stateMngr;
 	stateMngr.setState(TitleScreenState::getInstance());
-
+	//((TitleScreenState*)TitleScreenState::getInstance())->setWindow(screen);
+	
 	bool playing = true;
+
+	/*resize the terminal once before first draw. 
+	Having it resize in the loop below before every draw causes issues.
+	Lots of black gets drawn where there shouldn't be any*/
+	resize_term(screenHeight, screenWidth);
 
 	while (playing)
 	{
 		//draw
-		resize_term(screenHeight, screenWidth);
-		clear();
 		stateMngr.draw();
 		doupdate();
 
@@ -284,3 +293,8 @@ void GameApp::mainMenuState(void* dataPtr, int purpose)
 //	//mainMenu.setItem(new LineItem("Save", 6, 6));
 //	//mainMenu.setItem(new LineItem("Quit", 7, 7));
 //}
+
+GameApp::~GameApp()
+{
+	
+}

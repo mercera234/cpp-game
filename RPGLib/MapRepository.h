@@ -13,6 +13,7 @@ private:
 	unsigned short unitMapHeight;
 	unsigned short unitMapWidth;
 public:
+	MapRepository();
 	MapRepository(unsigned short unitMapHeight, unsigned short unitMapWidth);
 	void addExit(MapExit* source, MapExit* dest); //add one pair of connecting exits (implies no 1-way paths)
 	MapExit* getExit(MapExit* sourceExit);
