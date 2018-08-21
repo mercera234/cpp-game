@@ -226,9 +226,9 @@ void itemMenuTest()
 				continue;
 			}
 
-			switch (item->index)
+			if (item->index)
 			{
-			default: //set up swap ability here
+			//set up swap ability here
 				if (swapState == false)
 				{
 					item->selected = true;

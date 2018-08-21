@@ -69,7 +69,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>F:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\PDCurseControls\include;F:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\PDCurseControls\include\external;F:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\RPGLib;$(IncludePath)</IncludePath>
+    <IncludePath>F:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\PDCurseControls;F:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\PDCurseControls\include\external;F:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\RPGLib;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -142,6 +142,7 @@
     <ClInclude Include="comparator_tests.h" />
     <ClInclude Include="inventory_tests.h" />
     <ClInclude Include="map_ui_tests.h" />
+    <ClInclude Include="misc_tests.h" />
     <ClInclude Include="MockExplore.h" />
     <ClInclude Include="MockFight.h" />
     <ClInclude Include="MockMainMenu.h" />

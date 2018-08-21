@@ -5,6 +5,7 @@
 #include "BattleProcessor.h"
 #include "MapEditor.h"
 #include "MasterEditor.h"
+#include "misc_tests.h"
 
 
 void repositoryTest()
@@ -218,12 +219,15 @@ void battleProcessorTest()
 		int totalRows = 23;
 		int totalCols = 51;
 		resize_term(totalRows, totalCols);
-		BattleProcessor* bp = new BattleProcessor(newwin(totalRows, totalCols, 0, 0), players, enemies);
 
+		BattleProcessor bp;
+		bp.setWindow(newwin(totalRows, totalCols, 0, 0));
+		bp.addParticipants(players, enemies);
+		
 		bool playing = true;
 		while (playing)
 		{
-			bp->draw();
+			bp.draw();
 			doupdate();
 
 			int input = getch();
@@ -236,13 +240,14 @@ void battleProcessorTest()
 				break;
 			default:
 			{
-				playing = bp->processInput(input);
+				playing = bp.processInput(input);
 			}
 			break;
 			}
 		}
 
-
+		delete p1;
+		delete e1;
 
 	}
 }

@@ -69,7 +69,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>F:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\PDCurseControls\include\external;F:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\PDCurseControls\include;F:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\RPGLib\include;$(IncludePath)</IncludePath>
+    <IncludePath>F:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\PDCurseControls\include\external;F:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\PDCurseControls;$(IncludePath)</IncludePath>
     <OutDir>$(ProjectDir)Debug\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

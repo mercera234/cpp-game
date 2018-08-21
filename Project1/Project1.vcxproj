@@ -70,7 +70,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>F:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\RPGLib;F:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\Project1\include;F:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\PDCurseControls\include\external;F:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\PDCurseControls\include;$(IncludePath)</IncludePath>
+    <IncludePath>F:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\RPGLib;F:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\PDCurseControls\include\external;F:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\PDCurseControls;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -118,15 +118,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BattleState.cpp" />
     <ClCompile Include="GameApp.cpp" />
     <ClCompile Include="driver.cpp" />
     <ClCompile Include="ExploreState.cpp" />
+    <ClCompile Include="MainMenuState.cpp" />
     <ClCompile Include="TitleScreenState.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BattleState.h" />
     <ClInclude Include="GameApp.h" />
     <ClInclude Include="GameInput.h" />
     <ClInclude Include="ExploreState.h" />
+    <ClInclude Include="MainMenuState.h" />
     <ClInclude Include="TitleScreenState.h" />
   </ItemGroup>
   <ItemGroup>

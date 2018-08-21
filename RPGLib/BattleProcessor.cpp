@@ -5,26 +5,40 @@
 #include "BattleAlgorithm.h"
 #include "actor_helper.h"
 
-BattleProcessor::BattleProcessor(WINDOW* win, list<Actor*>& players, list<Actor*>& enemies)
+BattleProcessor::BattleProcessor()
 {
-	setWindow(win);
+
+}
+
+void BattleProcessor::setWindow(WINDOW* win)
+{
+	Controllable::setWindow(win);
 	totalRows = getmaxy(win);//total row/col dimensions same as visible
 	totalCols = getmaxx(win);
+}
 
-	//humanActors = players;
-	//cpuActors = enemies;
 
+void BattleProcessor::addParticipants(std::list<Actor*>& players, std::list<Actor*>& enemies)
+{
 	createActorCards(players, 0, humanActors);
 	createActorCards(enemies, humanActors.size(), cpuActors);
 
-
-	initTurnTracker(); 
+	//build environment
+	initTurnTracker();
 	initTargetMenu();
 	initSkillMenu();
 	initMessageDisplay();
 	initControlManager();
-	
+
 	advanceTurn();
+}
+
+
+BattleProcessor::BattleProcessor(WINDOW* win, std::list<Actor*>& players, std::list<Actor*>& enemies)
+{
+	setWindow(win);
+
+	addParticipants(players, enemies);
 }
 
 /*
@@ -67,8 +81,6 @@ void BattleProcessor::initTargetMenu()
 	createActorCards(cpuActors, humanCards.size(), cpuCards);
 */
 	//link cards
-	/*MenuItem::linkItemGroup(humanCards, DOWN_LINK);
-	MenuItem::linkItemGroup(cpuCards, DOWN_LINK);*/
 	MenuItem::linkItemGroup(humanActors, Dir::DOWN);
 	MenuItem::linkItemGroup(cpuActors, Dir::DOWN);
 
@@ -87,16 +99,12 @@ void BattleProcessor::initTargetMenu()
 }
 
 
-void BattleProcessor::addCardsToTargetMenu(list<MenuItem*>& cards)
+void BattleProcessor::addCardsToTargetMenu(std::list<MenuItem*>& cards)
 {
 	for each (MenuItem* item in cards)
 	{
 		targetMenu->setItem(item);
 	}
-	/*for (int i = 0; i < cards.size(); i++)
-	{
-		targetMenu->setItem(cards[i]);
-	}*/
 }
 
 void BattleProcessor::attack(Actor * attacker, Actor * target)
@@ -116,21 +124,20 @@ void BattleProcessor::attack(Actor * attacker, Actor * target)
 
 	alterStatValue(target->getStat(StatType::HP), -damage);
 	
-	ostringstream attackMsg;
+	std::ostringstream attackMsg;
 	attackMsg << attacker->name << " hits " << target->name;
 
 	messages.push_back(attackMsg.str());
 }
 
 
-void BattleProcessor::createActorCards(list<Actor*>& actors, int startNdx, list<MenuItem*>& cards)
+void BattleProcessor::createActorCards(std::list<Actor*>& actors, int startNdx, std::list<MenuItem*>& cards)
 {
 	int i = 0;
 	int index = startNdx;
 	for each (Actor* actor in actors)
 	{
 		cards.push_back(new ActorCard(actor, index++, -1));
-		//cards[i++] = new ActorCard(actor, index++, -1);
 	}
 }
 
@@ -290,24 +297,6 @@ void BattleProcessor::targetMenuDriver(int input)
 			setupVictory();
 		}
 
-	/*	bool allDead = true;
-		for (list<MenuItem*>::iterator it = cpuActors.begin(); it != cpuActors.end(); it++)
-		{
-			ActorCard* card = (ActorCard*)*it;
-			Actor* enemy = card->getActor();
-
-			if (isAlive(*enemy))
-			{
-				allDead = false; break;
-			}
-
-		}
-
-		if (allDead)
-		{
-			setupVictory();
-		}*/
-
 		skillMenuFrame->setText("", 0, 4); //clear human's name from the frame
 		cm->setFocus(msgDisplay);
 		setMessage();
@@ -337,7 +326,7 @@ void BattleProcessor::setupVictory()
 	int totalMoney;
 	calcRewards(totalExp, totalMoney);
 
-	ostringstream rewardMsg;
+	std::ostringstream rewardMsg;
 	rewardMsg << "Gained " << totalExp << " exp. Earned " << totalMoney << " gold $.";
 	messages.push_back(rewardMsg.str());
 }
@@ -347,7 +336,7 @@ void BattleProcessor::calcRewards(int& totalExp, int &totalMoney)
 {
 	totalExp = 0;
 	totalMoney = 0;
-	for (list<MenuItem*>::iterator it = cpuActors.begin(); it != cpuActors.end(); it++)
+	for (std::list<MenuItem*>::iterator it = cpuActors.begin(); it != cpuActors.end(); it++)
 	{
 		ActorCard* card = (ActorCard*)*it;
 		Actor* enemy = card->getActor();
@@ -359,13 +348,12 @@ void BattleProcessor::calcRewards(int& totalExp, int &totalMoney)
 
 void BattleProcessor::transferRewards(int totalExp, int totalMoney)
 {
-	for (list<MenuItem*>::iterator it = humanActors.begin(); it != humanActors.end(); it++)
+	for (std::list<MenuItem*>::iterator it = humanActors.begin(); it != humanActors.end(); it++)
 	{
 		ActorCard* card = (ActorCard*)*it;
 		Actor* player = card->getActor();
 
 		alterStatValue(player->stats.exp, totalExp);
-		//player->def->exp += totalExp;
 
 		//not sure how to handle money just yet
 
@@ -375,7 +363,7 @@ void BattleProcessor::transferRewards(int totalExp, int totalMoney)
 		//setup message for level ups
 		if (levelsGained > 0)
 		{
-			ostringstream gainLevelMsg;
+			std::ostringstream gainLevelMsg;
 			gainLevelMsg << player->name;
 			//gainLevelMsg << player->def->name;
 
@@ -429,7 +417,7 @@ void BattleProcessor::processCPUTurn()
 {
 	//choose random human target
 	int targetId = rand() % humanActors.size();
-	list<MenuItem*>::iterator it;
+	std::list<MenuItem*>::iterator it;
 	int seq = 0;
 	ActorCard* target = NULL;
 	for (it = humanActors.begin(); it != humanActors.end(); it++)
@@ -437,7 +425,7 @@ void BattleProcessor::processCPUTurn()
 		ActorCard* card = (ActorCard*)*it;
 		if (seq++ == targetId)
 		{
-			target = card;// ->getActor();
+			target = card;
 		}
 	}
 	
@@ -453,10 +441,10 @@ void BattleProcessor::processCPUTurn()
 	setMessage();
 }
 
-bool BattleProcessor::checkIfDefeated(list<MenuItem*>& cards)
+bool BattleProcessor::checkIfDefeated(std::list<MenuItem*>& cards)
 {
 	bool allDead = true;
-	for (list<MenuItem*>::iterator it = cards.begin(); it != cards.end(); it++)
+	for (std::list<MenuItem*>::iterator it = cards.begin(); it != cards.end(); it++)
 	{
 		ActorCard* card = (ActorCard*)*it;
 		Actor* actor = card->getActor();

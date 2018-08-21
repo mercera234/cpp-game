@@ -15,231 +15,231 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\Controllable.h">
+    <ClInclude Include="AbstractMenu.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Drawable.h">
+    <ClInclude Include="Animation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Rectangle.h">
+    <ClInclude Include="BlitAnimation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\ControlManager.h">
+    <ClInclude Include="Button.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\CursesPanel.h">
+    <ClInclude Include="BWFilter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\AbstractMenu.h">
+    <ClInclude Include="ChtypeFilter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Animation.h">
+    <ClInclude Include="ControlDecorator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Image.h">
+    <ClInclude Include="Controllable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Storable.h">
+    <ClInclude Include="ControlManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\TUI.h">
+    <ClInclude Include="CursesAttributeController.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\MenuItem.h">
+    <ClInclude Include="CursesPanel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\BlitAnimation.h">
+    <ClInclude Include="Direction.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\BWFilter.h">
+    <ClInclude Include="Drawable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\ChtypeFilter.h">
+    <ClInclude Include="FileChooser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\ControlDecorator.h">
+    <ClInclude Include="FileDirectory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Direction.h">
+    <ClInclude Include="FilterPattern.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\FilterPattern.h">
+    <ClInclude Include="Form.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\FileChooser.h">
+    <ClInclude Include="FormControl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\FileDirectory.h">
+    <ClInclude Include="FormField.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\FormControl.h">
+    <ClInclude Include="Frame.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\FormField.h">
+    <ClInclude Include="GraphMenu.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Frame.h">
+    <ClInclude Include="GridMenu.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\TextField.h">
+    <ClInclude Include="Highlighter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\TextLabel.h">
+    <ClInclude Include="Image.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\GridMenu.h">
+    <ClInclude Include="InputManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\GraphMenu.h">
+    <ClInclude Include="LineItem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Highlighter.h">
+    <ClInclude Include="MenuItem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\LineItem.h">
+    <ClInclude Include="MenuItem2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\ScrollBar.h">
+    <ClInclude Include="ObjectLinkedItem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Palette.h">
+    <ClInclude Include="Palette.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\RandomBlitAnimation.h">
+    <ClInclude Include="RandomBlitAnimation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\SpiralBlitAnimation.h">
+    <ClInclude Include="Rectangle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Table.h">
+    <ClInclude Include="RGBControl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\RGBControl.h">
+    <ClInclude Include="ScrollBar.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\CursesAttributeController.h">
+    <ClInclude Include="SpiralBlitAnimation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Button.h">
+    <ClInclude Include="Storable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Form.h">
+    <ClInclude Include="Table.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\TwoDStorage.h">
+    <ClInclude Include="TextField.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\InputManager.h">
+    <ClInclude Include="TextLabel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\MenuItem2.h">
+    <ClInclude Include="TUI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\ObjectLinkedItem.h">
+    <ClInclude Include="TwoDStorage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Controllable.cpp">
+    <ClCompile Include="AbstractMenu.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\ControlManager.cpp">
+    <ClCompile Include="Animation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\CursesPanel.cpp">
+    <ClCompile Include="BlitAnimation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\AbstractMenu.cpp">
+    <ClCompile Include="Button.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Animation.cpp">
+    <ClCompile Include="BWFilter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Image.cpp">
+    <ClCompile Include="ChtypeFilter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\TUI.cpp">
+    <ClCompile Include="Controllable.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\MenuItem.cpp">
+    <ClCompile Include="ControlManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\BlitAnimation.cpp">
+    <ClCompile Include="CursesAttributeController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\BWFilter.cpp">
+    <ClCompile Include="CursesPanel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\ChtypeFilter.cpp">
+    <ClCompile Include="Direction.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\FilterPattern.cpp">
+    <ClCompile Include="FileChooser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\FileChooser.cpp">
+    <ClCompile Include="FileDirectory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\FileDirectory.cpp">
+    <ClCompile Include="FilterPattern.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\FormControl.cpp">
+    <ClCompile Include="Form.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\FormField.cpp">
+    <ClCompile Include="FormControl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Frame.cpp">
+    <ClCompile Include="FormField.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\TextLabel.cpp">
+    <ClCompile Include="Frame.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\TextField.cpp">
+    <ClCompile Include="GraphMenu.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\GridMenu.cpp">
+    <ClCompile Include="GridMenu.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Highlighter.cpp">
+    <ClCompile Include="Highlighter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\GraphMenu.cpp">
+    <ClCompile Include="Image.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\LineItem.cpp">
+    <ClCompile Include="InputManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\ScrollBar.cpp">
+    <ClCompile Include="LineItem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\SpiralBlitAnimation.cpp">
+    <ClCompile Include="MenuItem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\RandomBlitAnimation.cpp">
+    <ClCompile Include="Palette.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Palette.cpp">
+    <ClCompile Include="RandomBlitAnimation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Table.cpp">
+    <ClCompile Include="RGBControl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\RGBControl.cpp">
+    <ClCompile Include="ScrollBar.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Form.cpp">
+    <ClCompile Include="SpiralBlitAnimation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Button.cpp">
+    <ClCompile Include="Table.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\CursesAttributeController.cpp">
+    <ClCompile Include="TextField.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\InputManager.cpp">
+    <ClCompile Include="TextLabel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Direction.cpp">
+    <ClCompile Include="TUI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

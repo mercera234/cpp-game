@@ -141,12 +141,12 @@ void DataPkg::blockOp(bool op, const void* datum, int datumOffset, int size, int
 
 void DataPkg::appendData(const void* datum, int size)
 {
-	writeData(datum, size, appendOffset);
+	writeData(datum, size, (int)appendOffset);
 }
 
 void DataPkg::readNextData(const void* datum, int size)
 {
-	readData(datum, size, readOffset);
+	readData(datum, size, (int)readOffset);
 }
 
 

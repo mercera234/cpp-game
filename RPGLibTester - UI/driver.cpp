@@ -4,6 +4,7 @@
 #include "state_machine_tests.h"
 #include "music_player_test.h"
 #include "inventory_tests.h"
+#include "misc_tests.h"
 
 //RPG LIB UI TESTER
 int main()
@@ -11,11 +12,13 @@ int main()
 	TUI tui;
 	tui.init();
 	
+	battleProcessorTest();
 	//mapEffectTest();
 	//mapEffectFilterTest();
 	//mapHighlighterTest();
 	//simpleMapTest();
 //	realMapTest();
+
 	//freeMovementProcessorTest();
 	//inventoryTest();
 	//gameStateManagerFullTest();

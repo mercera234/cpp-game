@@ -4,7 +4,7 @@
 #include "TitleScreenState.h"
 #include "GameInput.h"
 #include "MainMenuState.h"
-#include "GameApp.h"
+#include "BattleState.h"
 
 GameState* ExploreState::instance = nullptr;
 
@@ -46,30 +46,18 @@ void ExploreState::processInput(GameStateManager& manager, int input)
 {
 	switch (input)
 	{	
-	case GameInput::UP_INPUT:
-		explorationProcessor.processMovementInput(KEY_UP);
-		break;
-	case GameInput::DOWN_INPUT:
-		explorationProcessor.processMovementInput(KEY_DOWN);
-		break;
-	case GameInput::LEFT_INPUT:
-		explorationProcessor.processMovementInput(KEY_LEFT);
-		break;
-	case GameInput::RIGHT_INPUT:
-		explorationProcessor.processMovementInput(KEY_RIGHT);
-		break;
-
-
-	case GameInput::FIGHT_TRIGGER: //we will remove this later, but this is for triggering a fight automatically
-		//g->stateManager.push(fight, g);
-		break;
+	case GameInput::UP_INPUT: explorationProcessor.processMovementInput(KEY_UP); break;
+	case GameInput::DOWN_INPUT: explorationProcessor.processMovementInput(KEY_DOWN); break;
+	case GameInput::LEFT_INPUT: explorationProcessor.processMovementInput(KEY_LEFT); break;
+	case GameInput::RIGHT_INPUT: explorationProcessor.processMovementInput(KEY_RIGHT); break;
+	case GameInput::FIGHT_TRIGGER: //we will remove this later, but this is for triggering a fight immediately
+		manager.setState(BattleState::getInstance()); break; 
 	case GameInput::OK_INPUT:
-	//	g->stateManager.push(mainMenuState, g);
+	
 		break;
-	case GameInput::CANCEL_INPUT: manager.setState(TitleScreenState::getInstance()); break; //temporary
-	case GameInput::OPEN_MENU_INPUT: //manager.setState(MainMenuState::getInstance());  
-		break;
-	//case GameInput::FIGHT_TRIGGER: break;
+	//case GameInput::CANCEL_INPUT:
+
+	case GameInput::OPEN_MENU_INPUT: manager.setState(MainMenuState::getInstance()); break;
 	}
 
 	

@@ -39,6 +39,9 @@
     <ClInclude Include="MockStorable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MockObjectLinkedItem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -102,6 +105,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PaletteTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectLinkedTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LineItemTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

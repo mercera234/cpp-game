@@ -1,7 +1,6 @@
 #pragma once
 
 #include <list>
-using namespace std;
 #include "Actor.h"
 #include "ControlManager.h"
 #include "GraphMenu.h"
@@ -30,8 +29,8 @@ private:
 
 	void setMessage();
 
-	void createActorCards(list<Actor*>& actors, int startNdx, list<MenuItem*>& cards);
-	void addCardsToTargetMenu(list<MenuItem*>& cards);
+	void createActorCards(std::list<Actor*>& actors, int startNdx, std::list<MenuItem*>& cards);
+	void addCardsToTargetMenu(std::list<MenuItem*>& cards);
 
 	void attack(Actor * attacker, Actor * target);
 	//checkForVictory
@@ -39,13 +38,13 @@ private:
 	void setupVictory();
 	void calcRewards(int& totalExp, int &totalMoney);
 	void transferRewards(int totalExp, int totalMoney);
-	bool checkIfDefeated(list<MenuItem*>& cards);
+	bool checkIfDefeated(std::list<MenuItem*>& cards);
 
 	void setupDeath();
 public:
-	list<MenuItem*> humanActors; //human combatants
-	list<MenuItem*> cpuActors; //cpu combatants
-	list<string> messages;
+	std::list<MenuItem*> humanActors; //human combatants
+	std::list<MenuItem*> cpuActors; //cpu combatants
+	std::list<std::string> messages;
 	
 	//display elements
 	GraphMenu* targetMenu;
@@ -57,7 +56,10 @@ public:
 	TurnTracker* turnTracker;
 	PlayerActor* turnHolder;
 
-	BattleProcessor(WINDOW* win, list<Actor*>& players, list<Actor*>& enemies);
+	BattleProcessor();
+	void setWindow(WINDOW* win);
+	void addParticipants(std::list<Actor*>& players, std::list<Actor*>& enemies);
+	BattleProcessor(WINDOW* win, std::list<Actor*>& players, std::list<Actor*>& enemies);
 	void draw();
 	bool processInput(int input);
 	

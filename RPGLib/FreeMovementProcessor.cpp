@@ -45,9 +45,9 @@ void FreeMovementProcessor::bringCursorInBounds()
 		*curX = 0;
 	else if (*curY < 0)
 		*curY = 0;
-	else if (*curX >= moveControl->getTotalCols())
+	else if (*curX >= (int)(moveControl->getTotalCols()))
 		*curX = moveControl->getTotalCols() - 1;
-	else if (*curY >= moveControl->getTotalRows())
+	else if (*curY >= (int)(moveControl->getTotalRows()))
 		*curY = moveControl->getTotalRows() - 1;
 	
 }

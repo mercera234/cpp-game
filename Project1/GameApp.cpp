@@ -28,10 +28,7 @@ GameApp::GameApp()
 	inputManager.setInput(KEY_ESC, GameInput::QUIT_INPUT);
 
 	tui.init();
-	curs_set(CURSOR_INVISIBLE);
-
-	//screen = newwin(screenHeight, screenWidth, 0, 0);
-
+	
 	TitleScreenState::getInstance();
 }
 

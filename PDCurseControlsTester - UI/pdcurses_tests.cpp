@@ -690,6 +690,7 @@ void mockExploreTest()
 
 void mockMainMenuTest()
 {
+	mousemask(0, 0);
 	short totalRows = 23;
 	short totalCols = 51;
 	resize_term(totalRows, totalCols);

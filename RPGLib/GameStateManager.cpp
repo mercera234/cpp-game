@@ -9,8 +9,12 @@ void GameStateManager::setState(GameState* newState)
 
 	state = newState;
 	//load new state
-	if(state != nullptr)
+	if (state != nullptr)
+	{
 		state->loadState();
+		state->setManager(this);
+	}
+		
 }
 
 

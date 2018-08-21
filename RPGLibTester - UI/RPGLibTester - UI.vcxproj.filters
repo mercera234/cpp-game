@@ -89,5 +89,8 @@
     <ClInclude Include="MockTitle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="misc_tests.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

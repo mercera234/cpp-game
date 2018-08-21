@@ -83,7 +83,7 @@ void WadDatabase::compileLumps(FileDirectory& dir, LumpType type)
 		Lump* lump = new Lump();
 		
 		lump->sourceFileName = dir.getPath() + '\\' + file.d_name;
-		int fileSize = dir.getSize(lump->sourceFileName);
+		int fileSize = (int)dir.getSize(lump->sourceFileName);
 		
 		//calculate size in datapkg blocks (this may be a temporary fix)
 		int fullBlocks = fileSize / BLOCK_SIZE;
@@ -98,7 +98,8 @@ void WadDatabase::compileLumps(FileDirectory& dir, LumpType type)
 		WadDirEntry* dirEntry = new WadDirEntry();
 		dirEntry->type = type;
 		dirEntry->lumpSize = lump->size;
-		dirEntry->offset = lump->fileOffset = cursorOffset;
+		lump->fileOffset = cursorOffset;
+		dirEntry->offset = (int)lump->fileOffset;
 		cursorOffset += lump->size;
 		directory.push_back(dirEntry);
 	}

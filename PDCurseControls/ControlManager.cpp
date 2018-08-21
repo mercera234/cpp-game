@@ -5,11 +5,26 @@
 const short defaultCycleKey = '\t';
 const short defaultRevCycleKey = KEY_BTAB;
 
+ControlManager::ControlManager()
+{
+	setDefaultCycleKeys();
+}
+
 ControlManager::ControlManager(void* caller)
 { 
-	this->caller = caller; 
+	setCaller(caller);
 
 	//set default cycle keys
+	setDefaultCycleKeys();
+}
+
+void ControlManager::setCaller(void* caller)
+{
+	this->caller = caller;
+}
+
+void ControlManager::setDefaultCycleKeys()
+{
 	setCycleKey(defaultCycleKey);
 	setRevCycleKey(defaultRevCycleKey);
 }

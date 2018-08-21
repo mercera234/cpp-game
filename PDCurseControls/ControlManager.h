@@ -38,6 +38,7 @@ private:
 	void* caller; //the type of class that utilizes the Control Manager
 	short cycleKey; //to cycle forward
 	short revCycleKey; //to cycle backwards
+	void setDefaultCycleKeys();
 	bool handleGlobalInput(int input); //true if global input is handled
 	bool handleControlInput(int input); //true if input is handled
 	bool handleMouseInput(int input, Registration* r);
@@ -49,7 +50,10 @@ private:
 	void setFocusedControl(std::list<Registration*>::iterator it);
 	void cycleFocus(short cycleKey);
 public:
+	ControlManager();
 	ControlManager(void* caller);
+	void setCaller(void* caller);
+	
 	void registerControl(Controllable* c, char listeners, void(*callback) (void*, void*, int));
 	//void registerControl(Controllable* c, char listeners, Command* cmd);
 	void registerShortcutKey(int key, void(*callback) (void*, void*, int));

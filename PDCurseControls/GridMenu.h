@@ -11,6 +11,15 @@ It will always be in row major format.
 1 2 3
 4 5 6
 */
+
+//setting up a gridmenu
+//
+//resetItems
+//setWindow
+//setdimensions(itemwidth, separators)
+//setItems
+//setCurrentItem
+//post
 class GridMenu : public AbstractMenu
 {
 private:
@@ -95,6 +104,8 @@ public:
 
 	//getters/setters
 	void setItemHeight(unsigned short height);
+
+	/*Set the width of the column portion that holds the item (not the mark or separator)*/
 	void setItemWidth(unsigned short width);
 	unsigned short getItemWidth() { return itemWidth; }
 	unsigned short getItemHeight() { return itemHeight; }
