@@ -15,6 +15,11 @@ namespace PDCurseControlsTester
 			tui.init(); //stdscr is initialized after init is called
 		}
 
+		TEST_METHOD_CLEANUP(endTUI)
+		{
+			tui.shutdown();
+		}
+
 		TEST_METHOD(init_stdscrTest)
 		{
 			Assert::IsNotNull(stdscr);
@@ -64,6 +69,8 @@ namespace PDCurseControlsTester
 			tui.shutdown();
 			Assert::IsTrue(isendwin() != 0);
 		}
+
+		
 
 	};
 }

@@ -94,7 +94,7 @@ namespace PDCurseControlsTester
 			
 			mmi.selectable = true;
 			mmi.selected = true;
-			mmi.crossRef = 78;
+		//	mmi.crossRef = 78;
 			
 			mmi.index = 0;
 			mmi.hidden = true;
@@ -103,7 +103,7 @@ namespace PDCurseControlsTester
 			
 			Assert::IsTrue(mmi.selectable == false);
 			Assert::IsTrue(mmi.selected == false);
-			Assert::IsTrue(mmi.crossRef == -1);
+		//	Assert::IsTrue(mmi.crossRef == -1);
 			Assert::IsTrue(mmi.index == -1);
 			Assert::IsTrue(mmi.hidden == false);
 		}

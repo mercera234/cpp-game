@@ -11,7 +11,7 @@ namespace RPGLibTester
 
 		TEST_METHOD(playFile) //play a new sound file
 		{
-			Assert::IsTrue(musicPlayer.playFile("bossMusic.wav"));
+			Assert::AreEqual(1, musicPlayer.playFile("bossMusic.wav"));
 		}
 
 		TEST_METHOD(pause) //pause a currently playing track
@@ -24,13 +24,13 @@ namespace RPGLibTester
 		{
 			musicPlayer.playFile("bossMusic.wav");
 			musicPlayer.pause();
-			Assert::IsTrue(musicPlayer.play());
+			Assert::AreEqual(1, musicPlayer.play());
 		}
 
 		TEST_METHOD(stop) //stop playing completely
 		{
 			musicPlayer.playFile("bossMusic.wav");
-			Assert::IsTrue(musicPlayer.stop());
+			Assert::AreEqual(1, musicPlayer.stop());
 		}
 
 		//optional, volume testing?

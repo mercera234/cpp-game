@@ -2,12 +2,12 @@
 #include <fstream>
 #include <string>
 #include <list>
-#include <functional>
 #include <map>
+#include <functional>
 #include "Storable.h"
 #include "FileDirectory.h"
 #include "Lump.h"
-//#include "ActorDefRepository.h"
+//#include "ActorRepository.h"
 #include "MapRepository.h"
 
 
@@ -25,7 +25,7 @@ struct WadDirEntry
 	LumpType type;
 };
 
-
+//considering renaming this to ResourceManager
 class WadDatabase
 {
 private:	
@@ -42,6 +42,9 @@ private:
 	void compileLumps(FileDirectory& dir, LumpType type);
 	
 public:
+	std::map<std::string, Actor, std::function<bool(std::string, std::string)> > actors;
+	std::map<int, Map> gameMaps;
+	
 	WadDatabase();
 	void print();
 	
@@ -50,8 +53,10 @@ public:
 	bool save(std::ofstream* saveFile);
 	bool load(std::ifstream* loadFile);
 
+	void loadActorsFromTextFile(std::ifstream& textFile);
+	void loadGameMapsFromDir(FileDirectory& dir);
 	
 	//not sure if I should have this method here!!!
-	//void getActorRepository(std::map<std::string, ActorDef*, std::function<bool(std::string, std::string)>>& actorRepo, std::ifstream& wadFile);
+	//void getActorRepository(std::map<std::string, ActorDef*, std::function<bool(std::string, std::string)>>& mapRepo, std::ifstream& wadFile);
 	void getMapRepository(std::map<unsigned short, Map*>& mapRepo, std::ifstream& wadFile);
 };

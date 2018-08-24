@@ -1,5 +1,6 @@
 #include "CppUnitTest.h"
 #include "Image.h"
+#include <exception>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -12,6 +13,24 @@ namespace PDCurseControlsTester
 			Image img;
 			Assert::IsTrue(img.isBordered());
 		}
+
+		TEST_METHOD(drawWithoutWinTest)
+		{
+			Image img;
+
+			bool exceptionOccurred = false;
+			try
+			{
+				img.draw();
+			}
+			catch (std::exception e)//const char* msg)
+			{
+				exceptionOccurred = true;
+			}
+			
+			Assert::IsFalse(exceptionOccurred);
+		}
+
 
 		TEST_METHOD(setDimensionsSimpleTest)
 		{

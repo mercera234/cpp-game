@@ -6,6 +6,10 @@ private:
 	int max = 0; //these are different types, but this is ok unless we ever feel the need to go beyond 2.1 billion
 	int min = 0;
 	int curr = 0;
+	//TODO consider changing max to currMax, adding tempMax and finalMax
+	//currMax would be what the max is
+	//tempMax would be for temporary raising of the currMax
+	//finalMax is a max value that cannot change once set. The curr max and temp max cannot grow beyond this value
 	void boundCurr();
 public:
 	BoundInt() {};

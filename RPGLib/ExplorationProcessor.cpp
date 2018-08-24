@@ -76,13 +76,13 @@ bool ExplorationProcessor::processMovement(Movement& move)
 		{
 			switch (move.dir)
 			{
-			case Dir::UP: *curY -= move.magnitude;				
+			case Dir::UP: *curY += move.magnitude;				
 				break;
-			case Dir::DOWN: *curY += move.magnitude;				
+			case Dir::DOWN: *curY -= move.magnitude;				
 				break;
-			case Dir::LEFT: *curX -= move.magnitude;				
+			case Dir::LEFT: *curX += move.magnitude;				
 				break;
-			case Dir::RIGHT: *curX += move.magnitude;				
+			case Dir::RIGHT: *curX -= move.magnitude;				
 				break;
 			}
 			return false;

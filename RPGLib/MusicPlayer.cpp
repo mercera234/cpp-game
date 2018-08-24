@@ -2,7 +2,7 @@
 #include "MMSystem.h"
 #include "MusicPlayer.h"
 
-bool MusicPlayer::playFile(const std::string& filePath)
+int MusicPlayer::playFile(const std::string& filePath)
 {
 	setFile(filePath);
 	return play();
@@ -15,12 +15,12 @@ bool MusicPlayer::pause() //not implemented yet
 }
 
 
-bool MusicPlayer::stop()
+int MusicPlayer::stop()
 {
 	return PlaySound(NULL, 0, 0);
 }
 
-bool MusicPlayer::play()
+int MusicPlayer::play()
 {
 	if (file.compare("") == 0)
 		return false;

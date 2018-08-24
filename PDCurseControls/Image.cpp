@@ -26,24 +26,21 @@ Image::Image(int rows, int cols, WINDOW* win)
 
 void Image::init()
 {
-	bordered = true;
+	
 }
 
 
 void Image::reset()
 {
-	for (unsigned int row = 0; row < totalRows; row++)
-	{
-		for (unsigned int col = 0; col < totalCols; col++)
-		{
-			tileMap.setDatum(row, col, ' ');
-		}
-	}
+	tileMap.fill(' ');
 }
 
 
 void Image::draw()
 {
+	if (win == nullptr) //can't draw without a space to draw in
+		return;
+
 	//get position of upper left corner of map
 	/*
 	row and col are the position within the viewport

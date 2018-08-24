@@ -8,9 +8,9 @@ private:
 public:
 	void setFile(const std::string& filePath) { file = filePath; }
 	std::string& getFile() { return file; }
-	bool playFile(const std::string& filePath);
+	int playFile(const std::string& filePath);
 	bool pause();
-	bool stop();
-	bool play();
+	int stop();
+	int play();
 
 };

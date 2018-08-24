@@ -1,5 +1,20 @@
 #include "Actor.h"
 
+Actor::Actor()
+{
+	money.setMax(9999999);
+
+	////set default stat limits
+	stats.level.setMax(MAX_LEVELS);
+	stats.exp.setMax(MAX_EXP);
+	stats.strength.setMax(255);
+	stats.defense.setMax(255);
+	stats.intelligence.setMax(255);
+	stats.will.setMax(255);
+	stats.agility.setMax(255);
+
+}
+
 void Actor::alterStat(StatType statType, int amount)
 {
 	BoundInt& stat = getStat(statType);

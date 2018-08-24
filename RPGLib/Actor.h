@@ -55,7 +55,7 @@ struct Actor : public Thing, public Storable
 	
 	BoundInt money;
 
-	GridMenu* inventory;
+	//GridMenu* inventory;
 
 	//do this differently!
 	//int skills; //each bit represents 1 ability so, there are a max of 32
@@ -68,6 +68,7 @@ struct Actor : public Thing, public Storable
 	//bool save(ofstream* saveFile);
 	int save(std::ofstream& saveFile);
 	int load(std::ifstream& loadFile);
+
 
 	void alterStat(StatType statType, int amount);
 	BoundInt& getStat(StatType statType);
@@ -131,6 +132,8 @@ struct Actor : public Thing, public Storable
 
 	};
 	BaseStats stats;
+
+	Actor();
 };
 
 /*

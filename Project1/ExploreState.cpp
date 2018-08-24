@@ -1,3 +1,4 @@
+#include <utility>
 #include "ExploreState.h"
 #include "GameStateManager.h"
 #include "curses.h"
@@ -5,6 +6,8 @@
 #include "GameInput.h"
 #include "MainMenuState.h"
 #include "BattleState.h"
+#include "actor_helper.h"
+
 
 GameState* ExploreState::instance = nullptr;
 
@@ -20,12 +23,35 @@ GameState* ExploreState::getInstance()
 ExploreState::ExploreState()
 {
 	win = newwin(screenHeight, screenWidth, 0, 0);
+	/*map.setControlActor(nullActor);
 	map.setWindow(win);
-	map.load("data\\water_templ.map");
+	
 	map.setId(1);
 	mapRepo.add(map);
 	explorationProcessor.setMapRepo(&mapRepo);
-	explorationProcessor.setCursor(&y, &x);
+	explorationProcessor.setCursor(&(nullActor->y), &(nullActor->x));
+	explorationProcessor.setCurrMap(map.getId());
+	explorationProcessor.setViewMode(ViewMode::DYNAMIC);*/
+}
+
+
+void ExploreState::initDefaults()
+{
+	auto it = resourceManager->gameMaps.find(12); //id should be passed in to method
+	map = it->second;
+
+	Actor* nullActor = new Actor();
+	nullActor->symbol = 'X' | COLOR_RED_BOLD << TEXTCOLOR_OFFSET;
+	nullActor->x = 0;
+	nullActor->y = 0;
+
+	map.setControlActor(nullActor);
+	map.setWindow(win);
+
+	map.setId(1);
+	mapRepo.add(map);
+	explorationProcessor.setMapRepo(&mapRepo);
+	explorationProcessor.setCursor(&(nullActor->y), &(nullActor->x));
 	explorationProcessor.setCurrMap(map.getId());
 	explorationProcessor.setViewMode(ViewMode::DYNAMIC);
 }
@@ -55,8 +81,6 @@ void ExploreState::processInput(GameStateManager& manager, int input)
 	case GameInput::OK_INPUT:
 	
 		break;
-	//case GameInput::CANCEL_INPUT:
-
 	case GameInput::OPEN_MENU_INPUT: manager.setState(MainMenuState::getInstance()); break;
 	}
 

@@ -6,6 +6,7 @@
 #include "MapEditor.h"
 #include "MasterEditor.h"
 #include "misc_tests.h"
+#include "ActorRepository.h"
 
 
 void repositoryTest()
@@ -23,12 +24,24 @@ void repositoryTest()
 	_ASSERT(m == m2);*/
 
 
-	//Repository2<std::string, ActorDef> actorRepo;
+	//Repository2<std::string, ActorDef> mapRepo;
 
 	//Actor* actor = createActor("data\\hero.actr", AT_HUMAN);
-	//actorRepo.add(actor->def->name, *(actor->def));
+	//mapRepo.add(actor->def->name, *(actor->def));
 
-	//ActorDef* act2 = actorRepo.find(actor->def->name);
+	//ActorDef* act2 = mapRepo.find(actor->def->name);
+
+
+}
+
+void actorRepositoryTest()
+{
+	std::ifstream is("data\\actors.txt");
+	if (!is)
+		return;
+
+	ActorRepository repo;
+	repo.loadFromTextFile(is);
 
 
 }
@@ -39,20 +52,35 @@ void wadDatabaseTest()
 
 	std::string dataDir = "data";
 	std::string wadFileName = "data\\mainwad.dat";
-	wd.buildWad(dataDir);
 
+	//build wad file from separate data files in dataDirName
+	//then write data out to one wad file
+	wd.buildWad(dataDir); 
 	std::ofstream os(wadFileName, std::ios::binary);
 	wd.save(&os);
 	os.close();
 
 	wd.print();
 
+	system("pause");
+
+	//use a second waddatabase to load the data just from the wad file
+	//print methods should match except no individual source file names will be listed for the second call
 	WadDatabase wd2;
 	std::ifstream is(wadFileName, std::ios::binary);
 	wd2.load(&is);
 	is.close();
 
 	wd2.print();
+	system("pause");
+}
+
+void wadDatabasePrintEmptyTest()
+{
+	WadDatabase wd;
+	wd.print(); //won't crash to print empty database
+
+	system("pause");
 }
 
 void exploreTest()
@@ -164,11 +192,11 @@ void battleProcessorTest()
 		std::ifstream is(wadFileName, std::ios::binary);
 		wd.load(&is);*/
 
-		//	std::map<std::string, ActorDef*, function<bool(std::string, std::string)>> actorRepo(stringCompare);
-		//	std::map<std::string, Actor*, function<bool(std::string, std::string)>> actorRepo(stringCompare);
+		//	std::map<std::string, ActorDef*, function<bool(std::string, std::string)>> mapRepo(stringCompare);
+		//	std::map<std::string, Actor*, function<bool(std::string, std::string)>> mapRepo(stringCompare);
 
 
-		//wd.getActorRepository(actorRepo, is);
+		//wd.getActorRepository(mapRepo, is);
 		//is.close();
 		/*	ActorDef p1Def, p2Def,p3Def,p4Def;
 		ActorDef e1Def, e2Def, e3Def, e4Def;*/
@@ -176,10 +204,10 @@ void battleProcessorTest()
 		Actor* p1;
 		Actor* e1;
 
-		//p1Def = *(actorRepo.find("Hero")->second);
-		/*	p2Def = *(actorRepo.find("Lab Tech")->second);
-		p3Def = *(actorRepo.find("Navigator")->second);
-		p4Def = *(actorRepo.find("Mechanic")->second);*/
+		//p1Def = *(mapRepo.find("Hero")->second);
+		/*	p2Def = *(mapRepo.find("Lab Tech")->second);
+		p3Def = *(mapRepo.find("Navigator")->second);
+		p4Def = *(mapRepo.find("Mechanic")->second);*/
 
 		std::list<Actor*> players;
 		/*	players.push_back(buildActorFromDef(&p1Def, ActorType.HUMAN));
@@ -199,10 +227,10 @@ void battleProcessorTest()
 		players.push_back(buildActor(ActorType::HUMAN));*/
 
 
-		//	e1 = *(actorRepo.find("Toadie")->second);
-		/*	e2Def = *(actorRepo.find("Bigbug")->second);
-		e3Def = *(actorRepo.find("Skittler")->second);
-		e4Def = *(actorRepo.find("Wispwing")->second);*/
+		//	e1 = *(mapRepo.find("Toadie")->second);
+		/*	e2Def = *(mapRepo.find("Bigbug")->second);
+		e3Def = *(mapRepo.find("Skittler")->second);
+		e4Def = *(mapRepo.find("Wispwing")->second);*/
 
 		std::list<Actor*> enemies;
 		e1 = buildActor(ActorType::CPU);

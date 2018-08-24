@@ -174,6 +174,9 @@ void MenuItem::linkItemGroup(std::vector<MenuItem*>& group, Dir link)
 
 void MenuItem::linkItemGroup(std::list<MenuItem*>& group, Dir link)
 {
+	if (group.size() <= 0)
+		return;
+
 	std::list<MenuItem*>::iterator endIt = --(group.end()); //must stop at next to last element
 	for (std::list<MenuItem*>::iterator it = group.begin(); it != endIt; it++)
 	{
@@ -182,11 +185,6 @@ void MenuItem::linkItemGroup(std::list<MenuItem*>& group, Dir link)
 		
 		item->link(link, nextItem);
 	}
-
-	/*for (int i = 0; i < group.size() - 1; i++)
-	{
-		group[i]->link(link, group[i + 1]);
-	}*/
 }
 
 /*
@@ -198,6 +196,9 @@ C->null
 */
 void MenuItem::linkItemGroups(std::list<MenuItem*>& group1, std::list<MenuItem*>& group2, Dir link)
 {
+	if (group1.size() <= 0 || group2.size() <= 0)
+		return;
+
 	int smallestSize = std::min(group1.size(), group2.size()); 
 	
 	std::list<MenuItem*>::iterator it1 = group1.begin();

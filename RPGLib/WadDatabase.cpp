@@ -1,13 +1,15 @@
-#include "WadDatabase.h"
+#include <limits>
 #include <iostream>
 #include <iomanip>
-#include <dirent.h>
+//#include <dirent.h>
 #include <string>
+#include "WadDatabase.h"
 #include "DataPkg.h"
+#include "KeyComparators.h"
 //#include "DataPkgFactory.h"
 
 
-WadDatabase::WadDatabase()
+WadDatabase::WadDatabase() : actors(stringCompare)
 {
 	totalLumpSize = 0;
 }
@@ -51,10 +53,11 @@ void WadDatabase::print()
 
 
 /*
-Builds a wad file of name 'fileName' using all game data files foundin 'dataDir'
+Populates the database object (header, lumps, dirEntries) in memory
+using all game data files foundin 'dataDirName'
 */
 //TODO assign id values to every item compiled
-void WadDatabase::buildWad(std::string& dataDir)//, std::string& fileName)
+void WadDatabase::buildWad(std::string& dataDir)
 {
 	//load every data file into lump list
 	FileDirectory dir(dataDir);
@@ -85,7 +88,7 @@ void WadDatabase::compileLumps(FileDirectory& dir, LumpType type)
 		lump->sourceFileName = dir.getPath() + '\\' + file.d_name;
 		int fileSize = (int)dir.getSize(lump->sourceFileName);
 		
-		//calculate size in datapkg blocks (this may be a temporary fix)
+		//calculate size in datapkg blocks (this may be actor temporary fix)
 		int fullBlocks = fileSize / BLOCK_SIZE;
 		int partialBlocks = fileSize % BLOCK_SIZE > 0 ? 1 : 0;
 		int fileBlocks = fullBlocks + partialBlocks;
@@ -108,7 +111,7 @@ void WadDatabase::compileLumps(FileDirectory& dir, LumpType type)
 }
 
 
-//write header, lumps, directory to wad file
+//write header, lumps, directory to single wad data file
 bool WadDatabase::save(std::ofstream* saveFile)
 {
 	//write header
@@ -138,7 +141,7 @@ bool WadDatabase::save(std::ofstream* saveFile)
 }
 
 /*
-Load wad file into memory lumps
+Load single wad data file into memory lumps in database
 */
 bool WadDatabase::load(std::ifstream* loadFile)
 {
@@ -154,7 +157,7 @@ bool WadDatabase::load(std::ifstream* loadFile)
 
 	loadFile->read((char*)&header, sizeof(WadHeader));
 	
-	if (strncmp(header.tag, "IWAD", 4) != 0) //verify that this is a wad file
+	if (strncmp(header.tag, "IWAD", 4) != 0) //verify that this is actor wad file
 		return false;
 
 	//dispose of previous lumps/dir entries if present
@@ -173,12 +176,6 @@ bool WadDatabase::load(std::ifstream* loadFile)
 
 	for each (WadDirEntry* entry in directory)
 	{
-	//	loadFile->seekg(entry->offset);
-		
-	//	int blocks = entry->lumpSize / BLOCK_SIZE;
-		/*DataPkg pkg;
-		pkg.load(loadFile, blocks);*/
-
 		Lump* lump = new Lump();
 		lump->fileOffset = entry->offset;
 		lump->size = entry->lumpSize;
@@ -189,7 +186,7 @@ bool WadDatabase::load(std::ifstream* loadFile)
 	return true;
 }
 
-//void WadDatabase::getActorRepository(std::map<std::string, ActorDef*, std::function<bool(std::string, std::string)>>& actorRepo, std::ifstream& wadFile)
+//void WadDatabase::getActorRepository(std::map<std::string, ActorDef*, std::function<bool(std::string, std::string)>>& mapRepo, std::ifstream& wadFile)
 //{
 //	//iterate through directory for all actor types
 //	for each (WadDirEntry* entry in directory)
@@ -208,7 +205,7 @@ bool WadDatabase::load(std::ifstream* loadFile)
 //
 //		std::pair<std::string, ActorDef*> defPair(def->name, def);
 //		//pair<std::string, ActorDef*> defPair(aStr, def);
-//		actorRepo.insert(defPair);
+//		mapRepo.insert(defPair);
 //	}
 //}
 
@@ -233,5 +230,63 @@ void WadDatabase::getMapRepository(std::map<unsigned short, Map*>& mapRepo, std:
 		//std::pair<unsigned short, Map*> aMap();//def->name, def);
 		////pair<std::string, ActorDef*> defPair(aStr, def);
 		//mapRepo.insert(aMap);
+	}
+}
+
+void WadDatabase::loadActorsFromTextFile(std::ifstream& textFile)
+{
+	char lineFirstChar;
+	while ((lineFirstChar = (char)textFile.peek()) != EOF)
+	{
+		if (lineFirstChar == '#') //skip to next line
+		{
+			//see max conflict with windef.h, hence the extra ()s
+			textFile.ignore((std::numeric_limits<int>::max)(), '\n');
+			continue;
+		}
+
+		Actor actor;
+
+		char symbol;
+		int level, exp, money, hp, mp, str, def, intl, wil, agi;
+
+		textFile >> actor.name >> symbol >> level >> exp >> money >> hp >> mp >> str >> def >> intl >> wil >> agi;
+
+		std::replace(actor.name.begin(), actor.name.end(), '_', ' '); //This handles any multi-word names
+
+		actor.symbol = symbol;
+		actor.getStat(StatType::LEVEL).setCurr(level);
+		actor.getStat(StatType::EXP).setCurr(exp);
+		actor.getStat(StatType::MONEY).setCurr(money);
+
+		actor.getStat(StatType::HP).setMax(hp);
+		actor.getStat(StatType::HP).maxOut();
+		actor.getStat(StatType::MP).setMax(mp);
+		actor.getStat(StatType::MP).maxOut();
+
+		actor.getStat(StatType::STRENGTH).setCurr(str);
+		actor.getStat(StatType::DEFENSE).setCurr(def);
+		actor.getStat(StatType::INTELLIGENCE).setCurr(intl);
+		actor.getStat(StatType::WILL).setCurr(wil);
+		actor.getStat(StatType::AGILITY).setCurr(agi);
+
+		actors.insert(std::make_pair(actor.name, actor));
+	}
+
+}
+
+void WadDatabase::loadGameMapsFromDir(FileDirectory& dir)
+{
+	//get list of map files
+	std::string filter = Lump::getFilterFromType(LumpType::MAP);
+	std::list<dirent> files = dir.getFiles(false, filter);
+
+	int id = 0;
+	for each (dirent file in files)
+	{
+		Map gameMap;
+		gameMap.load(dir.getPath() + '\\' + file.d_name);
+
+		gameMaps.insert(std::make_pair(id++, gameMap)); //id is set automatically not manually
 	}
 }

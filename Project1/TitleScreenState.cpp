@@ -56,18 +56,24 @@ void TitleScreenState::processInput(GameStateManager& manager, int input)
 		switch (((LineItem*)item)->getCrossRef())
 		{
 		case TitleMenuOptions::NEW_GAME:
-			manager.setState(ExploreState::getInstance());
+		{
+			ExploreState* state = (ExploreState*)ExploreState::getInstance();
+			manager.setState(state);
+			state->setResourceManager(resourceManager); //should be setup in gameapp, not here
+			state->initDefaults();
+			//clear any previously loaded resources
+			//load default resources for new game
+
+		}
 			
-		//	delwin(screen);
 			break;
 		case TitleMenuOptions::LOAD_GAME:
+
 			break;
 		case TitleMenuOptions::EDIT_GAME:
 			break;
 		case TitleMenuOptions::QUIT_GAME:
 			manager.setState(nullptr);
-			
-			//active = false;
 			break;
 		}
 	}

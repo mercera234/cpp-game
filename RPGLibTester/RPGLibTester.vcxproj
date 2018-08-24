@@ -163,6 +163,7 @@
   <ItemGroup>
     <ClCompile Include="ActorTest.cpp" />
     <ClCompile Include="BattleAlgorithmTest.cpp" />
+    <ClCompile Include="BattleProcessorTest.cpp" />
     <ClCompile Include="BoundIntTest.cpp" />
     <ClCompile Include="FreeMovementProcessorTest.cpp" />
     <ClCompile Include="GameStateManagerTest.cpp" />
@@ -176,6 +177,7 @@
     <ClCompile Include="MusicPlayerTest.cpp" />
     <ClCompile Include="PickupTest.cpp" />
     <ClCompile Include="PlayerActorTest.cpp" />
+    <ClCompile Include="RepositoryTest.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -184,6 +186,7 @@
     </ClCompile>
     <ClCompile Include="DataPkgTest.cpp" />
     <ClCompile Include="TurnTrackerTest.cpp" />
+    <ClCompile Include="WadDatabaseTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PDCurseControls\PDCurseControls.vcxproj">

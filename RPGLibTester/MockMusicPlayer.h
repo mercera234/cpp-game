@@ -6,8 +6,8 @@ class MockMusicPlayer : public IMusicPlayer
 {
 private:
 public:
-	bool playFile(const std::string& filePath);
+	int playFile(const std::string& filePath);
 	bool pause();
-	bool stop();
-	bool play();
+	int stop();
+	int play();
 };

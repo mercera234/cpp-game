@@ -70,6 +70,7 @@ void BattleProcessor::initTargetMenu()
 	//setup target menu
 	int actorCardHeight = 4; //this should maybe be calculated
 	int totalCapacity = humanActors.size() + cpuActors.size();
+
 	targetMenu = new GraphMenu(newwin(actorCardHeight * 4, visibleCols - 2, 1, 1), totalCapacity);
 
 
@@ -182,7 +183,8 @@ void BattleProcessor::advanceTurn()
 {
 	turnHolder = (PlayerActor*)turnTracker->getNext();
 	
-	if (turnHolder == NULL)	return;
+	if (turnHolder == NULL)	
+		return;
 
 	Actor* next = turnHolder->getActor();
 	switch (next->type)

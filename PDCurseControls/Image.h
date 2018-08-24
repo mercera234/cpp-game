@@ -15,7 +15,7 @@ private:
 	True if a border is to be drawn around the image within the control space. 
 	This is not the same thing as a frame. This is the empty space outside the image that is visible in the controls window.
 	*/
-	bool bordered;
+	bool bordered = true;
 
 	//private methods
 	void init();

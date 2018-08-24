@@ -1,8 +1,8 @@
 #include "MockMusicPlayer.h"
 
-bool MockMusicPlayer::playFile(const std::string& filePath)
+int MockMusicPlayer::playFile(const std::string& filePath)
 {
-	return true;
+	return 1;
 }
 
 
@@ -12,12 +12,12 @@ bool MockMusicPlayer::pause()
 }
 
 
-bool MockMusicPlayer::stop()
+int MockMusicPlayer::stop()
 {
-	return true;
+	return 1;
 }
 
-bool MockMusicPlayer::play()
+int MockMusicPlayer::play()
 {
-	return true;
+	return 1;
 }

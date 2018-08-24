@@ -118,6 +118,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ActorRepository.h" />
     <ClInclude Include="actor_helper.h" />
     <ClInclude Include="Actor.h" />
     <ClInclude Include="AutoMap.h" />
@@ -165,6 +166,7 @@
   <ItemGroup>
     <ClCompile Include="Actor.cpp" />
     <ClCompile Include="ActorCard.cpp" />
+    <ClCompile Include="ActorRepository.cpp" />
     <ClCompile Include="actor_helper.cpp" />
     <ClCompile Include="AutoMap.cpp" />
     <ClCompile Include="BattleAlgorithm.cpp" />
