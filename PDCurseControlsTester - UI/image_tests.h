@@ -1,4 +1,8 @@
 #pragma once
 
-void imageTest();
+void imageLoadUnloadTest();
+void imageWithoutWindowTest();
+void imageWithoutDimensionsTest();
+void imageWithoutDataTest();
+
 void highlighterTest();

@@ -11,9 +11,10 @@ private:
 
 protected:
 	WINDOW* win = nullptr;
-	bool focusable = true; //true if this should be the focused item after receiving input
-	bool showing; //true if should be drawn 
-	bool focus; //true if the controllable is focused
+	bool focusable = true; //true if this object can have focus
+	bool showing = true; //true if should be drawn 
+	bool focus = false; //true if the controllable has focus
+	bool standout = false; //true if the control should be drawn with bold attribute on
 	bool acceptsMouseInput; 
 
 	//Rect* r; //A rectangle to save the true dimensions of the window in case it should go off screen
@@ -55,7 +56,7 @@ public:
 
 	bool isFocusable() { return focusable; }
 	void setFocusable(bool canFocus) { focusable = canFocus; }
-	virtual void setFocus() {};
+	//virtual void setFocus() {};
 	virtual void setCursorFocus() {}; //for moving the cursor to this component
 	virtual void setFocus(bool focusIn) { focus = focusIn; }
 	bool isFocused() { return focus; }

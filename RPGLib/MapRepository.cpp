@@ -51,7 +51,7 @@ MapExit* MapRepository::getExit(MapExit* sourceExit)
 	std::map<MapExit*, MapExit*>::iterator it;
 	it = exits.find(sourceExit);
 
-	return it == exits.end() ? NULL : &(*it->second);
+	return it == exits.end() ? nullptr : &(*it->second);
 }
 
 void MapRepository::add(Map& obj) //add one object of type T
@@ -65,5 +65,5 @@ Map* MapRepository::find(unsigned short id)
 	std::map<unsigned short, Map*>::iterator it;
 	it = maps.find(id);
 
-	return it == maps.end() ? NULL : &(*it->second);
+	return it == maps.end() ? nullptr : &(*it->second);
 }

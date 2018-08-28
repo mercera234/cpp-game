@@ -51,7 +51,7 @@ void MenuItem::draw()
 	calcDrawingVars();
 
 	if (menu != NULL &&
-		menu->isFocused() &&
+	//	menu->isFocused() &&
 		(this == menu->getCurrentItem() || selected))
 	{
 		drawCursor();

@@ -30,6 +30,9 @@ GameApp::GameApp()
 	inputManager.setInput(CTRL_F, GameInput::FIGHT_TRIGGER);
 	inputManager.setInput(KEY_ESC, GameInput::QUIT_INPUT);
 
+	//load resources
+	resourceManager.loadNullResources();
+
 	std::ifstream is(actorFile);
 	resourceManager.loadActorsFromTextFile(is);
 
@@ -38,8 +41,8 @@ GameApp::GameApp()
 
 	tui.init();
 	
-	TitleScreenState::getInstance();
-	((TitleScreenState*)TitleScreenState::getInstance())->setResourceManager(&resourceManager);
+	GameState* openingState = TitleScreenState::getInstance();
+	openingState->setResourceManager(&resourceManager);
 
 }
 
@@ -90,12 +93,9 @@ bool GameApp::run()
 		doupdate();
 
 		//input/process
-		switch (int input = getInput())
-		{
-		default:
-			playing = stateMngr.processInput(input);
-			break;
-		}
+		int input = getInput();
+		playing = stateMngr.processInput(input);
+			
 	}
 
 	return true;

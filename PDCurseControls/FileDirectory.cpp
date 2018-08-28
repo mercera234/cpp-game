@@ -1,9 +1,15 @@
 #include "FileDirectory.h"
 #include <fstream>
 
+FileDirectory::FileDirectory()
+{
+
+}
+
 FileDirectory::FileDirectory(const std::string& path)
 {
-	this->path = path;
+	setPath(path);
+	//this->path = path;
 }
 
 std::list<dirent> FileDirectory::getFiles(bool includeDirectories, const std::string& filter)

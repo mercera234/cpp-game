@@ -84,9 +84,18 @@ namespace PDCurseControlsTester
 			mmi->index = index;
 			
 			menu.setItem(mmi);
+			menu.setCurrentItem(index);
 
 			MenuItem* mmi2 = menu.getCurrentItem();
 			Assert::AreEqual(index, (int)mmi2->index);
+		}
+
+		TEST_METHOD(setNoCurrentItemTest)
+		{
+			MockMenu menu;
+			
+			MenuItem* mmi = menu.getCurrentItem();
+			Assert::IsTrue(mmi == nullptr);
 		}
 
 		TEST_METHOD(overwriteAfterSetItemTest)

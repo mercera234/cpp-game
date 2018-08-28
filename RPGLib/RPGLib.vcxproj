@@ -126,6 +126,7 @@
     <ClInclude Include="BoundInt.h" />
     <ClInclude Include="DataPkg.h" />
     <ClInclude Include="Editor.h" />
+    <ClInclude Include="EncounterTracker.h" />
     <ClInclude Include="ExplorationProcessor.h" />
     <ClInclude Include="Factory.h" />
     <ClInclude Include="FreeMovementProcessor.h" />
@@ -156,7 +157,9 @@
     <ClInclude Include="PlayerActor.h" />
     <ClInclude Include="Repository.h" />
     <ClInclude Include="Repository2.h" />
+    <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Spell.h" />
+    <ClInclude Include="StepTracker.h" />
     <ClInclude Include="Thing.h" />
     <ClInclude Include="TileEffect.h" />
     <ClInclude Include="TurnTracker.h" />
@@ -174,6 +177,7 @@
     <ClCompile Include="BoundInt.cpp" />
     <ClCompile Include="DataPkg.cpp" />
     <ClCompile Include="Editor.cpp" />
+    <ClCompile Include="EncounterTracker.cpp" />
     <ClCompile Include="ExplorationProcessor.cpp" />
     <ClCompile Include="Factory.cpp" />
     <ClCompile Include="FreeMovementProcessor.cpp" />
@@ -191,6 +195,8 @@
     <ClCompile Include="MovementProcessor.cpp" />
     <ClCompile Include="MusicPlayer.cpp" />
     <ClCompile Include="PlayerActor.cpp" />
+    <ClCompile Include="ResourceManager.cpp" />
+    <ClCompile Include="StepTracker.cpp" />
     <ClCompile Include="TurnTracker.cpp" />
     <ClCompile Include="WadDatabase.cpp" />
   </ItemGroup>

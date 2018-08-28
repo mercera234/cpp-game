@@ -63,11 +63,11 @@ bool AbstractMenu::setItem(MenuItem* item)
 	
 
 	items[item->index] = item;
-	if (curItem == nullptr) //set first added item to current item by default
-	{
-		setCurrentItem(item->index);
-		curIndex = item->index;
-	}
+	//if (curItem == nullptr) //set first added item to current item by default
+	//{
+	//	setCurrentItem(item->index);
+	//	curIndex = item->index;
+	//}
 		
 
 	return true;
@@ -102,7 +102,7 @@ bool AbstractMenu::clearItem(int index)
 
 bool AbstractMenu::validateIndex(int index)
 {
-	return index >= 0 && index < (int)items.size();
+	return index >= -1 && index < (int)items.size();
 }
 
 
@@ -132,7 +132,8 @@ bool AbstractMenu::setCurrentItem(int index)
 		return false;
 
 	curIndex = index;
-	curItem = items[index];
+
+	curItem = (index >= 0) ? items[index] : nullptr;
 
 	return true;
 }

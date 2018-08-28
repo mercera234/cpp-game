@@ -24,5 +24,6 @@ protected:
 	void prepare(); //overridden
 	void init(Image* background, bool playForwards = true);
 public:
+	~BlitAnimation();
 	void draw(); //overridden
 };

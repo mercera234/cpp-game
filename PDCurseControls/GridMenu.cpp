@@ -127,7 +127,7 @@ bool GridMenu::post(bool post)
 	if (posted)
 	{
 		linkItems();
-		setCurrentItem(0); //default will always be the first item
+		//setCurrentItem(0); //default will always be the first item
 	}
 	return posted;
 }

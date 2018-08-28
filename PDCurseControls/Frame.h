@@ -11,6 +11,7 @@ private:
 	std::string text; 
 	unsigned short textY, textX; //where to position the text
 public:
+	Frame() {}
 	Frame(WINDOW* win, Controllable* c);
 	
 	void setFocus(bool focusIn);
@@ -19,6 +20,7 @@ public:
 	/*
 	Sets text on the top border of the frame
 	*/
+	
 	void setText(const std::string& text, int y, int x);
 	void draw();
 	~Frame();

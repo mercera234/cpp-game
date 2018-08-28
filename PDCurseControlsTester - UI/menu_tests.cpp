@@ -86,6 +86,7 @@ void gridMenuTest()
 		break;
 		}
 	}
+	delete win;
 }
 
 void titleMenuTest()
@@ -380,7 +381,7 @@ void palettePrototypeTest()
 	}
 
 	delwin(label);
-
+	delwin(win);
 }
 
 
@@ -411,12 +412,12 @@ void scrollMenuTest()
 
 	bool usingMenu = true;
 
-	ScrollBar* sb = new ScrollBar(&menu);
+	ScrollBar sb(&menu);
 
 	while (usingMenu)
 	{
 		//menu.draw();
-		sb->draw();
+		sb.draw();
 		doupdate();
 		int input = getch();
 

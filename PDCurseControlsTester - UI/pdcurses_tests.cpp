@@ -99,6 +99,9 @@ void overlapWindowTest()
 	wnoutrefresh(win);
 	doupdate();
 	getch();
+
+	delwin(win);
+	delwin(win2);
 }
 
 void overlapWindowTest2()
@@ -133,6 +136,9 @@ void overlapWindowTest2()
 	wnoutrefresh(win);
 	doupdate();
 	getch();
+
+	delwin(win);
+	delwin(win2);
 }
 
 void overlapWindowTest3()
@@ -180,6 +186,9 @@ void overlapWindowTest3()
 	wnoutrefresh(win2);
 	doupdate();
 	getch();
+
+	delwin(win);
+	delwin(win2);
 }
 
 
@@ -688,6 +697,124 @@ void mockExploreTest()
 	getch();
 }
 
+/*Below this point are the mock main menu screens*/
+void drawMenuFrame(WINDOW* win, int mode)
+{
+	int cursorY = 1;
+	int cursorX = 1;
+	switch (mode)
+	{
+	case 'h': 
+		wattron(win, A_BOLD);
+		break;
+	case 's':
+		cursorY = 3;
+		break;
+	}
+	
+	werase(win);
+	box(win, 0, 0);
+	mvwaddstr(win, 1, 3, "Item");
+	mvwaddstr(win, 2, 3, "Equip");
+	mvwaddstr(win, 3, 3, "Status");
+	mvwaddstr(win, 4, 3, "Skill");
+	mvwaddstr(win, 1, 11, "Config");
+	mvwaddstr(win, 2, 11, "Map");
+	mvwaddstr(win, 3, 11, "Save");
+	mvwaddstr(win, 4, 11, "Quit");
+	mvwaddstr(win, cursorY, cursorX, "->");
+
+	if (mode == 'h')
+		wattroff(win, A_BOLD);
+}
+
+void drawCharFrame(WINDOW* win, int mode)
+{
+	werase(win);
+	box(win, 0, 0);
+
+	std::string charName = "Stephanopoulise"; //15 char name max length
+	std::string hpStats = "HP 9999/9999"; //max length of HP
+	std::string mpStats = "MP  999/999"; //max length of MP
+
+
+	for (int i = 0, row = 1; i < 4; i++, row += 4)
+	{
+		mvwaddstr(win, row, 3, charName.c_str());
+		mvwaddstr(win, row + 1, 3, hpStats.c_str());
+		mvwaddstr(win, row + 2, 3, mpStats.c_str());
+	}
+
+	int cursorY = 1;
+	int cursorX = 1;
+	switch (mode)
+	{
+	case 'h':
+		break;
+	case 's':
+		cursorY = 1;
+		cursorX = 1;
+		mvwaddstr(win, cursorY, cursorX, "->");
+		break;
+	}
+}
+
+void drawDescFrame(WINDOW* win, int mode)
+{
+	werase(win);
+	
+	switch (mode)
+	{
+	case 'h':
+		box(win, 0, 0);
+		mvwaddstr(win, 1, 1, "Dungeon 1");
+		mvwaddstr(win, 2, 1, "Level B3");
+		break;
+	case 's':
+		wattron(win, A_BOLD);
+		box(win, 0, 0);
+		mvwaddstr(win, 1, 1, "Stephanopoulise");
+		mvwaddstr(win, 2, 1, "Level 14");
+		mvwaddstr(win, 3, 1, "Mechanic");
+		wattroff(win, A_BOLD);
+		break;
+	}
+	
+}
+
+void drawBodyFrame(WINDOW* win, int mode)
+{
+	werase(win);
+
+	switch (mode)
+	{
+	case 'h':
+		box(win, 0, 0);
+		mvwaddstr(win, 1, 1, "Gold$ 3500");
+		mvwaddstr(win, 2, 1, "Steps 10023");
+		mvwaddstr(win, 3, 1, "Enemies Killed 380");
+		mvwaddstr(win, 4, 1, "Battles Won 250");
+		break;
+	case 's':
+		wattron(win, A_BOLD);
+		box(win, 0, 0);
+		mvwaddstr(win, 1, 7, "HP 9999/9999");
+		mvwaddstr(win, 2, 7, "MP  999/999");
+		mvwaddstr(win, 3, 1, "Strength 255");
+		mvwaddstr(win, 4, 2, "Defense 255");
+		mvwaddstr(win, 5, 2, "Agility 255");
+		mvwaddstr(win, 6, 4, "Intel 255");
+		mvwaddstr(win, 7, 5, "Will 255");
+		mvwaddstr(win, 8, 5, "Luck 255");
+		mvwaddstr(win, 9, 6, "Exp 9999999");
+		mvwaddstr(win, 10, 2, "To Next 9999999");
+		wattroff(win, A_BOLD);
+		break;
+	}
+		
+}
+
+
 void mockMainMenuTest()
 {
 	mousemask(0, 0);
@@ -695,69 +822,55 @@ void mockMainMenuTest()
 	short totalCols = 51;
 	resize_term(totalRows, totalCols);
 
+	char mode = 'h'; // draw from hub position
+	chtype motif = ' ' | 0x17000000; //blue background, white text
+
 	int leftBoxWidth = 20;
 	int topBoxHeight = 6;
 	int startRow = 0;
 	int startCol = 0;
 	WINDOW* menuFrame = newwin(topBoxHeight, leftBoxWidth, startRow, startCol);
 
-	chtype motif = ' ' | 0x17000000; //blue background, white text
-	wbkgd(menuFrame, motif);
-	box(menuFrame, 0, 0);
-
-	mvwaddstr(menuFrame, 1, 3, "Item");
-	mvwaddstr(menuFrame, 2, 3, "Equip");
-	mvwaddstr(menuFrame, 3, 3, "Status");
-	mvwaddstr(menuFrame, 4, 3, "Skill");
-	mvwaddstr(menuFrame, 1, 11, "Config");
-	mvwaddstr(menuFrame, 2, 11, "Map");
-	mvwaddstr(menuFrame, 3, 11, "Save");
-	mvwaddstr(menuFrame, 4, 11, "Quit");
-	mvwaddstr(menuFrame, 1, 1, "->");
-	
 	int bottomBoxHeight = totalRows - topBoxHeight + 1;
 	WINDOW* charFrame = newwin(bottomBoxHeight, leftBoxWidth, startRow + 5, startCol);
-	wbkgd(charFrame, motif);
-	box(charFrame, 0, 0);
-
-	std::string charName = "Stephanopoulise"; //15 char name max length
-	std::string hpStats = "HP 1000/2000"; //max length of HP
-	std::string mpStats = "MP 1000/2000"; //max length of MP
-
-	
-	for (int i = 0, row = 1; i < 4; i++, row += 4)
-	{
-		mvwaddstr(charFrame, row, 3, charName.c_str());
-		mvwaddstr(charFrame, row + 1, 3, hpStats.c_str());
-		mvwaddstr(charFrame, row + 2, 3, mpStats.c_str());
-	}
 
 	int rightBoxWidth = totalCols - leftBoxWidth;
 	WINDOW* descFrame = newwin(topBoxHeight, rightBoxWidth, startRow, startCol + leftBoxWidth);
-	wbkgd(descFrame, motif);
-	box(descFrame, 0, 0);
-	
-	mvwaddstr(descFrame, 1, 1, "Dungeon 1");
-	mvwaddstr(descFrame, 2, 1, "Level B3");
-
-
 
 	WINDOW* bodyFrame = newwin(bottomBoxHeight, rightBoxWidth, startRow + 5, startCol + leftBoxWidth);
-	wbkgd(bodyFrame, motif);
-	box(bodyFrame, 0, 0);
 
-	mvwaddstr(bodyFrame, 1, 1, "Gold$ 3500");
-	mvwaddstr(bodyFrame, 2, 1, "Steps 10023");
-	mvwaddstr(bodyFrame, 3, 1, "Enemies Killed 380");
-	mvwaddstr(bodyFrame, 4, 1, "Battles Won 250");
+	while (mode != 'q')
+	{
+		wbkgd(menuFrame, motif);
+		drawMenuFrame(menuFrame, mode);
 
+		wbkgd(charFrame, motif);
+		drawCharFrame(charFrame, mode);
+		
+		wbkgd(descFrame, motif);
+		drawDescFrame(descFrame, mode);
 
+		wbkgd(bodyFrame, motif);
+		drawBodyFrame(bodyFrame, mode);
 
-	wnoutrefresh(menuFrame);
-	wnoutrefresh(charFrame);
-	wnoutrefresh(descFrame);
-	wnoutrefresh(bodyFrame);
-	//wnoutrefresh(stdscr);
-	doupdate();
-	getch();
+		switch (mode)
+		{
+		case 'h': 
+			wnoutrefresh(charFrame);
+			wnoutrefresh(menuFrame);
+			wnoutrefresh(descFrame);
+			wnoutrefresh(bodyFrame);
+			break;
+		case 's':
+			wnoutrefresh(menuFrame);
+			wnoutrefresh(charFrame);
+			wnoutrefresh(descFrame);
+			wnoutrefresh(bodyFrame);
+			break;
+		}
+		
+	
+		doupdate();
+		mode = getch();
+	}
 }

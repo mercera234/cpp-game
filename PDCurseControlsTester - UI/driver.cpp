@@ -3,6 +3,11 @@
 #include "menu_tests.h"
 #include "pdcurses_tests.h"
 #include "tui_tests.h"
+#include "image_tests.h"
+#include "control_manager_tests.h"
+#include "frame_tests.h"
+#include "misc_tests.h"
+#include "textboard_tests.h"
 
 //PDCURSE CONTROLS UI TESTER
 int main()
@@ -12,7 +17,7 @@ int main()
 	//DO NOT MODIFY ABOVE THIS LINE
 	
 	
-	mockMainMenuTest();
+	controlManagerTest();
 	
 	
 	

@@ -54,6 +54,11 @@ LineItem* Palette::getItem(int menuRow, int menuCol)
 	return (LineItem*)menu.getItem(menuRow, menuCol);
 }
 
+void Palette::setCurrentItem(int index)
+{
+	menu.setCurrentItem(index);
+}
+
 LineItem* Palette::getCurrentItem()
 {
 	return (LineItem*)menu.getCurrentItem();

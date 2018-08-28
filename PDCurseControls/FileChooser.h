@@ -16,15 +16,12 @@ enum class FileDialogType
 	SAVE_DIALOG
 };
 
-//const int OPEN_DIALOG = 0;
-//const int SAVE_DIALOG = 1;
-
 class FileChooser : public Controllable
 {
 protected:
 	FileDirectory directory;
 	GridMenu fileMenu;
-	//std::string workingDir;
+	
 	TextLabel purposeLbl;
 	TextLabel pathLbl;
 	ScrollBar vScroller;
@@ -33,29 +30,29 @@ protected:
 	FileDialogType type;
 
 	//alignment variables
-	//int indent;
 	int pathWidth;
 	bool checkFilterMatch(const std::string& fileName);
-	void init(std::string workingDir, FileDialogType type, std::string filter = "");
+	void init(FileDialogType type, std::string filter = "");
 
 	bool navigateUpDirectory();
 	bool navigateDownDirectory(const std::string& dirName);
 public:
-	FileChooser(std::string workingDir, FileDialogType type, std::string filter = "");
+	FileChooser();
+	FileChooser(const std::string& workingDir, FileDialogType type, std::string filter = "");
 	void setupChooser(WINDOW* win);
 
-	FileChooser(WINDOW* win, std::string workingDir, FileDialogType type, std::string filter = "");
+	FileChooser(WINDOW* win, const std::string& workingDir, FileDialogType type, std::string filter = "");
 	void resetDirEntries();
 	
 	void driver(int input);
 	std::string filePathDriver();
 	void draw();
 
-	//~FileChooser();
-
+	
 	//getters/setters
 	void setFocus() { fileNameField.setCursorFocus(); }
 	void setFilter(const std::string& filter) { this->filter = filter; }
+	void setType(FileDialogType typeIn) { type = typeIn; }
+	void setDirectory(const std::string& workingDir);
 	FileDialogType getType() { return type; }
-	//GridMenu* getMenu() { return fileMenu; }
 };

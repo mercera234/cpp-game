@@ -2,6 +2,8 @@
 #include "LineItem.h"
 #include "GameStateManager.h"
 #include "ExploreState.h"
+#include "MainMenuState.h"
+#include "BattleState.h"
 #include "GameApp.h"
 #include "GameInput.h"
 
@@ -13,7 +15,7 @@ GameState* TitleScreenState::getInstance()
 	{
 		instance = new TitleScreenState;
 	}
-		
+	
 	return instance;
 }
 
@@ -47,25 +49,35 @@ void TitleScreenState::unloadState()
 
 }
 
+
+void TitleScreenState::beginNewGame()
+{
+	//clear any previously loaded resources
+	//initialize other needed states
+	GameState* state = MainMenuState::getInstance();
+	state->setResourceManager(resourceManager);
+
+	state = BattleState::getInstance();
+	state->setResourceManager(resourceManager);
+
+	ExploreState* exploreState = (ExploreState*)ExploreState::getInstance();
+	exploreState->setResourceManager(resourceManager); 
+	exploreState->initDefaults(); //load default resources for new game
+	
+	GameStateManager* manager = getManager();
+	manager->setState(exploreState);
+}
+
 void TitleScreenState::processInput(GameStateManager& manager, int input)
 {
 	MenuItem* item = GameApp::menuDriver(input, &titleMenu);
 		
-	if (item) //TODO not sure if this will work
+	if (item) 
 	{
 		switch (((LineItem*)item)->getCrossRef())
 		{
 		case TitleMenuOptions::NEW_GAME:
-		{
-			ExploreState* state = (ExploreState*)ExploreState::getInstance();
-			manager.setState(state);
-			state->setResourceManager(resourceManager); //should be setup in gameapp, not here
-			state->initDefaults();
-			//clear any previously loaded resources
-			//load default resources for new game
-
-		}
-			
+			beginNewGame();
 			break;
 		case TitleMenuOptions::LOAD_GAME:
 
@@ -83,7 +95,7 @@ void TitleScreenState::processInput(GameStateManager& manager, int input)
 void TitleScreenState::draw()
 {
 	werase(win);
-	mvwprintw(win, 0, 1, "---KILL IMPROVE REPEAT---");
+	mvwprintw(win, 0, 1, "---KILL, IMPROVE, REPEAT---");
 	wnoutrefresh(win);
 	titleMenu.draw();
 }

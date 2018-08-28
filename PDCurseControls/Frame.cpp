@@ -2,9 +2,8 @@
 
 Frame::Frame(WINDOW* win, Controllable*c)
 {
-	this->win = win;
-	this->c = c;
-	showing = true;
+	setWindow(win);
+	setControl(c);
 }
 
 void Frame::draw()
@@ -34,7 +33,8 @@ void Frame::draw()
 void Frame::setFocus(bool focusIn)
 {
 	Controllable::setFocus(focusIn);
-	c->setFocus(focusIn);
+	if(c != nullptr)
+		c->setFocus(focusIn);
 }
 
 void Frame::setText(const std::string& text, int y, int x)

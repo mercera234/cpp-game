@@ -12,6 +12,8 @@ void exploreTest();
 
 void battleProcessorTest();
 
+void statusDisplayTest();
+
 //these should maybe not be in here
 void mapEditorTest();
 void masterEditorTest();

@@ -76,6 +76,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>F:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\PDCurseControls\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -126,15 +127,20 @@
     <ClCompile Include="misc_tests.cpp" />
     <ClCompile Include="panel_tests.cpp" />
     <ClCompile Include="pdcurses_tests.cpp" />
+    <ClCompile Include="textboard_tests.cpp" />
     <ClCompile Include="text_tests.cpp" />
     <ClCompile Include="tui_tests.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="control_manager_tests.h" />
     <ClInclude Include="file_chooser_tests.h" />
+    <ClInclude Include="frame_tests.h" />
     <ClInclude Include="image_tests.h" />
     <ClInclude Include="menu_tests.h" />
+    <ClInclude Include="misc_tests.h" />
     <ClInclude Include="panel_tests.h" />
     <ClInclude Include="pdcurses_tests.h" />
+    <ClInclude Include="textboard_tests.h" />
     <ClInclude Include="text_tests.h" />
     <ClInclude Include="tui_tests.h" />
   </ItemGroup>

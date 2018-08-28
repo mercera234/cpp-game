@@ -6,23 +6,33 @@
 
 const char* divider = "----------------------------------------";
 
-FileChooser::FileChooser(std::string workingDir, FileDialogType type, std::string filter)
-	: directory(workingDir)
+FileChooser::FileChooser()
 {
-	init(workingDir, type, filter);
+
 }
 
-void FileChooser::init(std::string workingDir, FileDialogType type, std::string filter)
+FileChooser::FileChooser(const std::string& workingDir, FileDialogType type, std::string filter)
+	: directory(workingDir)
 {
-	this->type = type;
-	this->filter = filter;
+	init(type, filter);
+}
+
+void FileChooser::init(FileDialogType type, std::string filter)
+{
+	setType(type);
+	setFilter(filter);
+}
+
+void FileChooser::setDirectory(const std::string& workingDir)
+{
+	directory.setPath(workingDir);
 }
 
 /*The window parameter should have a height of at least 5*/
-FileChooser::FileChooser(WINDOW* win, std::string workingDir, FileDialogType type, std::string filter) 
+FileChooser::FileChooser(WINDOW* win, const std::string& workingDir, FileDialogType type, std::string filter)
 	: directory(workingDir)
 {
-	init(workingDir, type, filter);
+	init(type, filter);
 
 	setupChooser(win);
 }

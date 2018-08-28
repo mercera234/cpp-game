@@ -13,6 +13,7 @@ private:
 public:
 	static std::streampos getSize(const std::string& fileName);
 	
+	FileDirectory();
 	FileDirectory(const std::string& path);
 
 	//Returns files in the path located by the path member variable

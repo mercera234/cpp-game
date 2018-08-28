@@ -11,18 +11,16 @@ private:
 	static GameState* instance;
 	ExplorationProcessor explorationProcessor;
 	MapRepository mapRepo;
-	Map map;
-	
-	//temporary for position in map
-	int y = 0;
-	int x = 0;
+	Map* map;
+	Actor* player1;
 
-	WadDatabase* resourceManager;
-	void drawNullMap(int y, int x);
+	StepTracker stepTracker;
+	EncounterTracker encounterTracker;
+	
+
+	void processDirectionalInput(int input);
 public:
-	//~ExploreState();
 	static GameState* getInstance(); //since static, cannot be virtual in super class
-	void setResourceManager(WadDatabase* db) { resourceManager = db; }
 	void initDefaults();
 	void loadState();
 	void unloadState();

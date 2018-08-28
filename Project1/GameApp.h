@@ -4,14 +4,15 @@
 //#include "stateManager.h"
 #include "GridMenu.h"
 #include "InputManager.h"
-#include "WadDatabase.h"
+#include "ResourceManager.h"
+//#include "WadDatabase.h"
 
 class GameApp
 {
 private:
 	TUI tui;
 	InputManager inputManager;
-	WadDatabase resourceManager;
+	ResourceManager resourceManager;
 
 	int getInput();
 public:

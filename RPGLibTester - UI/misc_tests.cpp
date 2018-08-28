@@ -132,7 +132,7 @@ void exploreTest()
 	mp->setViewMode(ViewMode::DYNAMIC); //position map so character is visible (not sure if this is the best way to do this)
 
 	MusicPlayer musicPlayer;
-	bool ret = musicPlayer.playFile("01-02- 12 Microtonal Etudes, Op 28 I 16 notes Andantino.wav");
+	int ret = musicPlayer.playFile("01-02- 12 Microtonal Etudes, Op 28 I 16 notes Andantino.wav");
 
 	while (playing)
 	{
@@ -178,6 +178,64 @@ void exploreTest()
 	}
 
 	delwin(screen); //when a window is shared by multiple controllable objects, they cannot be responsible for deleting the window, because other objects can't tell that it is deleted
+}
+
+
+void statusDisplayTest()
+{
+	WINDOW* win = newwin(18, 31, 0, 0);
+	box(win, 0, 0);
+
+	Actor player;
+	BoundInt hp = player.getStat(StatType::HP);
+	hp.setMax(9999);
+	hp.setCurr(50);
+
+	BoundInt mp = player.getStat(StatType::MP);
+	mp.setMax(999);
+	mp.setCurr(2);
+
+	int maxStat = 255;
+	BoundInt str = player.getStat(StatType::STRENGTH);
+	str.setMax(maxStat);
+	str.setCurr(maxStat);
+
+	BoundInt def = player.getStat(StatType::DEFENSE);
+	def.setMax(maxStat);
+	def.setCurr(maxStat);
+
+	BoundInt intl = player.getStat(StatType::INTELLIGENCE);
+	intl.setMax(maxStat);
+	intl.setCurr(maxStat);
+
+	BoundInt wil = player.getStat(StatType::WILL);
+	wil.setMax(maxStat);
+	wil.setCurr(maxStat);
+
+	BoundInt agi = player.getStat(StatType::AGILITY);
+	agi.setMax(maxStat);
+	agi.setCurr(maxStat);
+
+	BoundInt exp = player.getStat(StatType::EXP);
+	exp.setMax(9999999);
+	exp.setCurr(9999999);
+
+	int toNext = 9999999;
+
+	mvwprintw(win, 1, 1, "      HP %+4u/%+4u", hp.getCurr(), hp.getMax());
+	mvwprintw(win, 2, 1, "      MP %+4u/%+4u", mp.getCurr(), mp.getMax());
+	mvwprintw(win, 3, 1, "Strength %-3u", str.getCurr());
+	mvwprintw(win, 4, 1, " Defense %-3u", def.getCurr());
+	mvwprintw(win, 5, 1, "   Intel %-3u", intl.getCurr());
+	mvwprintw(win, 6, 1, "    Will %-3u", wil.getCurr());
+	mvwprintw(win, 7, 1, " Agility %-3u", agi.getCurr());
+	mvwprintw(win, 8, 1, "     Exp %-7u", exp.getCurr());
+	mvwprintw(win, 9, 1, " To Next %-7u", toNext);
+	
+
+	wnoutrefresh(win);
+	doupdate();
+	getch();
 }
 
 

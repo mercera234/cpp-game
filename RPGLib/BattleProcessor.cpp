@@ -166,7 +166,7 @@ void BattleProcessor::initMessageDisplay()
 	//set message display
 	int msgDisplayRows = 4;
 	msgDisplay = new TextLabel(newwin(msgDisplayRows, visibleCols - 2, visibleRows - 5, 1), "");
-	msgDisplay->setJustification(JUST_CENTER);
+	msgDisplay->setJustification(Justf::CENTER);
 }
 
 void BattleProcessor::initControlManager()
@@ -360,7 +360,7 @@ void BattleProcessor::transferRewards(int totalExp, int totalMoney)
 		//not sure how to handle money just yet
 
 		//check for level up here as well (not fully implemented yet)
-		int levelsGained = 1;// = cc->checkLevelUp(c);
+		int levelsGained = 1;
 
 		//setup message for level ups
 		if (levelsGained > 0)

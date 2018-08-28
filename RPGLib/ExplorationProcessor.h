@@ -5,11 +5,14 @@
 #include "MapExit.h"
 #include "Map.h"
 #include "MapRepository.h"
+#include "StepTracker.h"
+#include "EncounterTracker.h"
 
 class ExplorationProcessor : public MovementProcessor
 {
 private:
 	Map* currMap = nullptr;
+	
 	bool processMovement(Movement& move);
 
 	MapRepository* mapRepo;

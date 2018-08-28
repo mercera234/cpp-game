@@ -13,7 +13,8 @@ int main()
 	tui.init();
 	
 	//battleProcessorTest();
-	actorRepositoryTest();
+	//actorRepositoryTest();
+	
 	//mapEffectTest();
 	//mapEffectFilterTest();
 	//mapHighlighterTest();

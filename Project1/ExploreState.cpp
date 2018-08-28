@@ -7,7 +7,7 @@
 #include "MainMenuState.h"
 #include "BattleState.h"
 #include "actor_helper.h"
-
+#include "defaults.h"
 
 GameState* ExploreState::instance = nullptr;
 
@@ -23,37 +23,46 @@ GameState* ExploreState::getInstance()
 ExploreState::ExploreState()
 {
 	win = newwin(screenHeight, screenWidth, 0, 0);
-	/*map.setControlActor(nullActor);
-	map.setWindow(win);
-	
-	map.setId(1);
-	mapRepo.add(map);
-	explorationProcessor.setMapRepo(&mapRepo);
-	explorationProcessor.setCursor(&(nullActor->y), &(nullActor->x));
-	explorationProcessor.setCurrMap(map.getId());
-	explorationProcessor.setViewMode(ViewMode::DYNAMIC);*/
 }
 
 
 void ExploreState::initDefaults()
 {
-	auto it = resourceManager->gameMaps.find(12); //id should be passed in to method
-	map = it->second;
+	//load default map
+	auto it = resourceManager->gameMaps.find(startingMapId); 
+	if (it == resourceManager->gameMaps.end())
+	{
+		it = resourceManager->gameMaps.find(nullId); //load null map if default isn't found
+	}
+	map = &(it->second);
 
-	Actor* nullActor = new Actor();
-	nullActor->symbol = 'X' | COLOR_RED_BOLD << TEXTCOLOR_OFFSET;
-	nullActor->x = 0;
-	nullActor->y = 0;
+	//load default main character
+	auto it2 = resourceManager->actors.find(player1Name);
+	if (it2 == resourceManager->actors.end())
+	{
+		it2 = resourceManager->actors.find(nullName); //loud null Actor if default isn't found
+	}
+	player1 = &(it2->second);
 
-	map.setControlActor(nullActor);
-	map.setWindow(win);
+	//set start position
+	player1->x = startX;
+	player1->y = startY;
 
-	map.setId(1);
-	mapRepo.add(map);
+	//setup exploration processor
+	map->setControlActor(player1);
+	map->setWindow(win);
+
+	mapRepo.add(*map);
 	explorationProcessor.setMapRepo(&mapRepo);
-	explorationProcessor.setCursor(&(nullActor->y), &(nullActor->x));
-	explorationProcessor.setCurrMap(map.getId());
+	explorationProcessor.setCursor(&(player1->y), &(player1->x));
+	explorationProcessor.setCurrMap(map->getId());
 	explorationProcessor.setViewMode(ViewMode::DYNAMIC);
+
+	//setup trackers
+	//TODO add steptracker initialization method
+	encounterTracker.setMinSteps(14);
+	encounterTracker.setMaxSteps(60);
+	encounterTracker.setEncounterChance(5);
 }
 
 
@@ -67,65 +76,98 @@ void ExploreState::unloadState()
 	
 }
 
+void ExploreState::processDirectionalInput(int input)
+{
+	bool stepTaken = false;
+	Axis stepAxis = Axis::HORIZONTAL;
+	switch (input)
+	{
+	case GameInput::UP_INPUT: stepTaken = explorationProcessor.processMovementInput(KEY_UP); stepAxis = Axis::VERTICAL; break;
+	case GameInput::DOWN_INPUT: stepTaken = explorationProcessor.processMovementInput(KEY_DOWN); stepAxis = Axis::VERTICAL; break;
+	case GameInput::LEFT_INPUT: stepTaken = explorationProcessor.processMovementInput(KEY_LEFT); break;
+	case GameInput::RIGHT_INPUT: stepTaken = explorationProcessor.processMovementInput(KEY_RIGHT); break;
+	}
+	
+	if (stepTaken)
+	{
+		stepTracker.addStep(); //a full step was taken
+		encounterTracker.takeStep(stepAxis);
+		if (encounterTracker.didEncounterOccur())
+		{
+			//change state to battle state and load the appropriate enemy details
+			GameState* state = BattleState::getInstance();
+			getManager()->setState(state);
+			encounterTracker.resetSteps(); //prepare for next time
+		}
+	}
+}
 
 void ExploreState::processInput(GameStateManager& manager, int input)
 {
+	bool stepTaken = false;
+	Axis stepAxis = Axis::HORIZONTAL;
 	switch (input)
 	{	
-	case GameInput::UP_INPUT: explorationProcessor.processMovementInput(KEY_UP); break;
-	case GameInput::DOWN_INPUT: explorationProcessor.processMovementInput(KEY_DOWN); break;
-	case GameInput::LEFT_INPUT: explorationProcessor.processMovementInput(KEY_LEFT); break;
-	case GameInput::RIGHT_INPUT: explorationProcessor.processMovementInput(KEY_RIGHT); break;
+	case GameInput::UP_INPUT: 
+	case GameInput::DOWN_INPUT: 
+	case GameInput::LEFT_INPUT: 
+	case GameInput::RIGHT_INPUT: 
+		processDirectionalInput(input);
+		break;
 	case GameInput::FIGHT_TRIGGER: //we will remove this later, but this is for triggering a fight immediately
-		manager.setState(BattleState::getInstance()); break; 
+	{
+		GameState* state = BattleState::getInstance();
+		manager.setState(state);
+	}
+	break;
 	case GameInput::OK_INPUT:
 	
 		break;
-	case GameInput::OPEN_MENU_INPUT: manager.setState(MainMenuState::getInstance()); break;
+	case GameInput::OPEN_MENU_INPUT: 
+	{
+		GameState* state = MainMenuState::getInstance();
+		manager.setState(state);
+	}
+		
+		break;
 	}
 
 	
-		
-	
 }
+
 
 void ExploreState::draw()
 {
 	werase(win);
-	if (map.getId() == 0)
-		drawNullMap(y, x);
-	else
-	{
-		Map* m = explorationProcessor.getCurrMap();
-		m->draw();
-	}
-		
+	
+	Map* m = explorationProcessor.getCurrMap();
+	m->draw();	
 }
 
 
-void ExploreState::drawNullMap(int y, int x)
-{
-	int centerY = screenHeight / 2;
-	int centerX = screenWidth / 2;
-	//get position of upper left corner of map
-	int startY = y - centerY;
-	int startX = x - centerX;
-
-	for (int row = 0, mapY = startY; row < screenHeight; row++, mapY++)
-	{
-		for (int col = 0, mapX = startX; col < screenWidth; col++, mapX++)
-		{
-			char c;
-			if (mapY % 4 == 0 && mapX % 8 == 0)
-			{
-				c = '!';
-			}
-			else {
-				c = ' ';
-			}
-			mvwaddch(win, row, col, c);
-
-		}
-	}
-}
+//void ExploreState::drawNullMap(int y, int x)
+//{
+//	int centerY = screenHeight / 2;
+//	int centerX = screenWidth / 2;
+//	//get position of upper left corner of map
+//	int startY = y - centerY;
+//	int startX = x - centerX;
+//
+//	for (int row = 0, mapY = startY; row < screenHeight; row++, mapY++)
+//	{
+//		for (int col = 0, mapX = startX; col < screenWidth; col++, mapX++)
+//		{
+//			char c;
+//			if (mapY % 4 == 0 && mapX % 8 == 0)
+//			{
+//				c = '!';
+//			}
+//			else {
+//				c = ' ';
+//			}
+//			mvwaddch(win, row, col, c);
+//
+//		}
+//	}
+//}
 

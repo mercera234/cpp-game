@@ -18,7 +18,7 @@ void TextLabel::init()
 	showing = true;
 	focusable = true;
 
-	justf = JUST_LEFT;
+	justf = Justf::LEFT;
 }
 
 void TextLabel::draw()
@@ -31,8 +31,8 @@ void TextLabel::draw()
 	int start;
 	switch (justf)
 	{
-	case JUST_LEFT: start = 0; break;
-	case JUST_CENTER:  
+	case Justf::LEFT: start = 0; break;
+	case Justf::CENTER:
 	{
 		int textLength = text.length();
 		start = (visibleCols - textLength) / 2;

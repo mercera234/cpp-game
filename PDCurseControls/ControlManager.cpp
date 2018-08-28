@@ -1,16 +1,24 @@
 #include "ControlManager.h"
 #include "curses.h"
+#include "compare_functions.h"
 #include <iterator>
+#include <algorithm>
+#include <assert.h>
 
 const short defaultCycleKey = '\t';
 const short defaultRevCycleKey = KEY_BTAB;
 
-ControlManager::ControlManager()
+ControlManager::ControlManager() : quickRef(comparePointers<Controllable>)
 {
 	setDefaultCycleKeys();
+
+	/*We need to reserve ample space for the controls, 
+	because vector iterators are invalidated when memory is reallocated behind the scenes.
+	*/
+	//controls.reserve(30); 
 }
 
-ControlManager::ControlManager(void* caller)
+ControlManager::ControlManager(void* caller) : quickRef(comparePointers<Controllable>)
 { 
 	setCaller(caller);
 
@@ -70,12 +78,33 @@ void ControlManager::registerControl(Controllable* c, char listeners, void(*call
 	r->callback = callback;
 	r->listen_map = listeners;
 
+	
 	controls.push_back(r);
+	quickRef.insert(std::make_pair(c, r));
 
-	if (controls.size() == 1)
-	{
-		setFocusedControl(controls.begin());
-	}
+	c->setFocus(false); //unfocus all newly registered controls by default
+
+	assert(quickRef.size() == controls.size());
+}
+
+void ControlManager::unRegisterControl(Controllable* c)
+{
+	//remove focus
+	auto it = quickRef.find(c);
+	if (it == quickRef.end()) //control is not registered
+		return;
+
+	Registration* r = it->second;
+	auto it2 = std::find(controls.begin(), controls.end(), r);
+
+	controls.erase(it2);
+
+	//remove doesn't work for some reason!
+	//auto it2 = std::remove(controls.begin(), controls.end(), r);
+
+	quickRef.erase(c);
+
+	assert(quickRef.size() == controls.size());
 }
 
 void ControlManager::registerShortcutKey(int key, void(*callback) (void*, void*, int))
@@ -84,41 +113,43 @@ void ControlManager::registerShortcutKey(int key, void(*callback) (void*, void*,
 	globalShortcuts.insert(shortcutMapping);
 }
 
+
 void ControlManager::popControl()
 {
-	if (*focusedControl == controls.back()) //if the control being popped is focused
+	if(controls.back() == focusedReg) //if the control being popped is focused
 	{
+		focusedReg = nullptr;
 		//if object was focused then set focus to next 
-		std::list<Registration*>::reverse_iterator it;
-		for (it = ++controls.rbegin(); it != controls.rend(); it++) //we start from the end, so modal windows are always processed first
+		for (auto it = ++controls.rbegin(); it != controls.rend(); it++)//, focusNdx--) //we start from the end, so modal windows are always processed first
 		{
 			Registration* r = *it;
 			Controllable* c = r->c;
 
 			if (c->isFocusable())
 			{
-				setFocusedControl(--it.base());//we always need to subtract 1 since the base iterator is one before the reverse iterator
+				setFocus(c);
 				break;
 			}
 		}
 	}
-	controls.pop_back();
+
+	unRegisterControl(controls.back()->c);
 }
 
 void ControlManager::unsetFocus()
 {
-	(*focusedControl)->c->setFocus(false);
-}
+	if(focusedReg == nullptr)
+		return;
 
-void ControlManager::setFocusedControl(std::list<Registration*>::iterator it)
-{
-	focusedControl = it;
-	(*focusedControl)->c->setFocus(true);
+	focusedReg->c->setFocus(false);
 }
 
 Controllable* ControlManager::getFocus()
 {
-	return (*focusedControl)->c;
+	if (focusedReg == nullptr) //nothing to get
+		return nullptr;
+
+	return focusedReg->c;
 }
 
 void ControlManager::cycleFocus(short key)
@@ -127,48 +158,57 @@ void ControlManager::cycleFocus(short key)
 		return;
 
 	//unset focus on current controllable
+	auto it = std::find(controls.begin(), controls.end(), focusedReg);
 	unsetFocus();
 
-	do //cycle to next control until we find one that is focusable
+	do //cycle to next control (next in vector) until we find one that is focusable
 	{
 		if (key == cycleKey)
 		{
-			focusedControl++;
-			if (focusedControl == controls.end())
-				focusedControl = controls.begin();
+			it++;
+			if (it == controls.end())
+					it = controls.begin();
 		}
-		else if (key == revCycleKey)
+		else if (key == revCycleKey) //cycle to previous control (prev in vector) until we find one that is focusable
 		{
-			if (focusedControl == controls.begin()) //if focus is before beginning
-				focusedControl = --controls.end();
+			if (it == controls.begin())
+				it = --controls.end();
 			else
-				focusedControl--;
+				it--;
 		}
-	}
-	while ((*focusedControl)->c->isFocusable() == false);
-
-	(*focusedControl)->c->setFocus(true);
+	} while ( (*it)->c->isFocusable() == false);
+	setFocus((*it)->c);
 }
 
-/*
-Maybe there's a better way to do this!
-*/
+
+void ControlManager::moveControlToTop(Controllable* c)
+{
+	//find the corresponding registration
+	auto it = quickRef.find(c);
+	if (it == quickRef.end()) //control is not registered
+		return;
+
+	auto beginIt = std::find(controls.begin(), controls.end(), it->second);
+
+	int rangeSize = std::distance(beginIt, controls.end());
+	int startNdx = std::distance(controls.begin(), beginIt);
+	//range should include control to move up to end
+	std::rotate(beginIt, beginIt + (rangeSize - startNdx), controls.end());
+}
+
+
 void ControlManager::setFocus(Controllable* c)
 { 
-	//unset focus on currently focused controllable
+	if (c->isFocusable() == false)
+		return;
+
 	unsetFocus();
 
-	//set focus on c
-	std::list<Registration*>::iterator it;
-	for (it = controls.begin(); it != controls.end(); it++)
-	{
-		Registration* r = *it;
-		if (r->c == c)
-		{
-			setFocusedControl(it);
-			break;
-		}
-	}
+	auto it = quickRef.find(c);
+
+	Registration* r = it->second;
+	focusedReg = r;
+	r->c->setFocus(true);
 } 
 
 bool ControlManager::handleGlobalInput(int input)
@@ -201,7 +241,7 @@ bool ControlManager::handleInput(int input)
 	bool handled = false;
 	if (controls.empty() == false) //there are controls
 	{
-		if((*focusedControl)->c->isModal())
+		if (focusedReg->c->isModal())
 			handled = handleControlInput(input);
 		else if (isGlobalInput(input))
 			handled = handleGlobalInput(input);
@@ -221,27 +261,36 @@ bool ControlManager::handleControlInput(int input)
 {
 	bool handled = false;
 	//process input through registered controls
-	std::list<Registration*>::reverse_iterator it;
-	for (it = controls.rbegin(); it != controls.rend(); it++) //we start from the end, so modal windows are always processed first
+	for (auto it = controls.rbegin(); it != controls.rend(); it++) //we start from the end, so modal windows are always processed first
 	{
 		Registration* r = *it;
-		if (r->callback == NULL) //no point in checking registration with no callback
-			continue;
+		bool isModal = r->c->isModal();
 
+		if (isModal)
+		{
+			if (r->callback == NULL) //no point in checking registration with no callback
+				break; //modal window cannot handle the input
+		}
+		else if (r->callback == NULL) //non-modal window cannot handle the input, so we will check the next
+			continue;
+		
 		if (input == KEY_MOUSE && (r->listen_map & MOUSE_LISTENER))
 		{
 			handled = handleMouseInput(input, r);
 
-			//if mouse input was handled then the appropriate control should gain focus if possible
-			if (handled && r->c->isFocusable())
+			//if mouse input was handled then the control should gain focus if possible
+		/*	if (handled && r->c->isFocusable())
 			{
-				setFocusedControl(--it.base());
-			}
+				setFocus(r->c);
+			}*/
 		}
-		else if (r->listen_map & KEY_LISTENER)
+		else if (input != KEY_MOUSE && r->listen_map & KEY_LISTENER)
 		{
 			handled = handleKeyInput(input, r);
 		}
+
+		if (isModal) //only process input for the top modal window
+			handled = true;
 
 		if (handled)
 			break;
@@ -251,7 +300,7 @@ bool ControlManager::handleControlInput(int input)
 
 bool ControlManager::handleKeyInput(int input, Registration* r)
 {
-	if (*focusedControl != r) //only the focusedControl can accept the key input
+	if(focusedReg != r)
 		return false;
 
 	r->callback(caller, r->c, input);
@@ -270,6 +319,13 @@ bool ControlManager::handleMouseInput(int input, Registration* r)
 		r->callback(caller, c, input);
 		handled = true;
 	}
+
+	//if mouse input was handled then the control should gain focus if possible
+	if (handled && c->isFocusable())
+	{
+		setFocus(c);
+	}
+
 
 	return handled;
 }
@@ -290,32 +346,23 @@ bool ControlManager::shutdown()
 void ControlManager::draw()
 {
 	//draw all layers from bottom to top
-	std::list<Registration*>::iterator it;
-	for (it = controls.begin(); it != controls.end(); it++)
+	for (auto it = controls.begin(); it != controls.end(); it++)
 	{
 		Registration* r = *it;
 		Controllable* c = r->c;
 		c->draw();
 	}
-	(*focusedControl)->c->setCursorFocus(); //execute the focused component's method for rendering focus
+	if(focusedReg != nullptr)
+		focusedReg->c->setCursorFocus(); //execute the focused component's method for rendering focus
+}
+
+ControlManager::~ControlManager()
+{
+	for each (Registration* r in controls)
+	{
+		delete r;
+	}
 }
 
 
-/*
-! method is not being used yet and is now out of date!
-*/
-//void ControlManager::registerControl(Controllable* c, char listeners, Command* cmd)
-//{
-//	Registration* r = new Registration();
-//
-//	r->c = c;
-//	c->setControlManager(this);
-//	//r->callback = callback;
-//	r->cmd = cmd;
-//	r->listen_map = listeners;
-//	controls.push_back(r);
-//
-//	if (focus == NULL) //set first item to focus by default
-//		focus = r;
-//}
 

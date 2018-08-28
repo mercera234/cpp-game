@@ -1,6 +1,15 @@
 #pragma once
 #include <vector>
 
+//TODO consider renaming this file to Motion.h
+struct Position
+{
+	int y = -1;
+	int x = -1;
+	Position() {}
+	Position(int yIn, int xIn) { y = yIn; x = xIn; }
+} typedef Pos;
+
 enum class Direction
 {
 	UNKNOWN,

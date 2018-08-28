@@ -7,7 +7,7 @@ void FormControl::setEditable(bool editable)
 
 	if (editable)
 	{
-		setFocus();
+		setFocus(true);
 	}
 	else
 		curs_set(CURSOR_INVISIBLE);

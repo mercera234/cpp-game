@@ -13,15 +13,15 @@ void fileChooserTest(FileDialogType dialogType)
 	WINDOW* main = newwin(height, width, (getmaxy(stdscr) - height) / 2, (getmaxx(stdscr) - width) / 2);
 	WINDOW* sub = derwin(main, height - 2, width - 2, 1, 1);
 
-	FileChooser* fd = new FileChooser(sub, fullPath, dialogType, ".map");
+	FileChooser fd(sub, fullPath, dialogType, ".map");
 
-	Frame* f = new Frame(main, fd);
+	Frame f(main, &fd);
 	std::string fileChosen;
 	bool playing = true;
 	while (playing)
 	{
-		f->draw();
-		fd->setFocus();
+		f.draw();
+		fd.setFocus();
 		doupdate();
 
 		int c = getch();
@@ -29,18 +29,18 @@ void fileChooserTest(FileDialogType dialogType)
 		//driver here
 		switch (c)
 		{
-		case KEY_DOWN: fd->driver(REQ_DOWN_ITEM); break;
-		case KEY_UP: fd->driver(REQ_UP_ITEM); break;
-		case KEY_PGDN: fd->driver(REQ_SCR_DPAGE); break;
-		case KEY_PGUP: fd->driver(REQ_SCR_UPAGE); break;
-		case KEY_HOME: fd->driver(REQ_FIRST_ITEM); break;
-		case KEY_END: fd->driver(REQ_LAST_ITEM); break;
+		case KEY_DOWN: fd.driver(REQ_DOWN_ITEM); break;
+		case KEY_UP: fd.driver(REQ_UP_ITEM); break;
+		case KEY_PGDN: fd.driver(REQ_SCR_DPAGE); break;
+		case KEY_PGUP: fd.driver(REQ_SCR_UPAGE); break;
+		case KEY_HOME: fd.driver(REQ_FIRST_ITEM); break;
+		case KEY_END: fd.driver(REQ_LAST_ITEM); break;
 		case KEY_ESC: playing = false; break;
 		case '\r':
-			fileChosen = fd->filePathDriver();
+			fileChosen = fd.filePathDriver();
 			break;
 		default:
-			fd->driver(c);
+			fd.driver(c);
 			break;
 		}
 

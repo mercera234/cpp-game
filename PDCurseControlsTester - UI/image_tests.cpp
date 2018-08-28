@@ -2,7 +2,7 @@
 #include "Image.h"
 #include "Highlighter.h"
 
-void imageTest()
+void imageLoadUnloadTest()
 {
 	Image img;
 	img.setWindow(stdscr);
@@ -28,6 +28,44 @@ void imageTest()
 	}
 }
 
+void imageWithoutWindowTest()
+{
+	Image img;
+	img.setDimensions(screenHeight, screenWidth);
+
+	img.draw(); //without win it will draw nothing
+
+	doupdate();
+	getch();
+}
+
+void imageWithoutDimensionsTest()
+{
+	Image img;
+	img.setWindow(stdscr);
+	
+	/*without dimensions set, it will draw 
+	the bottom right hand corner of a box 
+	in the upper left hand corner. 
+	This is because it attempts to draw one tile out of bounds before quitting.*/
+	img.draw(); 
+
+	doupdate();
+	getch();
+}
+
+void imageWithoutDataTest()
+{
+	Image img;
+	img.setWindow(stdscr);
+	img.setDimensions(screenHeight, screenWidth);
+
+	//technically draws a black screen. Set dimensions, also sets the dimensions on the tilemap and prefills it with spaces
+	img.draw();
+
+	doupdate();
+	getch();
+}
 
 void highlighterTest()
 {

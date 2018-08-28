@@ -76,7 +76,7 @@ namespace RPGLibTester
 			delete item4;
 		}
 
-		TEST_METHOD(swap2Items)
+		/*TEST_METHOD(swap2Items)
 		{
 			Inventory inv(2, 1);
 
@@ -90,12 +90,13 @@ namespace RPGLibTester
 			inv.addItem(item1);
 			inv.addItem(item2);
 			
+			
 			inv.swapItems(0, 1);
 
 			Assert::IsTrue(inv.getItemAtIndex(1)->name.compare(item1Name) == 0);
 			delete item1;
 			delete item2;
-		}
+		}*/
 		
 	};
 }

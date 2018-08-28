@@ -21,12 +21,12 @@ private:
 	static GameState* instance;
 
 	GridMenu titleMenu;
-	WadDatabase* resourceManager;
+
+	void beginNewGame();
+
 public:
-	//~TitleScreenState();
 	static GameState* getInstance(); //since static, cannot be virtual in super class
 	void processInput(GameStateManager& manager, int input);
-	void setResourceManager(WadDatabase* db) { resourceManager = db; }
 	void loadState();
 	void unloadState();
 	void draw();

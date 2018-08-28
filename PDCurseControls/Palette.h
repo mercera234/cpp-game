@@ -33,6 +33,7 @@ public:
 	//TODO setfocus needs to set focus to the gridmenu as well
 	
 	LineItem* getItem(int menuRow, int menuCol);
+	void setCurrentItem(int index);
 	LineItem* getCurrentItem();
 
 	//getters/setters

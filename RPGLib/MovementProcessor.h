@@ -60,7 +60,8 @@ protected:
 
 	int getMoveMagnitudeFromKey(int key);
 	Direction getDirectionFromKey(int key);
-	void processDirectionalInput(Dir input, int magnitude);
+	bool processHomeEndInput(int key);
+	bool processDirectionalInput(Dir input, int magnitude);
 	void moveCursor(Movement& move);
 
 	void adjustView();
@@ -80,7 +81,7 @@ protected:
 	virtual bool processMovement(Movement& move) = 0;
 	
 public:
-	void processMovementInput(int input);
+	bool processMovementInput(int input);
 
 	//getters/setters
 	void setViewMode(ViewMode mode);

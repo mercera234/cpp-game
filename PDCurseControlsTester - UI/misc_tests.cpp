@@ -2,6 +2,7 @@
 #include "LineItem.h"
 #include "TestCommand.h"
 
+
 void commandTest()
 {
 	GridMenu* menu = new GridMenu(newwin(5, 20, 2, 1), 1, 1);
@@ -28,4 +29,7 @@ void commandTest()
 
 	}
 
+	delete menu;
+	delete cmd;
 }
+

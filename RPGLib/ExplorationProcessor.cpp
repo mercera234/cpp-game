@@ -39,22 +39,7 @@ void ExplorationProcessor::setCurrMap(unsigned short id)
 bool ExplorationProcessor::processMovement(Movement& move)
 {
 	//move cursor by step
-	Axis axis;
-	switch (move.dir)
-	{
-	case Dir::UP: *curY -= move.magnitude; 
-		axis = Axis::VERTICAL;
-			break;
-	case Dir::DOWN: *curY += move.magnitude; 
-		axis = Axis::VERTICAL; 
-		break;
-	case Dir::LEFT: *curX -= move.magnitude; 
-		axis = Axis::HORIZONTAL; 
-		break;
-	case Dir::RIGHT: *curX += move.magnitude; 
-		axis = Axis::HORIZONTAL; 
-		break;
-	}
+	moveCursor(move);
 
 	//verify that cursor is within bounds
 	Boundary edge = inBounds();
@@ -66,30 +51,28 @@ bool ExplorationProcessor::processMovement(Movement& move)
 		sourceExit->mapId = currMap->getId();
 		sourceExit->edge = edge;
 
+		Axis axis = getAxis(move.dir);
+
 		int* perpAxis = (axis == Axis::HORIZONTAL) ? curY : curX;
 		int unitMapSize = (axis == Axis::HORIZONTAL) ? mapRepo->getUnitMapHeight() : mapRepo->getUnitMapWidth();
 		sourceExit->unit = *perpAxis / unitMapSize;
 
 		MapExit* destExit = mapRepo->getExit(sourceExit);
 
-		if (destExit == NULL) //no opening found, reverse the step
+		if (destExit == nullptr) //no opening found, reverse the step
 		{
-			switch (move.dir)
-			{
-			case Dir::UP: *curY += move.magnitude;				
-				break;
-			case Dir::DOWN: *curY -= move.magnitude;				
-				break;
-			case Dir::LEFT: *curX += move.magnitude;				
-				break;
-			case Dir::RIGHT: *curX -= move.magnitude;				
-				break;
-			}
+			Movement reverseMove(move.dir, -move.magnitude);
+			moveCursor(reverseMove);
 			return false;
 		}
 
 		moveActorAcrossMapSeam(*sourceExit, *destExit); //it->second is destination map
 		return true;
+	}
+	else //still on same map
+	{
+		
+
 	}
 
 	adjustView();

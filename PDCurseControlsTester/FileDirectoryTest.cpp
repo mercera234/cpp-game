@@ -9,6 +9,16 @@ namespace PDCurseControlsTester
 {
 	TEST_CLASS(FileDirectoryTest)
 	{
+		TEST_METHOD(defaultConstructorTest)
+		{
+			std::string path = "fake path";
+			FileDirectory dir;
+			dir.setPath(path);
+
+			int retval = path.compare(dir.getPath());
+			Assert::AreEqual(0, retval);
+		}
+
 		TEST_METHOD(getPathTest)
 		{
 			std::string path = "fake path";

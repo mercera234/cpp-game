@@ -278,7 +278,7 @@ void WadDatabase::loadActorsFromTextFile(std::ifstream& textFile)
 void WadDatabase::loadGameMapsFromDir(FileDirectory& dir)
 {
 	//get list of map files
-	std::string filter = Lump::getFilterFromType(LumpType::MAP);
+	std::string filter = "map";
 	std::list<dirent> files = dir.getFiles(false, filter);
 
 	int id = 0;

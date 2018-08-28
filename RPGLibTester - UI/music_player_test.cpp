@@ -5,7 +5,7 @@ void playFile()
 {
 	MusicPlayer musicPlayer;
 
-	bool retval = musicPlayer.playFile("01-02- 12 Microtonal Etudes, Op 28 I 16 notes Andantino.wav");
+	int retval = musicPlayer.playFile("01-02- 12 Microtonal Etudes, Op 28 I 16 notes Andantino.wav");
 
 	bool playing = true;
 	bool musicPlaying = true;

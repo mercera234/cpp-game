@@ -51,3 +51,8 @@ void BlitAnimation::changeTile(unsigned short row, unsigned short col)
 	blitMap->setDatum(row, col, !blit);
 	tilesChangedCount++;
 }
+
+BlitAnimation::~BlitAnimation()
+{
+	delete blitMap;
+}

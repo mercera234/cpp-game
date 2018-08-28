@@ -1,5 +1,6 @@
 #include "MovementProcessor.h"
 #include "TUI.h"
+#include "assert.h"
 
 void MovementProcessor::setConvenienceVariables()
 {
@@ -66,22 +67,50 @@ void MovementProcessor::centerView()
 	moveControl->setPosition(*curY - heightCenter, *curX - widthCenter);
 }
 
-void MovementProcessor::processMovementInput(int input)
+
+bool MovementProcessor::processHomeEndInput(int key)
 {
-	switch (input)
+	assert(key == CTL_HOME || key == CTL_END);
+	bool movedHorz = false;
+	bool movedVert = false;
+	Dir horzDir;
+	Dir vertDir;
+	switch (key)
 	{
 	case CTL_HOME: //use two movements to upper left corner
-		processDirectionalInput(Dir::LEFT, moveControl->getTotalCols());
-		processDirectionalInput(Dir::UP, moveControl->getTotalRows());
+		horzDir = Dir::LEFT;
+		vertDir = Dir::UP;
 		break;
 	case CTL_END: //use two movements to lower right corner
-		processDirectionalInput(Dir::RIGHT, moveControl->getTotalCols());
-		processDirectionalInput(Dir::DOWN, moveControl->getTotalRows());
-		break;
-	default:
-		processDirectionalInput(getDirectionFromKey(input), getMoveMagnitudeFromKey(input));
+		horzDir = Dir::RIGHT;
+		vertDir = Dir::DOWN;
 		break;
 	}
+
+	movedHorz = processDirectionalInput(horzDir, moveControl->getTotalCols());
+	movedVert = processDirectionalInput(vertDir, moveControl->getTotalRows());
+
+	return movedHorz && movedVert;
+}
+
+bool MovementProcessor::processMovementInput(int input)
+{
+	bool moved = false;
+	
+	switch (input)
+	{
+	case CTL_HOME: 
+		moved = processHomeEndInput(CTL_HOME);
+		break;
+	case CTL_END: 
+		moved = processHomeEndInput(CTL_END);
+		break;
+	default:
+		moved = processDirectionalInput(getDirectionFromKey(input), getMoveMagnitudeFromKey(input));
+		break;
+	}
+
+	return moved;
 }
 
 int MovementProcessor::getMoveMagnitudeFromKey(int key)
@@ -137,13 +166,13 @@ Dir MovementProcessor::getDirectionFromKey(int key)
 	return dir;
 }
 
-void MovementProcessor::processDirectionalInput(Dir dirInput, int magnitude)
+bool MovementProcessor::processDirectionalInput(Dir dirInput, int magnitude)
 {
 	Movement move;
 	move.dir = dirInput;
 	move.magnitude = magnitude;
 
-	processMovement(move);  //to be handled differently by concrete implementations of this abstract class
+	return processMovement(move);  //to be handled differently by concrete implementations of this abstract class
 }
 
 void MovementProcessor::moveCursor(Movement& move)

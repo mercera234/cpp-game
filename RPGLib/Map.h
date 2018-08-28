@@ -24,6 +24,7 @@ private:
 	//data storage
 	Image display;
 	bool brightness = true; //true - bright, false - dark
+	bool randomEncounters = true; //most are true
 
 	TwoDStorage<EffectType> effectsLayer;
 	//saveable data

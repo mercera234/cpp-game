@@ -9,9 +9,9 @@ FormField::FormField(TextLabel* label, FormControl* field, int type, void* data)
 	focusable = field->isFocusable();
 }
 
-void FormField::setFocus()
+void FormField::setFocus()//this method needs an input parameter
 {
-	field->setFocus();
+	field->setFocus(true);
 }
 
 void FormField::setCursorFocus()
