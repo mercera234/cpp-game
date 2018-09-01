@@ -59,7 +59,7 @@ void ExploreState::initDefaults()
 	explorationProcessor.setViewMode(ViewMode::DYNAMIC);
 
 	//setup trackers
-	//TODO add steptracker initialization method
+	//TODO add encounterTracker initialization method
 	encounterTracker.setMinSteps(14);
 	encounterTracker.setMaxSteps(60);
 	encounterTracker.setEncounterChance(5);

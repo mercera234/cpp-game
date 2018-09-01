@@ -15,6 +15,8 @@ class ResourceManager
 private:
 	int getColor(char c);
 
+
+
 public:
 	std::map<std::string, Actor, std::function<bool(std::string, std::string)> > actors;
 	std::map<int, Map> gameMaps;

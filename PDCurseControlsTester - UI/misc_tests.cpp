@@ -5,31 +5,25 @@
 
 void commandTest()
 {
-	GridMenu* menu = new GridMenu(newwin(5, 20, 2, 1), 1, 1);
-	menu->setColorPair(COLOR_BLUE);
-	menu->setItem(new LineItem("Red", 0, -1));
-	menu->setItem(new LineItem("Green", 1, -1));
+	//TestCommand testCmd;
 
-	Command* cmd = new TestCommand();
+	//Command* cmd = &testCmd;
+	///*bool inMenus = true;
+	//while (inMenus)
+	//{*/
+	//	clear();
 
-	bool inMenus = true;
-	while (inMenus)
-	{
-		clear();
+	//	cmd->execute();
 
-		/*if (cmd != NULL)
-		cmd->execute();*/
+	//	wnoutrefresh(stdscr);
 
-		wnoutrefresh(stdscr);
-
-		doupdate();
-		int c = getch();
+	//	doupdate();
+	//	int c = getch();
 
 
 
-	}
+	//}
 
-	delete menu;
-	delete cmd;
+
 }
 

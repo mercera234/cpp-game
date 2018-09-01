@@ -41,7 +41,7 @@ void TextField::init()
 
 void TextField::setCursorFocus()
 {
-	curs_set(CURSOR_NORMAL);
+	curs_set(CURSOR_NORMAL); //TODO This is a global function! cursor needs to be unset once the control loses focus
 
 	//apply move globally to screen
 	//need to use :: to differentiate this from the Controllable move method

@@ -11,11 +11,6 @@ const short defaultRevCycleKey = KEY_BTAB;
 ControlManager::ControlManager() : quickRef(comparePointers<Controllable>)
 {
 	setDefaultCycleKeys();
-
-	/*We need to reserve ample space for the controls, 
-	because vector iterators are invalidated when memory is reallocated behind the scenes.
-	*/
-	//controls.reserve(30); 
 }
 
 ControlManager::ControlManager(void* caller) : quickRef(comparePointers<Controllable>)
@@ -69,16 +64,34 @@ bool ControlManager::authorizeCyclicKeyChoice(int key)
 	return true;
 }
 
-void ControlManager::registerControl(Controllable* c, char listeners, void(*callback) (void*, void*, int))
+//void ControlManager::registerControl(Controllable* c, char listeners, int(*callback) (void*, void*, int))
+//{
+//	Registration* r = new Registration();
+//
+//	r->c = c;
+//	c->setControlManager(this);
+//	r->callback = callback;
+//	r->listen_map = listeners;
+//
+//	
+//	controls.push_back(r);
+//	quickRef.insert(std::make_pair(c, r));
+//
+//	c->setFocus(false); //unfocus all newly registered controls by default
+//
+//	assert(quickRef.size() == controls.size());
+//}
+
+void ControlManager::registerControl(Controllable* c, char listeners, ControlCommand* cmd)
 {
 	Registration* r = new Registration();
 
 	r->c = c;
 	c->setControlManager(this);
-	r->callback = callback;
+	r->cmd = cmd;
 	r->listen_map = listeners;
 
-	
+
 	controls.push_back(r);
 	quickRef.insert(std::make_pair(c, r));
 
@@ -86,6 +99,25 @@ void ControlManager::registerControl(Controllable* c, char listeners, void(*call
 
 	assert(quickRef.size() == controls.size());
 }
+
+//void ControlManager::registerControl(Controllable* c, char listeners, int(*callback) (void*, void*, int), Command* cmd)
+//{
+//	Registration* r = new Registration();
+//
+//	r->c = c;
+//	c->setControlManager(this);
+//	r->callback = callback;
+//	r->cmd = cmd;
+//	r->listen_map = listeners;
+//
+//
+//	controls.push_back(r);
+//	quickRef.insert(std::make_pair(c, r));
+//
+//	c->setFocus(false); //unfocus all newly registered controls by default
+//
+//	assert(quickRef.size() == controls.size());
+//}
 
 void ControlManager::unRegisterControl(Controllable* c)
 {
@@ -107,9 +139,9 @@ void ControlManager::unRegisterControl(Controllable* c)
 	assert(quickRef.size() == controls.size());
 }
 
-void ControlManager::registerShortcutKey(int key, void(*callback) (void*, void*, int))
+void ControlManager::registerShortcutKey(int key, ControlCommand* cmd)
 {
-	auto shortcutMapping = std::make_pair(key, callback);
+	auto shortcutMapping = std::make_pair(key, cmd);
 	globalShortcuts.insert(shortcutMapping);
 }
 
@@ -211,24 +243,21 @@ void ControlManager::setFocus(Controllable* c)
 	r->c->setFocus(true);
 } 
 
-bool ControlManager::handleGlobalInput(int input)
+int ControlManager::handleGlobalInput(int input)
 {
 	//check for cycle key
 	if (input == cycleKey || input == revCycleKey)
 	{
 		cycleFocus(input);
-		return true;
+		return HANDLED;
 	}
-
-	bool handled = false;
 
 	auto shortcutMapping = globalShortcuts.find(input);
 	auto mapping = *shortcutMapping;
-	auto callback = mapping.second; 
-	callback(caller, this, input);
-	handled = true;
+	auto cmd = mapping.second; 
 
-	return handled;
+	//return callback(caller, this, input);
+	return cmd->execute(nullptr, input);
 }
 
 bool ControlManager::isGlobalInput(int input)
@@ -236,9 +265,9 @@ bool ControlManager::isGlobalInput(int input)
 	return input == cycleKey || input == revCycleKey || (globalShortcuts.count(input) > 0);
 }
 
-bool ControlManager::handleInput(int input)
+int ControlManager::handleInput(int input)
 {
-	bool handled = false;
+	int handled = NOT_HANDLED;
 	if (controls.empty() == false) //there are controls
 	{
 		if (focusedReg->c->isModal())
@@ -257,9 +286,9 @@ bool ControlManager::handleInput(int input)
 	return handled;
 }
 
-bool ControlManager::handleControlInput(int input)
+int ControlManager::handleControlInput(int input)
 {
-	bool handled = false;
+	int handled = NOT_HANDLED;
 	//process input through registered controls
 	for (auto it = controls.rbegin(); it != controls.rend(); it++) //we start from the end, so modal windows are always processed first
 	{
@@ -268,60 +297,54 @@ bool ControlManager::handleControlInput(int input)
 
 		if (isModal)
 		{
-			if (r->callback == NULL) //no point in checking registration with no callback
+			if (r->cmd == nullptr) //no point in checking registration with no callback
+			//if (r->callback == nullptr) //no point in checking registration with no callback
 				break; //modal window cannot handle the input
 		}
-		else if (r->callback == NULL) //non-modal window cannot handle the input, so we will check the next
+		else if (r->cmd == nullptr) //non-modal window cannot handle the input, so we will check the next
+		//else if (r->callback == nullptr) //non-modal window cannot handle the input, so we will check the next
 			continue;
 		
 		if (input == KEY_MOUSE && (r->listen_map & MOUSE_LISTENER))
-		{
 			handled = handleMouseInput(input, r);
-
-			//if mouse input was handled then the control should gain focus if possible
-		/*	if (handled && r->c->isFocusable())
-			{
-				setFocus(r->c);
-			}*/
-		}
 		else if (input != KEY_MOUSE && r->listen_map & KEY_LISTENER)
-		{
 			handled = handleKeyInput(input, r);
-		}
 
-		if (isModal) //only process input for the top modal window
-			handled = true;
+		//if (isModal) //only process input for the top modal window
+		//	handled = HANDLED;
 
-		if (handled)
+		if (handled >= 0 || (handled == NOT_HANDLED && isModal))
 			break;
 	}	
 	return handled;
 }
 
-bool ControlManager::handleKeyInput(int input, Registration* r)
+int ControlManager::handleKeyInput(int input, Registration* r)
 {
 	if(focusedReg != r)
-		return false;
+		return NOT_HANDLED;
 
-	r->callback(caller, r->c, input);
-	return true;
+	/*if (r->cmd == nullptr)
+		return r->callback(caller, r->c, input);
+	else*/
+	return r->cmd->execute(r->c, input);
 }
 
-bool ControlManager::handleMouseInput(int input, Registration* r)
+int ControlManager::handleMouseInput(int input, Registration* r)
 {
-	bool handled = false;
+	int handled = NOT_HANDLED;
 	Controllable* c = r->c;
 	MEVENT event;
 	nc_getmouse(&event);
 
 	if (wenclose(c->getWindow(), event.y, event.x))
 	{
-		r->callback(caller, c, input);
-		handled = true;
+		handled = r->cmd->execute(c, input);
+		//handled = r->callback(caller, c, input);
 	}
 
 	//if mouse input was handled then the control should gain focus if possible
-	if (handled && c->isFocusable())
+	if ((handled >= 0) && c->isFocusable())
 	{
 		setFocus(c);
 	}

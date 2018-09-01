@@ -42,6 +42,12 @@
     <ClInclude Include="MockObjectLinkedItem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MockApplication.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MockControlCommand.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -114,6 +120,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TextBoardTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MockApplication.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

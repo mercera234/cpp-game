@@ -2,6 +2,9 @@
 #include "ControlManager.h"
 #include "MockControl.h"
 #include "mockCallbacks.h"
+#include "SimpleCommand.h"
+#include "MockControlCommand.h"
+#include "MockApplication.h"
 
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
@@ -13,6 +16,8 @@ namespace PDCurseControlsTester
 	TEST_CLASS(ControlManagerTest)
 	{
 		ControlManager cm;
+		MockApplication app;
+		MockControlCommand<MockApplication> cmd;
 
 		TEST_METHOD_INITIALIZE(begin)
 		{
@@ -61,7 +66,11 @@ namespace PDCurseControlsTester
 
 		TEST_METHOD(registerShortcutKeyTest)
 		{
-			cm.registerShortcutKey('q', mockCallBack);
+			cmd.setReceiver(&app);
+			cmd.setAction(&MockApplication::mockCallback);
+
+
+			cm.registerShortcutKey('q', &cmd);
 			
 			Assert::AreEqual(1, cm.getKeyAcceleratorCount()); 
 		}
@@ -148,11 +157,15 @@ namespace PDCurseControlsTester
 		TEST_METHOD(handleGlobalInputTest)
 		{
 			int value = 679;
-			cm.registerShortcutKey(value, setCyclicKeyInControlManager); //just a callback we can use to prove that input was handled successfully
-			
-			cm.handleInput(value);
 
-			Assert::AreEqual(value, (int)cm.getCycleKey());  
+			cmd.setReceiver(&app);
+			cmd.setAction(&MockApplication::mockCallBack2);
+
+			cm.registerShortcutKey(value, &cmd); //just a callback we can use to prove that input was handled successfully
+			
+			int retval = cm.handleInput(value);
+
+			Assert::AreEqual((int)ExitCode::HANDLED, retval);
 		}
 
 		TEST_METHOD(handleGlobalCyclicInputTest)
@@ -160,23 +173,27 @@ namespace PDCurseControlsTester
 			int value = '\t';
 			cm.setCycleKey(value); //should be default anyway, but just being explicit
 			
-			Assert::IsTrue(cm.handleInput(value));
+			Assert::IsTrue(cm.handleInput(value) == ExitCode::HANDLED);
 		}
 
 		TEST_METHOD(handleNonGlobalInputWithNoControlsTest)
 		{
-			Assert::IsFalse(cm.handleInput('5'));
+			Assert::IsFalse(cm.handleInput('5') == ExitCode::HANDLED);
 		}
 
 		TEST_METHOD(handleModalInputTest)
 		{
 			MockControl m; 
-			cm.registerControl(&m, KEY_LISTENER, mockCallBack);
+
+			cmd.setReceiver(&app);
+			cmd.setAction(&MockApplication::mockCallback);
+
+			cm.registerControl(&m, KEY_LISTENER, &cmd);
 			int value = 89;
 			m.setModal(true); //it is modal by default, but we set it here explicitly to be clear about what is going on
 			cm.setFocus(&m);
 
-			Assert::IsTrue(cm.handleInput(value));
+			Assert::IsTrue(cm.handleInput(value) == HANDLED);
 		}
 
 		TEST_METHOD(handleInputTest)
@@ -184,7 +201,10 @@ namespace PDCurseControlsTester
 			MockControl m;
 			cm.setCaller(&m);
 
-			cm.registerControl(&m, KEY_LISTENER, setXinMockControl);
+			cmd.setReceiver(&app);
+			cmd.setAction(&MockApplication::setXinMockControl);
+
+			cm.registerControl(&m, KEY_LISTENER, &cmd);
 			int value = 9001;
 			m.setModal(false);
 			cm.setFocus(&m);
@@ -201,11 +221,14 @@ namespace PDCurseControlsTester
 			MockControl m4;
 			MockControl m5;
 
-			cm.registerControl(&m1, KEY_LISTENER, mockCallBack);
-			cm.registerControl(&m2, KEY_LISTENER, mockCallBack);
-			cm.registerControl(&m3, KEY_LISTENER, mockCallBack);
-			cm.registerControl(&m4, KEY_LISTENER, mockCallBack);
-			cm.registerControl(&m5, KEY_LISTENER, mockCallBack);
+			cmd.setReceiver(&app);
+			cmd.setAction(&MockApplication::mockCallback);
+
+			cm.registerControl(&m1, KEY_LISTENER, &cmd);
+			cm.registerControl(&m2, KEY_LISTENER, &cmd);
+			cm.registerControl(&m3, KEY_LISTENER, &cmd);
+			cm.registerControl(&m4, KEY_LISTENER, &cmd);
+			cm.registerControl(&m5, KEY_LISTENER, &cmd);
 
 			//m5 will be at top of stack, so we will attempt to move m3 to top
 			cm.moveControlToTop(&m3);
@@ -213,5 +236,24 @@ namespace PDCurseControlsTester
 
 			Assert::AreEqual((int)&m3, (int)cm.getTopControl());
 		}
+
+		TEST_METHOD(cmdTest)
+		{
+			MockControl m1;
+			m1.setModal(false);
+
+			cmd.setReceiver(&app);
+			cmd.setAction(&MockApplication::mockCallback);
+
+			cm.registerControl(&m1, KEY_LISTENER, &cmd);
+
+			cm.setFocus(&m1);
+
+			int input = 800;
+			int retval = cm.handleInput(input);
+			Assert::AreEqual((int)ExitCode::HANDLED, retval);
+
+		}
+
 	};
 }

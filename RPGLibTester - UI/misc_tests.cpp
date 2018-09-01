@@ -2,9 +2,9 @@
 #include "ExplorationProcessor.h"
 #include "actor_helper.h"
 #include "MusicPlayer.h"
-#include "BattleProcessor.h"
-#include "MapEditor.h"
-#include "MasterEditor.h"
+//#include "BattleProcessor.h"
+//#include "MapEditor.h"
+//#include "MasterEditor.h"
 #include "misc_tests.h"
 #include "ActorRepository.h"
 
@@ -239,104 +239,6 @@ void statusDisplayTest()
 }
 
 
-void battleProcessorTest()
-{
-	bool testing = true;
-	while (testing)
-	{
-		//retrieve all actors from a wad file (just for testing, this should be refined)
-		/*WadDatabase wd;
-		std::string wadFileName = "data\\mainwad.dat";
-		std::ifstream is(wadFileName, std::ios::binary);
-		wd.load(&is);*/
-
-		//	std::map<std::string, ActorDef*, function<bool(std::string, std::string)>> mapRepo(stringCompare);
-		//	std::map<std::string, Actor*, function<bool(std::string, std::string)>> mapRepo(stringCompare);
-
-
-		//wd.getActorRepository(mapRepo, is);
-		//is.close();
-		/*	ActorDef p1Def, p2Def,p3Def,p4Def;
-		ActorDef e1Def, e2Def, e3Def, e4Def;*/
-
-		Actor* p1;
-		Actor* e1;
-
-		//p1Def = *(mapRepo.find("Hero")->second);
-		/*	p2Def = *(mapRepo.find("Lab Tech")->second);
-		p3Def = *(mapRepo.find("Navigator")->second);
-		p4Def = *(mapRepo.find("Mechanic")->second);*/
-
-		std::list<Actor*> players;
-		/*	players.push_back(buildActorFromDef(&p1Def, ActorType.HUMAN));
-		players.push_back(buildActorFromDef(&p2Def, AT_HUMAN));
-		players.push_back(buildActorFromDef(&p3Def, AT_HUMAN));
-		players.push_back(buildActorFromDef(&p4Def, AT_HUMAN));
-		*/
-
-		p1 = buildActor(ActorType::HUMAN);
-		p1->stats.strength.setCurr(10);
-		p1->stats.agility.setCurr(10);
-		p1->name = "Hero";
-
-		players.push_back(p1);
-		/*players.push_back(buildActor(ActorType::HUMAN));
-		players.push_back(buildActor(ActorType::HUMAN));
-		players.push_back(buildActor(ActorType::HUMAN));*/
-
-
-		//	e1 = *(mapRepo.find("Toadie")->second);
-		/*	e2Def = *(mapRepo.find("Bigbug")->second);
-		e3Def = *(mapRepo.find("Skittler")->second);
-		e4Def = *(mapRepo.find("Wispwing")->second);*/
-
-		std::list<Actor*> enemies;
-		e1 = buildActor(ActorType::CPU);
-		e1->stats.strength.setCurr(1);
-		e1->stats.agility.setCurr(40);
-		e1->stats.exp.setCurr(1);
-		e1->money.setCurr(1);
-		e1->name = "Toadie";
-		enemies.push_back(e1);
-		/*enemies.push_back(buildActor(ActorType::CPU));
-		enemies.push_back(buildActor(ActorType::CPU));
-		enemies.push_back(buildActor(ActorType::CPU));*/
-
-		int totalRows = 23;
-		int totalCols = 51;
-		resize_term(totalRows, totalCols);
-
-		BattleProcessor bp;
-		bp.setWindow(newwin(totalRows, totalCols, 0, 0));
-		bp.addParticipants(players, enemies);
-		
-		bool playing = true;
-		while (playing)
-		{
-			bp.draw();
-			doupdate();
-
-			int input = getch();
-
-			switch (input)
-			{
-			case KEY_ESC:
-				playing = false;
-				testing = false;
-				break;
-			default:
-			{
-				playing = bp.processInput(input);
-			}
-			break;
-			}
-		}
-
-		delete p1;
-		delete e1;
-
-	}
-}
 
 //void dataPkgLoadTest()
 //{
@@ -414,26 +316,26 @@ void battleProcessorTest()
 
 
 
-void mapEditorTest()
-{
-	/*Good lesson learned here. Always ensure that your terminal is sized to contain all windows that it renders or else window creation routines will return null*/
-	resize_term(30, 150);
-
-
-	MapEditor me;
-
-	mousemask(ALL_MOUSE_EVENTS | REPORT_MOUSE_POSITION, NULL);
-	bool editing = true;
-	while (editing) //simulate input/process/update loop
-	{
-		me.draw();
-
-		doupdate();
-		int input = getch();
-
-		editing = me.processInput(input);
-	}
-}
+//void mapEditorTest()
+//{
+//	/*Good lesson learned here. Always ensure that your terminal is sized to contain all windows that it renders or else window creation routines will return null*/
+//	resize_term(30, 150);
+//
+//
+//	MapEditor me;
+//
+//	mousemask(ALL_MOUSE_EVENTS | REPORT_MOUSE_POSITION, NULL);
+//	bool editing = true;
+//	while (editing) //simulate input/process/update loop
+//	{
+//		me.draw();
+//
+//		doupdate();
+//		int input = getch();
+//
+//		editing = me.processInput(input);
+//	}
+//}
 //
 //void actorEditorTest()
 //{
@@ -454,19 +356,19 @@ void mapEditorTest()
 
 
 
-
-void masterEditorTest()
-{
-	MasterEditor* editor = new MasterEditor();
-
-	bool editing = true;
-	while (editing) //simulate input/process/update loop
-	{
-		editor->draw();
-
-		doupdate();
-		int input = getch();
-
-		editing = editor->processInput(input);
-	}
-}
+//
+//void masterEditorTest()
+//{
+//	MasterEditor* editor = new MasterEditor();
+//
+//	bool editing = true;
+//	while (editing) //simulate input/process/update loop
+//	{
+//		editor->draw();
+//
+//		doupdate();
+//		int input = getch();
+//
+//		editing = editor->processInput(input);
+//	}
+//}

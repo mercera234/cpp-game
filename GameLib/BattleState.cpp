@@ -28,7 +28,7 @@ BattleState::BattleState()
 void BattleState::processInput(GameStateManager& manager, int input)
 {
 	//temporary fix for how battle processor handles input
-	switch (input)
+	/*switch (input)
 	{
 	case GameInput::DOWN_INPUT: input = KEY_DOWN; break;
 	case GameInput::UP_INPUT: input = KEY_UP; break;
@@ -37,9 +37,9 @@ void BattleState::processInput(GameStateManager& manager, int input)
 	case GameInput::OK_INPUT: input = 'c'; break;
 	case GameInput::CANCEL_INPUT: input = 'x'; break;
 	default: break;
-	}
+	}*/
 
-	if(battleProcessor.processInput(input) == false)
+	if(battleProcessor.processInput(input) == ExitCode::GO_BACK)
 		manager.setState(ExploreState::getInstance());
 }
 

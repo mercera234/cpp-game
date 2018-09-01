@@ -1,4 +1,5 @@
 #include "TUI.h"
+
 #include "file_chooser_tests.h"
 #include "menu_tests.h"
 #include "pdcurses_tests.h"

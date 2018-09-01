@@ -10,12 +10,16 @@
 #include "ActorCard.h"
 #include "Frame.h"
 #include "PlayerActor.h"
+#include "SimpleControlCommand.h"
 
 class BattleProcessor : public Controllable
 {
 private:
-	void driver(Controllable* control, int input);
-	void advanceTurn();
+	SimpleControlCommand<BattleProcessor> cmd;
+	bool inSession = false;
+
+	int driver(Controllable* control, int input);
+	bool advanceTurn();
 	void processCPUTurn();
 	void initTurnTracker();
 	void initTargetMenu();
@@ -23,24 +27,24 @@ private:
 	void initMessageDisplay();
 	void initControlManager();
 	
-	void skillMenuDriver(int input);
-	void targetMenuDriver(int input);
-	void displayDriver(int input);
+	int skillMenuDriver(int input);
+	int targetMenuDriver(int input);
+	int displayDriver(int input);
 
 	void setMessage();
 
 	void createActorCards(std::list<Actor*>& actors, int startNdx, std::list<MenuItem*>& cards);
 	void addCardsToTargetMenu(std::list<MenuItem*>& cards);
 
-	void attack(Actor * attacker, Actor * target);
-	//checkForVictory
-	//checkForDeath
+	int attack(Actor * attacker, Actor * target);
+
 	void setupVictory();
 	void calcRewards(int& totalExp, int &totalMoney);
 	void transferRewards(int totalExp, int totalMoney);
 	bool checkIfDefeated(std::list<MenuItem*>& cards);
 
 	void setupDeath();
+	void stopBattle();
 public:
 	std::list<MenuItem*> humanActors; //human combatants
 	std::list<MenuItem*> cpuActors; //cpu combatants
@@ -50,6 +54,8 @@ public:
 	GraphMenu* targetMenu;
 	Frame* skillMenuFrame;
 	GridMenu* skillMenu;
+
+	//TODO add a separate frame for the msgDisplay
 	TextLabel* msgDisplay;
 
 	//turntracking elements
@@ -60,8 +66,8 @@ public:
 	void setWindow(WINDOW* win);
 	void addParticipants(std::list<Actor*>& players, std::list<Actor*>& enemies);
 	BattleProcessor(WINDOW* win, std::list<Actor*>& players, std::list<Actor*>& enemies);
+
+	void begin();
 	void draw();
-	bool processInput(int input);
-	
-	static void controlCallback(void* caller, void* ptr, int input); //static
+	int processInput(int input);
 };

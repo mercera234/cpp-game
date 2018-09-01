@@ -153,8 +153,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="MockApplication.h" />
     <ClInclude Include="mockCallbacks.h" />
     <ClInclude Include="MockControl.h" />
+    <ClInclude Include="MockControlCommand.h" />
     <ClInclude Include="MockFileDirectory.h" />
     <ClInclude Include="MockMenu.h" />
     <ClInclude Include="MockMenuItem.h" />
@@ -165,6 +167,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AbstractMenuTest.cpp" />
+    <ClCompile Include="CommandTest.cpp" />
     <ClCompile Include="ControllableTest.cpp" />
     <ClCompile Include="ControlManagerTest.cpp" />
     <ClCompile Include="FileChooserTest.cpp" />
@@ -175,6 +178,7 @@
     <ClCompile Include="InputManagerTest.cpp" />
     <ClCompile Include="LineItemTest.cpp" />
     <ClCompile Include="MenuItemTest.cpp" />
+    <ClCompile Include="MockApplication.cpp" />
     <ClCompile Include="mockCallbacks.cpp" />
     <ClCompile Include="MockFileDirectory.cpp" />
     <ClCompile Include="MockMenu.cpp" />

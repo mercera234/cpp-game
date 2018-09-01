@@ -4,6 +4,11 @@
 #include "TUI.h"
 #include "actor_helper.h"
 
+ActorCard::ActorCard()
+{
+
+}
+
 ActorCard::ActorCard(Actor* actor, int element, int crossRefNdx)
 {
 	this->actor = actor;
@@ -38,9 +43,18 @@ void ActorCard::draw()
 		char sign = damageTaken > 0 ? '-' : '+';
 		oss << sign << damageTaken;
 		
-		wattron(win, COLOR_PAIR(COLOR_RED_BOLD));
+		chtype dmgColor = COLOR_PAIR(COLOR_RED_BOLD);
+		wattron(win, dmgColor);
 		mvwaddstr(win, topRow, cursorX + 17, oss.str().c_str());
-		wattroff(win, COLOR_PAIR(COLOR_RED_BOLD));
+		wattroff(win, dmgColor);
 	}
 
+}
+
+void ActorCard::applyDamage(int amount)
+{
+	displayDamage = true;
+	damageTaken = amount;
+
+	alterStatValue(actor->getStat(StatType::HP), -damageTaken);
 }

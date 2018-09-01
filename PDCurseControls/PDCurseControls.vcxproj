@@ -117,11 +117,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Command.h" />
     <ClInclude Include="compare_functions.h" />
+    <ClInclude Include="ControlCommand.h" />
     <ClInclude Include="Format.h" />
+    <ClInclude Include="input_return_codes.h" />
     <ClInclude Include="MenuItem2.h" />
     <ClInclude Include="InputManager.h" />
+    <ClInclude Include="SimpleControlCommand.h" />
     <ClInclude Include="ObjectLinkedItem.h" />
+    <ClInclude Include="SimpleCommand.h" />
     <ClInclude Include="Style.h" />
     <ClInclude Include="TextBoard.h" />
     <ClInclude Include="TextPiece.h" />

@@ -118,32 +118,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="BattleState.cpp" />
-    <ClCompile Include="GameApp.cpp" />
-    <ClCompile Include="driver.cpp" />
-    <ClCompile Include="ExploreState.cpp" />
-    <ClCompile Include="MainMenuState.cpp" />
-    <ClCompile Include="TitleScreenState.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="BattleState.h" />
-    <ClInclude Include="defaults.h" />
-    <ClInclude Include="GameApp.h" />
-    <ClInclude Include="GameInput.h" />
-    <ClInclude Include="ExploreState.h" />
-    <ClInclude Include="MainMenuState.h" />
-    <ClInclude Include="TitleScreenState.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ClassDiagram.cd" />
-  </ItemGroup>
-  <ItemGroup>
+    <ProjectReference Include="..\GameLib\GameLib.vcxproj">
+      <Project>{3cf43e9a-d0e5-482a-bcc1-53ab1ecb8ad2}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\PDCurseControls\PDCurseControls.vcxproj">
       <Project>{e3d14357-39d4-446e-b228-1ecce4b70488}</Project>
     </ProjectReference>
     <ProjectReference Include="..\RPGLib\RPGLib.vcxproj">
       <Project>{c52c8a11-cbcc-444c-95e2-391f2288828a}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\GameLib\driver.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

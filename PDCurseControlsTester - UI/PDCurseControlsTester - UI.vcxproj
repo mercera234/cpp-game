@@ -117,6 +117,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ControlManageApp.cpp" />
     <ClCompile Include="control_manager_tests.cpp" />
     <ClCompile Include="driver.cpp" />
     <ClCompile Include="file_chooser_tests.cpp" />
@@ -127,11 +128,13 @@
     <ClCompile Include="misc_tests.cpp" />
     <ClCompile Include="panel_tests.cpp" />
     <ClCompile Include="pdcurses_tests.cpp" />
+    <ClCompile Include="TestCommand.cpp" />
     <ClCompile Include="textboard_tests.cpp" />
     <ClCompile Include="text_tests.cpp" />
     <ClCompile Include="tui_tests.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ControlManageApp.h" />
     <ClInclude Include="control_manager_tests.h" />
     <ClInclude Include="file_chooser_tests.h" />
     <ClInclude Include="frame_tests.h" />
@@ -140,6 +143,7 @@
     <ClInclude Include="misc_tests.h" />
     <ClInclude Include="panel_tests.h" />
     <ClInclude Include="pdcurses_tests.h" />
+    <ClInclude Include="TestCommand.h" />
     <ClInclude Include="textboard_tests.h" />
     <ClInclude Include="text_tests.h" />
     <ClInclude Include="tui_tests.h" />

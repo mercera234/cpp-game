@@ -3,6 +3,9 @@
 #include "ExplorationProcessor.h"
 #include "MapRepository.h"
 #include "WadDatabase.h"
+#include "StepTracker.h"
+#include "EncounterTracker.h"
+
 
 class ExploreState : public GameState
 {

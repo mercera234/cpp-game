@@ -1,6 +1,5 @@
 #pragma once
 
-void battleProcessorTest();
 
 void repositoryTest();
 void actorRepositoryTest();

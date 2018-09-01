@@ -1,24 +1,27 @@
 #include "MockControl.h"
 #include "ControlManager.h"
 
-void mockCallBack(void* caller, void* ptr, int input)
+int mockCallBack(void* caller, void* ptr, int input)
 {
-
+	return HANDLED;
 }
 
-void mockCallBack2(void* caller, void* ptr, int input)
+int mockCallBack2(void* caller, void* ptr, int input)
 {
-
+	return HANDLED;
 }
 
-void setCyclicKeyInControlManager(void* caller, void* ptr, int input)
+int setCyclicKeyInControlManager(void* caller, void* ptr, int input)
 {
 	ControlManager* cm = (ControlManager*)ptr;
 	cm->setCycleKey(input);
+	return HANDLED;
 }
 
-void setXinMockControl(void* caller, void* ptr, int input)
+int setXinMockControl(void* caller, void* ptr, int input)
 {
 	MockControl* mc = (MockControl*)caller;
 	mc->setX(input);
+	return HANDLED;
 }
+

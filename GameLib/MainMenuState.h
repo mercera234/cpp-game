@@ -5,26 +5,17 @@
 #include "ControlManager.h"
 #include "GridMenu.h"
 #include "Frame.h"
-
-//Main Menu options
-enum MainMenuOption
-{
-	INVENTORY,
-	EQUIP,
-	STATUS,
-	SKILL,
-	CONFIG,
-	MAP,
-	SAVE,
-	MAIN_QUIT
-};
+#include "MainMenu.h"
 
 class MainMenuState : public GameState
 {
 private:
 	MainMenuState(); //private so class is Singleton
 	static GameState* instance;
-	ControlManager cm;
+	
+	MainMenu mm;
+	
+	/*ControlManager cm;
 
 	int leftFrameWidth;
 	int rightFrameWidth;
@@ -41,12 +32,12 @@ private:
 	Frame* bodyFrame;
 	WINDOW* bodyWindow;
 	void drawBodyWindow();
-	//GridMenu playerMenu;
-
+	
 	void processMainMenuInput(Frame* f, int input);
 	void processPlayerMenuInput(Frame* f, int input);
 
 	void setupMainMenu();
+	void setupPlayerMenu();*/
 public:
 	static GameState* getInstance(); //since static, cannot be virtual in super class
 	void processInput(GameStateManager& manager, int input);
@@ -54,6 +45,6 @@ public:
 	void loadState();
 	void unloadState() {}
 
-	static void mainMenuCallback(void* caller, void* ptr, int input);
-	static void playerMenuCallback(void* caller, void* ptr, int input);
+	/*static void mainMenuCallback(void* caller, void* ptr, int input);
+	static void playerMenuCallback(void* caller, void* ptr, int input);*/
 };

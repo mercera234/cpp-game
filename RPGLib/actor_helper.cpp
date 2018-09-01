@@ -43,6 +43,35 @@ Actor* buildActor(ActorType type)
 }
 
 
+void initTestActor(Actor& player)
+{
+	//set thing properties
+	player.x = 30;
+	player.y = 5;
+	player.symbol = '?';
+	player.name = "Unnamed";
+
+	//set actor properties
+	player.prevX = -1;
+	player.prevY = -1;
+
+	player.type = ActorType::HUMAN;
+
+	setBoundedStat(player.money, 0, 9999999, 0);
+	setBoundedStat(player.stats.level, 1, 99, 1);
+	setBoundedStat(player.stats.exp, 0, 9999999, 0);
+	setBoundedStat(player.stats.hp, 0, 25, 25);
+	setBoundedStat(player.stats.mp, 0, 10, 0);
+	setBoundedStat(player.stats.strength, 0, 255, 0);
+	setBoundedStat(player.stats.defense, 0, 255, 0);
+	setBoundedStat(player.stats.intelligence, 0, 255, 0);
+	setBoundedStat(player.stats.will, 0, 255, 0);
+	setBoundedStat(player.stats.agility, 0, 255, 0);
+}
+
+
+
+
 Actor* loadActor(const std::string& filename, ActorType type)
 {
 	Actor* actor = new Actor();

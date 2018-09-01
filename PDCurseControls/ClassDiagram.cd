@@ -24,7 +24,7 @@
   <Class Name="BlitAnimation" Collapsed="true">
     <Position X="26.25" Y="4.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAABAAAAAAAAAAAJAAAAAAAAAAAIAAAAAAQEggAA=</HashCode>
+      <HashCode>AAAAAABAAAAAAAAAAAJAAAAAAAAAAAIAAEAAAQEggAA=</HashCode>
       <FileName>BlitAnimation.h</FileName>
     </TypeIdentifier>
   </Class>
@@ -66,7 +66,7 @@
   <Class Name="ControlManager" Collapsed="true">
     <Position X="38.5" Y="1.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>gIAyVAAQAAKABDCBgAoAARAQAAEAACQAGCAKIEiABIA=</HashCode>
+      <HashCode>gIAyVAAQAAKABDCBgAoAARAQAAkAACQAGCAKIEiABIA=</HashCode>
       <FileName>ControlManager.h</FileName>
     </TypeIdentifier>
   </Class>
@@ -171,7 +171,7 @@
   <Class Name="Palette" Collapsed="true">
     <Position X="34" Y="3.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAUQAQABEAAAAIAACiAAAAAAAgAAABAAAAAAAA=</HashCode>
+      <HashCode>AAAAAEAUQAQABEAAAAIAACiAAAAAAAgAAABAAAAAAAA=</HashCode>
       <FileName>Palette.h</FileName>
     </TypeIdentifier>
   </Class>
@@ -287,10 +287,34 @@
       <FileName>TextPiece.h</FileName>
     </TypeIdentifier>
   </Class>
+  <Class Name="SimpleCommand&lt;Receiver&gt;" Collapsed="true">
+    <Position X="2.75" Y="7.5" Width="2.25" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Typedef Name="SimpleCommand&lt;Receiver&gt;::Action" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>SimpleCommand.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Typedef>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAABAAABAAAABAAAAAEBAAAAAAAAAAEBAAAAAAAAAA=</HashCode>
+      <FileName>SimpleCommand.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Command" Collapsed="true">
+    <Position X="3" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Command.h</FileName>
+    </TypeIdentifier>
+  </Class>
   <Struct Name="Registration" Collapsed="true">
     <Position X="45" Y="3.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AABAAAAAAAAAAAQAAAAAAAAAAAAAAACAAAAAAAAEAAQ=</HashCode>
+      <HashCode>AABAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAEAAQ=</HashCode>
       <FileName>ControlManager.h</FileName>
     </TypeIdentifier>
   </Struct>

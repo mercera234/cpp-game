@@ -6,6 +6,7 @@
 #include "BattleState.h"
 #include "GameApp.h"
 #include "GameInput.h"
+#include "menu_drivers.h"
 
 GameState* TitleScreenState::instance = nullptr;
 
@@ -70,7 +71,7 @@ void TitleScreenState::beginNewGame()
 
 void TitleScreenState::processInput(GameStateManager& manager, int input)
 {
-	MenuItem* item = GameApp::menuDriver(input, &titleMenu);
+	MenuItem* item = menuDriver(input, &titleMenu);
 		
 	if (item) 
 	{

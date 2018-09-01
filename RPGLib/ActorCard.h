@@ -15,8 +15,10 @@ private:
 	int damageTaken;
 
 public:
+	ActorCard();
 	ActorCard(Actor* actor, int element, int crossRefNdx);
 	Actor* getActor() { return actor; }
+	void applyDamage(int amount);
 	void setDamage(int amount) { damageTaken = amount; displayDamage = true; }
 	void draw();
 };

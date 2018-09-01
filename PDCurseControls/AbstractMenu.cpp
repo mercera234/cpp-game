@@ -63,12 +63,6 @@ bool AbstractMenu::setItem(MenuItem* item)
 	
 
 	items[item->index] = item;
-	//if (curItem == nullptr) //set first added item to current item by default
-	//{
-	//	setCurrentItem(item->index);
-	//	curIndex = item->index;
-	//}
-		
 
 	return true;
 
