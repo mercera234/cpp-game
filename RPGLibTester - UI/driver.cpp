@@ -20,7 +20,7 @@ int main()
 	//mapHighlighterTest();
 	//simpleMapTest();
 //	realMapTest();
-
+	textBoardTest();
 	//freeMovementProcessorTest();
 	//inventoryTest();
 	//gameStateManagerFullTest();

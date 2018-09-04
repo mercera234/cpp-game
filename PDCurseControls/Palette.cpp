@@ -40,6 +40,12 @@ void Palette::setItem(const std::string& name, chtype icon, unsigned short index
 	menu.setItem(dotItem);
 }
 
+void Palette::setFocus(bool focusIn)
+{
+	Controllable::setFocus(focusIn);
+	menu.setFocus(focusIn);
+}
+
 
 void Palette::draw()
 {

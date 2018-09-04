@@ -56,8 +56,6 @@ public:
 
 	bool isFocusable() { return focusable; }
 	void setFocusable(bool canFocus) { focusable = canFocus; }
-	//virtual void setFocus() {};
-	virtual void setCursorFocus() {}; //for moving the cursor to this component
 	virtual void setFocus(bool focusIn) { focus = focusIn; }
 	bool isFocused() { return focus; }
 	void setShowing(bool on) { showing = on; }

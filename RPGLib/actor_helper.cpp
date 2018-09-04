@@ -1,14 +1,14 @@
 #include <iostream>
 #include "actor_helper.h"
 
-void setBoundedStat(BoundInt& stat, int min, int max, int value)
+void setBoundedStat(BoundInt& stat, int min, int currMax, int max, int value)
 {
 	//min and max are 0 by default, so it is safer to set the max first before setting the min for most stats (if not all)
-	stat.setMax(max);
-	stat.setMin(min);
-	stat.setCurr(value);
+	stat.setValues(min, max, value);
+	stat.setCurrMax(currMax);
 }
 
+//TODO this should not be used
 Actor* buildActor(ActorType type)
 {
 	Actor* actor = new Actor();
@@ -25,16 +25,16 @@ Actor* buildActor(ActorType type)
 
 	actor->type = type;
 
-	setBoundedStat(actor->money, 0, 9999999, 0);
-	setBoundedStat(actor->stats.level, 1, 99, 1);
-	setBoundedStat(actor->stats.exp, 0, 9999999, 0);
-	setBoundedStat(actor->stats.hp, 0, 25, 25);
-	setBoundedStat(actor->stats.mp, 0, 10, 0);
-	setBoundedStat(actor->stats.strength, 0, 255, 0);
-	setBoundedStat(actor->stats.defense, 0, 255, 0);
-	setBoundedStat(actor->stats.intelligence, 0, 255, 0);
-	setBoundedStat(actor->stats.will, 0, 255, 0);
-	setBoundedStat(actor->stats.agility, 0, 255, 0);
+	//setBoundedStat(actor->money, 0, 9999999, 9999999, 0);
+	//setBoundedStat(actor->stats.level, 1, 99, 99, 1);
+	//setBoundedStat(actor->stats.exp, 0, 9999999, 0);
+	//setBoundedStat(actor->stats.hp, 0, 25, 25);
+	//setBoundedStat(actor->stats.mp, 0, 10, 0);
+	//setBoundedStat(actor->stats.strength, 0, 255, 0);
+	//setBoundedStat(actor->stats.defense, 0, 255, 0);
+	//setBoundedStat(actor->stats.intelligence, 0, 255, 0);
+	//setBoundedStat(actor->stats.will, 0, 255, 0);
+	//setBoundedStat(actor->stats.agility, 0, 255, 0);
 
 	//not all stats are set yet!
 
@@ -57,16 +57,16 @@ void initTestActor(Actor& player)
 
 	player.type = ActorType::HUMAN;
 
-	setBoundedStat(player.money, 0, 9999999, 0);
-	setBoundedStat(player.stats.level, 1, 99, 1);
-	setBoundedStat(player.stats.exp, 0, 9999999, 0);
-	setBoundedStat(player.stats.hp, 0, 25, 25);
-	setBoundedStat(player.stats.mp, 0, 10, 0);
-	setBoundedStat(player.stats.strength, 0, 255, 0);
-	setBoundedStat(player.stats.defense, 0, 255, 0);
-	setBoundedStat(player.stats.intelligence, 0, 255, 0);
-	setBoundedStat(player.stats.will, 0, 255, 0);
-	setBoundedStat(player.stats.agility, 0, 255, 0);
+	setBoundedStat(player.money, 0, 9999999, 9999999, 0);
+	setBoundedStat(player.stats.level, 1, MAX_LEVELS, MAX_LEVELS, 1);
+	setBoundedStat(player.stats.exp, 0, 9999999, 9999999, 0);
+	setBoundedStat(player.stats.hp, 0, 25, MAX_PLAYER_HP, 25);
+	setBoundedStat(player.stats.mp, 0, 10, 999, 0);
+	setBoundedStat(player.stats.strength, 0, 255, 255, 0);
+	setBoundedStat(player.stats.defense, 0, 255, 255, 0);
+	setBoundedStat(player.stats.intelligence, 0, 255, 255, 0);
+	setBoundedStat(player.stats.will, 0, 255, 255, 0);
+	setBoundedStat(player.stats.agility, 0, 255, 255, 0);
 }
 
 

@@ -1,5 +1,4 @@
 #include "CppUnitTest.h"
-#include "VarTextPiece.h"
 #include "TextBoard.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
@@ -8,7 +7,7 @@ namespace PDCurseControlsTester
 {
 	TEST_CLASS(TextBoardTest)
 	{
-		TEST_METHOD(expandIntTest)
+	/*	TEST_METHOD(expandIntTest)
 		{
 			VarTextPiece<int> piece;
 
@@ -30,9 +29,9 @@ namespace PDCurseControlsTester
 			std::string result = piece.getText();
 
 			Assert::IsTrue(result.compare("|a string|") == 0);
-		}
+		}*/
 
-		TEST_METHOD(macroStringTest)
+	/*	TEST_METHOD(macroStringTest)
 		{
 			VarTextPiece<int> piece;
 			piece.setText("%u");
@@ -50,7 +49,7 @@ namespace PDCurseControlsTester
 			std::string result = bigPiece.getText();
 
 			Assert::IsTrue(result.compare("38 letters.") == 0);
-		}
+		}*/
 
 		TEST_METHOD(addPieceTest)
 		{
@@ -61,5 +60,23 @@ namespace PDCurseControlsTester
 
 			Assert::AreEqual(1, board.getPieceCount());
 		}
+
+		TEST_METHOD(addFormatToPieceTest)
+		{
+			std::string text = "text";
+			TextPiece piece(new PosFormat(0, 0), "text");
+
+			Assert::IsTrue(text.compare(piece.getText()) == 0);
+		}
+
+		/*TEST_METHOD(updateTest)
+		{
+			TextPiece piece;
+
+			TextBoard board;
+			board.addPiece(&piece);
+
+			Assert::AreEqual(1, board.getPieceCount());
+		}*/
 	};
 }

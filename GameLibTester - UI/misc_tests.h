@@ -2,3 +2,4 @@
 
 void mainMenuTest();
 void battleProcessorTest();
+void exploreTest();

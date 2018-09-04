@@ -14,7 +14,7 @@ void textFieldtest()
 	{
 		curs_set(CURSOR_NORMAL);
 		field.draw();
-		field.setCursorFocus();
+		field.setFocus(true);
 		doupdate();
 		int c = getch();
 
@@ -61,7 +61,7 @@ void formFieldTest()
 	while (playing)
 	{
 		fField->draw();
-		field->setCursorFocus();
+		field->setFocus(true);
 		doupdate();
 		int c = getch();
 

@@ -110,5 +110,19 @@ namespace PDCurseControlsTester
 			Assert::IsTrue(0 == text.compare("Bome words."));
 		}
 
+		TEST_METHOD(cursorFocusTest)
+		{
+			int row = 2;
+			int col = 3;
+
+			TextField field(15, row, col);
+			field.setFocus(true);
+
+			int x, y;
+			getyx(stdscr, y, x);
+
+			Assert::AreEqual(row, y);
+			Assert::AreEqual(col, x);
+		}
 	};
 }

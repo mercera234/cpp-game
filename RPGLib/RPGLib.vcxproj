@@ -125,9 +125,9 @@
     <ClInclude Include="BoundInt.h" />
     <ClInclude Include="DataPkg.h" />
     <ClInclude Include="EncounterTracker.h" />
-    <ClInclude Include="ExplorationProcessor.h" />
     <ClInclude Include="Factory.h" />
     <ClInclude Include="FreeMovementProcessor.h" />
+    <ClInclude Include="GameData.h" />
     <ClInclude Include="GameItemMenuRecord.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="GameStateManager.h" />
@@ -156,6 +156,7 @@
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Spell.h" />
     <ClInclude Include="StepTracker.h" />
+    <ClInclude Include="TextParamValue.h" />
     <ClInclude Include="Thing.h" />
     <ClInclude Include="TileEffect.h" />
     <ClInclude Include="TurnTracker.h" />
@@ -172,9 +173,9 @@
     <ClCompile Include="BoundInt.cpp" />
     <ClCompile Include="DataPkg.cpp" />
     <ClCompile Include="EncounterTracker.cpp" />
-    <ClCompile Include="ExplorationProcessor.cpp" />
     <ClCompile Include="Factory.cpp" />
     <ClCompile Include="FreeMovementProcessor.cpp" />
+    <ClCompile Include="GameData.cpp" />
     <ClCompile Include="GameItemMenuRecord.cpp" />
     <ClCompile Include="GameStateManager.cpp" />
     <ClCompile Include="Inventory.cpp" />
@@ -189,6 +190,7 @@
     <ClCompile Include="PlayerActor.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="StepTracker.cpp" />
+    <ClCompile Include="TextParamValue.cpp" />
     <ClCompile Include="TurnTracker.cpp" />
     <ClCompile Include="WadDatabase.cpp" />
   </ItemGroup>

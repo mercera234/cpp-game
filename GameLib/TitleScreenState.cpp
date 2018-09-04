@@ -7,6 +7,7 @@
 #include "GameApp.h"
 #include "GameInput.h"
 #include "menu_drivers.h"
+#include "defaults.h"
 
 GameState* TitleScreenState::instance = nullptr;
 
@@ -25,13 +26,12 @@ GameState* TitleScreenState::getInstance()
 TitleScreenState::TitleScreenState() 
 {
 	win = newwin(screenHeight, screenWidth, 0, 0);
-	WINDOW* menuWin = newwin(4, 25, 1, 1); //TODO window must be deleted later!!
 	titleMenu.resetItems(3, 1);
-	titleMenu.setWindow(menuWin);
+	titleMenu.setWindow(newwin(4, 25, 1, 1));
 	
-	titleMenu.setItem(new LineItem("New Game", 0, TitleMenuOptions::NEW_GAME));
-	titleMenu.setItem(new LineItem("Load Game", 1, TitleMenuOptions::LOAD_GAME));
-	titleMenu.setItem(new LineItem("Quit Game", 2, TitleMenuOptions::QUIT_GAME));
+	titleMenu.setItem(new LineItem(S_NEW_GAME, 0, TitleMenuOptions::NEW_GAME));
+	titleMenu.setItem(new LineItem(S_LOAD_GAME, 1, TitleMenuOptions::LOAD_GAME));
+	titleMenu.setItem(new LineItem(S_QUIT_GAME, 2, TitleMenuOptions::QUIT_GAME));
 
 	titleMenu.setCurrentItem(0);
 	titleMenu.setWrapAround(false);
@@ -60,13 +60,14 @@ void TitleScreenState::beginNewGame()
 
 	state = BattleState::getInstance();
 	state->setResourceManager(resourceManager);
+	state->initDefaults();
 
-	ExploreState* exploreState = (ExploreState*)ExploreState::getInstance();
-	exploreState->setResourceManager(resourceManager); 
-	exploreState->initDefaults(); //load default resources for new game
+	state = ExploreState::getInstance();
+	state->setResourceManager(resourceManager);
+	state->initDefaults(); //load default resources for new game
 	
 	GameStateManager* manager = getManager();
-	manager->setState(exploreState);
+	manager->setState(state); //should be explore state by this point
 }
 
 void TitleScreenState::processInput(GameStateManager& manager, int input)
@@ -96,7 +97,7 @@ void TitleScreenState::processInput(GameStateManager& manager, int input)
 void TitleScreenState::draw()
 {
 	werase(win);
-	mvwprintw(win, 0, 1, "---KILL, IMPROVE, REPEAT---");
+	mvwprintw(win, 0, 1, GAME_TITLE.c_str());
 	wnoutrefresh(win);
 	titleMenu.draw();
 }

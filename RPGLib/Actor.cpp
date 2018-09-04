@@ -2,9 +2,15 @@
 
 Actor::Actor()
 {
-	money.setMax(9999999);
+	money.setCurrMax(9999999);
 
 	////set default stat limits
+	stats.hp.setMax(MAX_ENEMY_HP);
+	stats.hp.setCurrMax(MAX_PLAYER_HP);
+
+	stats.mp.setMax(999);
+	stats.mp.setCurrMax(999);
+
 	stats.level.setMax(MAX_LEVELS);
 	stats.exp.setMax(MAX_EXP);
 	stats.strength.setMax(255);

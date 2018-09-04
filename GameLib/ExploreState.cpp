@@ -43,10 +43,14 @@ void ExploreState::initDefaults()
 		it2 = resourceManager->actors.find(nullName); //loud null Actor if default isn't found
 	}
 	player1 = &(it2->second);
+	player1->type = ActorType::HUMAN;
 
 	//set start position
 	player1->x = startX;
 	player1->y = startY;
+	
+	//store actor in playerParty TODO I may not want to do it like this
+	resourceManager->playerParty.push_back(player1);
 
 	//setup exploration processor
 	map->setControlActor(player1);
@@ -59,7 +63,6 @@ void ExploreState::initDefaults()
 	explorationProcessor.setViewMode(ViewMode::DYNAMIC);
 
 	//setup trackers
-	//TODO add encounterTracker initialization method
 	encounterTracker.setMinSteps(14);
 	encounterTracker.setMaxSteps(60);
 	encounterTracker.setEncounterChance(5);
@@ -98,6 +101,12 @@ void ExploreState::processDirectionalInput(int input)
 			GameState* state = BattleState::getInstance();
 			getManager()->setState(state);
 			encounterTracker.resetSteps(); //prepare for next time
+
+			//get enemy pool from current map
+
+			//get specific enemy group
+
+			//pass enemies into BattleState
 		}
 	}
 }
@@ -144,30 +153,4 @@ void ExploreState::draw()
 	m->draw();	
 }
 
-
-//void ExploreState::drawNullMap(int y, int x)
-//{
-//	int centerY = screenHeight / 2;
-//	int centerX = screenWidth / 2;
-//	//get position of upper left corner of map
-//	int startY = y - centerY;
-//	int startX = x - centerX;
-//
-//	for (int row = 0, mapY = startY; row < screenHeight; row++, mapY++)
-//	{
-//		for (int col = 0, mapX = startX; col < screenWidth; col++, mapX++)
-//		{
-//			char c;
-//			if (mapY % 4 == 0 && mapX % 8 == 0)
-//			{
-//				c = '!';
-//			}
-//			else {
-//				c = ' ';
-//			}
-//			mvwaddch(win, row, col, c);
-//
-//		}
-//	}
-//}
 

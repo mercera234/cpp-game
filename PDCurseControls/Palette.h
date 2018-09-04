@@ -30,7 +30,7 @@ public:
 	void draw(); //override
 	void driver(int input);
 	bool post(bool post);
-	//TODO setfocus needs to set focus to the gridmenu as well
+	void setFocus(bool focusIn);
 	
 	LineItem* getItem(int menuRow, int menuCol);
 	void setCurrentItem(int index);

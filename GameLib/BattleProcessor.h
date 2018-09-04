@@ -11,12 +11,14 @@
 #include "Frame.h"
 #include "PlayerActor.h"
 #include "SimpleControlCommand.h"
+#include "ResourceManager.h"
 
 class BattleProcessor : public Controllable
 {
 private:
 	SimpleControlCommand<BattleProcessor> cmd;
 	bool inSession = false;
+	ResourceManager* resourceManager;
 
 	int driver(Controllable* control, int input);
 	bool advanceTurn();
@@ -45,6 +47,8 @@ private:
 
 	void setupDeath();
 	void stopBattle();
+
+	void clearDisplayDamage();
 public:
 	std::list<MenuItem*> humanActors; //human combatants
 	std::list<MenuItem*> cpuActors; //cpu combatants
@@ -54,8 +58,6 @@ public:
 	GraphMenu* targetMenu;
 	Frame* skillMenuFrame;
 	GridMenu* skillMenu;
-
-	//TODO add a separate frame for the msgDisplay
 	TextLabel* msgDisplay;
 
 	//turntracking elements
@@ -65,9 +67,12 @@ public:
 	BattleProcessor();
 	void setWindow(WINDOW* win);
 	void addParticipants(std::list<Actor*>& players, std::list<Actor*>& enemies);
+	void clearParticipants();
 	BattleProcessor(WINDOW* win, std::list<Actor*>& players, std::list<Actor*>& enemies);
 
 	void begin();
 	void draw();
 	int processInput(int input);
+
+	void setResourceManager(ResourceManager* rm) { resourceManager = rm; }
 };

@@ -14,11 +14,6 @@ void FormField::setFocus()//this method needs an input parameter
 	field->setFocus(true);
 }
 
-void FormField::setCursorFocus()
-{
-	field->setCursorFocus();
-}
-
 
 void FormField::draw()
 {

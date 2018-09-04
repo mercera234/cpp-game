@@ -13,8 +13,11 @@ private:
 	int chance = 0; //a percentage out of one hundred
 	bool occurred = false; //true if encounter has occurred
 	bool tracking = true; //true if encounters are possible and must be tracked
+
+	void initSeed();
 public:
 	EncounterTracker();
+	EncounterTracker(int min, int max, int chanceIn);
 	~EncounterTracker();
 
 	void setMinSteps(int value);

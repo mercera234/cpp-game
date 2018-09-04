@@ -7,6 +7,21 @@ namespace RPGLibTester
 {
 	TEST_CLASS(BoundIntTest)
 	{
+		TEST_METHOD(defaultCnstr)
+		{
+			BoundInt level;
+
+			Assert::AreEqual(INT_MAX, level.getMax()); //will equal max since it exceeds the max
+		}
+
+		TEST_METHOD(setValues)
+		{
+			BoundInt level;
+			level.setValues(3, 78);
+
+			Assert::AreEqual(3, level.getCurr()); //will equal min since it is originally lower than min
+		}
+
 		TEST_METHOD(BoundIntCnstr)
 		{
 			int min = 0;
@@ -14,7 +29,7 @@ namespace RPGLibTester
 			BoundInt level(min, max);
 			
 			Assert::AreEqual(min, level.getMin());
-			Assert::AreEqual(max, level.getMax());
+			Assert::AreEqual(max, level.getCurrMax());
 		}
 
 		TEST_METHOD(BoundIntCnstrWithCurr)
@@ -46,7 +61,7 @@ namespace RPGLibTester
 			Assert::AreEqual(max, hp.getCurr());
 		}
 
-		TEST_METHOD(setMaxLow) //set max below current, and current is auto modified
+		TEST_METHOD(setCurrMaxLow) //set max below current, and current is auto modified
 		{
 			int min = 0;
 			int max = 999;
@@ -54,7 +69,7 @@ namespace RPGLibTester
 
 			mp.setCurr(500);
 			int newMax = 499;
-			mp.setMax(newMax);
+			mp.setCurrMax(newMax);
 			Assert::AreEqual(newMax, mp.getCurr());
 		}
 
@@ -80,6 +95,46 @@ namespace RPGLibTester
 			enemyHp.maxOut();
 
 			Assert::AreEqual(max, enemyHp.getCurr());
+		}
+
+		TEST_METHOD(setTempMax)
+		{
+			int min = 0;
+			int max = 9999;
+			BoundInt heroHp(min, max);
+
+			heroHp.setCurrMax(50);
+
+			int tempMax = 100;
+			heroHp.setTempMax(tempMax);
+			heroHp.maxOut();
+
+			Assert::AreEqual(tempMax, heroHp.getCurr());
+		}
+
+		TEST_METHOD(resetTempMax)
+		{
+			int min = 0;
+			int max = 9999;
+			BoundInt heroHp(min, max);
+
+			int currMax = 50;
+			heroHp.setCurrMax(currMax);
+
+			int tempMax = 100;
+			heroHp.setTempMax(tempMax);
+			heroHp.resetTempMax();
+
+			Assert::AreEqual(currMax, heroHp.getTempMax());
+		}
+
+		TEST_METHOD(alterCurr)
+		{
+			BoundInt heroHp(0, 300, 100);
+			heroHp.alterCurr(-30);
+			heroHp.alterCurr(2);
+
+			Assert::AreEqual(72, heroHp.getCurr());
 		}
 
 	};

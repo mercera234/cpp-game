@@ -26,7 +26,7 @@ void MapRepository::addExit(MapExit* source, MapExit* dest)
 Add 2 exits between maps effectively joining the two
 */
 void MapRepository::addMapSeam(Map& negMap, Map& posMap, //negative map is either N or W, positive is S or E
-	bool xAxis, //true if seam is between West and East maps
+	Axis axis,
 	unsigned short negUnit, unsigned short posUnit, //the unit portion of the map to join together
 	unsigned short length) //not used just yet
 {
@@ -34,11 +34,11 @@ void MapRepository::addMapSeam(Map& negMap, Map& posMap, //negative map is eithe
 	MapExit* posExit = new MapExit();
 
 	negExit->mapId = negMap.getId();
-	negExit->edge = xAxis ? Boundary::EAST : Boundary::SOUTH;
+	negExit->edge = axis == Axis::HORIZONTAL ? Boundary::EAST : Boundary::SOUTH;
 	negExit->unit = negUnit;
 
 	posExit->mapId = posMap.getId();
-	posExit->edge = xAxis ? Boundary::WEST : Boundary::NORTH;
+	posExit->edge = axis == Axis::HORIZONTAL ? Boundary::WEST : Boundary::NORTH;
 	posExit->unit = posUnit;
 
 	addExit(negExit, posExit);

@@ -6,6 +6,7 @@
 #include "actor_helper.h"
 #include <assert.h>
 #include "GameInput.h"
+#include "defaults.h"
 
 BattleProcessor::BattleProcessor()
 {
@@ -31,6 +32,12 @@ void BattleProcessor::addParticipants(std::list<Actor*>& players, std::list<Acto
 	initSkillMenu();
 	initMessageDisplay();
 	initControlManager();
+}
+
+void BattleProcessor::clearParticipants()
+{
+	humanActors.clear();
+	cpuActors.clear();
 }
 
 void BattleProcessor::begin()
@@ -123,8 +130,6 @@ int BattleProcessor::attack(Actor * attacker, Actor * target)
 
 	damage += calcVariance(damage, 20);
 
-	//altering stat should be done through the actor card
-	//alterStatValue(target->getStat(StatType::HP), -damage);
 	return damage;
 }
 
@@ -147,10 +152,10 @@ void BattleProcessor::initSkillMenu()
 	skillMenu = new GridMenu(newwin(skillMenuRows, visibleCols - 2, visibleRows - 5, 1), skillMenuRows, 1);
 
 	//we shouldn't initialize and post here, this should be done based on which human's turn it is
-	skillMenu->setItem(new LineItem("Attack", 0, -1));
-	skillMenu->setItem(new LineItem("Magic", 1, -1));
-	skillMenu->setItem(new LineItem("Item", 2, -1));
-	skillMenu->setItem(new LineItem("Run", 3, -1));
+	skillMenu->setItem(new LineItem(ATTACK, 0, -1));
+	skillMenu->setItem(new LineItem(MAGIC, 1, -1));
+	skillMenu->setItem(new LineItem(S_ITEM, 2, -1));
+	skillMenu->setItem(new LineItem(RUN, 3, -1));
 
 	skillMenu->post(true);
 	skillMenu->setCurrentItem(0);
@@ -344,14 +349,13 @@ void BattleProcessor::setupVictory()
 	//add messages
 	messages.push_back("You killed the enemies.");
 
-	//calculate experience and money earned
-	int totalExp;
-	int totalMoney;
-	calcRewards(totalExp, totalMoney);
+	resourceManager->theData.alterIntData(BATTLES_WON, 1);
+	resourceManager->theData.alterIntData(ENEMIES_KILLED, cpuActors.size());
 
-	std::ostringstream rewardMsg;
-	rewardMsg << "Gained " << totalExp << " exp. Earned " << totalMoney << " gold $.";
-	messages.push_back(rewardMsg.str());
+	//calculate experience and money earned
+	int totalExp, totalMoney;
+	calcRewards(totalExp, totalMoney);
+	transferRewards(totalExp, totalMoney);
 }
 
 
@@ -369,29 +373,37 @@ void BattleProcessor::calcRewards(int& totalExp, int &totalMoney)
 		totalMoney += enemy->getStat(StatType::MONEY).getCurr();
 	}
 
-	//TODO divided total gained by number of players
+	std::ostringstream rewardMsg;
+	rewardMsg << "Gained " << totalExp << " exp. Earned " << totalMoney << " gold $.";
+	messages.push_back(rewardMsg.str());
 }
 
 void BattleProcessor::transferRewards(int totalExp, int totalMoney)
 {
+	//transfer gold
+	resourceManager->theData.alterIntData(GOLD$, totalMoney);
+	
+	//divided total gained by number of players
+	int expPerPlayer = totalExp / humanActors.size();
+	if (expPerPlayer <= 0)
+		expPerPlayer = 1;
+
+	//transfer exp and process level gains
 	for each (MenuItem* item in humanActors)
 	{
 		ActorCard* card = (ActorCard*)item;
 		Actor* player = card->getActor();
 
-		alterStatValue(player->stats.exp, totalExp);
-
-		//not sure how to handle money just yet
+		player->stats.exp.alterCurr(expPerPlayer);
 
 		//check for level up here as well (not fully implemented yet)
-		int levelsGained = 1;
+		int levelsGained = 0;
 
 		//setup message for level ups
 		if (levelsGained > 0)
 		{
 			std::ostringstream gainLevelMsg;
 			gainLevelMsg << player->name;
-			//gainLevelMsg << player->def->name;
 
 			levelsGained == 1 ?
 				gainLevelMsg << " gained a level." :
@@ -408,11 +420,12 @@ int BattleProcessor::displayDriver(int input)
 	if (input != GameInput::OK_INPUT)
 		return HANDLED;
 
+	clearDisplayDamage();
+
 	//advance acknowledgements until exhausted
 	setMessage();
-//	messages.pop_front();
 	
-	if(messages.size() <= 0)  //no more messages left
+	if(messages.size() <= 0 && msgDisplay->getText().compare("") == 0)  //no more messages left
 	{
 		if (advanceTurn() == false) //no more messages and turntracker is turned off
 		{
@@ -425,13 +438,33 @@ int BattleProcessor::displayDriver(int input)
 	return HANDLED;
 }
 
+void BattleProcessor::clearDisplayDamage()
+{
+	//clear actor cards from displaying damage
+	for each (MenuItem* item in humanActors)
+	{
+		ActorCard* card = (ActorCard*)item;
+		card->setDisplayDamage(false);
+	}
+
+	for each (MenuItem* item in cpuActors)
+	{
+		ActorCard* card = (ActorCard*)item;
+		card->setDisplayDamage(false);
+	}
+}
+
 /*
 Return true if there was a message to print
 */
 void BattleProcessor::setMessage()
 {
 	if (messages.size() <= 0)//verify there is a message to print
+	{
+		msgDisplay->setText("");
 		return;
+	}
+		
 		
 	msgDisplay->setText(messages.front());
 	messages.pop_front();

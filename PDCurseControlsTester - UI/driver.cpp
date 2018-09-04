@@ -9,6 +9,7 @@
 #include "frame_tests.h"
 #include "misc_tests.h"
 #include "textboard_tests.h"
+#include "text_tests.h"
 
 //PDCURSE CONTROLS UI TESTER
 int main()

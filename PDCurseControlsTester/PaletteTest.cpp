@@ -56,5 +56,17 @@ namespace PDCurseControlsTester
 			LineItem* item = p.getItem(0, 0);
 			Assert::AreEqual('R', (char)item->getIcon());
 		}
+
+	/*	TEST_METHOD(setFocusTest)
+		{
+			Palette p(1, 1, "B", 1, 1);
+			
+			p.setFocus(true);
+
+			
+
+			LineItem* item = p.getItem(0, 0);
+			Assert::AreEqual('R', (char)item->getIcon());
+		}*/
 	};
 }

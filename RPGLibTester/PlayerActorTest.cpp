@@ -32,13 +32,13 @@ namespace RPGLibTester
 
 		TEST_METHOD(canAliveActorPlayTest)
 		{
-			setBoundedStat(a1.stats.hp, 0, 25, aliveHP);
+			setBoundedStat(a1.stats.hp, 0, 25, 9999, aliveHP);
 			Assert::IsTrue(p1.canPlay());
 		}
 
 		TEST_METHOD(canDeadActorPlayTest)
 		{
-			setBoundedStat(a1.stats.hp, 0, 25, deadHP);
+			setBoundedStat(a1.stats.hp, 0, 25, 9999, deadHP);
 			Assert::IsFalse(p1.canPlay());
 		}
 
@@ -56,8 +56,8 @@ namespace RPGLibTester
 		*/
 		TEST_METHOD(getNextOneDeadTest)
 		{
-			setBoundedStat(a1.stats.hp, 0, 25, aliveHP);
-			setBoundedStat(a2.stats.hp, 0, 25, deadHP);
+			setBoundedStat(a1.stats.hp, 0, 25, 9999, aliveHP);
+			setBoundedStat(a2.stats.hp, 0, 25, 9999, deadHP);
 
 			tt.addPlayer(&p1);
 			tt.addPlayer(&p2);
@@ -74,8 +74,8 @@ namespace RPGLibTester
 		*/
 		TEST_METHOD(getNextSkippedTest)
 		{
-			setBoundedStat(a1.stats.hp, 0, 25, aliveHP);
-			setBoundedStat(a2.stats.hp, 0, 25, aliveHP);
+			setBoundedStat(a1.stats.hp, 0, 25, 9999, aliveHP);
+			setBoundedStat(a2.stats.hp, 0, 25, 9999, aliveHP);
 	
 			tt.addPlayer(&p1);
 			tt.addPlayer(&p2);

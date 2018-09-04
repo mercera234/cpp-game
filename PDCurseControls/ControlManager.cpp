@@ -290,6 +290,8 @@ int ControlManager::handleControlInput(int input)
 {
 	int handled = NOT_HANDLED;
 	//process input through registered controls
+
+	//TODO why are we iterating through all the controls? We should just process the focused one!
 	for (auto it = controls.rbegin(); it != controls.rend(); it++) //we start from the end, so modal windows are always processed first
 	{
 		Registration* r = *it;
@@ -309,9 +311,6 @@ int ControlManager::handleControlInput(int input)
 			handled = handleMouseInput(input, r);
 		else if (input != KEY_MOUSE && r->listen_map & KEY_LISTENER)
 			handled = handleKeyInput(input, r);
-
-		//if (isModal) //only process input for the top modal window
-		//	handled = HANDLED;
 
 		if (handled >= 0 || (handled == NOT_HANDLED && isModal))
 			break;
@@ -376,7 +375,7 @@ void ControlManager::draw()
 		c->draw();
 	}
 	if(focusedReg != nullptr)
-		focusedReg->c->setCursorFocus(); //execute the focused component's method for rendering focus
+		focusedReg->c->setFocus(true); //set focus again in case the cursor is involved
 }
 
 ControlManager::~ControlManager()

@@ -4,6 +4,7 @@
 #include "Actor.h"
 #include "Map.h"
 #include "FileDirectory.h"
+#include "GameData.h"
 
 //null resources
 const int nullId = -1;
@@ -15,11 +16,13 @@ class ResourceManager
 private:
 	int getColor(char c);
 
-
-
 public:
 	std::map<std::string, Actor, std::function<bool(std::string, std::string)> > actors;
 	std::map<int, Map> gameMaps;
+	GameData theData;
+
+	std::vector<Actor*> playerParty;
+
 
 	ResourceManager();
 	

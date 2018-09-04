@@ -31,13 +31,12 @@ void ActorCard::draw()
 	BoundInt hpStat = actor->getStat(StatType::HP);
 	BoundInt mpStat = actor->getStat(StatType::MP);
 
-	mvwprintw(win, topRow + 1, itemX, "HP %+4u/%+4u", hpStat.getCurr(), hpStat.getMax());
-	mvwprintw(win, topRow + 2, itemX, "MP %+4u/%+4u", mpStat.getCurr(), mpStat.getMax());
+	mvwprintw(win, topRow + 1, itemX, "HP %+4u/%+4u", hpStat.getCurr(), hpStat.getCurrMax());
+	mvwprintw(win, topRow + 2, itemX, "MP %+4u/%+4u", mpStat.getCurr(), mpStat.getCurrMax());
 
 	//display damage taken if any
 	if (displayDamage)
 	{
-		displayDamage = false; //
 		std::ostringstream oss;
 
 		char sign = damageTaken > 0 ? '-' : '+';

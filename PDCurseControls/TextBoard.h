@@ -1,9 +1,10 @@
 #pragma once
-#include "TextPiece.h"
+//#include "TextPiece.h"
 #include "Controllable.h"
 #include "Direction.h"
 #include "Style.h"
 #include <list>
+#include "TextPiece.h"
 
 class TextBoard : public Controllable
 {

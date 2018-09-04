@@ -38,7 +38,9 @@ public:
 	//getters/setters
 
 	/* Move cursor to this control. Set cursor to normal blinking underline. (Override) */
-	void setCursorFocus(); 
+	void setFocus(bool focusIn);
+
+	//void setCursorFocus(bool cursorFocusOn);
 
 	/*Changes the stored text with the text parameter.*/
 	void setText(const std::string& textIn);

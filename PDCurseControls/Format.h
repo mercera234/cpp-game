@@ -10,8 +10,15 @@ struct Format
 
 struct LineFormat : public Format
 {
-	int line = -1;
-	Justf justf;
+	int line = 0;
+	Justf justf = Justf::RIGHT;
+	LineFormat() {};
+	LineFormat(int line, Justf justf)
+	{
+		this->line = line;
+		this->justf = justf;
+	}
+
 	void draw(WINDOW* win, const std::string& text)
 	{
 		int x = getPosition(justf, getmaxx(win), text.length());
@@ -22,6 +29,9 @@ struct LineFormat : public Format
 struct PosFormat : public Format
 {
 	Pos pos;
+	PosFormat() {}
+	PosFormat(int yIn, int xIn) : pos(yIn,xIn) {}
+
 	void draw(WINDOW* win, const std::string& text)
 	{
 		mvwaddstr(win, pos.y, pos.x, text.c_str());

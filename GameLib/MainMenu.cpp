@@ -3,33 +3,119 @@
 #include "LineItem.h"
 #include "menu_drivers.h"
 #include "GameInput.h"
+#include "TextBoard.h"
+#include "TextParamValue.h"
+#include "defaults.h"
 
 MainMenu::MainMenu()
 {
 	cm.setCaller(this);
 
-	topFrameHeight = 6;
-	bottomFrameHeight = screenHeight - topFrameHeight + 1;
-	leftFrameWidth = 20;
-	rightFrameWidth = screenWidth - leftFrameWidth;
+	//link frames to controls
+	mainFrame.setControl(&mainMenu);
+	playerFrame.setControl(&playerMenu);
+	bodyFrame.setControl(&bodyContent);
 
-	setupMainMenu();
-	setupPlayerMenu();
-
-	bodyWindow = newwin(bottomFrameHeight - 2, rightFrameWidth - 2, 6, leftFrameWidth + 1);
-	bodyFrame.setWindow(newwin(bottomFrameHeight, rightFrameWidth, 5, leftFrameWidth));
-	bodyFrame.setControl(nullptr);
-
+	//setup cmds
 	mainMenuCmd.setReceiver(this);
 	mainMenuCmd.setAction(&MainMenu::processMainMenuInput);
 
 	playerMenuCmd.setReceiver(this);
 	playerMenuCmd.setAction(&MainMenu::processPlayerMenuInput);
 
+
+	setupStatusFields();
+
+	//register controls
 	cm.registerControl(&mainFrame, KEY_LISTENER, &mainMenuCmd);
 	cm.registerControl(&playerFrame, KEY_LISTENER, &playerMenuCmd);
-	cm.registerControl(&bodyFrame, KEY_LISTENER, nullptr);
+	cm.registerControl(&bodyFrame, 0, nullptr);
 	cm.setFocus(&mainFrame);
+}
+
+void MainMenu::setupStatusFields()
+{
+	hpRow.setText(HP);
+	hpRow.setFormat(new LineFormat(0, Justf::LEFT));
+
+	mpRow.setText(MP);
+	mpRow.setFormat(new LineFormat(1, Justf::LEFT));
+
+	strengthRow.setText(STRENGTH);
+	strengthRow.setFormat(new LineFormat(2, Justf::LEFT));
+
+	defenseRow.setText(DEFENSE);
+	defenseRow.setFormat(new LineFormat(3, Justf::LEFT));
+
+	intelRow.setText(INTELLIGENCE);
+	intelRow.setFormat(new LineFormat(4, Justf::LEFT));
+
+	willRow.setText(WILL);
+	willRow.setFormat(new LineFormat(5, Justf::LEFT));
+
+	agilityRow.setText(AGILITY);
+	agilityRow.setFormat(new LineFormat(6, Justf::LEFT));
+
+	expRow.setText(EXP);
+	expRow.setFormat(new LineFormat(7, Justf::LEFT));
+
+	statusContent.addPiece(&hpRow);
+	statusContent.addPiece(&mpRow);
+	statusContent.addPiece(&strengthRow);
+	statusContent.addPiece(&defenseRow);
+	statusContent.addPiece(&intelRow);
+	statusContent.addPiece(&willRow);
+	statusContent.addPiece(&agilityRow);
+	statusContent.addPiece(&expRow);
+}
+
+void MainMenu::setWindow(WINDOW* win)
+{
+	Controllable::setWindow(win);
+
+	int controlHeight = getmaxy(win);
+	int controlWidth = getmaxx(win);
+
+	topFrameHeight = 6;
+	bottomFrameHeight = controlHeight - topFrameHeight + 1;
+	leftFrameWidth = 20;
+	rightFrameWidth = controlWidth - leftFrameWidth;
+
+	setupMainMenu();
+	setupPlayerMenu();
+
+	bodyContent.setWindow(newwin(bottomFrameHeight - 2, rightFrameWidth - 2, 6, leftFrameWidth + 1));
+	bodyFrame.setWindow(newwin(bottomFrameHeight, rightFrameWidth, 5, leftFrameWidth));
+
+	statusContent.setWindow(newwin(bottomFrameHeight - 2, rightFrameWidth - 2, 6, leftFrameWidth + 1));
+}
+
+void MainMenu::setData(GameData* gd)
+{
+	theData = gd;
+
+	gold.setFormat(new LineFormat(0, Justf::LEFT));
+	gold.setText(GOLD$);
+	gold.setInnerJustf(Justf::LEFT);
+
+	steps.setFormat(new LineFormat(1, Justf::LEFT));
+	steps.setText(STEPS);
+	steps.setInnerJustf(Justf::LEFT);
+
+	enemiesKilled.setFormat(new LineFormat(2, Justf::LEFT));
+	enemiesKilled.setText(ENEMIES_KILLED);
+	enemiesKilled.setInnerJustf(Justf::LEFT);
+
+	battlesWon.setFormat(new LineFormat(3, Justf::LEFT));
+	battlesWon.setText(BATTLES_WON);
+	battlesWon.setInnerJustf(Justf::LEFT);
+
+	bodyContent.addPiece(&gold);
+	bodyContent.addPiece(&steps);
+	bodyContent.addPiece(&enemiesKilled);
+	bodyContent.addPiece(&battlesWon);
+
+	setupHubContent();
 }
 
 void MainMenu::addPlayerParty(std::vector<Actor*>& allies)
@@ -57,14 +143,14 @@ void MainMenu::setupMainMenu()
 	mainMenu.setItemWidth(6);
 	mainMenu.setColSepLength(0);
 
-	mainMenu.setItem(new LineItem("Item", 0, MainMenuOption::INVENTORY), 0, 0);
-	mainMenu.setItem(new LineItem("Equip", 1, MainMenuOption::EQUIP), 1, 0);
-	mainMenu.setItem(new LineItem("Status", 2, MainMenuOption::STATUS), 2, 0);
-	mainMenu.setItem(new LineItem("Skill", 3, MainMenuOption::SKILL), 3, 0);
-	mainMenu.setItem(new LineItem("Config", 4, MainMenuOption::CONFIG), 0, 1);
-	mainMenu.setItem(new LineItem("Map", 5, MainMenuOption::MAP), 1, 1);
-	mainMenu.setItem(new LineItem("Save", 6, MainMenuOption::SAVE), 2, 1);
-	mainMenu.setItem(new LineItem("Quit", 7, MainMenuOption::MAIN_QUIT), 3, 1);
+	mainMenu.setItem(new LineItem(S_ITEM, 0, MainMenuOption::INVENTORY), 0, 0);
+	mainMenu.setItem(new LineItem(S_EQUIP, 1, MainMenuOption::EQUIP), 1, 0);
+	mainMenu.setItem(new LineItem(S_STATUS, 2, MainMenuOption::STATUS), 2, 0);
+	mainMenu.setItem(new LineItem(S_SKILL, 3, MainMenuOption::SKILL), 3, 0);
+	mainMenu.setItem(new LineItem(S_CONFIG, 4, MainMenuOption::CONFIG), 0, 1);
+	mainMenu.setItem(new LineItem(S_MAP, 5, MainMenuOption::MAP), 1, 1);
+	mainMenu.setItem(new LineItem(S_SAVE, 6, MainMenuOption::SAVE), 2, 1);
+	mainMenu.setItem(new LineItem(S_QUIT, 7, MainMenuOption::MAIN_QUIT), 3, 1);
 
 	mainMenu.setWrapAround(false);
 	mainMenu.setFocus(true);
@@ -73,7 +159,7 @@ void MainMenu::setupMainMenu()
 	mainMenu.setCurrentItem(0);
 
 	mainFrame.setWindow(newwin(topFrameHeight, leftFrameWidth, 0, 0));
-	mainFrame.setControl(&mainMenu);
+	
 }
 
 
@@ -94,21 +180,9 @@ void MainMenu::setupPlayerMenu()
 	playerMenu.post(true);
 
 	playerFrame.setWindow(newwin(bottomFrameHeight, leftFrameWidth, 5, 0));
-	playerFrame.setControl(&playerMenu);
+	
 }
 
-
-int MainMenu::mainMenuCallback(void* caller, void* ptr, int input) //static
-{
-	MainMenu* mm = (MainMenu*)caller;
-	return mm->processMainMenuInput((Frame*)ptr, input);
-}
-
-int MainMenu::playerMenuCallback(void* caller, void* ptr, int input) //static
-{
-	MainMenu* mm = (MainMenu*)caller;
-	return mm->processPlayerMenuInput((Frame*)ptr, input);
-}
 
 int MainMenu::processInput(int input)
 {
@@ -133,73 +207,71 @@ int MainMenu::processMainMenuInput(Controllable* c, int input)
 		case MainMenuOption::STATUS:
 			cm.setFocus(&playerFrame);
 			playerMenu.setCurrentItem(0);
+			bodyFrame.setControl(&statusContent);
+			setupStatusContent();
 			break;
 		case MainMenuOption::MAIN_QUIT: 
 			return ExitCode::QUIT_TO_TITLE;
 		}
 	}
+	else //no item selected, render default data
+	{
+		setupHubContent();
+	}
 
 	return HANDLED;
 }
 
+void MainMenu::setupHubContent()
+{
+	gold.setValue(&theData->retrieveIntData(GOLD$));
+	steps.setValue(&theData->retrieveIntData(STEPS));
+	enemiesKilled.setValue(&theData->retrieveIntData(ENEMIES_KILLED));
+	battlesWon.setValue(&theData->retrieveIntData(BATTLES_WON));
+}
+
 int MainMenu::processPlayerMenuInput(Controllable* c, int input)
 {
+	//right now this only handles the status menu!!!
 	if (input == GameInput::CANCEL_INPUT)
 	{
 		playerMenu.setCurrentItem(NO_CUR_ITEM);
 		cm.setFocus(&mainFrame);
-
+		bodyFrame.setControl(&bodyContent);
 		return HANDLED;
 	}
 
 
 	MenuItem* item = menuDriver(input, &playerMenu);
 
-	if (item)
-	{
-		
-	}
+	setupStatusContent();
 
 	return HANDLED;
 }
 
-void MainMenu::drawBodyWindow()
+void MainMenu::setupStatusContent()
 {
-	LineItem* item = (LineItem*)playerMenu.getCurrentItem();
+	MenuItem* item = playerMenu.getCurrentItem();
 
-	if (item->name.compare("") == 0) 
-		return;
+	if (item && ((LineItem*)item)->name.compare("") != 0)
+	{
+		Actor* ally = allies[item->index];
 
-	Actor* ally = allies[item->index];
-
-	BoundInt hpStat = ally->getStat(StatType::HP);
-	BoundInt mpStat = ally->getStat(StatType::MP);
-	BoundInt strStat = ally->getStat(StatType::STRENGTH);
-	BoundInt defStat = ally->getStat(StatType::DEFENSE);
-	BoundInt intStat = ally->getStat(StatType::INTELLIGENCE);
-	BoundInt wilStat = ally->getStat(StatType::WILL);
-	BoundInt agiStat = ally->getStat(StatType::AGILITY);
-	BoundInt expStat = ally->getStat(StatType::EXP);
-
-	mvwprintw(bodyWindow, 0, 0, "HP %+4u/%+4u", hpStat.getCurr(), hpStat.getMax());
-	mvwprintw(bodyWindow, 1, 0, "MP %+4u/%+4u", mpStat.getCurr(), mpStat.getMax());
-	mvwprintw(bodyWindow, 2, 0, "Strength %+3u", strStat.getCurr());
-	mvwprintw(bodyWindow, 3, 0, "Defense %+3u", defStat.getCurr());
-	mvwprintw(bodyWindow, 4, 0, "Intel %+3u", intStat.getCurr());
-	mvwprintw(bodyWindow, 5, 0, "Will %+3u", wilStat.getCurr());
-	mvwprintw(bodyWindow, 6, 0, "Agility %+3u", agiStat.getCurr());
-	mvwprintw(bodyWindow, 7, 0, "Exp %+3u", expStat.getCurr());
-
-	touchwin(bodyWindow);
-	wnoutrefresh(bodyWindow);
+		hpRow.setValue(&ally->getStat(StatType::HP));
+		mpRow.setValue(&ally->getStat(StatType::MP));
+		strengthRow.setValue(&ally->getStat(StatType::STRENGTH));
+		defenseRow.setValue(&ally->getStat(StatType::DEFENSE));
+		intelRow.setValue(&ally->getStat(StatType::INTELLIGENCE));
+		willRow.setValue(&ally->getStat(StatType::WILL));
+		agilityRow.setValue(&ally->getStat(StatType::AGILITY));
+		expRow.setValue(&ally->getStat(StatType::EXP));
+	}
 }
+
 
 void MainMenu::draw()
 {
 	cm.draw();
-
-	if (cm.getFocus() == &playerFrame)
-		drawBodyWindow();
 }
 
 MainMenu::~MainMenu()

@@ -119,3 +119,7 @@ void ExplorationProcessor::moveActorAcrossMapSeam(MapExit& fromMap, MapExit& toM
 }
 
 
+void ExplorationProcessor::draw()
+{
+	currMap->draw();
+}

@@ -9,6 +9,14 @@ namespace RPGLibTester
 	{
 		EncounterTracker tracker;
 
+		TEST_METHOD(nonDefaultCnstr)
+		{
+			EncounterTracker et(3, 5, 20);
+
+			Assert::AreEqual(3, et.getMinSteps());
+		}
+
+
 		TEST_METHOD(setMinStepsTest)
 		{
 			int steps = 25;

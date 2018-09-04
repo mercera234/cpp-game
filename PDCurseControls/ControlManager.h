@@ -8,20 +8,14 @@
 #include "ControlCommand.h"
 #include "input_return_codes.h"
 
-#define KEY_LISTENER 0x01
-#define MOUSE_LISTENER 0x02
+const int KEY_LISTENER = 0x01;
+const int MOUSE_LISTENER = 0x02;
 
-//input to ControlManager was not handled by any registered controls
-//const int NOT_HANDLED = -1;
-//
-////input was handled and no code was returned. Values greater than 0 imply a return code
-//const int HANDLED = 0;
 
 struct Registration
 {
 	Controllable* c;
 	ControlCommand* cmd = nullptr;
-	//int(*callback) (void*, void*, int);
 	char listen_map = 0; //bit map of all listeners
 	Registration() {};
 };
@@ -41,8 +35,7 @@ private:
 	//a quick reference map used to quickly find the registration associated with a controllable
 	std::map<Controllable*, Registration*, std::function<bool(Controllable*, Controllable*)> > quickRef;
 	std::map<int, ControlCommand*> globalShortcuts; //shortcuts are global input
-	//std::map<int, std::function<int(void*, void*, int)>> globalShortcuts; //shortcuts are global input
-
+	
 	/*if a control is focused, then this will point to it*/
 	Registration* focusedReg = nullptr;
 
@@ -67,16 +60,13 @@ public:
 	ControlManager(void* caller);
 	void setCaller(void* caller);
 	
-	//void registerControl(Controllable* c, char listeners, int(*callback) (void*, void*, int));
 	void registerControl(Controllable* c, char listeners, ControlCommand* cmd);
-	//void registerControl(Controllable* c, char listeners, int(*callback) (void*, void*, int), Command* cmd);
-
 	void unRegisterControl(Controllable* c);
 	
 	/*Shortcuts can only be called by the client object.
 	TODO should this use a different kind of command that doesn't require a control?*/
 	void registerShortcutKey(int key, ControlCommand* cmd);
-	//void registerShortcutKey(int key, int(*callback) (void*, void*, int));
+
 	void draw();
 	/*
 	Pop the control on top of the stack (end of the registered controls list).

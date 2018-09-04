@@ -27,4 +27,6 @@ public:
 
 	void setCurrMap(unsigned short id);
 	Map* getCurrMap() { return currMap; }
+
+	void draw();
 };

@@ -1,32 +1,53 @@
 #pragma once
+#include <limits>
 
+/*
+Encapsulates an integer value with a min and max value different than what is capable with a 4-byte integer.
+min <= curr <= currMax <= tempMax <= max
+*/
 class BoundInt
 {
 private:
-	int max = 0; //these are different types, but this is ok unless we ever feel the need to go beyond 2.1 billion
-	int min = 0;
-	int curr = 0;
-	//TODO consider changing max to currMax, adding tempMax and finalMax
-	//currMax would be what the max is
-	//tempMax would be for temporary raising of the currMax
-	//finalMax is a max value that cannot change once set. The curr max and temp max cannot grow beyond this value
-	void boundCurr();
+	int currMax = INT_MAX; //the current maximum, which can be changed
+	int min = 0; //the minimum that curr can ever go
+	int curr = 0; //the current value
+	int tempMax = INT_MAX; //for temporary raising of the currMax
+	int max = INT_MAX; //a max value that cannot change once set. The curr max and temp max cannot grow beyond this value
+	
+	void boundValue(int lowEnd, int& value, int highEnd);
 public:
 	BoundInt() {};
 	BoundInt(int minIn, int maxIn, int currIn = 0);
 
+	void setValues(int minIn, int maxIn, int currIn = 0);
 	void maxOut();
-
 	//getters/setters
-	void setCurr(int currIn);
-
-	//Update the max bound. Will throw an assertion error if lower than the min.
-	void setMax(int maxIn);
-
-	//Update the min bound. Will throw an assertion error if greater than the max.
+	
+	//Update the min bound. Will throw an assertion error if greater than the currMax.
 	void setMin(int minIn);
 
-	int getMax() { return max; }
+	//Update the current value. Will be bounded between the min and tempMax
+	void setCurr(int currIn);
+
+	/*Update the current value relative what it is currently with amount. 
+	Amount is always added so use negative numbers for subtraction*/
+	void alterCurr(int amount);
+
+	//Update the currMax bound. Will throw an assertion error if lower than the min or greater than the max.
+	void setCurrMax(int currMaxIn);
+
+	//Update the tempmax bound.
+	void setTempMax(int tempMaxIn);
+	void resetTempMax() { tempMax = currMax; }
+
+	//Set the max. Can be done once during life of BoundInt
+	void setMax(int maxIn);
+
 	int getMin() { return min; }
 	int getCurr() { return curr; }
+	int getCurrMax() { return currMax; }
+	int getTempMax() { return tempMax; }
+	int getMax() { return max; }
+
 };
+

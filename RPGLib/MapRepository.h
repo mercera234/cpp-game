@@ -22,7 +22,7 @@ public:
 	Map* find(unsigned short id); //override
 
 	void addMapSeam(Map& negMap, Map& posMap, //negative map is either N or W, positive is S or E
-		bool xAxis, //true if seam is between West and East maps
+		Axis axis, //true if seam is between West and East maps
 		unsigned short negUnit, unsigned short posUnit, //the unit portion of the map to join together
 		unsigned short length);
 	

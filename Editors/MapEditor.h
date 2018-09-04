@@ -10,10 +10,11 @@
 #include "MapEffectFilterPattern.h"
 #include "FreeMovementProcessor.h"
 #include "Editor.h"
+#include "SimpleControlCommand.h"
 
 #define DEF_MAP_EXTENSION ".map"
 
-class MapEditor : Editor
+class MapEditor : Editor<MapEditor>
 {
 private:
 
@@ -75,21 +76,27 @@ private:
 	MapEffectFilterPattern mapEffectFilterPattern;
 	Highlighter highlighter;
 
+	SimpleControlCommand<MapEditor> paletteCmd;
+	SimpleControlCommand<MapEditor> mapCmd;
+	SimpleControlCommand<MapEditor> canvasInputCmd;
+	SimpleControlCommand<MapEditor> controlCmd;
+	SimpleControlCommand<MapEditor> globalCmd;
+
 	void setupPalettes();
 	void setupRulers();
 	void setCanvasSize(int rows, int cols);
 	void setConvenienceVariables();
 
-	bool processMapInput(int input);
+	int processMapInput(Controllable* c, int input);
 	void processMouseInput(int input);
 
 	void processShiftDirectionalInput(int input);
 
-	void processPaletteInput(Palette* p, int input);
-	void processFilterPaletteInput(chtype icon);
+	int processPaletteInput(Controllable* c, int input);
+	int processFilterPaletteInput(chtype icon);
 	void resizeButtonDriver();
 	
-	void canvasInputDriver(TextField* field, int input);
+	int canvasInputDriver(Controllable* c, int input);
 	void setupControlManager();
 
 	void applyTool(int y, int x);
@@ -99,17 +106,17 @@ private:
 	
 	void fill(int sourceRow, int sourceCol);
 
-	void driver(Controllable* control, int input);
+	int driver(Controllable* control, int input);
 public:
 
 	MapEditor();
 	~MapEditor();
-	bool processInput(int input);
+	int processInput(int input);
 	void draw();
 
 	//static callback methods
-	static void paletteCallback(void*, void*, int);
+	/*static void paletteCallback(void*, void*, int);
 	static void mapCallback(void* caller, void* ptr, int input); 
 	static void canvasInputCallback(void* caller, void* ptr, int input);
-	static void controlCallback(void*, void*, int);
+	static void controlCallback(void*, void*, int);*/
 };

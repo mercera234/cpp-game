@@ -10,10 +10,13 @@ private:
 	static GameState* instance;
 	
 	BattleProcessor battleProcessor;
+	Actor e1; //temporary!!!
+
 public:
 	static GameState* getInstance(); //since static, cannot be virtual in super class
 	void processInput(GameStateManager& manager, int input);
 	void draw();
-	void loadState() {}
-	void unloadState() {}
+	void loadState();
+	void unloadState();
+	void initDefaults();
 };

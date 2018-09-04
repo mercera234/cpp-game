@@ -18,27 +18,39 @@ BattleState::BattleState()
 {
 	win = newwin(screenHeight, screenWidth, 0, 0);
 	
-	std::list<Actor*> players;
-	std::list<Actor*> enemies;
+	
 	
 	battleProcessor.setWindow(win);
+	
+}
+
+void BattleState::initDefaults()
+{
+	battleProcessor.setResourceManager(resourceManager);
+}
+
+void BattleState::loadState()
+{
+	std::list<Actor*> players = { resourceManager->playerParty.begin(), resourceManager->playerParty.end() };
+	
+	//TODO enemies should be loaded from a pool or something
+	e1 = resourceManager->actors.find("Wispwing")->second; //retrieve a copy of the repository enemy
+	e1.type = ActorType::CPU;
+
+	std::list<Actor*> enemies;
+	enemies.push_back(&e1);
+
 	battleProcessor.addParticipants(players, enemies);
+	battleProcessor.begin();
+}
+
+void BattleState::unloadState()
+{
+	battleProcessor.clearParticipants();
 }
 
 void BattleState::processInput(GameStateManager& manager, int input)
 {
-	//temporary fix for how battle processor handles input
-	/*switch (input)
-	{
-	case GameInput::DOWN_INPUT: input = KEY_DOWN; break;
-	case GameInput::UP_INPUT: input = KEY_UP; break;
-	case GameInput::LEFT_INPUT: input = KEY_LEFT; break;
-	case GameInput::RIGHT_INPUT: input = KEY_RIGHT; break;
-	case GameInput::OK_INPUT: input = 'c'; break;
-	case GameInput::CANCEL_INPUT: input = 'x'; break;
-	default: break;
-	}*/
-
 	if(battleProcessor.processInput(input) == ExitCode::GO_BACK)
 		manager.setState(ExploreState::getInstance());
 }

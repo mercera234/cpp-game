@@ -4,7 +4,7 @@
 template <class Receiver>
 class SimpleControlCommand : public ControlCommand
 {
-private:
+protected:
 	typedef int (Receiver::* Action)(Controllable*, int);
 
 	Receiver* receiver;

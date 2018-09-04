@@ -50,7 +50,7 @@ public:
 
 	
 	//getters/setters
-	void setFocus() { fileNameField.setCursorFocus(); }
+	void setFocus() { fileNameField.setFocus(true); }
 	void setFilter(const std::string& filter) { this->filter = filter; }
 	void setType(FileDialogType typeIn) { type = typeIn; }
 	void setDirectory(const std::string& workingDir);

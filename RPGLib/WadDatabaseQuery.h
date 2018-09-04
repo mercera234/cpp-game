@@ -21,7 +21,7 @@ void WadDatabaseQuery::getRepo(WadDatabase& db, LumpType type, std::map<Key, Val
 	{
 	case LumpType::ACTOR: 
 		
-		//db.getActorRepository(std::map<std::string, ActorDef*, std::function<bool(std::string, std::string)>>& actorRepo, std::ifstream& wadFile);
+		//db.getActorRepository(std::map<std::string, ActorDef*, std::function<bool(std::string, std::string)>>& mapRepo, std::ifstream& wadFile);
 		
 		break;
 	//case LumpType::MAP: repo = MapRepository(3, 5); break;

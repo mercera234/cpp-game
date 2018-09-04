@@ -8,6 +8,7 @@ namespace RPGLibTester
 {
 	TEST_CLASS(ActorTest)
 	{
+		//TODO remove buildActor and replace with initTestActor
 		TEST_METHOD(gainMoney)
 		{
 			Actor* player = buildActor(ActorType::HUMAN);
@@ -26,7 +27,7 @@ namespace RPGLibTester
 
 			BoundInt* hp = &(player.stats.hp);
 
-			hp->setMax(maxHP);
+			hp->setCurrMax(maxHP);
 			hp->setCurr(10);
 
 			hp->maxOut();
@@ -61,7 +62,7 @@ namespace RPGLibTester
 			Actor* player = buildActor(ActorType::HUMAN);
 
 			int maxHP = 25;
-			player->stats.hp.setMax(maxHP);
+			player->stats.hp.setCurrMax(maxHP);
 			player->stats.hp.setCurr(1);
 
 			player->alterStat(StatType::HP, 30); //player is healed beyond max
@@ -71,9 +72,10 @@ namespace RPGLibTester
 
 		TEST_METHOD(isActorAlive)
 		{
-			Actor* player = buildActor(ActorType::HUMAN);
+			Actor player;
+			initTestActor(player);
 
-			Assert::IsTrue(isAlive(*player));
+			Assert::IsTrue(isAlive(player));
 		}
 
 		TEST_METHOD(isActorDead)

@@ -5,9 +5,21 @@
 
 EncounterTracker::EncounterTracker()
 {
-	srand((unsigned int)time(NULL));
+	initSeed();
 }
 
+EncounterTracker::EncounterTracker(int min, int max, int chanceIn)
+{
+	initSeed();
+	setMinSteps(min);
+	setMaxSteps(max);
+	setEncounterChance(chanceIn);
+}
+
+void EncounterTracker::initSeed()
+{
+	srand((unsigned int)time(NULL));
+}
 
 void EncounterTracker::setMinSteps(int value)
 {

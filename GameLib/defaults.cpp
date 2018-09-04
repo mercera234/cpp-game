@@ -1,5 +1,5 @@
+#include "defaults.h"
 #include "GameInput.h"
-#include "InputManager.h"
 #include "TUI.h"
 
 void defaultGameInputs(InputManager& inputManager)
@@ -26,4 +26,19 @@ int getInput(InputManager& inputManager)
 {
 	int input = getch();
 	return inputManager.getInput(input);
+}
+
+void setupDefaultDataKeys(ResourceManager& rm)
+{
+	BoundInt gold$(0, 9999999, 0);
+	rm.theData.storeIntData(GOLD$, gold$);
+	
+	BoundInt enemiesKilled(0, 9999999);
+	rm.theData.storeIntData(ENEMIES_KILLED, enemiesKilled);
+	
+	BoundInt battlesWon(0, 9999999);
+	rm.theData.storeIntData(BATTLES_WON, battlesWon);
+	
+	BoundInt stepsTaken(0, 9999999);
+	rm.theData.storeIntData(STEPS, stepsTaken);
 }

@@ -38,15 +38,39 @@ void TextField::init()
 	cursorPos = 0; //starts at beginning
 }
 
-
-void TextField::setCursorFocus()
+void TextField::setFocus(bool focusIn)
 {
-	curs_set(CURSOR_NORMAL); //TODO This is a global function! cursor needs to be unset once the control loses focus
+	Controllable::setFocus(focusIn);
 
-	//apply move globally to screen
-	//need to use :: to differentiate this from the Controllable move method
-	::move(scrY, scrX + cursorPos); //a known issue with using wmove combined with getch is why we're using move
+	int cursorType = CURSOR_INVISIBLE;
+
+	if (focus)
+	{
+		//apply move globally to screen
+		//need to use :: to differentiate this from the Controllable move method
+		::move(scrY, scrX + cursorPos); //a known issue with using wmove combined with getch is why we're using move
+
+		cursorType = CURSOR_NORMAL;
+	}
+
+	curs_set(cursorType);
 }
+
+//void TextField::setCursorFocus(bool cursorFocusOn)
+//{
+//	int cursorType = CURSOR_INVISIBLE;
+//	
+//	if (cursorFocusOn)
+//	{
+//		//apply move globally to screen
+//		//need to use :: to differentiate this from the Controllable move method
+//		::move(scrY, scrX + cursorPos); //a known issue with using wmove combined with getch is why we're using move
+//		
+//		cursorType = CURSOR_NORMAL;
+//	}
+//	
+//	curs_set(cursorType);
+//}
 
 bool TextField::deleteChar()
 {

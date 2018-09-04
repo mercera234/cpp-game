@@ -5,6 +5,9 @@
 #include "ControlManager.h"
 #include "SimpleControlCommand.h"
 #include "Actor.h"
+#include "TextBoard.h"
+#include "GameData.h"
+#include "TextParamValue.h"
 
 //Main Menu options
 enum MainMenuOption
@@ -21,9 +24,8 @@ enum MainMenuOption
 
 const int playerCapacity = 4;
 
-const int exitCode = 1;
-const int quitCode = 2;
-
+/*The main menu to be used in game for checking player status, using inventory items, etc...
+Designed for a 23 x 51 window. */
 class MainMenu : public Controllable
 {
 private:
@@ -31,13 +33,12 @@ private:
 	SimpleControlCommand<MainMenu> mainMenuCmd;
 	SimpleControlCommand<MainMenu> playerMenuCmd;
 
+	GameData* theData;
 
 	int leftFrameWidth;
 	int rightFrameWidth;
 	int topFrameHeight;
 	int bottomFrameHeight;
-
-
 
 
 	Frame mainFrame;
@@ -47,15 +48,26 @@ private:
 	GridMenu playerMenu;
 
 	Frame bodyFrame;
-	WINDOW* bodyWindow;
-	void drawBodyWindow();
-	
+	TextBoard bodyContent;
+	TextParamValue gold, steps, enemiesKilled, battlesWon;
+
+	TextBoard statusContent;
+	TextParamCurrMaxValue hpRow, mpRow;
+	TextParamValue strengthRow, defenseRow, intelRow, willRow, agilityRow, expRow;
+
+	Frame descFrame;
+	GridMenu descMenu;
 
 	int processMainMenuInput(Controllable* c, int input);
 	int processPlayerMenuInput(Controllable* c, int input);
 
 	void setupMainMenu();
 	void setupPlayerMenu();
+
+	void setupHubContent();
+	void setupStatusFields();
+	void setupStatusContent();
+	
 
 	std::vector<Actor*> allies;
 	int selectedAlly = -1;
@@ -64,10 +76,15 @@ public:
 	void addPlayerParty(std::vector<Actor*>& allies);
 	void draw();
 	int processInput(int input);
+	void setWindow(WINDOW* win);
 
 	~MainMenu();
 
-	static int mainMenuCallback(void* caller, void* ptr, int input);
-	static int playerMenuCallback(void* caller, void* ptr, int input);
+	/*static int mainMenuCallback(void* caller, void* ptr, int input);
+	static int playerMenuCallback(void* caller, void* ptr, int input);*/
+
+	void setData(GameData* gd);
+	//setters/getters
+	 
 };
 

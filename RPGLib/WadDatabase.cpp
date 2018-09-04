@@ -259,9 +259,9 @@ void WadDatabase::loadActorsFromTextFile(std::ifstream& textFile)
 		actor.getStat(StatType::EXP).setCurr(exp);
 		actor.getStat(StatType::MONEY).setCurr(money);
 
-		actor.getStat(StatType::HP).setMax(hp);
+		actor.getStat(StatType::HP).setCurrMax(hp);
 		actor.getStat(StatType::HP).maxOut();
-		actor.getStat(StatType::MP).setMax(mp);
+		actor.getStat(StatType::MP).setCurrMax(mp);
 		actor.getStat(StatType::MP).maxOut();
 
 		actor.getStat(StatType::STRENGTH).setCurr(str);

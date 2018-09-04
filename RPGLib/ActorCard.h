@@ -20,5 +20,6 @@ public:
 	Actor* getActor() { return actor; }
 	void applyDamage(int amount);
 	void setDamage(int amount) { damageTaken = amount; displayDamage = true; }
+	void setDisplayDamage(bool on) { displayDamage = on; }
 	void draw();
 };

@@ -168,7 +168,6 @@
     <ClInclude Include="TextField.h" />
     <ClInclude Include="TextLabel.h" />
     <ClInclude Include="TUI.h" />
-    <ClInclude Include="VarTextPiece.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Direction.cpp" />
@@ -206,6 +205,7 @@
     <ClCompile Include="TextBoard.cpp" />
     <ClCompile Include="TextField.cpp" />
     <ClCompile Include="TextLabel.cpp" />
+    <ClCompile Include="TextPiece.cpp" />
     <ClCompile Include="TUI.cpp" />
   </ItemGroup>
   <ItemGroup>

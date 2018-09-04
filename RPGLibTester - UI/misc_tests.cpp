@@ -1,5 +1,4 @@
 #include "WadDatabase.h"
-#include "ExplorationProcessor.h"
 #include "actor_helper.h"
 #include "MusicPlayer.h"
 //#include "BattleProcessor.h"
@@ -7,7 +6,8 @@
 //#include "MasterEditor.h"
 #include "misc_tests.h"
 #include "ActorRepository.h"
-
+#include "TextParamValue.h"
+#include "TextBoard.h"
 
 void repositoryTest()
 {
@@ -83,102 +83,7 @@ void wadDatabasePrintEmptyTest()
 	system("pause");
 }
 
-void exploreTest()
-{
-	int scrHeight = 23;
-	int scrWidth = 51;
-	resize_term(scrHeight, scrWidth);
 
-	bool playing = true;
-
-	WINDOW* screen = newwin(scrHeight, scrWidth, 0, 0);
-
-	//create 2 maps
-	Map map0(screen, "data\\water_templ.map");
-	Map map1(screen, "data\\water_templ2.map");
-	Map map2(screen, "data\\labyrinth.map");
-	//	Map map2 (screen, "data\\crypt.map");
-
-	//setup main character
-	Actor* mainC = loadActor("hero.actr", ActorType::HUMAN);
-	mainC->symbol = 'A';
-
-	mainC->x = 45;
-	mainC->y = 37;
-
-	map0.setControlActor(mainC);
-
-	curs_set(CURSOR_INVISIBLE);
-
-	MapRepository* repo = new MapRepository(64, 64);
-
-	ExplorationProcessor* mp = new ExplorationProcessor(&(mainC->y), &(mainC->x), repo);
-	unsigned short id0 = 0;
-	unsigned short id1 = 1;
-	unsigned short id2 = 2;
-	map0.setId(id0);
-	map1.setId(id1);
-	map2.setId(id2);
-
-	repo->addMapSeam(map0, map1, true, 0, 1, 1);
-	repo->addMapSeam(map2, map0, false, 0, 0, 1);
-	repo->addMapSeam(map2, map1, true, 0, 0, 1);
-	repo->add(map0); //could combine this without previous method
-	repo->add(map1);
-	repo->add(map2);
-
-	int currId = map0.getId();
-	mp->setCurrMap(currId);
-	mp->setViewMode(ViewMode::DYNAMIC); //position map so character is visible (not sure if this is the best way to do this)
-
-	MusicPlayer musicPlayer;
-	int ret = musicPlayer.playFile("01-02- 12 Microtonal Etudes, Op 28 I 16 notes Andantino.wav");
-
-	while (playing)
-	{
-		//draw map
-		mp->getCurrMap()->draw();
-
-		//update music if changing maps
-		if ((currId <= 1) && mp->getCurrMap()->getId() == 2)
-		{
-			musicPlayer.stop();
-			musicPlayer.playFile("11 CONTEMPLATIVE INTERMISSION.wav");
-			currId = mp->getCurrMap()->getId();
-		}
-		else if (currId == 2 && mp->getCurrMap()->getId() <= 1)
-		{
-			musicPlayer.stop();
-			musicPlayer.playFile("01-02- 12 Microtonal Etudes, Op 28 I 16 notes Andantino.wav");
-			currId = mp->getCurrMap()->getId();
-		}
-
-
-		//add y,x coordinates to screen
-		mvwprintw(screen, scrHeight - 2, scrWidth - 16, "y:%+4u x:%+4u", mainC->y, mainC->x);
-		wnoutrefresh(screen);
-
-		doupdate();
-
-		//process input
-		int input = getch();
-		switch (input)
-		{
-		case KEY_ESC: playing = false; break;
-		case KEY_RIGHT:
-		case KEY_LEFT:
-		case KEY_UP:
-		case KEY_DOWN:
-			mp->processMovementInput(input); break;
-		case '\t': //toggle automap
-			break;
-		default:
-			break;
-		}
-	}
-
-	delwin(screen); //when a window is shared by multiple controllable objects, they cannot be responsible for deleting the window, because other objects can't tell that it is deleted
-}
 
 
 void statusDisplayTest()
@@ -188,42 +93,42 @@ void statusDisplayTest()
 
 	Actor player;
 	BoundInt hp = player.getStat(StatType::HP);
-	hp.setMax(9999);
+	hp.setCurrMax(9999);
 	hp.setCurr(50);
 
 	BoundInt mp = player.getStat(StatType::MP);
-	mp.setMax(999);
+	mp.setCurrMax(999);
 	mp.setCurr(2);
 
 	int maxStat = 255;
 	BoundInt str = player.getStat(StatType::STRENGTH);
-	str.setMax(maxStat);
+	str.setCurrMax(maxStat);
 	str.setCurr(maxStat);
 
 	BoundInt def = player.getStat(StatType::DEFENSE);
-	def.setMax(maxStat);
+	def.setCurrMax(maxStat);
 	def.setCurr(maxStat);
 
 	BoundInt intl = player.getStat(StatType::INTELLIGENCE);
-	intl.setMax(maxStat);
+	intl.setCurrMax(maxStat);
 	intl.setCurr(maxStat);
 
 	BoundInt wil = player.getStat(StatType::WILL);
-	wil.setMax(maxStat);
+	wil.setCurrMax(maxStat);
 	wil.setCurr(maxStat);
 
 	BoundInt agi = player.getStat(StatType::AGILITY);
-	agi.setMax(maxStat);
+	agi.setCurrMax(maxStat);
 	agi.setCurr(maxStat);
 
 	BoundInt exp = player.getStat(StatType::EXP);
-	exp.setMax(9999999);
+	exp.setCurrMax(9999999);
 	exp.setCurr(9999999);
 
 	int toNext = 9999999;
 
-	mvwprintw(win, 1, 1, "      HP %+4u/%+4u", hp.getCurr(), hp.getMax());
-	mvwprintw(win, 2, 1, "      MP %+4u/%+4u", mp.getCurr(), mp.getMax());
+	mvwprintw(win, 1, 1, "      HP %+4u/%+4u", hp.getCurr(), hp.getCurrMax());
+	mvwprintw(win, 2, 1, "      MP %+4u/%+4u", mp.getCurr(), mp.getCurrMax());
 	mvwprintw(win, 3, 1, "Strength %-3u", str.getCurr());
 	mvwprintw(win, 4, 1, " Defense %-3u", def.getCurr());
 	mvwprintw(win, 5, 1, "   Intel %-3u", intl.getCurr());
@@ -238,6 +143,72 @@ void statusDisplayTest()
 	getch();
 }
 
+void textParamValueTest()
+{
+	WINDOW* win = newwin(5, 30, 1, 1);
+	wbkgd(win, COLOR_RED << BKGDCOLOR_OFFSET);//use this more often! very helpful!
+
+	LineFormat fmt(0, Justf::RIGHT);
+
+	BoundInt gold$(0, 9999999);
+	TextParamValue tpv;
+	tpv.setFormat(&fmt);
+	tpv.setText("Gold$");
+	tpv.setValue(&gold$);
+
+	tpv.draw(win);
+	wnoutrefresh(win);
+	doupdate();
+	getch();
+
+	gold$.setCurr(10000000);
+
+	tpv.draw(win);
+	wnoutrefresh(win);
+	doupdate();
+	getch();
+}
+
+void textBoardTest()
+{
+	WINDOW* win = newwin(5, 30, 1, 1);
+	wbkgd(win, COLOR_RED << BKGDCOLOR_OFFSET);//use this more often! very helpful!
+
+	LineFormat hpFmt(0, Justf::RIGHT);
+	BoundInt hp(0, 9999, 245);
+	hp.setCurrMax(500);
+
+	TextParamCurrMaxValue pcmv;
+	pcmv.setFormat(&hpFmt);
+	pcmv.setText("HP");
+	pcmv.setValue(&hp);
+	
+	LineFormat fmt(2, Justf::RIGHT);
+
+	BoundInt strength(0, 250, 47);
+	TextParamValue tpv;
+	tpv.setFormat(&fmt);
+	tpv.setText("Strength");
+	tpv.setValue(&strength);
+	
+	TextBoard board;
+	board.setWindow(win);
+	board.addPiece(&tpv);
+	board.addPiece(&pcmv);
+
+	board.draw();
+	wnoutrefresh(win);
+	doupdate();
+	getch();
+
+	strength.setCurr(358);
+	hp.setCurr(3);
+
+	board.draw();
+	wnoutrefresh(win);
+	doupdate();
+	getch();
+}
 
 
 //void dataPkgLoadTest()
@@ -316,26 +287,7 @@ void statusDisplayTest()
 
 
 
-//void mapEditorTest()
-//{
-//	/*Good lesson learned here. Always ensure that your terminal is sized to contain all windows that it renders or else window creation routines will return null*/
-//	resize_term(30, 150);
-//
-//
-//	MapEditor me;
-//
-//	mousemask(ALL_MOUSE_EVENTS | REPORT_MOUSE_POSITION, NULL);
-//	bool editing = true;
-//	while (editing) //simulate input/process/update loop
-//	{
-//		me.draw();
-//
-//		doupdate();
-//		int input = getch();
-//
-//		editing = me.processInput(input);
-//	}
-//}
+
 //
 //void actorEditorTest()
 //{

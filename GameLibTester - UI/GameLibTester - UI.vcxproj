@@ -155,13 +155,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="misc_tests.h" />
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="driver.cpp" />
     <ClCompile Include="misc_tests.cpp" />
-    <ClCompile Include="stdafx.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GameLib\GameLib.vcxproj">

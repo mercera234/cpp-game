@@ -7,11 +7,14 @@ void actorRepositoryTest();
 void wadDatabaseTest();
 void wadDatabasePrintEmptyTest();
 
-void exploreTest();
+
 
 void battleProcessorTest();
 
 void statusDisplayTest();
+
+void textParamValueTest();
+void textBoardTest();
 
 //these should maybe not be in here
 void mapEditorTest();

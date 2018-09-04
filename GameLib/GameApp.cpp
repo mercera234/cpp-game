@@ -15,6 +15,7 @@ GameApp::GameApp()
 	
 	//load resources
 	resourceManager.loadNullResources();
+	setupDefaultDataKeys(resourceManager);
 
 	std::ifstream is(actorFile);
 	resourceManager.loadActorsFromTextFile(is);

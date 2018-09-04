@@ -31,7 +31,7 @@ MapEditor::MapEditor()
 	visibleCols = screenWidth;
 
 	//TODO canvas default size is same as visible window? is this true?
-	setCanvasSize(64, 64);
+	setCanvasSize(screenHeight, screenWidth);
 
 	//setup map labels
 	setupRulers();
@@ -100,6 +100,34 @@ MapEditor::MapEditor()
 	mapEffectFilterPattern.setMap(&map);
 	mapEffectFilterPattern.setEnabled(false);
 
+	paletteCmd.setReceiver(this);
+	paletteCmd.setAction(&MapEditor::processPaletteInput);
+
+	canvasInputCmd.setReceiver(this);
+	canvasInputCmd.setAction(&MapEditor::canvasInputDriver);
+
+	mapCmd.setReceiver(this);
+	mapCmd.setAction(&MapEditor::processMapInput);
+
+	controlCmd.setReceiver(this);
+	controlCmd.setAction(&MapEditor::driver);
+
+	globalCmd.setReceiver(this);
+	globalCmd.setAction(&MapEditor::processGlobalInput);
+
+	//set editor level controls
+	newCmd.setReceiver(this);
+	newCmd.setAction(&MapEditor::confirmNewDialogDriver);
+
+	openCmd.setReceiver(this);
+	openCmd.setAction(&MapEditor::confirmOpenDialogDriver);
+
+	quitCmd.setReceiver(this);
+	quitCmd.setAction(&MapEditor::confirmQuitDialogDriver);
+
+	fileDialogCmd.setReceiver(this);
+	fileDialogCmd.setAction(&MapEditor::fileDialogDriver);
+
 	setupControlManager();
 }
 
@@ -114,27 +142,26 @@ void MapEditor::setConvenienceVariables()
 void MapEditor::setupControlManager()
 {
 	cm = new ControlManager(this);
-	cm->registerControl(&textPalette, MOUSE_LISTENER, paletteCallback);
-	cm->registerControl(&bkgdPalette, MOUSE_LISTENER, paletteCallback);
-	cm->registerControl(&toolPalette, MOUSE_LISTENER, paletteCallback);
-	cm->registerControl(&filterPalette, MOUSE_LISTENER, paletteCallback);
-	cm->registerControl(&canvasRowsInput, KEY_LISTENER | MOUSE_LISTENER, canvasInputCallback);
-	cm->registerControl(&canvasColsInput, KEY_LISTENER | MOUSE_LISTENER, canvasInputCallback);
-	cm->registerControl(&map, KEY_LISTENER | MOUSE_LISTENER, mapCallback);
-	cm->setFocus(&map);
+	cm->registerControl(&textPalette, MOUSE_LISTENER, &paletteCmd);
+	cm->registerControl(&bkgdPalette, MOUSE_LISTENER, &paletteCmd);
+	cm->registerControl(&toolPalette, MOUSE_LISTENER, &paletteCmd);
+	cm->registerControl(&filterPalette, MOUSE_LISTENER, &paletteCmd);
+	cm->registerControl(&canvasRowsInput, KEY_LISTENER | MOUSE_LISTENER, &canvasInputCmd);
+	cm->registerControl(&canvasColsInput, KEY_LISTENER | MOUSE_LISTENER, &canvasInputCmd);
 	cm->registerControl(&mapEffectFilterPattern, 0, 0);
-
 	cm->registerControl(fileNameLbl, 0, 0);
 	cm->registerControl(&topRuler, 0, 0);
 	cm->registerControl(&xyLbl, 0, 0);
 	cm->registerControl(&hLbl, 0, 0);
 	cm->registerControl(&wLbl, 0, 0);
-	cm->registerControl(&resizeBtn, MOUSE_LISTENER, controlCallback);
+	cm->registerControl(&resizeBtn, MOUSE_LISTENER, &controlCmd);
+	cm->registerControl(&map, KEY_LISTENER | MOUSE_LISTENER, &mapCmd);
+	cm->setFocus(&map);
 	
-	cm->registerShortcutKey(KEY_ESC, globalCallback);
-	cm->registerShortcutKey(CTRL_N, globalCallback);
-	cm->registerShortcutKey(CTRL_S, globalCallback);
-	cm->registerShortcutKey(CTRL_O, globalCallback);
+	cm->registerShortcutKey(KEY_ESC, &globalCmd);
+	cm->registerShortcutKey(CTRL_N, &globalCmd);
+	cm->registerShortcutKey(CTRL_S, &globalCmd);
+	cm->registerShortcutKey(CTRL_O, &globalCmd);
 }
 
 void MapEditor::setupPalettes()
@@ -152,11 +179,11 @@ void MapEditor::setupPalettes()
 	bkgdPalette.setTitle("BKGD");
 	bkgdPalette.setWindows(topRulerRow + 7, paletteLeftEdge, rows, cols);
 	bkgdPalette.setFocusable(false);
-
+	
 	toolPalette.setTitle("TOOL");
 	toolPalette.setWindows(topRulerRow + 14, paletteLeftEdge, 1, 3);
 	toolPalette.setFocusable(false);
-
+	
 	filterPalette.setTitle("FILTER");
 	filterPalette.setWindows(topRulerRow + 18, paletteLeftEdge, 2, cols);
 	filterPalette.setFocusable(false);
@@ -171,6 +198,8 @@ void MapEditor::setupPalettes()
 		textPalette.setItem(colorNames[i], c, i);
 		bkgdPalette.setItem(colorNames[i], c, i);
 	}
+	textPalette.setCurrentItem(0);
+	bkgdPalette.setCurrentItem(0);
 	textPalette.post(true);
 	bkgdPalette.post(true);
 	
@@ -182,6 +211,7 @@ void MapEditor::setupPalettes()
 	toolPalette.setItem("Fill", 'F', 1);
 	toolPalette.setItem("Brush", 'B', 2);
 
+	toolPalette.setCurrentItem(0);
 	toolPalette.post(true);
 	tool = DOT;
 
@@ -195,6 +225,7 @@ void MapEditor::setupPalettes()
 	filterPalette.setItem("Save", F_SAVEABLE | COLOR_PAIR(COLOR_BLUE_BOLD), 6);
 	filterPalette.setItem("Exit", F_EXIT | COLOR_PAIR(COLOR_GREEN_BOLD), 7);
 
+	filterPalette.setCurrentItem(0);
 	filterPalette.post(true);
 }
 
@@ -227,10 +258,9 @@ void MapEditor::setupRulers()
 }
 
 
-bool MapEditor::processInput(int input)
+int MapEditor::processInput(int input)
 {
-	cm->handleInput(input);
-	return cm->isActive();
+	return cm->handleInput(input);
 }
 
 
@@ -242,13 +272,13 @@ void MapEditor::createNew()
 	cm->setFocus(&map);
 }
 
-void MapEditor::controlCallback(void* caller, void* ptr, int input) //static
-{
-	MapEditor* me = (MapEditor*)caller;
-	me->driver((Controllable*)ptr, input);
-}
+//void MapEditor::controlCallback(void* caller, void* ptr, int input) //static
+//{
+//	MapEditor* me = (MapEditor*)caller;
+//	me->driver((Controllable*)ptr, input);
+//}
 
-void MapEditor::driver(Controllable* control, int input)
+int MapEditor::driver(Controllable* control, int input)
 {
 	if (control == &resizeBtn)
 		resizeButtonDriver(); //input is discarded, it is just the value of the mouse key
@@ -256,31 +286,33 @@ void MapEditor::driver(Controllable* control, int input)
 		targetMenuDriver(input);
 	else if (control == msgDisplay)
 		displayDriver(input);*/
+	return HANDLED;
 }
 
 
 
-void MapEditor::paletteCallback(void* caller, void* ptr, int input) //static
-{
-	MapEditor* me = (MapEditor*) caller;
-	me->processPaletteInput((Palette*)ptr, input);
-}
+//void MapEditor::paletteCallback(void* caller, void* ptr, int input) //static
+//{
+//	MapEditor* me = (MapEditor*) caller;
+//	me->processPaletteInput((Palette*)ptr, input);
+//}
+//
+//void MapEditor::mapCallback(void* caller, void* ptr, int input) //static
+//{
+//	MapEditor* me = (MapEditor*)caller;
+//	me->processMapInput(input);
+//}
+//
+//
+//void MapEditor::canvasInputCallback(void* caller, void* ptr, int input) //static
+//{
+//	MapEditor* me = (MapEditor*)caller;
+//	me->canvasInputDriver((TextField*)ptr, input);
+//}
 
-void MapEditor::mapCallback(void* caller, void* ptr, int input) //static
+int MapEditor::canvasInputDriver(Controllable* c, int input)
 {
-	MapEditor* me = (MapEditor*)caller;
-	me->processMapInput(input);
-}
-
-
-void MapEditor::canvasInputCallback(void* caller, void* ptr, int input) //static
-{
-	MapEditor* me = (MapEditor*)caller;
-	me->canvasInputDriver((TextField*)ptr, input);
-}
-
-void MapEditor::canvasInputDriver(TextField* field, int input)
-{
+	TextField* field = (TextField*)c;
 	switch (input)
 	{
 	case KEY_MOUSE: //cm->setFocus(field); 
@@ -293,11 +325,12 @@ void MapEditor::canvasInputDriver(TextField* field, int input)
 	}
 
 
-
+	return HANDLED;
 }
 
 void MapEditor::resizeButtonDriver()
 {
+	setModified(true);
 	int rows = stoi(canvasRowsInput.getText());
 	int cols = stoi(canvasColsInput.getText());
 	setCanvasSize(rows, cols);
@@ -337,10 +370,12 @@ void MapEditor::save(std::string fileName)
 }
 
 
-void MapEditor::processPaletteInput(Palette* p, int input)
+int MapEditor::processPaletteInput(Controllable* c, int input)
 {
 	MEVENT event;
 	nc_getmouse(&event);
+
+	Palette* p = (Palette*)c;
 
 	int pY = event.y;
 	int	pX = event.x;
@@ -349,6 +384,7 @@ void MapEditor::processPaletteInput(Palette* p, int input)
 	p->driver(input);
 	LineItem* item = (LineItem*)p->getCurrentItem();
 
+	int exitCode = HANDLED;
 	if (p == &textPalette)
 	{
 		textColor = (item->index << 24) & A_COLOR; //it might make more sense to use the icon, but this is backwards compatible with what I had
@@ -363,18 +399,19 @@ void MapEditor::processPaletteInput(Palette* p, int input)
 	}
 	else if (p == &filterPalette)
 	{
-		processFilterPaletteInput(item->getIcon());
+		exitCode = processFilterPaletteInput(item->getIcon());
 	}
+	return exitCode;
 }
 
 
-void MapEditor::processFilterPaletteInput(chtype icon)
+int MapEditor::processFilterPaletteInput(chtype icon)
 {
 	filter = EffectType::NONE;
 	int symbol = (icon & 0x0000ffff);
 	switch (symbol)
 	{
-	case F_NO_FILTER: mapEffectFilterPattern.setEnabled(false); return; break;
+	case F_NO_FILTER: mapEffectFilterPattern.setEnabled(false); return HANDLED; break;
 	case F_OBSTR: filter = EffectType::OBSTR; break;
 	case F_JUMPABLE: filter = EffectType::JUMPABLE; break;
 //	case F_DMG_CONST: filter = E_HP_ALT_CONST; break;
@@ -384,6 +421,8 @@ void MapEditor::processFilterPaletteInput(chtype icon)
 //	case F_EXIT: filter = E_EXIT; break;
 	}
 	mapEffectFilterPattern.setEnabled(true);
+
+	return HANDLED;
 }
 
 
@@ -449,7 +488,7 @@ void MapEditor::processShiftDirectionalInput(int input)
 }
 
 
-bool MapEditor::processMapInput(int input)
+int MapEditor::processMapInput(Controllable* c, int input)
 {
 	switch (input)
 	{
@@ -534,7 +573,7 @@ bool MapEditor::processMapInput(int input)
 		
 		break;
 	}
-	return true;
+	return HANDLED;
 }
 
 
