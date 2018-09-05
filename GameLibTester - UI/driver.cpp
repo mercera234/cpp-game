@@ -11,7 +11,7 @@ int main()
 
 
 
-	exploreTest();
+	exploreOneMapTest();
 
 
 

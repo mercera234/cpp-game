@@ -15,7 +15,7 @@ protected:
 	bool showing = true; //true if should be drawn 
 	bool focus = false; //true if the controllable has focus
 	bool standout = false; //true if the control should be drawn with bold attribute on
-	bool acceptsMouseInput; 
+	bool acceptsMouseInput = false; //true if the control can accept mouse input
 
 	//Rect* r; //A rectangle to save the true dimensions of the window in case it should go off screen
 	

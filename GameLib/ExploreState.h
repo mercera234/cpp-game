@@ -3,7 +3,6 @@
 #include "ExplorationProcessor.h"
 #include "MapRepository.h"
 #include "WadDatabase.h"
-#include "StepTracker.h"
 #include "EncounterTracker.h"
 
 
@@ -15,13 +14,14 @@ private:
 	ExplorationProcessor explorationProcessor;
 	MapRepository mapRepo;
 	Map* map;
-	Actor* player1;
+	Actor player1;
 
-	StepTracker stepTracker;
 	EncounterTracker encounterTracker;
 	
+	void loadResourceManagerData();
 
 	void processDirectionalInput(int input);
+	void processStepTaken(Axis stepAxis);
 public:
 	static GameState* getInstance(); //since static, cannot be virtual in super class
 	void initDefaults();

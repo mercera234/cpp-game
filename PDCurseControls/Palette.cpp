@@ -28,6 +28,9 @@ void Palette::setWindows(unsigned short y, unsigned short x, unsigned short menu
 	menu.resetItems(menuRows, menuCols);
 
 	selection.setWindow(newwin(1, paletteWidth, menuY + menuRows, x));
+
+	title.setFormat(new LineFormat());
+	selection.setFormat(new LineFormat());
 }
 
 

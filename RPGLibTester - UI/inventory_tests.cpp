@@ -5,7 +5,6 @@
 void inventoryTest() 
 {
 	resize_term(screenHeight, screenWidth);
-	curs_set(CURSOR_INVISIBLE);
 
 	GameItem* item1 = new GameItem;
 	item1->name = "Cell Water";

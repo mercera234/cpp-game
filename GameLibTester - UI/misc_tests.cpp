@@ -162,7 +162,7 @@ void battleProcessorTest()
 	}
 }
 
-void exploreTest()
+void exploreMegaMapTest()
 {
 	resize_term(screenHeight, screenWidth);
 
@@ -264,6 +264,84 @@ void exploreTest()
 			mp.processMovementInput(input); break;
 		case '\t': //toggle automap
 			break;
+		default:
+			break;
+		}
+	}
+
+	delwin(screen);
+}
+
+
+void exploreOneMapTest()
+{
+	resize_term(screenHeight, screenWidth);
+
+	bool playing = true;
+
+	WINDOW* screen = newwin(screenHeight, screenWidth, 0, 0);
+
+	ResourceManager rm;
+	setupDefaultDataKeys(rm);
+
+	rm.loadNullResources();
+	//std::ifstream is(actorFile);
+	//rm.loadActorsFromTextFile(is);
+
+	FileDirectory dataDir(dataDirName);
+	rm.loadGameMapsFromDir(dataDir);
+
+	Map map0 = rm.gameMaps[5];
+	map0.setWindow(screen);
+
+	//setup main character
+	Actor mainC;
+	initTestActor(mainC);
+	mainC.name = "hero.actr";
+	mainC.type = ActorType::HUMAN;
+	mainC.symbol = 'A' | COLOR_YELLOW_BOLD << TEXTCOLOR_OFFSET;
+	mainC.x = 3;
+	mainC.y = 9;
+
+	map0.setControlActor(&mainC);
+
+	MapRepository repo(23, 51);
+
+	ExplorationProcessor mp(&(mainC.y), &(mainC.x), &repo);
+	unsigned short id0 = 0;
+	map0.setId(id0);
+	
+	repo.add(map0); //could combine this without previous method
+	
+	int currId = map0.getId();
+	mp.setCurrMap(currId);
+	mp.setViewMode(ViewMode::DYNAMIC); //position map so character is visible (not sure if this is the best way to do this)
+
+	while (playing)
+	{
+		//draw map
+		mp.draw();
+
+		//add y,x coordinates to screen
+		mvwprintw(screen, screenHeight - 2, screenWidth - 16, "y:%+4u x:%+4u", mainC.y, mainC.x);
+		wnoutrefresh(screen);
+
+		doupdate();
+
+		//process input
+		int input = getch();
+		switch (input)
+		{
+		case KEY_ESC: playing = false; break;
+		case KEY_RIGHT:
+		case KEY_LEFT:
+		case KEY_UP:
+		case KEY_DOWN:
+			mp.processMovementInput(input); break;
+		case '\t': //toggle automap
+			break;
+		case '+': mp.setClipMode(true); break;
+		case '-': mp.setClipMode(false); break;
 		default:
 			break;
 		}

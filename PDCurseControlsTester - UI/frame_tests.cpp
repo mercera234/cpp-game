@@ -1,5 +1,6 @@
 #include "Frame.h"
 #include "GridMenu.h"
+#include "Image.h"
 
 void frameTest()
 {
@@ -35,4 +36,44 @@ void drawEmptyFrameTest()
 	getch();
 
 	delwin(win);
+}
+
+void frameWithImageTest()
+{
+	resize_term(30, 100);
+
+	Image img;
+	img.setWindow(newwin(10, 10, 1, 1));
+	img.setDimensions(5, 5);
+
+	Frame frame;
+	frame.setWindow(newwin(12, 12, 0, 0));
+	frame.setControl(&img);
+
+	int y = -1;
+	int x = -1;
+	img.setPosition(y, x);
+	TwoDStorage<chtype>* tileMap = img.getTileMap();
+	tileMap->fill('!' | COLOR_BLUE << BKGDCOLOR_OFFSET);
+
+	bool playing = true;
+	while (playing)
+	{
+		frame.draw();
+		doupdate();
+		int c = getch();
+
+		switch (c)
+		{
+		case KEY_DOWN: y--; break;
+		case KEY_UP: y++; break;
+		case KEY_LEFT: x++; break;
+		case KEY_RIGHT: x--; break;
+		case KEY_ESC:
+			playing = false;
+			continue;
+			break;
+		}
+		img.setPosition(y, x);
+	}
 }

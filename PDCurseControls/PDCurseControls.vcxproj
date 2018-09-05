@@ -186,7 +186,6 @@
     <ClCompile Include="FileDirectory.cpp" />
     <ClCompile Include="FilterPattern.cpp" />
     <ClCompile Include="Form.cpp" />
-    <ClCompile Include="FormControl.cpp" />
     <ClCompile Include="FormField.cpp" />
     <ClCompile Include="Frame.cpp" />
     <ClCompile Include="GraphMenu.cpp" />

@@ -22,14 +22,37 @@ GameState* ExploreState::getInstance()
 
 ExploreState::ExploreState()
 {
-	win = newwin(screenHeight, screenWidth, 0, 0);
+	
 }
 
 
 void ExploreState::initDefaults()
 {
+	//like starting a new game here
+	setupDefaultDataKeys(*resourceManager);
+
+	loadResourceManagerData();
+
+	//setup exploration processor
+	map->setControlActor(&player1);
+	map->setWindow(newwin(screenHeight, screenWidth, 0, 0));
+
+	mapRepo.add(*map);
+	explorationProcessor.setMapRepo(&mapRepo);
+	explorationProcessor.setCursor(&(player1.y), &(player1.x));
+	explorationProcessor.setCurrMap(map->getId());
+	explorationProcessor.setViewMode(ViewMode::DYNAMIC);
+
+	//setup trackers
+	encounterTracker.setMinSteps(minPeaceSteps);
+	encounterTracker.setMaxSteps(maxPeaceSteps);
+	encounterTracker.setEncounterChance(encounterChance);
+}
+
+void ExploreState::loadResourceManagerData()
+{
 	//load default map
-	auto it = resourceManager->gameMaps.find(startingMapId); 
+	auto it = resourceManager->gameMaps.find(startingMapId);
 	if (it == resourceManager->gameMaps.end())
 	{
 		it = resourceManager->gameMaps.find(nullId); //load null map if default isn't found
@@ -42,30 +65,16 @@ void ExploreState::initDefaults()
 	{
 		it2 = resourceManager->actors.find(nullName); //loud null Actor if default isn't found
 	}
-	player1 = &(it2->second);
-	player1->type = ActorType::HUMAN;
+	player1 = (it2->second); //get copy of player1
+	player1.type = ActorType::HUMAN;
 
 	//set start position
-	player1->x = startX;
-	player1->y = startY;
-	
-	//store actor in playerParty TODO I may not want to do it like this
-	resourceManager->playerParty.push_back(player1);
+	player1.x = startX;
+	player1.y = startY;
 
-	//setup exploration processor
-	map->setControlActor(player1);
-	map->setWindow(win);
+	resourceManager->playerParty.clear(); //clear out old data first
+	resourceManager->playerParty.push_back(&player1);
 
-	mapRepo.add(*map);
-	explorationProcessor.setMapRepo(&mapRepo);
-	explorationProcessor.setCursor(&(player1->y), &(player1->x));
-	explorationProcessor.setCurrMap(map->getId());
-	explorationProcessor.setViewMode(ViewMode::DYNAMIC);
-
-	//setup trackers
-	encounterTracker.setMinSteps(14);
-	encounterTracker.setMaxSteps(60);
-	encounterTracker.setEncounterChance(5);
 }
 
 
@@ -79,6 +88,26 @@ void ExploreState::unloadState()
 	
 }
 
+void ExploreState::processStepTaken(Axis stepAxis)
+{
+	resourceManager->theData.alterIntData(STEPS, 1);
+	
+	encounterTracker.takeStep(stepAxis);
+	if (encounterTracker.didEncounterOccur())
+	{
+		//change state to battle state and load the appropriate enemy details
+		GameState* state = BattleState::getInstance();
+		getManager()->setState(state);
+		encounterTracker.resetSteps(); //prepare for next time
+
+		//get enemy pool from current map
+
+		//get specific enemy group
+
+		//pass enemies into BattleState
+	}
+}
+
 void ExploreState::processDirectionalInput(int input)
 {
 	bool stepTaken = false;
@@ -90,31 +119,25 @@ void ExploreState::processDirectionalInput(int input)
 	case GameInput::LEFT_INPUT: stepTaken = explorationProcessor.processMovementInput(KEY_LEFT); break;
 	case GameInput::RIGHT_INPUT: stepTaken = explorationProcessor.processMovementInput(KEY_RIGHT); break;
 	}
-	
+
+	//verify that actor is still alive
+	if (isAlive(player1) == false)
+	{
+		player1.symbol = nullSymbol;
+		return;
+	}
+
 	if (stepTaken)
 	{
-		stepTracker.addStep(); //a full step was taken
-		encounterTracker.takeStep(stepAxis);
-		if (encounterTracker.didEncounterOccur())
-		{
-			//change state to battle state and load the appropriate enemy details
-			GameState* state = BattleState::getInstance();
-			getManager()->setState(state);
-			encounterTracker.resetSteps(); //prepare for next time
-
-			//get enemy pool from current map
-
-			//get specific enemy group
-
-			//pass enemies into BattleState
-		}
+		processStepTaken(stepAxis);
 	}
 }
 
 void ExploreState::processInput(GameStateManager& manager, int input)
 {
-	bool stepTaken = false;
-	Axis stepAxis = Axis::HORIZONTAL;
+	if (isAlive(player1) == false && input != GameInput::OK_INPUT) //only accept ok input if player has died
+		return;
+
 	switch (input)
 	{	
 	case GameInput::UP_INPUT: 
@@ -129,8 +152,19 @@ void ExploreState::processInput(GameStateManager& manager, int input)
 		manager.setState(state);
 	}
 	break;
+	case GameInput::TOGGLE_ENCOUNTERS:
+	{
+		int chance = encounterTracker.getEncounterChance() > 0 ? 0 : encounterChance;
+		encounterTracker.setEncounterChance(chance);
+	}
+		
+		break;
 	case GameInput::OK_INPUT:
-	
+		if (isAlive(player1) == false)
+		{
+			GameState* state = TitleScreenState::getInstance();
+			manager.setState(state);
+		}
 		break;
 	case GameInput::OPEN_MENU_INPUT: 
 	{
@@ -147,8 +181,6 @@ void ExploreState::processInput(GameStateManager& manager, int input)
 
 void ExploreState::draw()
 {
-	werase(win);
-	
 	Map* m = explorationProcessor.getCurrMap();
 	m->draw();	
 }

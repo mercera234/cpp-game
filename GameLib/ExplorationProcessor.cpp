@@ -35,6 +35,30 @@ void ExplorationProcessor::setCurrMap(unsigned short id)
 	moveControl = currMap->getDisplay();
 }
 
+bool ExplorationProcessor::findMapExit(Boundary& edge, Movement& move )
+{
+	MapExit* sourceExit = new MapExit();
+	sourceExit->mapId = currMap->getId();
+	sourceExit->edge = edge;
+
+	Axis axis = getAxis(move.dir);
+
+	int* perpAxis = (axis == Axis::HORIZONTAL) ? curY : curX;
+	int unitMapSize = (axis == Axis::HORIZONTAL) ? mapRepo->getUnitMapHeight() : mapRepo->getUnitMapWidth();
+	sourceExit->unit = *perpAxis / unitMapSize;
+
+	MapExit* destExit = mapRepo->getExit(sourceExit);
+
+	if (destExit == nullptr) //no opening found, reverse the step
+	{
+		reverseMovement(move);
+		return false;
+	}
+
+	moveActorAcrossMapSeam(*sourceExit, *destExit); //it->second is destination map
+	return true;
+}
+
 
 bool ExplorationProcessor::processMovement(Movement& move)
 {
@@ -46,36 +70,53 @@ bool ExplorationProcessor::processMovement(Movement& move)
 	if (edge != Boundary::IN_BOUNDS) //walked off edge
 	{
 		//search for exit for this map using the mapId, edge, and unit
+		findMapExit(edge, move);
+	}
+	else if(clipMode == false)//still on same map, and we're not clipping
+	{			
+		//check what character stepped on
+		TwoDStorage<EffectType>& eLayer = currMap->getEffectsLayer();
+		EffectType type = eLayer.getDatum(*curY, *curX);
 
-		MapExit* sourceExit = new MapExit();
-		sourceExit->mapId = currMap->getId();
-		sourceExit->edge = edge;
-
-		Axis axis = getAxis(move.dir);
-
-		int* perpAxis = (axis == Axis::HORIZONTAL) ? curY : curX;
-		int unitMapSize = (axis == Axis::HORIZONTAL) ? mapRepo->getUnitMapHeight() : mapRepo->getUnitMapWidth();
-		sourceExit->unit = *perpAxis / unitMapSize;
-
-		MapExit* destExit = mapRepo->getExit(sourceExit);
-
-		if (destExit == nullptr) //no opening found, reverse the step
+		switch (type)
 		{
-			Movement reverseMove(move.dir, -move.magnitude);
-			moveCursor(reverseMove);
+		case EffectType::OBSTR: 
+			reverseMovement(move); 
 			return false;
+			break;
+		case EffectType::HP_DECREASE: currMap->alterActorHP(-1); break;
+		case EffectType::HP_INCREASE: 
+		{
+			Actor* actor = currMap->getControlActor();
+			currMap->alterActorHP(actor->getStat(StatType::HP).getCurrMax());
+		}
+			break;
+		case EffectType::JUMPABLE: 
+			//check if tile beyond is passable
+			if (jumpGap > 0) //can't cross 2 jump blocks in a row
+			{
+				reverseMovement(move);
+				return false;
+			}
+
+			jumpGap++;
+			if (processMovement(move) == false) //move again to test next block
+			{
+				jumpGap = 0; //reset jumpGap
+				reverseMovement(move);
+				return false;
+			}
+			jumpGap = 0;
+			break;
+			//check that map control actor has jump capacity
 		}
 
-		moveActorAcrossMapSeam(*sourceExit, *destExit); //it->second is destination map
-		return true;
-	}
-	else //still on same map
-	{
 		
 
 	}
 
 	adjustView();
+
 
 	return true;
 }
@@ -122,4 +163,5 @@ void ExplorationProcessor::moveActorAcrossMapSeam(MapExit& fromMap, MapExit& toM
 void ExplorationProcessor::draw()
 {
 	currMap->draw();
+
 }

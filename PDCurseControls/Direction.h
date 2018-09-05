@@ -1,7 +1,8 @@
 #pragma once
 #include <vector>
 
-//TODO consider renaming this file to Motion.h
+
+
 struct Position
 {
 	int y = -1;
@@ -35,7 +36,29 @@ enum class Axis
 	VERTICAL
 };
 
-const std::vector<Dir> allDirs({ Dir::UP, Dir::DOWN, Dir::LEFT, Dir::RIGHT});
+const std::vector<Dir> allDirs({ Dir::UP, Dir::DOWN, Dir::LEFT, Dir::RIGHT });
 
 Dir getOppositeDir(Dir dir);
 Axis getAxis(Dir dir);
+
+//TODO create a ChainedMovement object that can track multiple movements
+struct Movement
+{
+	int magnitude = 0;
+	Dir dir = Dir::UNKNOWN;
+
+	Movement() {}
+	Movement(Dir d, int mag) {
+		dir = d; magnitude = mag;
+	}
+
+	Movement getOppositeMove()
+	{
+		Movement m;
+		m.dir = getOppositeDir(dir);
+		m.magnitude = magnitude;
+		return m;
+	}
+};
+
+

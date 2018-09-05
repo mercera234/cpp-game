@@ -2,3 +2,4 @@
 
 void frameTest();
 void drawEmptyFrameTest();
+void frameWithImageTest();

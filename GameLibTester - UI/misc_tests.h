@@ -2,4 +2,5 @@
 
 void mainMenuTest();
 void battleProcessorTest();
-void exploreTest();
+void exploreMegaMapTest();
+void exploreOneMapTest();

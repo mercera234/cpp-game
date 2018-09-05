@@ -5,9 +5,13 @@
 
 //game defaults
 const std::string player1Name = "Hero";
-const int startingMapId = 12;
-const int startY = 0;
-const int startX = 0;
+const int startingMapId = 5;
+const int startY = 9;
+const int startX = 3;
+
+const int minPeaceSteps = 14;
+const int maxPeaceSteps = 60;
+const int encounterChance = 5;//percent chance
 
 const std::string actorFile = "data\\actors.txt";
 const std::string dataDirName = "data";

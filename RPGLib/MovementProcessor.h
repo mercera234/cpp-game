@@ -10,26 +10,6 @@ enum class ViewMode
 };
 
 
-struct Movement
-{
-	int magnitude = 0;
-	Dir dir;
-
-	Movement() {}
-	Movement(Dir d, int mag) {
-		dir = d; magnitude = mag;
-	}
-
-	Movement getOppositeMove()
-	{
-		Movement m;
-		m.dir = getOppositeDir(dir);
-		m.magnitude = magnitude;
-		return m;
-	}
-};
-
-
 class MovementProcessor
 {
 protected:
@@ -60,7 +40,13 @@ protected:
 
 	int getMoveMagnitudeFromKey(int key);
 	Direction getDirectionFromKey(int key);
+
+	/*Process movement after pressing Home or End keys. 
+	Return value is the move that was taken.*/
 	bool processHomeEndInput(int key);
+
+	/*Process movement after pressing directional arrows. 
+	Return value is the move that was taken.*/
 	bool processDirectionalInput(Dir input, int magnitude);
 	void moveCursor(Movement& move);
 
@@ -75,12 +61,13 @@ protected:
 	bool inWindow();
 
 	/* Adjust the view if viewMode is set to dynamic. Adjustment occurs when cursor is too close to the boundaries of control.*/
-	//void adjustDynamicView(int step, Dir dirInput);
-
-	//virtual bool processStep(int* axis, int step, Dir dirInput) = 0;
 	virtual bool processMovement(Movement& move) = 0;
+	void reverseMovement(Movement& move);
 	
 public:
+	/*TODO, this should return the total movement taken, and not just success or fail
+	Process movement after pressing any key.
+	Return value is the move that was taken.*/
 	bool processMovementInput(int input);
 
 	//getters/setters

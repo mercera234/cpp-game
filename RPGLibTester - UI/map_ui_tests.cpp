@@ -648,7 +648,7 @@ void hiLevelMapTest()
 
 	Image* img = autoMap.getDisplay();
 
-	curs_set(CURSOR_INVISIBLE);
+	
 	FreeMovementProcessor mp(img, &curY, &curX);
 	mp.setViewMode(ViewMode::CENTER);
 	bool playing = true;
@@ -784,7 +784,7 @@ void animationTest()
 	SpiralBlitAnimation anim(img);
 	anim.setSpeed(4); //4 is optimum speed for spiral
 
-	curs_set(CURSOR_INVISIBLE);
+	
 	bool playing = true;
 	bool dir = true;
 

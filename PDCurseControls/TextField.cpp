@@ -6,14 +6,11 @@
 
 TextField::TextField()
 {
-	init();
 }
 
 
 TextField::TextField(unsigned int length, unsigned short y, unsigned short x)
 {
-	init();
-
 	setupField(length, y, x);
 }
 
@@ -29,20 +26,13 @@ void TextField::setupField(unsigned int length, unsigned short y, unsigned short
 	setDimensions(1, winLength);
 }
 
-void TextField::init()
-{
-	focusable = true;
-	acceptsMouseInput = false;
-	setEditable(true);
 
-	cursorPos = 0; //starts at beginning
-}
 
 void TextField::setFocus(bool focusIn)
 {
 	Controllable::setFocus(focusIn);
 
-	int cursorType = CURSOR_INVISIBLE;
+	CursorType type = CursorType::INVISIBLE;
 
 	if (focus)
 	{
@@ -50,27 +40,12 @@ void TextField::setFocus(bool focusIn)
 		//need to use :: to differentiate this from the Controllable move method
 		::move(scrY, scrX + cursorPos); //a known issue with using wmove combined with getch is why we're using move
 
-		cursorType = CURSOR_NORMAL;
+		type = CursorType::NORMAL;
 	}
 
-	curs_set(cursorType);
+	setCursorType(type);
 }
 
-//void TextField::setCursorFocus(bool cursorFocusOn)
-//{
-//	int cursorType = CURSOR_INVISIBLE;
-//	
-//	if (cursorFocusOn)
-//	{
-//		//apply move globally to screen
-//		//need to use :: to differentiate this from the Controllable move method
-//		::move(scrY, scrX + cursorPos); //a known issue with using wmove combined with getch is why we're using move
-//		
-//		cursorType = CURSOR_NORMAL;
-//	}
-//	
-//	curs_set(cursorType);
-//}
 
 bool TextField::deleteChar()
 {

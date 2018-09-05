@@ -54,6 +54,7 @@ void FileChooser::setupChooser(WINDOW* win)
 	int purposeLblWidth = 10;
 	purposeLbl.setWindow(newwin(1, purposeLblWidth, begY, begX));
 	purposeLbl.setText(msg);
+	purposeLbl.setFormat(new LineFormat);
 
 	//setup path label
 	int height = getmaxy(win); //height required is a minimum of 5
@@ -61,7 +62,7 @@ void FileChooser::setupChooser(WINDOW* win)
 	pathWidth = dialogWidth - purposeLblWidth - 1; //a gap between purpose and path labels
 
 	pathLbl.setWindow(newwin(1, pathWidth, begY, begX + purposeLblWidth + 1));
-
+	pathLbl.setFormat(new LineFormat);
 
 	//setup file listing
 	fileMenu.setWindow(newwin(height - 4, dialogWidth - 1, begY + 2, begX));

@@ -169,7 +169,7 @@ void BattleProcessor::initMessageDisplay()
 	//set message display
 	int msgDisplayRows = 4;
 	msgDisplay = new TextLabel(newwin(msgDisplayRows, visibleCols - 2, visibleRows - 5, 1), "");
-	msgDisplay->setJustification(Justf::CENTER);
+	msgDisplay->setFormat(new LineFormat(0, Justf::CENTER));
 }
 
 void BattleProcessor::initControlManager()
@@ -194,7 +194,6 @@ bool BattleProcessor::advanceTurn()
 
 	Actor* next = turnHolder->getActor();
 
-	
 	switch (next->type)
 	{
 	case ActorType::HUMAN:
@@ -215,6 +214,9 @@ bool BattleProcessor::advanceTurn()
 
 void BattleProcessor::draw()
 {
+	werase(win);
+	wnoutrefresh(win);
+
 	bool showMsgs = false;
 	bool showSkillMenu = true;
 	if (cm->getFocus() == msgDisplay)
@@ -339,6 +341,7 @@ void BattleProcessor::setupDeath()
 {
 	stopBattle();
 	messages.push_back("You died.");
+	everyoneDied = true;
 }
 
 
@@ -430,7 +433,10 @@ int BattleProcessor::displayDriver(int input)
 		if (advanceTurn() == false) //no more messages and turntracker is turned off
 		{
 			inSession = false;
-			return GO_BACK;
+			if (everyoneDied)
+				return QUIT_TO_TITLE;
+			else
+				return GO_BACK;
 		}
 			
 	}
@@ -504,6 +510,7 @@ void BattleProcessor::processCPUTurn()
 
 	messages.push_back(attackMsg.str());
 
+	
 	if(checkIfDefeated(humanActors))
 	{
 		setupDeath();

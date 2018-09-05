@@ -32,6 +32,7 @@ public:
 	int getPeaceSteps() { return peaceSteps; }
 	void setEncounterTracking(bool track) { tracking = track; }
 	void setEncounterChance(int chance) { this->chance = chance; }
+	int getEncounterChance() { return chance; }
 	bool didEncounterOccur() { return occurred; }
 	
 };

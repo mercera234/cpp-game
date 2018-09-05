@@ -6,14 +6,26 @@ enum class EffectType
 	NONE = 0, //functionally equivalent to using a nullptr for an EffectType
 	OBSTR = 1,
 	JUMPABLE = 2,
-	HP_ALTER = 3,
-	UP_EXIT = 4,
-	DOWN_EXIT = 5
+	HP_DECREASE = 3,
+	HP_INCREASE = 4,
+	UP_EXIT = 5,
+	DOWN_EXIT = 6,
+	SAVE = 7
+};
+
+const int effectTypeColors[8] = { 
+	COLOR_BLACK, 
+	COLOR_RED_BOLD,
+	COLOR_BLUE,
+	COLOR_RED,
+	COLOR_MAGENTA_BOLD,
+	COLOR_GREEN,
+	COLOR_GREEN_BOLD,
+	COLOR_YELLOW_BOLD
 };
 
 
-
-
+//We're not even using this right now
 class TileEffect
 {
 private:

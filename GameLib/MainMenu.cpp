@@ -271,6 +271,8 @@ void MainMenu::setupStatusContent()
 
 void MainMenu::draw()
 {
+	werase(win);
+	wnoutrefresh(win);
 	cm.draw();
 }
 

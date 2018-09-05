@@ -32,6 +32,11 @@ bool GameData::alterIntData(const std::string& key, int amount)
 	return true;
 }
 
+void GameData::clearData()
+{
+	bIntData.clear();
+}
+
 GameData::~GameData()
 {
 }

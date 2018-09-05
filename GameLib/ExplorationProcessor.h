@@ -11,13 +11,20 @@ class ExplorationProcessor : public MovementProcessor
 private:
 	Map* currMap = nullptr;
 	
+	//return true if movement was possible
 	bool processMovement(Movement& move);
 
 	MapRepository* mapRepo;
 
 	void init();
+
+	bool clipMode = false;
+	bool findMapExit(Boundary& edge, Movement& move);
+	int jumpGap = 0; //testing the jumpable tiles
+
 	void moveActorAcrossMapSeam(MapExit& fromMap, MapExit& toMap);
 	bool bounded = true;
+	
 public:
 	ExplorationProcessor();
 	ExplorationProcessor(int* curY, int* curX, MapRepository* repo);
@@ -27,6 +34,12 @@ public:
 
 	void setCurrMap(unsigned short id);
 	Map* getCurrMap() { return currMap; }
+
+	//getters/setters
+
+	void setClipMode(bool clipModeIn) { clipMode = clipModeIn; }
+	bool getClipMode() { return clipMode; }
+
 
 	void draw();
 };

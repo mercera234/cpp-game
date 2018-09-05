@@ -4,8 +4,6 @@
 class FormControl : public Controllable
 {
 protected:
-	bool editable;
 public:
-	void setEditable(bool editable);
 	virtual void clear() = 0;
 };

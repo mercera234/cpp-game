@@ -95,6 +95,7 @@ bool MovementProcessor::processHomeEndInput(int key)
 
 bool MovementProcessor::processMovementInput(int input)
 {
+	Movement moveTaken;
 	bool moved = false;
 	
 	switch (input)
@@ -184,6 +185,13 @@ void MovementProcessor::moveCursor(Movement& move)
 	case Dir::LEFT: *curX -= move.magnitude; break;
 	case Dir::RIGHT: *curX += move.magnitude; break;
 	}
+}
+
+
+void MovementProcessor::reverseMovement(Movement& move)
+{
+	Movement reverseMove(move.dir, -move.magnitude);
+	moveCursor(reverseMove);
 }
 
 

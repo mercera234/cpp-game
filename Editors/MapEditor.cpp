@@ -6,7 +6,7 @@
 #include "FileChooser.h"
 #include "TwoDStorage.h"
 #include "LineItem.h"
-//#include "Factory.h"
+#include "TextParamValue.h"
 
 const int DOT = 0;
 const int FILL = 1;
@@ -16,90 +16,91 @@ const int BRUSH = 2;
 const int F_NO_FILTER = '-';
 const int F_OBSTR = 'O';
 const int F_JUMPABLE = 'J';
-const int F_DMG_CONST = 'd';
-const int F_DMG_INC = 'D';
-const int F_AILMENT = 'A';
+const int F_HP_DEC = 'd';
+const int F_HP_INC = 'D';
+const int F_EXIT_D = '^';
+const int F_EXIT_U ='v';
 const int F_SAVEABLE = 'S';
-const int F_EXIT ='E';
 
 MapEditor::MapEditor()
 {
 	topRulerRow = 2;
-	sideRulerCol = 19;
+	sideRulerCol = 4;
 
-	visibleRows = screenHeight;
-	visibleCols = screenWidth;
+	int editorRows = 30;
+	int editorCols = 100;
+	resize_term(editorRows, editorCols);
+	setWindow(newwin(editorRows, editorCols, 0, 0));
 
-	//TODO canvas default size is same as visible window? is this true?
-	setCanvasSize(screenHeight, screenWidth);
+	fileNameLbl.setWindow(newwin(1, 15, 0, 1));
+	fileNameLbl.setText(fileName);
+	fileNameLbl.setFormat(new LineFormat());
 
-	//setup map labels
-	setupRulers();
-
-
-	/*when constructing the frame we add 2 extra rows and columns for the box border*/
-	frame = newwin(visibleRows + 2, visibleCols + 2, topRulerRow + 1, sideRulerCol + 1);
-	viewport = derwin(frame, visibleRows, visibleCols, 1, 1);
-
-	/*set center of viewport*/
-	centerY = visibleRows / 2;
-	centerX = visibleCols / 2;
-
-	curY = centerY; //center the map position to start with
-	curX = centerX;
-	
-	setupPalettes();
-
-	modified = false; 
-
-	keypad(stdscr, true);
-
-	//setup filename (this should eventually be moved to program that sets up master editor
-	fileName = DEF_FILENAME;
-	WINDOW* textWin = newwin(1, 15, 0, 1);
-	fileNameLbl = new TextLabel(textWin, fileName);
-	
 	//setup default file path for opening/saving files
 	char buf[256];
 	GetFullPathName(".", 256, buf, NULL);
 	dialogDefPath = buf;
 	extensionFilter = DEF_MAP_EXTENSION;
 
+	/*when constructing the frame we add 2 extra rows and columns for the box border*/
+	mapFrame.setWindow(newwin(screenHeight + 2, screenWidth + 2, topRulerRow + 1, sideRulerCol + 1));
+	mapFrame.setControl(&mapEffectFilterPattern);
+
 	map.setName(fileName);
-	map.setWindow(viewport);
-	map.setDimensions(canvasRows, canvasCols);
-	
+	map.setWindow(newwin(screenHeight, screenWidth, topRulerRow + 2, sideRulerCol + 2));
+	map.setDimensions(screenHeight, screenWidth);
+
 	setConvenienceVariables();
+	
+	//setup map labels
+	setupRulers();
+
+	/*set center of map*/
+	centerY = screenHeight / 2;
+	centerX = screenWidth / 2;
+
+	curY = centerY; //center the map position to start with
+	curX = centerX;
+	
+	setupPalettes();
 
 	mp.setMoveControl(&map);
 	mp.setCursor(&curY, &curX);
 	mp.setViewMode(ViewMode::CENTER); //default view mode
 
-	int bottomRow = visibleRows + 2 + topRulerRow + 1;
+	int bottomRow = screenHeight + 2 + topRulerRow + 1;
+
+	coordDisplay.setWindow(newwin(1, 16, bottomRow, sideRulerCol + 1));
+	//TextParamValue* xCoord = new TextParamValue(new LineFormat(0, Justf::LEFT), "x:", )
+
 
 	xyLbl.setWindow(newwin(1, 16, bottomRow, sideRulerCol + 1));
+	xyLbl.setFormat(new LineFormat());
 
 	int hLeftEdge = sideRulerCol + 1 + 25;
 	hLbl.setWindow(newwin(1, 2, bottomRow, hLeftEdge));
 	hLbl.setText("H:");
+	hLbl.setFormat(new LineFormat());
 
-	canvasRowsInput.setupField(3, bottomRow, hLeftEdge + 3);
-	canvasRowsInput.setText(canvasRows);
+	mapRowsInput.setupField(3, bottomRow, hLeftEdge + 3);
+	mapRowsInput.setText(screenHeight);
 	
 	wLbl.setWindow(newwin(1, 2, bottomRow, hLeftEdge + 10));
 	wLbl.setText("W:");
+	wLbl.setFormat(new LineFormat());
 
-	canvasColsInput.setupField(3, bottomRow, hLeftEdge + 13);
-	canvasColsInput.setText(canvasCols);
+	mapColsInput.setupField(3, bottomRow, hLeftEdge + 13);
+	mapColsInput.setText(screenWidth);
 
 	resizeBtn.setWindow(newwin(1, 6, bottomRow, hLeftEdge + 18));
 	resizeBtn.setText("RESIZE");
-	
+	resizeBtn.setFormat(new LineFormat());
 	
 	highlighter.positionHighlighter(image, &curY, &curX);
 	mapEffectFilterPattern.setMap(&map);
 	mapEffectFilterPattern.setEnabled(false);
 
+	//set commands
 	paletteCmd.setReceiver(this);
 	paletteCmd.setAction(&MapEditor::processPaletteInput);
 
@@ -115,7 +116,6 @@ MapEditor::MapEditor()
 	globalCmd.setReceiver(this);
 	globalCmd.setAction(&MapEditor::processGlobalInput);
 
-	//set editor level controls
 	newCmd.setReceiver(this);
 	newCmd.setAction(&MapEditor::confirmNewDialogDriver);
 
@@ -146,17 +146,18 @@ void MapEditor::setupControlManager()
 	cm->registerControl(&bkgdPalette, MOUSE_LISTENER, &paletteCmd);
 	cm->registerControl(&toolPalette, MOUSE_LISTENER, &paletteCmd);
 	cm->registerControl(&filterPalette, MOUSE_LISTENER, &paletteCmd);
-	cm->registerControl(&canvasRowsInput, KEY_LISTENER | MOUSE_LISTENER, &canvasInputCmd);
-	cm->registerControl(&canvasColsInput, KEY_LISTENER | MOUSE_LISTENER, &canvasInputCmd);
-	cm->registerControl(&mapEffectFilterPattern, 0, 0);
-	cm->registerControl(fileNameLbl, 0, 0);
+	cm->registerControl(&mapRowsInput, KEY_LISTENER | MOUSE_LISTENER, &canvasInputCmd);
+	cm->registerControl(&mapColsInput, KEY_LISTENER | MOUSE_LISTENER, &canvasInputCmd);
+	//cm->registerControl(&mapEffectFilterPattern, 0, 0);
+	cm->registerControl(&fileNameLbl, 0, 0);
 	cm->registerControl(&topRuler, 0, 0);
+	cm->registerControl(&sideRuler, 0, 0);
 	cm->registerControl(&xyLbl, 0, 0);
 	cm->registerControl(&hLbl, 0, 0);
 	cm->registerControl(&wLbl, 0, 0);
 	cm->registerControl(&resizeBtn, MOUSE_LISTENER, &controlCmd);
-	cm->registerControl(&map, KEY_LISTENER | MOUSE_LISTENER, &mapCmd);
-	cm->setFocus(&map);
+	cm->registerControl(&mapFrame, KEY_LISTENER | MOUSE_LISTENER, &mapCmd);
+	cm->setFocus(&mapFrame);
 	
 	cm->registerShortcutKey(KEY_ESC, &globalCmd);
 	cm->registerShortcutKey(CTRL_N, &globalCmd);
@@ -167,7 +168,7 @@ void MapEditor::setupControlManager()
 void MapEditor::setupPalettes()
 {
 	//setup palette labels
-	paletteLeftEdge = sideRulerCol + 1 + visibleCols + 5;
+	paletteLeftEdge = sideRulerCol + 1 + map.getVisibleCols() + 5;
 
 	int rows = 4;
 	int cols = 4;
@@ -217,13 +218,13 @@ void MapEditor::setupPalettes()
 
 	//setup filter palette
 	filterPalette.setItem("<no filter>", F_NO_FILTER, 0);
-	filterPalette.setItem("Obstr", F_OBSTR | COLOR_PAIR(COLOR_RED_BOLD), 1);
-	filterPalette.setItem("Jumpable", F_JUMPABLE | COLOR_PAIR(COLOR_CYAN_BOLD), 2);
-	filterPalette.setItem("Const Dmg", F_DMG_CONST | COLOR_PAIR(COLOR_MAGENTA), 3);
-	filterPalette.setItem("Inc Dmg", F_DMG_INC | COLOR_PAIR(COLOR_MAGENTA_BOLD), 4);
-	filterPalette.setItem("Ailment", F_AILMENT | COLOR_PAIR(COLOR_YELLOW), 5);
-	filterPalette.setItem("Save", F_SAVEABLE | COLOR_PAIR(COLOR_BLUE_BOLD), 6);
-	filterPalette.setItem("Exit", F_EXIT | COLOR_PAIR(COLOR_GREEN_BOLD), 7);
+	filterPalette.setItem("Obstr", F_OBSTR | COLOR_PAIR(effectTypeColors[1]), 1);
+	filterPalette.setItem("Jumpable", F_JUMPABLE | COLOR_PAIR(effectTypeColors[2]), 2);
+	filterPalette.setItem("HP Decrease", F_HP_DEC | COLOR_PAIR(effectTypeColors[3]), 3);
+	filterPalette.setItem("HP Increase", F_HP_INC | COLOR_PAIR(effectTypeColors[4]), 4);
+	filterPalette.setItem("Down Exit", F_EXIT_D | COLOR_PAIR(effectTypeColors[5]), 5);
+	filterPalette.setItem("Up Exit", F_EXIT_U | COLOR_PAIR(effectTypeColors[6]), 6);
+	filterPalette.setItem("Saveable", F_SAVEABLE | COLOR_PAIR(effectTypeColors[7]), 7);
 
 	filterPalette.setCurrentItem(0);
 	filterPalette.post(true);
@@ -232,29 +233,39 @@ void MapEditor::setupPalettes()
 
 void MapEditor::setupRulers()
 {
-	std::string topRulerText;
+	std::string topRulerText = "+";
 
-	//draw top ruler
-	for (int i = 0; i <= visibleCols; i++)
+	int cols, rows;
+	rows = map.getVisibleRows();
+	cols = map.getVisibleCols();
+
+	//fill top ruler with numbers from 0-9 repeatedly
+	for (int i = 0; i <= cols; i++)
 	{
 		int digit = i % 10;
 		char c = digit + 48;
 		topRulerText.push_back(c);
 	}
+	
 
-	WINDOW* tRWin = newwin(1, topRulerText.length(), topRulerRow, sideRulerCol + 1);
+	WINDOW* tRWin = newwin(1, topRulerText.length(), topRulerRow, sideRulerCol);
 
 	topRuler.setWindow(tRWin);
 	topRuler.setText(topRulerText);
+	topRuler.setFormat(new LineFormat);
 
-	/*TODO I need a vertical label to draw this component */
-
-	//draw side ruler
-	/*for (int i = 0; i <= visibleRows; i++)
+	//setup side ruler
+	std::string sideRulerText;
+	for (int i = 0; i <= rows; i++)
 	{
 		int digit = i % 10;
-		mvprintw(topRulerRow + 1 + i, sideRulerCol, "%d", digit);
-	}*/
+		char c = digit + 48;
+		sideRulerText.push_back(c);
+	}
+
+	sideRuler.setWindow(newwin(sideRulerText.length(), 1, topRulerRow + 1, sideRulerCol));
+	sideRuler.setText(sideRulerText);
+	sideRuler.setFormat(new VerticalLineFormat);
 }
 
 
@@ -269,14 +280,9 @@ void MapEditor::createNew()
 	map.reset();
 	fileName = DEF_FILENAME;
 	setModified(false);
-	cm->setFocus(&map);
+	cm->setFocus(&mapFrame);
 }
 
-//void MapEditor::controlCallback(void* caller, void* ptr, int input) //static
-//{
-//	MapEditor* me = (MapEditor*)caller;
-//	me->driver((Controllable*)ptr, input);
-//}
 
 int MapEditor::driver(Controllable* control, int input)
 {
@@ -290,32 +296,12 @@ int MapEditor::driver(Controllable* control, int input)
 }
 
 
-
-//void MapEditor::paletteCallback(void* caller, void* ptr, int input) //static
-//{
-//	MapEditor* me = (MapEditor*) caller;
-//	me->processPaletteInput((Palette*)ptr, input);
-//}
-//
-//void MapEditor::mapCallback(void* caller, void* ptr, int input) //static
-//{
-//	MapEditor* me = (MapEditor*)caller;
-//	me->processMapInput(input);
-//}
-//
-//
-//void MapEditor::canvasInputCallback(void* caller, void* ptr, int input) //static
-//{
-//	MapEditor* me = (MapEditor*)caller;
-//	me->canvasInputDriver((TextField*)ptr, input);
-//}
-
 int MapEditor::canvasInputDriver(Controllable* c, int input)
 {
 	TextField* field = (TextField*)c;
 	switch (input)
 	{
-	case KEY_MOUSE: //cm->setFocus(field); 
+	case KEY_MOUSE: 
 		break;
 	default: 
 		if (isalpha(input)) break; //do not accept alphabetic characters
@@ -331,10 +317,9 @@ int MapEditor::canvasInputDriver(Controllable* c, int input)
 void MapEditor::resizeButtonDriver()
 {
 	setModified(true);
-	int rows = stoi(canvasRowsInput.getText());
-	int cols = stoi(canvasColsInput.getText());
-	setCanvasSize(rows, cols);
-	map.resize(canvasRows, canvasCols);
+	int rows = stoi(mapRowsInput.getText());
+	int cols = stoi(mapColsInput.getText());
+	map.resize(rows, cols);
 
 	//make sure cursor is still in bounds
 	curY = curY > (short)map.getTotalRows() ? map.getTotalRows() : curY;
@@ -343,14 +328,10 @@ void MapEditor::resizeButtonDriver()
 	mp.setViewMode(ViewMode::CENTER); //reset the view to center
 	setConvenienceVariables();
 
-	cm->setFocus(&map); //switch focus back to map
+	cm->setFocus(&mapFrame); //switch focus back to map
 }
 
-void MapEditor::setCanvasSize(int rows, int cols)
-{
-	canvasRows = rows;
-	canvasCols = cols;
-}
+
 
 void MapEditor::load(std::string fileName)
 {
@@ -359,9 +340,10 @@ void MapEditor::load(std::string fileName)
 	//resize canvas to loaded image
 	setConvenienceVariables();
 
-	setCanvasSize(map.getTotalRows(), map.getTotalCols());
-	
-	cm->setFocus(&map);
+	mapRowsInput.setText(map.getTotalRows());
+	mapColsInput.setText(map.getTotalCols());
+
+	cm->setFocus(&mapFrame);
 }
 
 void MapEditor::save(std::string fileName)
@@ -414,11 +396,11 @@ int MapEditor::processFilterPaletteInput(chtype icon)
 	case F_NO_FILTER: mapEffectFilterPattern.setEnabled(false); return HANDLED; break;
 	case F_OBSTR: filter = EffectType::OBSTR; break;
 	case F_JUMPABLE: filter = EffectType::JUMPABLE; break;
-//	case F_DMG_CONST: filter = E_HP_ALT_CONST; break;
-//	case F_DMG_INC: filter = E_HP_ALT_INC; break;
+	case F_HP_DEC: filter = EffectType::HP_DECREASE; break;
+	case F_HP_INC: filter = EffectType::HP_INCREASE; break;
 	//case F_AILMENT: filter = E_AILMENT; break;
-	//case F_SAVEABLE: filter = E_SAVEABLE; break;
-//	case F_EXIT: filter = E_EXIT; break;
+	//case F_EXIT_D: filter = E_SAVEABLE; break;
+//	case F_EXIT_U: filter = E_EXIT; break;
 	}
 	mapEffectFilterPattern.setEnabled(true);
 
@@ -582,7 +564,6 @@ void MapEditor::fill(int sourceRow, int sourceCol)
 	std::list<int> fillPoints;
 
 	chtype replaceTile = image->getTile(sourceRow, sourceCol);
-		//mvwinch(viewport, sourceRow, sourceCol); //make sure this isn't reversed
 	chtype fillTile = drawChar | bkgdColor | textColor;
 	if (drawChar == ' ')
 	{
@@ -653,36 +634,24 @@ void MapEditor::fill(int sourceRow, int sourceCol)
 
 void MapEditor::draw()
 {
-	wclear(stdscr);
-	mvaddch(topRulerRow, sideRulerCol, '+');
-	for (int i = 0; i <= visibleRows; i++)
-	{
-		int digit = i % 10;
-		mvprintw(topRulerRow + 1 + i, sideRulerCol, "%d", digit);
-	}
-	box(frame, 0, 0);
-	int bottom = getmaxy(frame);
-	
+	wclear(win);
+	wnoutrefresh(win);
+
 	char buf[20];
 	sprintf_s(buf, "x: %+4d  y: %+4d", curX, curY);
 	xyLbl.setText(buf);
 	
-	wnoutrefresh(stdscr);
-	wnoutrefresh(frame);
-
-	
 	cm->draw();
 	highlighter.draw();
-	chtype cursorChar = mvwinch(viewport, curY - image->getUlY(), curX - image->getUlX());
-	waddch(viewport, cursorChar | A_REVERSE);
-	wnoutrefresh(viewport);
+
+	WINDOW* mapWin = map.getWindow();
+	chtype cursorChar = mvwinch(mapWin, curY - image->getUlY(), curX - image->getUlX());
+	waddch(mapWin, cursorChar | A_REVERSE);
+	wnoutrefresh(mapWin);
 }
 
 
 
 MapEditor::~MapEditor()
 {
-	delwin(viewport);
-	delwin(frame);
-	
 }

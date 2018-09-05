@@ -43,6 +43,8 @@ TUI::TUI()
 	
 }
 
+CursorType TUI::cursorType = CursorType::INVISIBLE;
+
 void TUI::init()
 {
 	initscr();                    /* Start curses mode */
@@ -54,11 +56,19 @@ void TUI::init()
 
 	keypad(stdscr, true);//set stdscr as default for keypad (also allows use of arrow keys)
 	initColors();
-
+	
+	setCursorType(cursorType);
 	mousemask(ALL_MOUSE_EVENTS, NULL); //allow mouse usage
-	curs_set(CURSOR_INVISIBLE); //I'd prefer to have this set by default
 	refresh();//do this once so that first call to getch doesn't do this
 }
+
+
+void setCursorType(CursorType typeIn)
+{
+	TUI::cursorType = typeIn;
+	curs_set((int)TUI::cursorType); //this should not be called anywhere else
+}
+
 
 void TUI::initColors()
 {
@@ -95,6 +105,16 @@ void TUI::printOnBkgd(chtype c, WINDOW* win, int y, int x)
 
 	chtype printTextColor = (getBkgdColor(bkgdTile) != getTextColor(regularC) ? regularC : standoutC);
 	waddch(win, bkgdTile | printTextColor | text);
+}
+
+void TUI::printStrOnBkgd(std::string s, WINDOW* win, int y, int x)
+{
+	int col = x;
+	for each (char c in s)
+	{
+		chtype ct = c | COLOR_WHITE << TEXTCOLOR_OFFSET;
+		printOnBkgd(ct, win, y, col++);
+	}
 }
 
 

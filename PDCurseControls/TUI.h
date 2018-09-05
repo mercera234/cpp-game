@@ -87,10 +87,13 @@ chtype setTextColor(int color);
 /* Return the text color value from the tile*/
 int getTextColor(chtype tile);
 
-//cursor states (for use with curs_set function)
-#define CURSOR_INVISIBLE 0
-#define CURSOR_NORMAL 1
-#define CURSOR_BOLD 2
+//cursor states
+enum class CursorType
+{
+	INVISIBLE = 0,
+	NORMAL = 1,
+	BOLD = 2
+};
 
 const unsigned short screenHeight = 23;
 const unsigned short screenWidth = 51;
@@ -113,16 +116,25 @@ const std::string colorNames[16] = {
 	"Bold Yellow",
 	"Bold White" };
 
+void setCursorType(CursorType typeIn);
+
 class TUI
 {
 private:
 	void initColors();
+	
 public:
 	static void printOnBkgd(chtype c, WINDOW* win, int y, int x); //TUI must be initialized first to use this of course
+	static void printStrOnBkgd(std::string s, WINDOW* win, int y, int x);
 	
+
+	static CursorType cursorType;// = CursorType::INVISIBLE;
 	TUI();
 
 	WINDOW* win;
 	void init();
 	void shutdown(); //shutdown curses and other functions
+
+
+	
 };

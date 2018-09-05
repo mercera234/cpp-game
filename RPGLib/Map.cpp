@@ -1,4 +1,5 @@
 #include <fstream>
+#include <sstream>
 #include "Map.h"
 #include "TUI.h"
 
@@ -53,17 +54,48 @@ void Map::reset()
 }
 
 
+void Map::alterActorHP(int amount)
+{
+	if (controlActor == nullptr)
+		return;
+
+	damage += amount;
+	BoundInt& hp = controlActor->getStat(StatType::HP);
+
+	hp.alterCurr(amount);
+}
+
+
 void Map::draw()
 {
 	display.draw();
 
 	if (controlActor != NULL) //draw actor if present
 	{
+		int y = controlActor->y - display.getUlY();
+		int x = controlActor->x - display.getUlX();
+
 		chtype mainCImageNormal = controlActor->symbol;
 
-		TUI::printOnBkgd(mainCImageNormal, win, controlActor->y - display.getUlY(), controlActor->x - display.getUlX());
+		TUI::printOnBkgd(mainCImageNormal, win, y, x);
+		
+		if (damage != 0)
+		{
+			//build string from damage
+			std::ostringstream oss;
+
+			if (damage > 0) oss << '+'; //append + for positive values
+			oss << damage;
+			
+			TUI::printStrOnBkgd(oss.str(), win, y - 1, x + 1);
+			
+			damage = 0;
+		}
+
 		wnoutrefresh(win);
 	}
+
+	
 }
 
 

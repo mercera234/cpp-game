@@ -1,5 +1,6 @@
 #include "BattleState.h"
 #include "ExploreState.h"
+#include "TitleScreenState.h"
 #include "GameInput.h"
 #include "GameStateManager.h"
 #include "actor_helper.h"
@@ -16,12 +17,7 @@ GameState* BattleState::getInstance() //since static, cannot be virtual in super
 
 BattleState::BattleState()
 {
-	win = newwin(screenHeight, screenWidth, 0, 0);
-	
-	
-	
-	battleProcessor.setWindow(win);
-	
+	battleProcessor.setWindow(newwin(screenHeight, screenWidth, 0, 0));	
 }
 
 void BattleState::initDefaults()
@@ -51,14 +47,19 @@ void BattleState::unloadState()
 
 void BattleState::processInput(GameStateManager& manager, int input)
 {
-	if(battleProcessor.processInput(input) == ExitCode::GO_BACK)
-		manager.setState(ExploreState::getInstance());
+	int exitCode = battleProcessor.processInput(input);
+
+	switch (exitCode)
+	{
+	case ExitCode::GO_BACK: manager.setState(ExploreState::getInstance()); break;
+	case ExitCode::QUIT_TO_TITLE: 
+		manager.setState(TitleScreenState::getInstance()); 
+		break;
+	}	
 }
 
 
 void BattleState::draw()
 {
-	werase(win);
-	wnoutrefresh(win);
 	battleProcessor.draw();
 }

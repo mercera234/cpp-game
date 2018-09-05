@@ -18,10 +18,11 @@ class BattleProcessor : public Controllable
 private:
 	SimpleControlCommand<BattleProcessor> cmd;
 	bool inSession = false;
+	bool everyoneDied = false;
 	ResourceManager* resourceManager;
 
 	int driver(Controllable* control, int input);
-	bool advanceTurn();
+	bool advanceTurn(); //returns true if the turn was advanced to the next player
 	void processCPUTurn();
 	void initTurnTracker();
 	void initTargetMenu();

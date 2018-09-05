@@ -6,10 +6,10 @@
 #include "SimpleControlCommand.h"
 #include "ConfirmCommand.h"
 
-#define DEF_FILENAME "<Untitled>" //will add open/close arrows later
+const std::string DEF_FILENAME = "<Untitled>";
 
 template <typename Receiver>
-class Editor
+class Editor : public Controllable
 {
 protected:
 	ControlManager* cm;
@@ -20,9 +20,9 @@ protected:
 	ConfirmCommand<Receiver> quitCmd;
 
 	//file data (this should be moved to Master Editor)
-	std::string fileName;
+	std::string fileName = DEF_FILENAME;
 	std::string dialogDefPath;
-	TextLabel* fileNameLbl;
+	TextLabel fileNameLbl;
 	bool modified = false;
 	std::string extensionFilter;
 
@@ -313,5 +313,5 @@ void Editor<Receiver>::updateFileNameLabel()
 	std::string lblTxt;
 	lblTxt = modified ? fileName.substr(0, 14) + "*" : fileName;
 
-	fileNameLbl->setText(lblTxt);
+	fileNameLbl.setText(lblTxt);
 }

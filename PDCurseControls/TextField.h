@@ -8,12 +8,10 @@ class TextField : public FormControl
 {
 private:
 	std::string text;
-	unsigned short cursorPos; //the position of the cursor for inputting characters
+	unsigned short cursorPos = 0; //the position of the cursor for inputting characters
 
 	short scrY, scrX; //beg y and x of window. Used for the move routine due to the issue with wmove
 	
-	void init();
-
 	bool deleteChar();
 	bool insertChar(int c);
 public:

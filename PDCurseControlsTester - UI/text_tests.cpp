@@ -12,7 +12,7 @@ void textFieldtest()
 	bool playing = true;
 	while (playing)
 	{
-		curs_set(CURSOR_NORMAL);
+		setCursorType(CursorType::NORMAL);
 		field.draw();
 		field.setFocus(true);
 		doupdate();
@@ -43,12 +43,15 @@ void textFieldtest()
 
 void textLabelTest()
 {
-	WINDOW* win = newwin(1, 10, 2, 2);
-	TextLabel* label = new TextLabel(win, "12345678901");
+	WINDOW* win = newwin(10, 1, 2, 2);
+	TextLabel label(win, "12345678901");
+	label.setFormat(new VerticalLineFormat(0, Justf::RIGHT));
 
-	label->draw();
+	label.draw();
 	doupdate();
 	getch();
+
+	delwin(win);
 }
 
 void formFieldTest()

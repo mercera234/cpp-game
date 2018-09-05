@@ -12,20 +12,9 @@ int main()
 	TUI tui;
 	tui.init();
 	
-	//battleProcessorTest();
-	//actorRepositoryTest();
-	
-	//mapEffectTest();
-	//mapEffectFilterTest();
-	//mapHighlighterTest();
-	//simpleMapTest();
-//	realMapTest();
-	textBoardTest();
-	//freeMovementProcessorTest();
-	//inventoryTest();
-	//gameStateManagerFullTest();
-	//playFile();
 
+	mapEffectFilterTest();
+	
 	tui.shutdown();
 		
 	return 0;

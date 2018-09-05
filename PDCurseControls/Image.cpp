@@ -55,6 +55,7 @@ void Image::draw()
 			drawTileChar(row, col, mapY, mapX);
 		}
 	}
+	touchwin(win);
 	wnoutrefresh(win);
 }
 

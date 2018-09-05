@@ -11,25 +11,16 @@
 #include "FreeMovementProcessor.h"
 #include "Editor.h"
 #include "SimpleControlCommand.h"
+#include "TextBoard.h"
 
-#define DEF_MAP_EXTENSION ".map"
+const std::string DEF_MAP_EXTENSION = ".map";
 
 class MapEditor : Editor<MapEditor>
 {
 private:
-
-	/*Map space*/
-	int canvasRows; //!!!these vars are deprecated and should be used from map object
-	int canvasCols;
-
 	/*these vars identify the top left corner above and left of the viewport window*/
 	int topRulerRow;
 	int sideRulerCol;
-
-	WINDOW* frame;
-	WINDOW* viewport; //this is now in the map, but I'm keeping the reference here in case it is useful for drawing other layers over the map
-	int visibleRows;
-	int visibleCols;
 
 	/*The cursor position in the viewport*/
 	short centerX, centerY;
@@ -40,6 +31,7 @@ private:
 
 	FreeMovementProcessor mp;
 
+	Frame mapFrame;
 	Map map;
 	Image* image;//a convenience pointer to the map's image
 
@@ -49,14 +41,16 @@ private:
 	TextLabel topRuler;
 	TextLabel sideRuler;
 	TextLabel xyLbl;
+
+	TextBoard coordDisplay;
 	
 	TextLabel hLbl;
 	TextLabel wLbl;
 	TextLabel resizeBtn;
 
 	//Canvas dimension fields
-	TextField canvasRowsInput;
-	TextField canvasColsInput;
+	TextField mapRowsInput;
+	TextField mapColsInput;
 
 	//what is this for?
 	short layer;
@@ -84,7 +78,7 @@ private:
 
 	void setupPalettes();
 	void setupRulers();
-	void setCanvasSize(int rows, int cols);
+	//void setCanvasSize(int rows, int cols);
 	void setConvenienceVariables();
 
 	int processMapInput(Controllable* c, int input);
@@ -113,10 +107,4 @@ public:
 	~MapEditor();
 	int processInput(int input);
 	void draw();
-
-	//static callback methods
-	/*static void paletteCallback(void*, void*, int);
-	static void mapCallback(void* caller, void* ptr, int input); 
-	static void canvasInputCallback(void* caller, void* ptr, int input);
-	static void controlCallback(void*, void*, int);*/
 };

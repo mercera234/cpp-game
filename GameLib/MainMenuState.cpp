@@ -21,8 +21,6 @@ GameState* MainMenuState::getInstance()
 
 MainMenuState::MainMenuState()
 {
-	win = newwin(screenHeight, screenWidth, 0, 0);
-
 	mm.setWindow(newwin(screenHeight, screenWidth, 0, 0));
 }
 
@@ -45,6 +43,7 @@ void MainMenuState::processInput(GameStateManager& manager, int input)
 		manager.setState(ExploreState::getInstance());
 		break;
 	case ExitCode::QUIT_TO_TITLE: 
+		resourceManager->playerParty.clear(); //clear out players
 		manager.setState(TitleScreenState::getInstance()); 
 		break;
 	}
@@ -55,8 +54,5 @@ void MainMenuState::processInput(GameStateManager& manager, int input)
 
 void MainMenuState::draw()
 {
-	werase(win);
-	wnoutrefresh(win);
-
 	mm.draw();
 }

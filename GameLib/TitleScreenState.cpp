@@ -25,6 +25,7 @@ GameState* TitleScreenState::getInstance()
 //Title Menu options
 TitleScreenState::TitleScreenState() 
 {
+	//TODO make a TitleScreen object to hold this
 	win = newwin(screenHeight, screenWidth, 0, 0);
 	titleMenu.resetItems(3, 1);
 	titleMenu.setWindow(newwin(4, 25, 1, 1));

@@ -162,8 +162,6 @@
     <ClInclude Include="MockMenuItem.h" />
     <ClInclude Include="MockObjectLinkedItem.h" />
     <ClInclude Include="MockStorable.h" />
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AbstractMenuTest.cpp" />
@@ -185,12 +183,6 @@
     <ClCompile Include="MockStorable.cpp" />
     <ClCompile Include="ObjectLinkedTest.cpp" />
     <ClCompile Include="PaletteTest.cpp" />
-    <ClCompile Include="stdafx.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
-    </ClCompile>
     <ClCompile Include="StorableTest.cpp" />
     <ClCompile Include="TextBoardTest.cpp" />
     <ClCompile Include="TextFieldTest.cpp" />

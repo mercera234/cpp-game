@@ -42,7 +42,7 @@ private:
 	//overlay data (eventually this should be private)
 	
 	Actor* controlActor = nullptr; //the actor controlled by the player and moved around on the map
-
+	int damage = 0; //damage taken by actor while traversing the map
 public:
 	Map() {}
 	Map(const std::string& name, int rows, int cols, WINDOW* win); //create new map
@@ -61,6 +61,9 @@ public:
 	bool load(const std::string& fileName);
 	void draw();
 	~Map();
+
+	//returns true if actor lived. False if died
+	void alterActorHP(int amount);
 
 	//getters/setters
 	Image* getDisplay() { return &display; }

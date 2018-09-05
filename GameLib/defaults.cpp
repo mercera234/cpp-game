@@ -20,6 +20,7 @@ void defaultGameInputs(InputManager& inputManager)
 	//set up inputs for debugging
 	inputManager.setInput(CTRL_F, GameInput::FIGHT_TRIGGER);
 	inputManager.setInput(KEY_ESC, GameInput::QUIT_INPUT);
+	inputManager.setInput(CTRL_E, GameInput::TOGGLE_ENCOUNTERS);
 }
 
 int getInput(InputManager& inputManager)
@@ -30,6 +31,8 @@ int getInput(InputManager& inputManager)
 
 void setupDefaultDataKeys(ResourceManager& rm)
 {
+	rm.theData.clearData();
+
 	BoundInt gold$(0, 9999999, 0);
 	rm.theData.storeIntData(GOLD$, gold$);
 	
