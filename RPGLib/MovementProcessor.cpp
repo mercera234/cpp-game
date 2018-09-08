@@ -68,7 +68,7 @@ void MovementProcessor::centerView()
 }
 
 
-bool MovementProcessor::processHomeEndInput(int key)
+MovementChain MovementProcessor::processHomeEndInput(int key)
 {
 	assert(key == CTL_HOME || key == CTL_END);
 	bool movedHorz = false;
@@ -87,31 +87,37 @@ bool MovementProcessor::processHomeEndInput(int key)
 		break;
 	}
 
-	movedHorz = processDirectionalInput(horzDir, moveControl->getTotalCols());
-	movedVert = processDirectionalInput(vertDir, moveControl->getTotalRows());
+	MovementChain movesTaken;
+	Movement horzMove, vertMove;
+	horzMove = processDirectionalInput(horzDir, moveControl->getTotalCols());
+	vertMove = processDirectionalInput(vertDir, moveControl->getTotalRows());
 
-	return movedHorz && movedVert;
+	movesTaken.moves.push_back(horzMove);
+	movesTaken.moves.push_back(vertMove);
+	return movesTaken;
 }
 
-bool MovementProcessor::processMovementInput(int input)
+MovementChain MovementProcessor::processMovementInput(int input)
 {
-	Movement moveTaken;
-	bool moved = false;
+	MovementChain movesTaken;
 	
 	switch (input)
 	{
 	case CTL_HOME: 
-		moved = processHomeEndInput(CTL_HOME);
+		movesTaken = processHomeEndInput(CTL_HOME);
 		break;
 	case CTL_END: 
-		moved = processHomeEndInput(CTL_END);
+		movesTaken = processHomeEndInput(CTL_END);
 		break;
 	default:
-		moved = processDirectionalInput(getDirectionFromKey(input), getMoveMagnitudeFromKey(input));
+	{
+		Movement move = processDirectionalInput(getDirectionFromKey(input), getMoveMagnitudeFromKey(input));
+		movesTaken.moves.push_back(move);
+	}
 		break;
 	}
 
-	return moved;
+	return movesTaken;
 }
 
 int MovementProcessor::getMoveMagnitudeFromKey(int key)
@@ -167,13 +173,14 @@ Dir MovementProcessor::getDirectionFromKey(int key)
 	return dir;
 }
 
-bool MovementProcessor::processDirectionalInput(Dir dirInput, int magnitude)
+Movement MovementProcessor::processDirectionalInput(Dir dirInput, int magnitude)
 {
 	Movement move;
 	move.dir = dirInput;
 	move.magnitude = magnitude;
 
-	return processMovement(move);  //to be handled differently by concrete implementations of this abstract class
+	processMovement(move);  //to be handled differently by concrete implementations of this abstract class
+	return move;
 }
 
 void MovementProcessor::moveCursor(Movement& move)
@@ -192,6 +199,7 @@ void MovementProcessor::reverseMovement(Movement& move)
 {
 	Movement reverseMove(move.dir, -move.magnitude);
 	moveCursor(reverseMove);
+	move.magnitude = 0; //original move could not complete
 }
 
 

@@ -1,10 +1,10 @@
 #include <fstream>
 #include <sstream>
-#include "Map.h"
+#include "MapRoom.h"
 #include "TUI.h"
 
 
-Map::Map(const std::string& name, int rows, int cols, WINDOW* win) :
+MapRoom::MapRoom(const std::string& name, int rows, int cols, WINDOW* win) :
 	display(rows, cols, win) //Image uses same window as map, but the Image is responsible for destroying it
 {
 	this->name = name;
@@ -15,98 +15,55 @@ Map::Map(const std::string& name, int rows, int cols, WINDOW* win) :
 }
 
 
-Map::Map(WINDOW* win, const std::string& fileName)
+MapRoom::MapRoom(WINDOW* win, const std::string& fileName)
 {
 	Controllable::setWindow(win);
 	load(fileName);
 }
 
-void Map::setWindow(WINDOW* win)
+void MapRoom::setWindow(WINDOW* win)
 {
 	Controllable::setWindow(win);
 	display.setWindow(win);
 }
 
 
-void Map::setDimensions(unsigned int rows, unsigned int cols)
+void MapRoom::setDimensions(unsigned int rows, unsigned int cols)
 {
 	Controllable::setDimensions(rows, cols);
 	display.setDimensions(rows, cols);
 	effectsLayer.setDimensions(rows, cols);
-
-	//set hi-level map data
-	unitsHigh = totalRows / unitHeight;
-	unitsWide = totalCols / unitWidth;
-	totalUnits = unitsHigh * unitsWide;
-
-	unitMaps = new TwoDStorage<char>(unitsHigh, unitsWide);
-	for (int i = 0; i < totalUnits; i++)
-	{
-		unitMaps->setDatum(i, (char)0x0); //
-	}
 }
 
 
-void Map::reset()
+void MapRoom::reset()
 {
 	display.reset();
 	effectsLayer.fill(EffectType::NONE);
 }
 
 
-void Map::alterActorHP(int amount)
+void MapRoom::draw()
 {
-	if (controlActor == nullptr)
-		return;
+	display.draw();	
 
-	damage += amount;
-	BoundInt& hp = controlActor->getStat(StatType::HP);
-
-	hp.alterCurr(amount);
-}
-
-
-void Map::draw()
-{
-	display.draw();
-
-	if (controlActor != NULL) //draw actor if present
+	//draw map things
+	for each (Sprite* thing in things)
 	{
-		int y = controlActor->y - display.getUlY();
-		int x = controlActor->x - display.getUlX();
-
-		chtype mainCImageNormal = controlActor->symbol;
-
-		TUI::printOnBkgd(mainCImageNormal, win, y, x);
-		
-		if (damage != 0)
-		{
-			//build string from damage
-			std::ostringstream oss;
-
-			if (damage > 0) oss << '+'; //append + for positive values
-			oss << damage;
-			
-			TUI::printStrOnBkgd(oss.str(), win, y - 1, x + 1);
-			
-			damage = 0;
-		}
-
-		wnoutrefresh(win);
+		mvwaddch(win, thing->pos.y, thing->pos.x, thing->symbol);
 	}
-
-	
+	wnoutrefresh(win);
 }
 
 
-bool Map::save(const std::string& fileName)
+bool MapRoom::save(const std::string& fileName)
 {
 	std::ofstream gFile;
 	gFile.open(fileName, std::ios::trunc | std::ios::binary);
 	if (gFile.is_open() == false)
 		return false;
 
-	gFile.write((char*) &id, sizeof(short));
+	gFile.write((char*) &id, sizeof(int));
 
 	display.save(gFile);
 	
@@ -122,14 +79,14 @@ bool Map::save(const std::string& fileName)
 	return true;
 }
 
-bool Map::load(const std::string& fileName)
+bool MapRoom::load(const std::string& fileName)
 {
 	std::ifstream gFile;
 	gFile.open(fileName, std::ios::binary);
 	if (gFile.is_open() == false)
 		return false;
 
-	gFile.read((char*)&id, sizeof(short));
+	gFile.read((char*)&id, sizeof(int));
 
 
 	if(display.getWindow() == nullptr)
@@ -159,7 +116,7 @@ bool Map::load(const std::string& fileName)
 }
 
 
-void Map::setPosition(int y, int x)
+void MapRoom::setPosition(int y, int x)
 {
 	//set position for both map and image
 	Controllable::setPosition(y, x);
@@ -167,7 +124,7 @@ void Map::setPosition(int y, int x)
 }
 
 
-void Map::resize(int rows, int cols)
+void MapRoom::resize(int rows, int cols)
 {
 	int prevTotalTiles = totalTiles;
 
@@ -176,12 +133,19 @@ void Map::resize(int rows, int cols)
 	effectsLayer.setDimensions(rows, cols, EffectType::NONE);
 }
 
+Sprite* MapRoom::checkCollisionDetection(Pos& pos)
+{
+	for each (Sprite* thing in things)
+	{
+		if (pos.y == thing->pos.y && pos.x == thing->pos.x)//if item is stepped over
+		{
+			return thing;
+		}
+	}
+	return nullptr;
+}
 
-	
-
-
-
-Map::~Map()
+MapRoom::~MapRoom()
 {	
 
 }

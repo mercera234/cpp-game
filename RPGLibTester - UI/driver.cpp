@@ -5,6 +5,7 @@
 #include "music_player_test.h"
 #include "inventory_tests.h"
 #include "misc_tests.h"
+#include "mapRoom_tests.h"
 
 //RPG LIB UI TESTER
 int main()
@@ -13,7 +14,7 @@ int main()
 	tui.init();
 	
 
-	mapEffectFilterTest();
+	spriteOnMapTest();
 	
 	tui.shutdown();
 		

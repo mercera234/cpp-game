@@ -54,6 +54,9 @@
     <ClCompile Include="MockTitle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="mapRoom_tests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="map_ui_tests.h">
@@ -90,6 +93,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="misc_tests.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mapRoom_tests.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

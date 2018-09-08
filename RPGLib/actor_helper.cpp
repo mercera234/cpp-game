@@ -14,14 +14,10 @@ Actor* buildActor(ActorType type)
 	Actor* actor = new Actor();
 
 	//set thing properties
-	actor->x = 30;
-	actor->y = 5;
 	actor->symbol = '?';
 	actor->name = "Unnamed";
 
 	//set actor properties
-	actor->prevX = -1;
-	actor->prevY = -1;
 
 	actor->type = type;
 
@@ -46,15 +42,11 @@ Actor* buildActor(ActorType type)
 void initTestActor(Actor& player)
 {
 	//set thing properties
-	player.x = 30;
-	player.y = 5;
 	player.symbol = '?';
 	player.name = "Unnamed";
 
 	//set actor properties
-	player.prevX = -1;
-	player.prevY = -1;
-
+	
 	player.type = ActorType::HUMAN;
 
 	setBoundedStat(player.money, 0, 9999999, 9999999, 0);

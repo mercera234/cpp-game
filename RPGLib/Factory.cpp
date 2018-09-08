@@ -1,11 +1,11 @@
 #include "Factory.h"
 #include "TwoDStorage.h"
 
-Map* Factory::createMap(unsigned short id, unsigned short height, unsigned short width, char patternChar, WINDOW* win)
+MapRoom* Factory::createMap(unsigned short id, unsigned short height, unsigned short width, char patternChar, WINDOW* win)
 {
 	//create map
 	std::string name = "Map " + id;
-	Map* newMap = new Map(name, height, width, win);
+	MapRoom* newMap = new MapRoom(name, height, width, win);
 	newMap->setId(id);
 
 	//populate the map with patternChar
@@ -23,11 +23,11 @@ Map* Factory::createMap(unsigned short id, unsigned short height, unsigned short
 	return newMap;
 }
 
-Map* Factory::createMap(WINDOW* win, unsigned short id, unsigned short height, unsigned short width, char patternChar, unsigned short hlY, unsigned short hlX)
+MapRoom* Factory::createMap(WINDOW* win, unsigned short id, unsigned short height, unsigned short width, char patternChar, unsigned short hlY, unsigned short hlX)
 {
 	//create map
 	std::string name = "Map " + id;
-	Map* newMap = new Map(name, height, width, win);
+	MapRoom* newMap = new MapRoom(name, height, width, win);
 	newMap->setId(id);
 
 	//populate the map with patternChar
@@ -41,7 +41,7 @@ Map* Factory::createMap(WINDOW* win, unsigned short id, unsigned short height, u
 		tileMap->setDatum(i, tile);
 	}
 
-	newMap->setHighLevelPosition(hlY, hlX);
+//	newMap->setHighLevelPosition(hlY, hlX);
 
 	return newMap;
 }

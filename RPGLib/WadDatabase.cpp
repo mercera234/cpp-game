@@ -209,7 +209,7 @@ bool WadDatabase::load(std::ifstream* loadFile)
 //	}
 //}
 
-void WadDatabase::getMapRepository(std::map<unsigned short, Map*>& mapRepo, std::ifstream& wadFile)
+void WadDatabase::getMapRepository(std::map<unsigned short, MapRoom*>& mapRepo, std::ifstream& wadFile)
 {
 	//iterate through directory for all actor types
 	for each (WadDirEntry* entry in directory)
@@ -284,7 +284,7 @@ void WadDatabase::loadGameMapsFromDir(FileDirectory& dir)
 	int id = 0;
 	for each (dirent file in files)
 	{
-		Map gameMap;
+		MapRoom gameMap;
 		gameMap.load(dir.getPath() + '\\' + file.d_name);
 
 		gameMaps.insert(std::make_pair(id++, gameMap)); //id is set automatically not manually

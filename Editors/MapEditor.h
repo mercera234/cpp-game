@@ -5,7 +5,7 @@
 #include "TextLabel.h"
 #include "ControlManager.h"
 #include "Frame.h"
-#include "Map.h"
+#include "MapRoom.h"
 #include "Highlighter.h"
 #include "MapEffectFilterPattern.h"
 #include "FreeMovementProcessor.h"
@@ -32,7 +32,7 @@ private:
 	FreeMovementProcessor mp;
 
 	Frame mapFrame;
-	Map map;
+	MapRoom map;
 	Image* image;//a convenience pointer to the map's image
 
 	char drawChar;

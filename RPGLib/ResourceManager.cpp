@@ -3,7 +3,7 @@
 
 ResourceManager::ResourceManager() : actors(stringCompare)
 {
-	
+	loadNullResources();
 }
 
 int ResourceManager::loadActorsFromTextFile(std::ifstream& textFile)
@@ -25,8 +25,8 @@ int ResourceManager::loadActorsFromTextFile(std::ifstream& textFile)
 
 		textFile >> actor.name >> symbol >> color >> level >> exp >> money >> hp >> mp >> str >> def >> intl >> wil >> agi;
 
-		std::replace(actor.name.begin(), actor.name.end(), '_', ' '); //This handles any multi-word names
-
+		fixString(actor.name);
+		
 		actor.symbol = symbol | getColor(color) << TEXTCOLOR_OFFSET;
 		actor.getStat(StatType::LEVEL).setCurr(level);
 		actor.getStat(StatType::EXP).setCurr(exp);
@@ -42,11 +42,17 @@ int ResourceManager::loadActorsFromTextFile(std::ifstream& textFile)
 		actor.getStat(StatType::INTELLIGENCE).setCurr(intl);
 		actor.getStat(StatType::WILL).setCurr(wil);
 		actor.getStat(StatType::AGILITY).setCurr(agi);
+		actor.id = getNextId();
 
 		actors.insert(std::make_pair(actor.name, actor));
 	}
 
 	return actors.size();
+}
+
+void ResourceManager::fixString(std::string& s)
+{
+	std::replace(s.begin(), s.end(), '_', ' '); //This handles any multi-word names
 }
 
 int ResourceManager::getColor(char c)
@@ -81,14 +87,48 @@ int ResourceManager::loadGameMapsFromDir(FileDirectory& dir)
 	std::string filter = "map";
 	std::list<dirent> files = dir.getFiles(false, filter);
 
-	int id = 0;
 	for each (dirent file in files)
 	{
-		Map gameMap;
+		MapRoom gameMap;
 		gameMap.load(dir.getPath() + '\\' + file.d_name);
 
-		gameMap.setId(id);
-		gameMaps.insert(std::make_pair(id++, gameMap)); //id is set automatically not manually
+		gameMap.setId(getNextId());
+		gameMaps.insert(std::make_pair(gameMap.getId(), gameMap)); //id is set automatically not manually
+	}
+
+	return gameMaps.size();
+}
+
+int ResourceManager::loadMapRoomsFromTextFile(std::ifstream& textFile)
+{
+	char lineFirstChar;
+	while ((lineFirstChar = (char)textFile.peek()) != EOF)
+	{
+		if (lineFirstChar == '#') //skip to next line
+		{
+			//see max conflict with windef.h, hence the extra ()s
+			textFile.ignore((std::numeric_limits<int>::max)(), '\n');
+			continue;
+		}
+
+		MapRoom room;
+
+		bool brightness;
+		bool randomEncounters;
+		std::string name;
+		std::string imagePath;
+
+		textFile >> name >> imagePath >> brightness >> randomEncounters;
+
+		fixString(name);
+
+		room.setName(name);
+		room.setBrightness(brightness);
+		room.setRandomEncounters(randomEncounters);
+		room.setId(getNextId());
+		//so far this loads the map metadata, but not the image, effectslayer, overlays, or items
+
+		gameMaps.insert(std::make_pair(room.getId(), room));
 	}
 
 	return gameMaps.size();
@@ -104,7 +144,7 @@ void ResourceManager::loadNullResources()
 	actors.insert(std::make_pair(nullActor.name, nullActor));
 
 	//load null map
-	Map nullMap;
+	MapRoom nullMap;
 	nullMap.setDimensions(screenHeight, screenWidth);
 	Image* img = nullMap.getDisplay();
 	TwoDStorage<chtype>* tiles = img->getTileMap();
@@ -118,6 +158,6 @@ void ResourceManager::loadNullResources()
 		}
 	}
 
-	gameMaps.insert(std::make_pair(-1, nullMap));
+	gameMaps.insert(std::make_pair(nullId, nullMap));
 
 }

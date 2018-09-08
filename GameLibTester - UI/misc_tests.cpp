@@ -8,6 +8,7 @@
 #include "ResourceManager.h"
 #include "ExplorationProcessor.h"
 #include "MusicPlayer.h"
+#include "GameItem.h"
 
 void mainMenuTest()
 {
@@ -164,112 +165,113 @@ void battleProcessorTest()
 
 void exploreMegaMapTest()
 {
-	resize_term(screenHeight, screenWidth);
+	//resize_term(screenHeight, screenWidth);
 
-	bool playing = true;
+	//bool playing = true;
 
-	WINDOW* screen = newwin(screenHeight, screenWidth, 0, 0);
+	//WINDOW* screen = newwin(screenHeight, screenWidth, 0, 0);
 
-	ResourceManager rm;
-	setupDefaultDataKeys(rm);
+	//ResourceManager rm;
+	//setupDefaultDataKeys(rm);
 
-	rm.loadNullResources();
-	//std::ifstream is(actorFile);
-	//rm.loadActorsFromTextFile(is);
+	//rm.loadNullResources();
+	////std::ifstream is(actorFile);
+	////rm.loadActorsFromTextFile(is);
 
-	FileDirectory dataDir(dataDirName);
-	rm.loadGameMapsFromDir(dataDir);
+	//FileDirectory dataDir(dataDirName);
+	//rm.loadGameMapsFromDir(dataDir);
 
-	Map map0 = rm.gameMaps[11];
-	map0.setWindow(screen);
+	//Map map0 = rm.gameMaps[11];
+	//map0.setWindow(screen);
 
-	Map map1 = rm.gameMaps[12];
-	Map map2 = rm.gameMaps[5];
-	map1.setWindow(screen);
-	map2.setWindow(screen);
+	//Map map1 = rm.gameMaps[12];
+	//Map map2 = rm.gameMaps[5];
+	//map1.setWindow(screen);
+	//map2.setWindow(screen);
 
-	//setup main character
-	Actor mainC;
-	initTestActor(mainC);
-	mainC.name = "hero.actr";
-	mainC.type = ActorType::HUMAN;
-	mainC.symbol = 'A' | COLOR_YELLOW_BOLD << TEXTCOLOR_OFFSET;
-	mainC.x = 48;
-	mainC.y = 20;
+	////setup main character
+	//Actor mainC;
+	//initTestActor(mainC);
+	//mainC.name = "hero.actr";
+	//mainC.type = ActorType::HUMAN;
+	//mainC.symbol = 'A' | COLOR_YELLOW_BOLD << TEXTCOLOR_OFFSET;
+	//mainC.x = 48;
+	//mainC.y = 20;
 
-	map0.setControlActor(&mainC);
+	//map0.setControlActor(&mainC);
 
-	MapRepository repo(23, 51);
+	////MapRepository repo(23, 51);
 
-	ExplorationProcessor mp(&(mainC.y), &(mainC.x), &repo);
-	unsigned short id0 = 0;
-	unsigned short id1 = 1;
-	unsigned short id2 = 2;
-	map0.setId(id0);
-	map1.setId(id1);
-	map2.setId(id2);
+	//ExplorationProcessor mp(&(mainC.y), &(mainC.x));
+	//unsigned short id0 = 0;
+	//unsigned short id1 = 1;
+	//unsigned short id2 = 2;
+	//map0.setId(id0);
+	//map1.setId(id1);
+	//map2.setId(id2);
 
-	repo.addMapSeam(map0, map1, Axis::HORIZONTAL, 0, 1, 1);
-	repo.addMapSeam(map2, map0, Axis::VERTICAL, 0, 0, 1);
-	repo.addMapSeam(map2, map1, Axis::HORIZONTAL, 0, 0, 1);
-	repo.add(map0); //could combine this without previous method
-	repo.add(map1);
-	repo.add(map2);
+	//MapRepository& repo = mp.getMapRepo();
+	//repo.addMapSeam(map0, map1, Axis::HORIZONTAL, 0, 1, 1);
+	//repo.addMapSeam(map2, map0, Axis::VERTICAL, 0, 0, 1);
+	//repo.addMapSeam(map2, map1, Axis::HORIZONTAL, 0, 0, 1);
+	//repo.add(map0); //could combine this without previous method
+	//repo.add(map1);
+	//repo.add(map2);
 
-	int currId = map0.getId();
-	mp.setCurrMap(currId);
-	mp.setViewMode(ViewMode::DYNAMIC); //position map so character is visible (not sure if this is the best way to do this)
+	//int currId = map0.getId();
+	//mp.setCurrMap(currId);
+	//mp.setViewMode(ViewMode::DYNAMIC); //position map so character is visible (not sure if this is the best way to do this)
 
-	MusicPlayer musicPlayer;
-	std::string song1 = "01-02- 12 Microtonal Etudes, Op 28 I 16 notes Andantino.wav";
-	std::string song2 = "11 CONTEMPLATIVE INTERMISSION.wav";
-	int ret = musicPlayer.playFile(song1);
+	//MusicPlayer musicPlayer;
+	//std::string song1 = "01-02- 12 Microtonal Etudes, Op 28 I 16 notes Andantino.wav";
+	//std::string song2 = "11 CONTEMPLATIVE INTERMISSION.wav";
+	//int ret = musicPlayer.playFile(song1);
 
-	while (playing)
-	{
-		//draw map
-		mp.draw();
+	//while (playing)
+	//{
+	//	//draw map
+	//	mp.draw();
 
-		//add y,x coordinates to screen
-		mvwprintw(screen, screenHeight - 2, screenWidth - 16, "y:%+4u x:%+4u", mainC.y, mainC.x);
-		wnoutrefresh(screen);
+	//	//add y,x coordinates to screen
+	//	mvwprintw(screen, screenHeight - 2, screenWidth - 16, "y:%+4u x:%+4u", mainC.y, mainC.x);
+	//	wnoutrefresh(screen);
 
-		doupdate();
-
-
-		//update music if changing maps
-		if ((currId <= 1) && mp.getCurrMap()->getId() == 2)
-		{
-			musicPlayer.stop();
-			musicPlayer.playFile(song2);
-			currId = mp.getCurrMap()->getId();
-		}
-		else if (currId == 2 && mp.getCurrMap()->getId() <= 1)
-		{
-			musicPlayer.stop();
-			musicPlayer.playFile(song1);
-			currId = mp.getCurrMap()->getId();
-		}
+	//	doupdate();
 
 
-		//process input
-		int input = getch();
-		switch (input)
-		{
-		case KEY_ESC: playing = false; break;
-		case KEY_RIGHT:
-		case KEY_LEFT:
-		case KEY_UP:
-		case KEY_DOWN:
-			mp.processMovementInput(input); break;
-		case '\t': //toggle automap
-			break;
-		default:
-			break;
-		}
-	}
+	//	//update music if changing maps
+	//	if ((currId <= 1) && mp.getCurrMap()->getId() == 2)
+	//	{
+	//		musicPlayer.stop();
+	//		musicPlayer.playFile(song2);
+	//		currId = mp.getCurrMap()->getId();
+	//	}
+	//	else if (currId == 2 && mp.getCurrMap()->getId() <= 1)
+	//	{
+	//		musicPlayer.stop();
+	//		musicPlayer.playFile(song1);
+	//		currId = mp.getCurrMap()->getId();
+	//	}
 
-	delwin(screen);
+
+	//	//process input
+	//	int input = getch();
+	//	switch (input)
+	//	{
+	//	case KEY_ESC: playing = false; break;
+	//	case KEY_RIGHT:
+	//	case KEY_LEFT:
+	//	case KEY_UP:
+	//	case KEY_DOWN:
+	//		mp.processMovementInput(input); break;
+	//	case '\t': //toggle automap
+	//		break;
+	//	default:
+	//		break;
+	//	}
+	//}
+
+	//delwin(screen);
 }
 
 
@@ -279,20 +281,15 @@ void exploreOneMapTest()
 
 	bool playing = true;
 
-	WINDOW* screen = newwin(screenHeight, screenWidth, 0, 0);
-
 	ResourceManager rm;
 	setupDefaultDataKeys(rm);
 
-	rm.loadNullResources();
+	//rm.loadNullResources();
 	//std::ifstream is(actorFile);
 	//rm.loadActorsFromTextFile(is);
 
 	FileDirectory dataDir(dataDirName);
 	rm.loadGameMapsFromDir(dataDir);
-
-	Map map0 = rm.gameMaps[5];
-	map0.setWindow(screen);
 
 	//setup main character
 	Actor mainC;
@@ -300,30 +297,56 @@ void exploreOneMapTest()
 	mainC.name = "hero.actr";
 	mainC.type = ActorType::HUMAN;
 	mainC.symbol = 'A' | COLOR_YELLOW_BOLD << TEXTCOLOR_OFFSET;
-	mainC.x = 3;
-	mainC.y = 9;
-
-	map0.setControlActor(&mainC);
-
-	MapRepository repo(23, 51);
-
-	ExplorationProcessor mp(&(mainC.y), &(mainC.x), &repo);
-	unsigned short id0 = 0;
-	map0.setId(id0);
 	
-	repo.add(map0); //could combine this without previous method
-	
-	int currId = map0.getId();
-	mp.setCurrMap(currId);
+	int itemRoomId = 6;
+
+	Image map;
+	map.setDimensions(2, 3);
+	map.setTile(0, 0, 7);
+	map.setTile(0, 1, 7);
+	map.setTile(1, 0, itemRoomId);
+	map.setTile(1, 1, 5);
+	map.setTile(0, 2, nullId);
+	map.setTile(1, 2, nullId);
+
+	MegaMap mm;
+	mm.setMapRoomLayout(map);
+	mm.setUnitHeight(screenHeight);
+	mm.setUnitWidth(screenWidth);
+
+	//create an item in the item room
+	GameItem money;
+	money.id = 30; //making this large to avoid conflicting with maps
+	money.name = GOLD$;
+	money.type = GameItemType::MONEY;
+
+	Sprite s;
+	s.pos.y = 23;
+	s.pos.x = 23;
+	s.quantity = 5;
+	s.symbol = '$' | COLOR_YELLOW_BOLD << TEXTCOLOR_OFFSET;
+	s.thing = &money;
+
+	MapRoom& itemRoom = rm.gameMaps[6];
+	itemRoom.things.push_back(&s);
+
+	ExplorationProcessor mp;
+	mp.setMap(mm);
+	mp.setResourceManager(&rm);
+	mp.setControlActor(&mainC);
+	Pos pos(32, 54);
+	mp.setCursor(pos);
 	mp.setViewMode(ViewMode::DYNAMIC); //position map so character is visible (not sure if this is the best way to do this)
 
+	WINDOW* screen = mp.getScreen();
 	while (playing)
 	{
 		//draw map
 		mp.draw();
 
 		//add y,x coordinates to screen
-		mvwprintw(screen, screenHeight - 2, screenWidth - 16, "y:%+4u x:%+4u", mainC.y, mainC.x);
+		Pos cursor = mp.getCursor();
+		mvwprintw(screen, screenHeight - 2, screenWidth - 16, "y:%+4u x:%+4u", cursor.y, cursor.x);
 		wnoutrefresh(screen);
 
 		doupdate();

@@ -1,6 +1,6 @@
 #pragma once
 #include "TwoDStorage.h"
-#include "Map.h"
+#include "MapRoom.h"
 
 struct UnitMap
 {
@@ -11,7 +11,7 @@ struct MapMetadata
 {
 	//id the specific map
 	unsigned short mapId;
-	Map* map;
+	MapRoom* map;
 
 	//dimensional data
 	//x and y coordinates of map upper left corner when viewed in automap mode. A high level set of coordinates

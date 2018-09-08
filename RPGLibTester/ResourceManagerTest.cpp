@@ -36,7 +36,7 @@ namespace RPGLibTester
 		TEST_METHOD(getNullResourcesMapContentTest)
 		{
 			rm.loadNullResources();
-			Map m = rm.gameMaps.find(nullId)->second;
+			MapRoom m = rm.gameMaps.find(nullId)->second;
 			TwoDStorage<chtype>* tileMap = m.getDisplay()->getTileMap();
 			chtype c = tileMap->getDatum(4, 8);
 

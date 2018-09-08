@@ -43,7 +43,7 @@ private:
 	
 public:
 	std::map<std::string, Actor, std::function<bool(std::string, std::string)> > actors;
-	std::map<int, Map> gameMaps;
+	std::map<int, MapRoom> gameMaps;
 	
 	WadDatabase();
 	void print();
@@ -58,5 +58,5 @@ public:
 	
 	//not sure if I should have this method here!!!
 	//void getActorRepository(std::map<std::string, ActorDef*, std::function<bool(std::string, std::string)>>& mapRepo, std::ifstream& wadFile);
-	void getMapRepository(std::map<unsigned short, Map*>& mapRepo, std::ifstream& wadFile);
+	void getMapRepository(std::map<unsigned short, MapRoom*>& mapRepo, std::ifstream& wadFile);
 };

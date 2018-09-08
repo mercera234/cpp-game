@@ -25,7 +25,7 @@ void MapRepository::addExit(MapExit* source, MapExit* dest)
 /*
 Add 2 exits between maps effectively joining the two
 */
-void MapRepository::addMapSeam(Map& negMap, Map& posMap, //negative map is either N or W, positive is S or E
+void MapRepository::addMapSeam(MapRoom& negMap, MapRoom& posMap, //negative map is either N or W, positive is S or E
 	Axis axis,
 	unsigned short negUnit, unsigned short posUnit, //the unit portion of the map to join together
 	unsigned short length) //not used just yet
@@ -54,15 +54,15 @@ MapExit* MapRepository::getExit(MapExit* sourceExit)
 	return it == exits.end() ? nullptr : &(*it->second);
 }
 
-void MapRepository::add(Map& obj) //add one object of type T
+void MapRepository::add(MapRoom& obj) //add one object of type T
 {
-	std::pair<unsigned short, Map*> aMap(obj.getId(), &obj);
+	std::pair<unsigned short, MapRoom*> aMap(obj.getId(), &obj);
 	maps.insert(aMap);
 }
 
-Map* MapRepository::find(unsigned short id)
+MapRoom* MapRepository::find(unsigned short id)
 {
-	std::map<unsigned short, Map*>::iterator it;
+	std::map<unsigned short, MapRoom*>::iterator it;
 	it = maps.find(id);
 
 	return it == maps.end() ? nullptr : &(*it->second);

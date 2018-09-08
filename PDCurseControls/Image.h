@@ -46,6 +46,7 @@ public:
 	void setBordered(bool bordered) { this->bordered = bordered; }
 	bool isBordered() { return bordered; }
 
+	//TODO these methods allocate memory with no delete!
 	static Image* getScreenShot(unsigned int y, unsigned int x, unsigned int height, unsigned int width);
 	static Image* getFullScreenShot();
 };

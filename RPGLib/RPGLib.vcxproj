@@ -125,6 +125,7 @@
     <ClInclude Include="BoundInt.h" />
     <ClInclude Include="DataPkg.h" />
     <ClInclude Include="EncounterTracker.h" />
+    <ClInclude Include="EnemyPool.h" />
     <ClInclude Include="Factory.h" />
     <ClInclude Include="FreeMovementProcessor.h" />
     <ClInclude Include="GameData.h" />
@@ -136,7 +137,7 @@
     <ClInclude Include="GameItem.h" />
     <ClInclude Include="KeyComparators.h" />
     <ClInclude Include="Lump.h" />
-    <ClInclude Include="Map.h" />
+    <ClInclude Include="MapRoom.h" />
     <ClInclude Include="ActorCard.h" />
     <ClInclude Include="BattleAlgorithm.h" />
     <ClInclude Include="MapEffectFilterPattern.h" />
@@ -144,10 +145,12 @@
     <ClInclude Include="MapKeyComparators.h" />
     <ClInclude Include="MapMetadata.h" />
     <ClInclude Include="MapRepository.h" />
+    <ClInclude Include="Sprite.h" />
     <ClInclude Include="MegaMap.h" />
     <ClInclude Include="Money.h" />
     <ClInclude Include="MovementProcessor.h" />
     <ClInclude Include="MusicPlayer.h" />
+    <ClInclude Include="Overlay.h" />
     <ClInclude Include="Pickup.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerActor.h" />
@@ -173,6 +176,7 @@
     <ClCompile Include="BoundInt.cpp" />
     <ClCompile Include="DataPkg.cpp" />
     <ClCompile Include="EncounterTracker.cpp" />
+    <ClCompile Include="EnemyPool.cpp" />
     <ClCompile Include="Factory.cpp" />
     <ClCompile Include="FreeMovementProcessor.cpp" />
     <ClCompile Include="GameData.cpp" />
@@ -180,13 +184,15 @@
     <ClCompile Include="GameStateManager.cpp" />
     <ClCompile Include="Inventory.cpp" />
     <ClCompile Include="KeyComparators.cpp" />
-    <ClCompile Include="Map.cpp" />
+    <ClCompile Include="MapRoom.cpp" />
     <ClCompile Include="MapEffectFilterPattern.cpp" />
     <ClCompile Include="mapKeyComparators.cpp" />
     <ClCompile Include="MapRepository.cpp" />
+    <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="MegaMap.cpp" />
     <ClCompile Include="MovementProcessor.cpp" />
     <ClCompile Include="MusicPlayer.cpp" />
+    <ClCompile Include="Overlay.cpp" />
     <ClCompile Include="PlayerActor.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="StepTracker.cpp" />

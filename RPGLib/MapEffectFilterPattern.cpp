@@ -2,14 +2,14 @@
 #include "ChtypeFilter.h"
 #include "TUI.h"
 
-void MapEffectFilterPattern::setMap(Map* m)
+void MapEffectFilterPattern::setMap(MapRoom* m)
 {
 	setControl(m);
 }
 
 void MapEffectFilterPattern::applyFilterPattern()
 {
-	Map* m = (Map*)c;
+	MapRoom* m = (MapRoom*)c;
 
 	//add filter to map
 	for (unsigned int row = 0; row < m->getTotalRows(); row++)

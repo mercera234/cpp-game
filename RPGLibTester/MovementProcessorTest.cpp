@@ -61,5 +61,26 @@ namespace RPGLibTester
 
 			Assert::AreEqual(1, x);
 		}
+
+		TEST_METHOD(checkReturnValTest)
+		{
+			MockMovementProcessor mmp;
+
+			int rows = 3;
+			int cols = 6;
+			Image img(rows, cols, stdscr);
+			mmp.setMoveControl(&img);
+			int y = 0;
+			int x = 0;
+			mmp.setCursor(&y, &x);
+
+			MovementChain mc = mmp.processMovementInput(CTL_END);
+
+			Movement& move1 = mc.moves[0];
+			Movement& move2 = mc.moves[1];
+
+			Assert::AreEqual(cols, move1.magnitude);
+			Assert::AreEqual(rows, move2.magnitude);
+		}
 	};
 }

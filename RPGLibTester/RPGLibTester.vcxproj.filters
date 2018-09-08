@@ -38,9 +38,6 @@
     <ClCompile Include="TurnTrackerTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MapTest.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="MovementProcessorTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -96,6 +93,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GameDataTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MegaMapTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MapRoomTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemyPoolTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

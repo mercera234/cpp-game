@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "MockApplication.h"
 #include "ControlManager.h"
 #include "MockControl.h"

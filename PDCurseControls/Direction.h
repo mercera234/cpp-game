@@ -61,4 +61,10 @@ struct Movement
 	}
 };
 
+/*Not sure that I like this. It tracks all the moves, but it clearly isn't a subclass of Movement*/
+struct MovementChain
+{
+	std::vector<Movement> moves;
+};
+
 

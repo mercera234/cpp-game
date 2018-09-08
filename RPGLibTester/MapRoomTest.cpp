@@ -1,12 +1,12 @@
 #include "CppUnitTest.h"
 #include "TUI.h"
-#include "Map.h"
+#include "MapRoom.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace RPGLibTester
 {
-	TEST_CLASS(MapTest)
+	TEST_CLASS(MapRoomTest)
 	{
 		TUI tui;
 
@@ -27,7 +27,7 @@ namespace RPGLibTester
 			WINDOW* win = newwin(rows + 10, cols + 10, 0, 0); //the window dimensions do not have to match the map
 
 			std::string name = "test map";
-			Map theMap(name, rows, cols, win);
+			MapRoom theMap(name, rows, cols, win);
 
 			Assert::AreEqual(0, theMap.getName().compare(name));
 			Assert::AreEqual(rows, (int)theMap.getTotalRows());
@@ -42,7 +42,7 @@ namespace RPGLibTester
 			WINDOW* win = newwin(rows + 10, cols + 10, 0, 0); //the window dimensions do not have to match the map
 
 			std::string name = "test map";
-			Map theMap(name, rows, cols, win);
+			MapRoom theMap(name, rows, cols, win);
 
 			Image* img = theMap.getDisplay();
 
@@ -59,7 +59,7 @@ namespace RPGLibTester
 		{
 			int rows = 3;
 			int cols = 4;
-			Map theMap;
+			MapRoom theMap;
 			theMap.setDimensions(rows, cols);
 
 			Image* display = theMap.getDisplay();
@@ -77,7 +77,7 @@ namespace RPGLibTester
 			WINDOW* win = newwin(rows + 10, cols + 10, 0, 0); //the window dimensions do not have to match the map
 
 			std::string name = "test map";
-			Map theMap(name, rows, cols, win);
+			MapRoom theMap(name, rows, cols, win);
 
 			theMap.resize(2, 4);
 
@@ -92,7 +92,7 @@ namespace RPGLibTester
 			WINDOW* win = newwin(rows, cols, 0, 0); //the window dimensions do not have to match the map
 
 			std::string name = "test map";
-			Map theMap(name, rows, cols, win);
+			MapRoom theMap(name, rows, cols, win);
 
 			int newRows = 3;
 			int newCols = 1;
@@ -112,7 +112,7 @@ namespace RPGLibTester
 			WINDOW* win = newwin(rows, cols, 0, 0); //the window dimensions do not have to match the map
 
 			std::string name = "test map";
-			Map theMap(name, rows, cols, win);
+			MapRoom theMap(name, rows, cols, win);
 
 			int newRows = 3;
 			int newCols = 1;
@@ -133,7 +133,7 @@ namespace RPGLibTester
 			WINDOW* win = newwin(rows + 10, cols + 10, 0, 0); //the window dimensions do not have to match the map
 
 			std::string name = "test map";
-			Map theMap(name, rows, cols, win);
+			MapRoom theMap(name, rows, cols, win);
 
 			TwoDStorage<EffectType> tileEffects = theMap.getEffectsLayer();
 			Assert::IsTrue(EffectType::NONE == tileEffects.getDatum(0));

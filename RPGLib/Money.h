@@ -1,9 +1,9 @@
 #pragma once
-#include "Pickup.h"
+#include "Sprite.h"
 
 const chtype defaultMoneySymbol = '$' | COLOR_YELLOW_BOLD << TEXTCOLOR_OFFSET;
 
-struct Money : public Pickup
+struct Money : public Thing
 {
-	unsigned int amount;
+	int amount;
 };

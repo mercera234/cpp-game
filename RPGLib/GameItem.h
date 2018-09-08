@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Pickup.h"
+#include "Thing.h"
 
 const chtype defaultItemSymbol = '*' | COLOR_MAGENTA_BOLD << TEXTCOLOR_OFFSET;
 
@@ -12,11 +12,12 @@ enum class GameItemType
 	ARMOR,
 	ACCESSORY,
 	KEY,
-	READABLE
+	READABLE,
+	MONEY
 };
 
-struct GameItem : public Pickup
+struct GameItem : public Thing
 {
 	GameItemType type;
-	unsigned int cost;
+	int cost;
 };

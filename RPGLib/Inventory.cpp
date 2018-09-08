@@ -10,8 +10,8 @@ Inventory::Inventory(unsigned int rows, unsigned int cols)
 	//create one blank item
 	blankItem = new GameItem();
 	blankItem->name = blankName;
-	blankItem->x = -1;
-	blankItem->y = -1;
+	//blankItem->x = -1;
+	//blankItem->y = -1;
 	blankItem->description = "";
 	blankItem->cost = 0;
 	blankItem->type = GameItemType::BLANK;

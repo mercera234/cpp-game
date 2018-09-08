@@ -1,6 +1,7 @@
 #include "CppUnitTest.h"
 #include "GameItem.h"
 #include "Money.h"
+//#include "Pickup.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -14,8 +15,6 @@ namespace RPGLibTester
 			item.name = "Cigarette";
 			item.description = "Soothes nerves";
 			item.symbol = defaultItemSymbol;
-			item.y = 0;
-			item.x = 0;
 			item.cost = 3;
 			item.type = GameItemType::CONSUMABLE;
 
@@ -33,7 +32,7 @@ namespace RPGLibTester
 			Assert::IsTrue(true);
 		}
 
-		TEST_METHOD(pickup)
+		/*TEST_METHOD(pickup)
 		{
 			GameItem potion;
 			potion.name = "Potion";
@@ -41,7 +40,7 @@ namespace RPGLibTester
 			Pickup p = potion;
 
 			Assert::IsTrue(p.name.compare("Potion") == 0);
-		}
+		}*/
 
 		/*
 

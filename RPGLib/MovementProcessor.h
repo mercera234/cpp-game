@@ -43,11 +43,11 @@ protected:
 
 	/*Process movement after pressing Home or End keys. 
 	Return value is the move that was taken.*/
-	bool processHomeEndInput(int key);
+	MovementChain processHomeEndInput(int key);
 
 	/*Process movement after pressing directional arrows. 
 	Return value is the move that was taken.*/
-	bool processDirectionalInput(Dir input, int magnitude);
+	Movement processDirectionalInput(Dir input, int magnitude);
 	void moveCursor(Movement& move);
 
 	void adjustView();
@@ -60,7 +60,8 @@ protected:
 	/* Return true if coordinates are not less than the controls upper left coordinate, and within the visible area */
 	bool inWindow();
 
-	/* Adjust the view if viewMode is set to dynamic. Adjustment occurs when cursor is too close to the boundaries of control.*/
+	/* Adjust the view if viewMode is set to dynamic. Adjustment occurs when cursor is too close to the boundaries of control.
+	Return true if movement took place. move is updated with the actual move taken.*/
 	virtual bool processMovement(Movement& move) = 0;
 	void reverseMovement(Movement& move);
 	
@@ -68,7 +69,7 @@ public:
 	/*TODO, this should return the total movement taken, and not just success or fail
 	Process movement after pressing any key.
 	Return value is the move that was taken.*/
-	bool processMovementInput(int input);
+	MovementChain processMovementInput(int input);
 
 	//getters/setters
 	void setViewMode(ViewMode mode);

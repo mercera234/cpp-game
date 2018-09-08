@@ -163,11 +163,13 @@
     <ClCompile Include="BattleAlgorithmTest.cpp" />
     <ClCompile Include="BoundIntTest.cpp" />
     <ClCompile Include="EncounterTrackerTest.cpp" />
+    <ClCompile Include="EnemyPoolTest.cpp" />
     <ClCompile Include="FreeMovementProcessorTest.cpp" />
     <ClCompile Include="GameDataTest.cpp" />
     <ClCompile Include="GameStateManagerTest.cpp" />
     <ClCompile Include="InventoryTest.cpp" />
-    <ClCompile Include="MapTest.cpp" />
+    <ClCompile Include="MapRoomTest.cpp" />
+    <ClCompile Include="MegaMapTest.cpp" />
     <ClCompile Include="MockMovementProcessor.cpp" />
     <ClCompile Include="MockMusicPlayer.cpp" />
     <ClCompile Include="MockState1.cpp" />

@@ -3,7 +3,7 @@
 #include <functional>
 #include "KeyComparators.h"
 #include "Actor.h"
-#include "Map.h"
+#include "MapRoom.h"
 #include "GameItem.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
@@ -32,9 +32,9 @@ namespace RPGLibTester
 
 		TEST_METHOD(gameMapMapTest)
 		{
-			std::map<int, Map> mapRepo;
+			std::map<int, MapRoom> mapRepo;
 			
-			Map m;
+			MapRoom m;
 			mapRepo.insert(std::make_pair(0, m));
 
 			Assert::AreEqual(1, (int)mapRepo.size());

@@ -1,6 +1,6 @@
 #pragma once
 #include "FilterPattern.h"
-#include "Map.h"
+#include "MapRoom.h"
 
 
 class MapEffectFilterPattern : public FilterPattern
@@ -10,6 +10,6 @@ private:
 	short getColor(EffectType effect);
 public:
 	MapEffectFilterPattern() {};
-	MapEffectFilterPattern(Map* m) : FilterPattern(m) {};
-	void setMap(Map* m);
+	MapEffectFilterPattern(MapRoom* m) : FilterPattern(m) {};
+	void setMap(MapRoom* m);
 };

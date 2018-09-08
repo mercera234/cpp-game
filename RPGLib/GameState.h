@@ -9,7 +9,7 @@ class GameState : public Drawable
 {
 protected:
 	bool active = true;
-	std::string name;
+	std::string name; //TODO you should be able to get rid of this
 	void setName(const std::string& nameIn) { this->name = nameIn; } //only derived states should be allowed to use this method
 	WINDOW* win;
 	GameStateManager* manager;

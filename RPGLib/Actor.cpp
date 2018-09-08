@@ -69,7 +69,7 @@ int Actor::save(std::ofstream& saveFile)
 	std::streampos startPos = saveFile.tellp();
 
 	saveFile.write(buf, MAX_NAME_LENGTH);
-	saveFile.write((char*)&symbol, sizeof(char));
+//	saveFile.write((char*)&symbol, sizeof(char));
 	/*saveFile.write((char*)&level, sizeof(short));
 	saveFile.write((char*)&exp, sizeof(int));
 	saveFile.write((char*)&money, sizeof(int));
@@ -100,7 +100,7 @@ int Actor::load(std::ifstream& loadFile)
 	loadFile.read(buf, MAX_NAME_LENGTH);
 	name.assign(buf);
 
-	loadFile.read((char*)&symbol, sizeof(char));
+//	loadFile.read((char*)&symbol, sizeof(char));
 	/*loadFile.read((char*)&level, sizeof(short));
 	loadFile.read((char*)&exp, sizeof(int));
 	loadFile.read((char*)&money, sizeof(int));

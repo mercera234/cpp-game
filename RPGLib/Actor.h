@@ -50,13 +50,12 @@ An actor represents individual user controlled players, enemies, and NPCs
 */
 struct Actor : public Thing, public Storable
 {
-	int prevX, prevY; //previous position
 	ActorType type;
 	
 	BoundInt money;
 
 	//GridMenu* inventory;
-
+	//int y, x;
 	//do this differently!
 	//int skills; //each bit represents 1 ability so, there are a max of 32
 	

@@ -30,7 +30,12 @@ public:
 	int getMinSteps() { return minSteps; }
 	int getMaxSteps() { return maxSteps; }
 	int getPeaceSteps() { return peaceSteps; }
-	void setEncounterTracking(bool track) { tracking = track; }
+
+	void setTracking(bool trackingIn) { tracking = trackingIn; }
+	bool getTracking() { return tracking; }
+
+
+
 	void setEncounterChance(int chance) { this->chance = chance; }
 	int getEncounterChance() { return chance; }
 	bool didEncounterOccur() { return occurred; }
