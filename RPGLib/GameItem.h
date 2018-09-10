@@ -8,11 +8,11 @@ enum class GameItemType
 {
 	BLANK, //not an item, just a place holder
 	CONSUMABLE,
-	WEAPON,
-	ARMOR,
-	ACCESSORY,
+	EQUIPPABLE,
+	//WEAPON, //TODO weapon,armor, and accessory could be combined into EQUIPPABLE
+	//ARMOR,
+	//ACCESSORY,
 	KEY,
-	READABLE,
 	MONEY
 };
 
@@ -20,4 +20,5 @@ struct GameItem : public Thing
 {
 	GameItemType type;
 	int cost;
+	int value; 
 };

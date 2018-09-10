@@ -1,12 +1,14 @@
 #pragma once
+#include <list>
 #include "ControlManager.h"
 #include "Frame.h"
 #include "TextLabel.h"
 #include "FileChooser.h"
 #include "SimpleControlCommand.h"
 #include "ConfirmCommand.h"
-
-const std::string DEF_FILENAME = "<Untitled>";
+#include "EditMode.h"
+#include "TUI.h"
+#include "LineItem.h"
 
 template <typename Receiver>
 class Editor : public Controllable
@@ -20,11 +22,11 @@ protected:
 	ConfirmCommand<Receiver> quitCmd;
 
 	//file data (this should be moved to Master Editor)
-	std::string fileName = DEF_FILENAME;
-	std::string dialogDefPath;
+	
 	TextLabel fileNameLbl;
-	bool modified = false;
-	std::string extensionFilter;
+
+	std::list<EditMode*> modes;
+	std::list<EditMode*>::iterator mode;
 
 	void updateFileNameLabel();
 	
@@ -33,15 +35,18 @@ protected:
 	void setupConfirmDialog(ControlCommand* cmd);
 	
 	void setupFileDialog(FileDialogType dialogType);
-	virtual void load(std::string fileName) = 0;
-	virtual void save(std::string fileName) = 0;
+
+	virtual void load(const std::string& fileName) = 0;
+	virtual void save(const std::string& fileName) = 0;
 	virtual void createNew() = 0; //for creating a new instance of whatever is being edited
-	void setModified(bool modified); //all routines to perform when current map has been modified from original state
+	virtual void cycleMode() = 0;
+
 public:
 	virtual void draw() = 0;
 	virtual int processInput(int input) = 0;
-	ControlManager* getControlManager() { return cm; }
+	
 	int processGlobalInput(Controllable* c, int input);
+
 	int confirmNewDialogDriver(Controllable* dialog, int input);
 	int confirmOpenDialogDriver(Controllable* dialog, int input);
 	int confirmQuitDialogDriver(Controllable* dialog, int input);
@@ -49,25 +54,14 @@ public:
 };
 
 
-#include "Editor.h"
-#include "TUI.h"
-#include "LineItem.h"
 
-template <typename Receiver>
-void Editor<Receiver>::setModified(bool mod)
-{
-	if (modified == mod && mod)//exit if no change in modified state and modified is set to true
-		return;
 
-	modified = mod;
-
-	updateFileNameLabel();
-}
 
 template <typename Receiver>
 int Editor<Receiver>::processGlobalInput(Controllable* c, int input)
 {
 	int exitCode = HANDLED;
+	bool modified = (*mode)->isModified();
 	//handle preliminary input
 	switch (input)
 	{
@@ -105,18 +99,20 @@ int Editor<Receiver>::processGlobalInput(Controllable* c, int input)
 	case CTRL_S:
 		if (modified) //save only if there are changes
 		{
-			if (fileName.compare(DEF_FILENAME) == 0) //bring up filechooser if default name is still used 
+			if ((*mode)->hasSaved() == false) //bring up filechooser if default name is still used 
 				setupFileDialog(FileDialogType::SAVE_DIALOG);
 			else
 			{
-				save(dialogDefPath + '\\' + fileName);
-				setModified(false);
+				(*mode)->save();
 			}
 
 		}
 		break;
 	case CTRL_A:
 		setupFileDialog(FileDialogType::SAVE_DIALOG);
+		break;
+	case CTRL_M:
+		cycleMode();
 		break;
 	}
 
@@ -254,7 +250,7 @@ void Editor<Receiver>::setupFileDialog(FileDialogType dialogType)
 	WINDOW* main = newwin(height, width, (getmaxy(stdscr) - height) / 2, (getmaxx(stdscr) - width) / 2);
 	WINDOW* w = derwin(main, height - 2, width - 2, 1, 1);
 
-	FileChooser* fd = new FileChooser(w, dialogDefPath, dialogType, extensionFilter);
+	FileChooser* fd = new FileChooser(w, (*mode)->getDefaultFilePath(), dialogType, (*mode)->extensionFilter);
 
 	Frame* f = new Frame(main, fd);
 	f->setModal(true);
@@ -296,11 +292,11 @@ int Editor<Receiver>::fileDialogDriver(Controllable* dialog, int input)
 		case FileDialogType::SAVE_DIALOG: save(fileChosen); break;
 		}
 		int pos = fileChosen.find_last_of('\\');
-		fileName = fileChosen.substr(pos + 1, fileChosen.length());
+		(*mode)->setFileName(fileChosen.substr(pos + 1, fileChosen.length()));
 
 		//save path that file was opened/saved from as the start point for next time
-		dialogDefPath = fileChosen.substr(0, pos);
-		setModified(false);
+		(*mode)->setDefaultFilePath(fileChosen.substr(0, pos));
+		(*mode)->setModified(false);
 
 		cm->popControl();
 	}
@@ -310,8 +306,5 @@ int Editor<Receiver>::fileDialogDriver(Controllable* dialog, int input)
 template <typename Receiver>
 void Editor<Receiver>::updateFileNameLabel()
 {
-	std::string lblTxt;
-	lblTxt = modified ? fileName.substr(0, 14) + "*" : fileName;
-
-	fileNameLbl.setText(lblTxt);
+	fileNameLbl.setText((*mode)->getFileNameModified());
 }

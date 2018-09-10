@@ -16,13 +16,13 @@ void inventoryTest()
 	item2->name = "Tazer";
 	item2->cost = 500;
 	item2->description = "Stuns enemies";
-	item2->type = GameItemType::WEAPON;
+	item2->type = GameItemType::EQUIPPABLE;
 
 	GameItem* item3 = new GameItem;
 	item3->name = "Laser Sword";
 	item3->cost = 10000;
 	item3->description = "Weapon";
-	item3->type = GameItemType::WEAPON;
+	item3->type = GameItemType::EQUIPPABLE;
 
 	Inventory inv(10, 1);
 	GridMenu* menu = inv.getGridMenu();

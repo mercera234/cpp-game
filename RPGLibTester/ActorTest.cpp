@@ -8,16 +8,18 @@ namespace RPGLibTester
 {
 	TEST_CLASS(ActorTest)
 	{
-		//TODO remove buildActor and replace with initTestActor
+		
 		TEST_METHOD(gainMoney)
 		{
-			Actor* player = buildActor(ActorType::HUMAN);
-			player->money.setCurr(0); //should be 0 by default, but this is more explicit
+			Actor player;
+			initTestActor(player);
+			
+			player.money.setCurr(0); //should be 0 by default, but this is more explicit
 
 			int moneyGain = 100;
-			alterStatValue(player->money, moneyGain);
+			alterStatValue(player.money, moneyGain);
 			
-			Assert::AreEqual(moneyGain, player->money.getCurr());
+			Assert::AreEqual(moneyGain, player.money.getCurr());
 		}
 
 		TEST_METHOD(maxOutHP) //like if using a restorative item or sleeping at an inn
@@ -37,37 +39,40 @@ namespace RPGLibTester
 
 		TEST_METHOD(gainExperience) //no level up
 		{
-			Actor* player = buildActor(ActorType::HUMAN);
+			Actor player;
+			initTestActor(player);
 
-			player->stats.exp.setCurr(100);
+			player.stats.exp.setCurr(100);
 			
-			player->alterStat(StatType::EXP, 10);
+			player.alterStat(StatType::EXP, 10);
 			
-			Assert::AreEqual(110, player->stats.exp.getCurr());
+			Assert::AreEqual(110, player.stats.exp.getCurr());
 		}
 
 		TEST_METHOD(damageActor)
 		{
-			Actor* player = buildActor(ActorType::HUMAN);
+			Actor player;
+			initTestActor(player);
 
-			player->stats.hp.setCurr(25);
+			player.stats.hp.setCurr(25);
 
-			player->alterStat(StatType::HP, -10);
+			player.alterStat(StatType::HP, -10);
 
-			Assert::AreEqual(15, player->stats.hp.getCurr());
+			Assert::AreEqual(15, player.stats.hp.getCurr());
 		}
 
 		TEST_METHOD(healActor)
 		{
-			Actor* player = buildActor(ActorType::HUMAN);
+			Actor player;
+			initTestActor(player);
 
 			int maxHP = 25;
-			player->stats.hp.setCurrMax(maxHP);
-			player->stats.hp.setCurr(1);
+			player.stats.hp.setCurrMax(maxHP);
+			player.stats.hp.setCurr(1);
 
-			player->alterStat(StatType::HP, 30); //player is healed beyond max
+			player.alterStat(StatType::HP, 30); //player is healed beyond max
 
-			Assert::AreEqual(maxHP, player->stats.hp.getCurr()); 
+			Assert::AreEqual(maxHP, player.stats.hp.getCurr()); 
 		}
 
 		TEST_METHOD(isActorAlive)
@@ -80,11 +85,12 @@ namespace RPGLibTester
 
 		TEST_METHOD(isActorDead)
 		{
-			Actor* player = buildActor(ActorType::HUMAN);
+			Actor player;
+			initTestActor(player);
 
-			player->alterStat(StatType::HP, -10000);
+			player.alterStat(StatType::HP, -10000);
 
-			Assert::IsFalse(isAlive(*player));
+			Assert::IsFalse(isAlive(player));
 		}
 		
 

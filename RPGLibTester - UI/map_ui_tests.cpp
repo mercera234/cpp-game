@@ -561,33 +561,53 @@ void highLevelMapTest()
 void megaMapTest()
 {
 	MegaMap mm;
+	mm.setDimensions(6, 6, 6);
 	mm.setUnitHeight(23);
 	mm.setUnitWidth(51);
+	mm.setFloor(0);
 
-	Image& img = mm.getMapRoomLayout();
-	TwoDStorage<chtype>* tileMap = img.getTileMap();
+	Image img[6];
+	TwoDStorage<chtype>* tileMap = img[0].getTileMap();
 	tileMap->fill(INT_MAX);
 
-	img.setDimensions(6, 6);
-	img.setTile(1, 2, 1);
-	img.setTile(1, 3, 1);
-	img.setTile(1, 4, 1);
-	img.setTile(2, 2, 1);
-	img.setTile(2, 3, 1);
-	img.setTile(2, 4, 1);
+	img[0].setDimensions(6, 6);
+	img[1].setDimensions(6, 6);
+	img[2].setDimensions(6, 6);
+	img[3].setDimensions(6, 6);
+	img[4].setDimensions(6, 6);
+	img[5].setDimensions(6, 6);
 
-	img.setTile(1, 1, 2);
-	img.setTile(2, 1, 2);
-	img.setTile(3, 1, 2);
-	img.setTile(4, 1, 2);
+	img[0].setTile(1, 2, 1);
+	img[0].setTile(1, 3, 1);
+	img[0].setTile(1, 4, 1);
+	img[0].setTile(2, 2, 1);
+	img[0].setTile(2, 3, 1);
+	img[0].setTile(2, 4, 1);
+
+	img[0].setTile(1, 1, 2);
+	img[0].setTile(2, 1, 2);
+	img[0].setTile(3, 1, 2);
+	img[0].setTile(4, 1, 2);
 	
+	img[1].getTileMap()->fill(INT_MAX);
+	img[2].getTileMap()->fill(INT_MAX);
+	img[3].getTileMap()->fill(INT_MAX);
+	img[4].getTileMap()->fill(INT_MAX);
+	img[5].getTileMap()->fill(INT_MAX);
+
+	mm.setLayerImage(0, img[0]);
+	mm.setLayerImage(1, img[1]);
+	mm.setLayerImage(2, img[2]);
+	mm.setLayerImage(3, img[3]);
+	mm.setLayerImage(4, img[4]);
+	mm.setLayerImage(5, img[5]);
+
+
 	Actor actor;
 	initTestActor(actor);
-	/*actor.y = 30;
-	actor.x = 120;*/
+	
 	Pos actorPos(30, 120);
 
-//	mm.setCursor(&actor.y, &actor.x);
 	mm.setCursor(&actorPos.y, &actorPos.x);
 
 	bool playing = true;
@@ -601,16 +621,18 @@ void megaMapTest()
 		case KEY_UP: actorPos.y--; break;
 		case KEY_LEFT: actorPos.x--; break;
 		case KEY_RIGHT: actorPos.x++; break;
+		case '+': mm.changeLayer(1); break;
+		case '-': mm.changeLayer(-1); break;
 		case KEY_ESC: playing = false; continue; 
 		}
 		
 		
 		Pos imc = mm.getMapRoomPos();
 		Pos map = mm.getUnitPos();
-		int mapId = img.getTile(map.y, map.x);
+		int mapId = img[0].getTile(map.y, map.x);
 		if (mapId == INT_MAX)
 			mapId = '!';
-		std::cout << "y: " << actorPos.y << " x: " << actorPos.x  //print actor coordinates
+		std::cout << "z: " << mm.getFloorLabel() << " y: " << actorPos.y << " x: " << actorPos.x  //print actor coordinates
 			<< "  mapY: " << imc.y << " mapX: " << imc.x  //print inner map coordinates
 			<< "  Y: " << map.y << " X: " << map.x << ' ' << ((mapId == INT_MAX) ? '!' : mapId) << std::endl; //print high level map coordinates
 	}

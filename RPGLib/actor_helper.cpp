@@ -8,36 +8,6 @@ void setBoundedStat(BoundInt& stat, int min, int currMax, int max, int value)
 	stat.setCurrMax(currMax);
 }
 
-//TODO this should not be used
-Actor* buildActor(ActorType type)
-{
-	Actor* actor = new Actor();
-
-	//set thing properties
-	actor->symbol = '?';
-	actor->name = "Unnamed";
-
-	//set actor properties
-
-	actor->type = type;
-
-	//setBoundedStat(actor->money, 0, 9999999, 9999999, 0);
-	//setBoundedStat(actor->stats.level, 1, 99, 99, 1);
-	//setBoundedStat(actor->stats.exp, 0, 9999999, 0);
-	//setBoundedStat(actor->stats.hp, 0, 25, 25);
-	//setBoundedStat(actor->stats.mp, 0, 10, 0);
-	//setBoundedStat(actor->stats.strength, 0, 255, 0);
-	//setBoundedStat(actor->stats.defense, 0, 255, 0);
-	//setBoundedStat(actor->stats.intelligence, 0, 255, 0);
-	//setBoundedStat(actor->stats.will, 0, 255, 0);
-	//setBoundedStat(actor->stats.agility, 0, 255, 0);
-
-	//not all stats are set yet!
-
-	
-	return actor;
-}
-
 
 void initTestActor(Actor& player)
 {

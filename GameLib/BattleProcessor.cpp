@@ -373,7 +373,7 @@ void BattleProcessor::calcRewards(int& totalExp, int &totalMoney)
 		Actor* enemy = card->getActor();
 
 		totalExp += enemy->getStat(StatType::EXP).getCurr();
-		totalMoney += enemy->getStat(StatType::MONEY).getCurr();
+		totalMoney += enemy->money.getCurr();
 	}
 
 	std::ostringstream rewardMsg;

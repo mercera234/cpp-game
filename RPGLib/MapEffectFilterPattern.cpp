@@ -47,20 +47,5 @@ void MapEffectFilterPattern::applyFilterPattern()
 
 short MapEffectFilterPattern::getColor(EffectType effect)
 {
-	//short color;
-	//switch (effect)
-	//{ //hard code all colors for effects here
-	//case EffectType::OBSTR: color = effectTypeColors[(int)effect];
-	//	//color = COLOR_RED_BOLD; 
-	//	break;
-	//case EffectType::JUMPABLE: color = COLOR_BLUE; break;
-	//case EffectType::HP_DECREASE: color = COLOR_RED; break;
-	//case EffectType::HP_INCREASE: color = COLOR_MAGENTA_BOLD; break;
-	//case EffectType::DOWN_EXIT: color = COLOR_GREEN; break;
-	//case EffectType::UP_EXIT: color = COLOR_GREEN_BOLD; break;
-	//default: color = COLOR_YELLOW_BOLD; break;
-	//}
-
-	//return color;
 	return effectTypeColors[(int)effect];
 }

@@ -19,7 +19,7 @@ int main()
 	//DO NOT MODIFY ABOVE THIS LINE
 	
 	
-	frameWithImageTest();
+	statusBoardWithTextPieces();
 	
 	
 	

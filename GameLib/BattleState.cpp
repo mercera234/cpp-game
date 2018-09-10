@@ -4,6 +4,7 @@
 #include "GameInput.h"
 #include "GameStateManager.h"
 #include "actor_helper.h"
+#include "EnemyPool.h"
 
 GameState* BattleState::instance = nullptr;
 
@@ -29,14 +30,36 @@ void BattleState::loadState()
 {
 	std::list<Actor*> players = { resourceManager->playerParty.begin(), resourceManager->playerParty.end() };
 	
-	//TODO enemies should be loaded from a pool or something
-	e1 = resourceManager->actors.find("Wispwing")->second; //retrieve a copy of the repository enemy
-	e1.type = ActorType::CPU;
+	//TODO pool is being set manually right now, should be read in from file
+	EnemyPool pool;
+	EnemyGroup group1;
+	group1.weight = 1;
+	group1.enemyNames.push_back("Toadie");
+	group1.enemyNames.push_back("Toadie");
 
-	std::list<Actor*> enemies;
-	enemies.push_back(&e1);
+	EnemyGroup group2;
+	group2.weight = 1;
+	group2.enemyNames.push_back("Toadie");
+	group2.enemyNames.push_back("Skittler");
 
-	battleProcessor.addParticipants(players, enemies);
+	std::vector<EnemyGroup> groups;
+	groups.push_back(group1);
+	groups.push_back(group2);
+
+	pool.setGroups(groups);
+
+	EnemyGroup randomGroup = pool.getRandomGroup();
+
+	std::list<Actor*> enemyPtrs;
+	for each (std::string name in randomGroup.enemyNames)
+	{
+		Actor e = resourceManager->actors.find(name)->second; //get copy of repository enemy
+		e.type = ActorType::CPU;
+		enemies.push_back(e);
+		enemyPtrs.push_back(&enemies.back());
+	}
+
+	battleProcessor.addParticipants(players, enemyPtrs);
 	battleProcessor.begin();
 }
 

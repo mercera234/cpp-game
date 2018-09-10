@@ -3,14 +3,7 @@
 #include "GridMenu.h"
 #include "curses.h"
 #include "WadDatabase.h"
-
-enum TitleMenuOptions
-{
-	NEW_GAME,
-	LOAD_GAME, 
-	QUIT_GAME,
-	EDIT_GAME
-};
+#include "TitleScreen.h"
 
 
 class TitleScreenState : public GameState
@@ -20,6 +13,7 @@ private:
 	
 	static GameState* instance;
 
+	TitleScreen titleScreen;
 	GridMenu titleMenu;
 
 	void beginNewGame();

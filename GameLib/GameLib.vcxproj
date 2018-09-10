@@ -122,6 +122,7 @@
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="MainMenuState.cpp" />
     <ClCompile Include="menu_drivers.cpp" />
+    <ClCompile Include="TitleScreen.cpp" />
     <ClCompile Include="TitleScreenState.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -135,6 +136,7 @@
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="MainMenuState.h" />
     <ClInclude Include="menu_drivers.h" />
+    <ClInclude Include="TitleScreen.h" />
     <ClInclude Include="TitleScreenState.h" />
   </ItemGroup>
   <ItemGroup>

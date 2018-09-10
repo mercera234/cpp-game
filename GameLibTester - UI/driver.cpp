@@ -1,7 +1,7 @@
 #include "TUI.h"
 #include "misc_tests.h"
 
-//PROJECT1 UI TESTER
+//GAMELIB UI TESTER
 int main()
 {
 	TUI tui;
@@ -11,7 +11,7 @@ int main()
 
 
 
-	exploreOneMapTest();
+	mainMenuTest();
 
 
 

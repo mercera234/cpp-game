@@ -6,7 +6,7 @@
 #include "SimpleControlCommand.h"
 #include "Actor.h"
 #include "TextBoard.h"
-#include "GameData.h"
+#include "ResourceManager.h"
 #include "TextParamValue.h"
 
 //Main Menu options
@@ -33,7 +33,7 @@ private:
 	SimpleControlCommand<MainMenu> mainMenuCmd;
 	SimpleControlCommand<MainMenu> playerMenuCmd;
 
-	GameData* theData;
+	ResourceManager* resourceManager;
 
 	int leftFrameWidth;
 	int rightFrameWidth;
@@ -49,11 +49,12 @@ private:
 
 	Frame bodyFrame;
 	TextBoard bodyContent;
-	TextParamValue gold, steps, enemiesKilled, battlesWon;
-
+	
 	TextBoard statusContent;
-	TextParamCurrMaxValue hpRow, mpRow;
-	TextParamValue strengthRow, defenseRow, intelRow, willRow, agilityRow, expRow;
+	TextParamCurrMaxValue* hpRow, *mpRow;
+	TextParamValue<BoundInt>* strengthRow, *defenseRow, *intelRow, *willRow, *agilityRow, *expRow;
+
+	TextParamValue<BoundInt>* gold, *steps, *enemiesKilled, *battlesWon;
 
 	Frame descFrame;
 	GridMenu descMenu;
@@ -64,6 +65,7 @@ private:
 	void setupMainMenu();
 	void setupPlayerMenu();
 
+	void setupBodyFields();
 	void setupHubContent();
 	void setupStatusFields();
 	void setupStatusContent();
@@ -80,10 +82,8 @@ public:
 
 	~MainMenu();
 
-	/*static int mainMenuCallback(void* caller, void* ptr, int input);
-	static int playerMenuCallback(void* caller, void* ptr, int input);*/
+	void setResourceManager(ResourceManager* resourceManagerIn);
 
-	void setData(GameData* gd);
 	//setters/getters
 	 
 };

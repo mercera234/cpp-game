@@ -23,8 +23,10 @@ MainMenu::MainMenu()
 	playerMenuCmd.setReceiver(this);
 	playerMenuCmd.setAction(&MainMenu::processPlayerMenuInput);
 
-
+	setupBodyFields();
 	setupStatusFields();
+
+
 
 	//register controls
 	cm.registerControl(&mainFrame, KEY_LISTENER, &mainMenuCmd);
@@ -35,39 +37,38 @@ MainMenu::MainMenu()
 
 void MainMenu::setupStatusFields()
 {
-	hpRow.setText(HP);
-	hpRow.setFormat(new LineFormat(0, Justf::LEFT));
+	//values are null, but will be setup later
+	hpRow = new TextParamCurrMaxValue(new LineFormat(0, Justf::LEFT), HP, nullptr);
+	mpRow = new TextParamCurrMaxValue(new LineFormat(1, Justf::LEFT), MP, nullptr, 4);
+	strengthRow = new TextParamValue<BoundInt>(new LineFormat(2, Justf::LEFT), STRENGTH, nullptr);
+	defenseRow = new TextParamValue<BoundInt>(new LineFormat(3, Justf::LEFT), DEFENSE, nullptr);
+	intelRow = new TextParamValue<BoundInt>(new LineFormat(4, Justf::LEFT), INTELLIGENCE, nullptr);
+	willRow = new TextParamValue<BoundInt>(new LineFormat(5, Justf::LEFT), WILL, nullptr);
+	agilityRow = new TextParamValue<BoundInt>(new LineFormat(6, Justf::LEFT), AGILITY, nullptr);
+	expRow = new TextParamValue<BoundInt>(new LineFormat(7, Justf::LEFT), EXP, nullptr);
 
-	mpRow.setText(MP);
-	mpRow.setFormat(new LineFormat(1, Justf::LEFT));
-
-	strengthRow.setText(STRENGTH);
-	strengthRow.setFormat(new LineFormat(2, Justf::LEFT));
-
-	defenseRow.setText(DEFENSE);
-	defenseRow.setFormat(new LineFormat(3, Justf::LEFT));
-
-	intelRow.setText(INTELLIGENCE);
-	intelRow.setFormat(new LineFormat(4, Justf::LEFT));
-
-	willRow.setText(WILL);
-	willRow.setFormat(new LineFormat(5, Justf::LEFT));
-
-	agilityRow.setText(AGILITY);
-	agilityRow.setFormat(new LineFormat(6, Justf::LEFT));
-
-	expRow.setText(EXP);
-	expRow.setFormat(new LineFormat(7, Justf::LEFT));
-
-	statusContent.addPiece(&hpRow);
-	statusContent.addPiece(&mpRow);
-	statusContent.addPiece(&strengthRow);
-	statusContent.addPiece(&defenseRow);
-	statusContent.addPiece(&intelRow);
-	statusContent.addPiece(&willRow);
-	statusContent.addPiece(&agilityRow);
-	statusContent.addPiece(&expRow);
+	statusContent.addPiece(hpRow); //the bound int values will need to be setup later
+	statusContent.addPiece(mpRow);
+	statusContent.addPiece(strengthRow);
+	statusContent.addPiece(defenseRow);
+	statusContent.addPiece(intelRow);
+	statusContent.addPiece(willRow);
+	statusContent.addPiece(agilityRow);
+	statusContent.addPiece(expRow);
 }
+
+void MainMenu::setupBodyFields()
+{
+	gold = new TextParamValue<BoundInt>(new LineFormat(0, Justf::LEFT), GOLD$, nullptr);
+	steps = new TextParamValue<BoundInt>(new LineFormat(1, Justf::LEFT), STEPS, nullptr);
+	enemiesKilled = new TextParamValue<BoundInt>(new LineFormat(2, Justf::LEFT), ENEMIES_KILLED, nullptr);
+	battlesWon = new TextParamValue<BoundInt>(new LineFormat(3, Justf::LEFT), BATTLES_WON, nullptr);
+	bodyContent.addPiece(gold);
+	bodyContent.addPiece(steps);
+	bodyContent.addPiece(enemiesKilled);
+	bodyContent.addPiece(battlesWon);
+}
+
 
 void MainMenu::setWindow(WINDOW* win)
 {
@@ -90,33 +91,6 @@ void MainMenu::setWindow(WINDOW* win)
 	statusContent.setWindow(newwin(bottomFrameHeight - 2, rightFrameWidth - 2, 6, leftFrameWidth + 1));
 }
 
-void MainMenu::setData(GameData* gd)
-{
-	theData = gd;
-
-	gold.setFormat(new LineFormat(0, Justf::LEFT));
-	gold.setText(GOLD$);
-	gold.setInnerJustf(Justf::LEFT);
-
-	steps.setFormat(new LineFormat(1, Justf::LEFT));
-	steps.setText(STEPS);
-	steps.setInnerJustf(Justf::LEFT);
-
-	enemiesKilled.setFormat(new LineFormat(2, Justf::LEFT));
-	enemiesKilled.setText(ENEMIES_KILLED);
-	enemiesKilled.setInnerJustf(Justf::LEFT);
-
-	battlesWon.setFormat(new LineFormat(3, Justf::LEFT));
-	battlesWon.setText(BATTLES_WON);
-	battlesWon.setInnerJustf(Justf::LEFT);
-
-	bodyContent.addPiece(&gold);
-	bodyContent.addPiece(&steps);
-	bodyContent.addPiece(&enemiesKilled);
-	bodyContent.addPiece(&battlesWon);
-
-	setupHubContent();
-}
 
 void MainMenu::addPlayerParty(std::vector<Actor*>& allies)
 {
@@ -222,12 +196,18 @@ int MainMenu::processMainMenuInput(Controllable* c, int input)
 	return HANDLED;
 }
 
+void MainMenu::setResourceManager(ResourceManager* resourceManagerIn)
+{
+	resourceManager = resourceManagerIn;
+	setupHubContent();
+}
+
 void MainMenu::setupHubContent()
 {
-	gold.setValue(&theData->retrieveIntData(GOLD$));
-	steps.setValue(&theData->retrieveIntData(STEPS));
-	enemiesKilled.setValue(&theData->retrieveIntData(ENEMIES_KILLED));
-	battlesWon.setValue(&theData->retrieveIntData(BATTLES_WON));
+	gold->setValue(&resourceManager->theData.retrieveIntData(GOLD$));
+	steps->setValue(&resourceManager->theData.retrieveIntData(STEPS));
+	enemiesKilled->setValue(&resourceManager->theData.retrieveIntData(ENEMIES_KILLED));
+	battlesWon->setValue(&resourceManager->theData.retrieveIntData(BATTLES_WON));
 }
 
 int MainMenu::processPlayerMenuInput(Controllable* c, int input)
@@ -256,15 +236,14 @@ void MainMenu::setupStatusContent()
 	if (item && ((LineItem*)item)->name.compare("") != 0)
 	{
 		Actor* ally = allies[item->index];
-
-		hpRow.setValue(&ally->getStat(StatType::HP));
-		mpRow.setValue(&ally->getStat(StatType::MP));
-		strengthRow.setValue(&ally->getStat(StatType::STRENGTH));
-		defenseRow.setValue(&ally->getStat(StatType::DEFENSE));
-		intelRow.setValue(&ally->getStat(StatType::INTELLIGENCE));
-		willRow.setValue(&ally->getStat(StatType::WILL));
-		agilityRow.setValue(&ally->getStat(StatType::AGILITY));
-		expRow.setValue(&ally->getStat(StatType::EXP));
+		hpRow->setValue(&ally->getStat(StatType::HP));
+		mpRow->setValue(&ally->getStat(StatType::MP));
+		strengthRow->setValue(&ally->getStat(StatType::STRENGTH));
+		defenseRow->setValue(&ally->getStat(StatType::DEFENSE));
+		intelRow->setValue(&ally->getStat(StatType::INTELLIGENCE));
+		willRow->setValue(&ally->getStat(StatType::WILL));
+		agilityRow->setValue(&ally->getStat(StatType::AGILITY));
+		expRow->setValue(&ally->getStat(StatType::EXP));
 	}
 }
 

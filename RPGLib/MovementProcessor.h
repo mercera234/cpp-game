@@ -66,8 +66,7 @@ protected:
 	void reverseMovement(Movement& move);
 	
 public:
-	/*TODO, this should return the total movement taken, and not just success or fail
-	Process movement after pressing any key.
+	/*Process movement after pressing any key.
 	Return value is the move that was taken.*/
 	MovementChain processMovementInput(int input);
 

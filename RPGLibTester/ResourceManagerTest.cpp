@@ -14,7 +14,8 @@ namespace RPGLibTester
 			std::ifstream is;
 			int actorsLoaded = rm.loadActorsFromTextFile(is);
 
-			Assert::AreEqual(0, actorsLoaded); //loads nothing since we aren't connecting to filesystem
+			//loads nothing since we aren't connecting to filesystem
+			Assert::AreEqual(0, actorsLoaded); 
 		}
 
 		TEST_METHOD(getNullResourcesTest)
@@ -22,7 +23,8 @@ namespace RPGLibTester
 			rm.loadNullResources();
 
 			Assert::AreEqual(1, (int)rm.actors.size()); 
-			Assert::AreEqual(1, (int)rm.gameMaps.size()); 
+			Assert::AreEqual(1, (int)rm.mapRooms.size()); 
+			Assert::AreEqual(1, (int)rm.gameMaps.size());
 		}
 
 		TEST_METHOD(getNullResourcesActorContentTest)
@@ -36,7 +38,7 @@ namespace RPGLibTester
 		TEST_METHOD(getNullResourcesMapContentTest)
 		{
 			rm.loadNullResources();
-			MapRoom m = rm.gameMaps.find(nullId)->second;
+			MapRoom m = rm.mapRooms.find(nullId)->second;
 			TwoDStorage<chtype>* tileMap = m.getDisplay()->getTileMap();
 			chtype c = tileMap->getDatum(4, 8);
 

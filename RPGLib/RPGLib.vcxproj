@@ -158,6 +158,7 @@
     <ClInclude Include="Repository2.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Spell.h" />
+    <ClInclude Include="Stats.h" />
     <ClInclude Include="StepTracker.h" />
     <ClInclude Include="TextParamValue.h" />
     <ClInclude Include="Thing.h" />

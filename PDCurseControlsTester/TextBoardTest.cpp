@@ -53,10 +53,8 @@ namespace PDCurseControlsTester
 
 		TEST_METHOD(addPieceTest)
 		{
-			TextPiece piece;
-
 			TextBoard board;
-			board.addPiece(&piece);
+			board.addPiece(new TextPiece());
 
 			Assert::AreEqual(1, board.getPieceCount());
 		}
@@ -69,14 +67,6 @@ namespace PDCurseControlsTester
 			Assert::IsTrue(text.compare(piece.getText()) == 0);
 		}
 
-		/*TEST_METHOD(updateTest)
-		{
-			TextPiece piece;
-
-			TextBoard board;
-			board.addPiece(&piece);
-
-			Assert::AreEqual(1, board.getPieceCount());
-		}*/
+		
 	};
 }

@@ -331,32 +331,11 @@ void statusBoardWithTextPieces()
 	getParamValueString<int>(strString, 3, right, "Strength", 3);
 	getParamValueString<int>(defString, 3, Justf::LEFT, "Defense", 3);
 
-	//set up the textlets
-	TextPiece hpText, mpText, strText, defText;
-
-	LineFormat* fmts[4];
-	for (int i = 0; i < 4; i++)
-	{
-		fmts[i] = new LineFormat;
-		fmts[i]->line = i;
-		fmts[i]->justf = right;
-	}
-
-	hpText.setFormat(fmts[0]);
-	mpText.setFormat(fmts[1]);
-	strText.setFormat(fmts[2]);
-	defText.setFormat(fmts[3]);
-
-	hpText.setText(hpString.str());
-	mpText.setText(mpString.str());
-	strText.setText(strString.str());
-	defText.setText(defString.str());
-
 	//add textlets to board and display
-	board.addPiece(&hpText);
-	board.addPiece(&mpText);
-	board.addPiece(&strText);
-	board.addPiece(&defText);
+	board.addPiece(new TextPiece(new LineFormat(0, right), hpString.str()));
+	board.addPiece(new TextPiece(new LineFormat(1, right), mpString.str()));
+	board.addPiece(new TextPiece(new LineFormat(2, right), strString.str()));
+	board.addPiece(new TextPiece(new LineFormat(3, right), defString.str()));
 
 	box(frame, 0, 0);
 	wnoutrefresh(frame);

@@ -9,7 +9,7 @@
 #include "TileEffect.h"
 #include "Sprite.h"
 
-class MapRoom : public Controllable, Thing
+class MapRoom : public Controllable, Thing, Storable
 {
 private:
 	//data storage
@@ -44,11 +44,11 @@ public:
 
 	/*Save map data from editor. This will not include every field. 
 	Notably, anything that is simple data that can be stored in a text file will not be saved here.*/
-	bool save(const std::string& fileName);
+	int save(std::ofstream& saveFile);
 
 	/*Load map data. This will not include every field.
 	Notably, anything that is simple data that can be stored in a text file will not be saved here.*/
-	bool load(const std::string& fileName);
+	int load(std::ifstream& loadFile);
 	void draw();
 
 	Sprite* checkCollisionDetection(Pos& pos);

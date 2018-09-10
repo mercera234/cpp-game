@@ -39,7 +39,7 @@ BoundInt& Actor::getStat(StatType statType)
 	case StatType::MP: stat = &stats.mp; break;
 	case StatType::EXP: stat = &stats.exp; break;
 	case StatType::LEVEL: stat = &stats.level; break;
-	case StatType::MONEY: stat = &money; break;
+	//case StatType::MONEY: stat = &money; break;
 	case StatType::STRENGTH: stat = &stats.strength; break;
 	case StatType::DEFENSE: stat = &stats.defense; break;
 	case StatType::INTELLIGENCE: stat = &stats.intelligence; break;

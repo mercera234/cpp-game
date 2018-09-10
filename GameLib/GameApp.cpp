@@ -22,6 +22,8 @@ GameApp::GameApp()
 	FileDirectory dataDir(dataDirName);
 	resourceManager.loadGameMapsFromDir(dataDir);
 
+	std::ifstream is2(mapFile);
+	resourceManager.loadMapsFromTextFile(is2);
 	tui.init();
 	
 	GameState* openingState = TitleScreenState::getInstance();

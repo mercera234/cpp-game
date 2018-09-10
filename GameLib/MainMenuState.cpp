@@ -27,8 +27,9 @@ MainMenuState::MainMenuState()
 
 void MainMenuState::loadState()
 {
+	mm.setResourceManager(resourceManager);
 	mm.addPlayerParty(resourceManager->playerParty);
-	mm.setData(&resourceManager->theData);
+	
 }
 
 

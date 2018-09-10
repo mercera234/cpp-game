@@ -56,7 +56,6 @@ void WadDatabase::print()
 Populates the database object (header, lumps, dirEntries) in memory
 using all game data files foundin 'dataDirName'
 */
-//TODO assign id values to every item compiled
 void WadDatabase::buildWad(std::string& dataDir)
 {
 	//load every data file into lump list
@@ -224,7 +223,7 @@ void WadDatabase::getMapRepository(std::map<unsigned short, MapRoom*>& mapRepo, 
 		pkg.load(&wadFile, blocks);
 
 	//	DataPkgFactory factory;
-		//TODO need to pull maps from pkgs
+		
 	//	ActorDef* def = factory.getActorDefFromPkg(&pkg);
 
 		//std::pair<unsigned short, Map*> aMap();//def->name, def);
@@ -235,58 +234,58 @@ void WadDatabase::getMapRepository(std::map<unsigned short, MapRoom*>& mapRepo, 
 
 void WadDatabase::loadActorsFromTextFile(std::ifstream& textFile)
 {
-	char lineFirstChar;
-	while ((lineFirstChar = (char)textFile.peek()) != EOF)
-	{
-		if (lineFirstChar == '#') //skip to next line
-		{
-			//see max conflict with windef.h, hence the extra ()s
-			textFile.ignore((std::numeric_limits<int>::max)(), '\n');
-			continue;
-		}
+	//char lineFirstChar;
+	//while ((lineFirstChar = (char)textFile.peek()) != EOF)
+	//{
+	//	if (lineFirstChar == '#') //skip to next line
+	//	{
+	//		//see max conflict with windef.h, hence the extra ()s
+	//		textFile.ignore((std::numeric_limits<int>::max)(), '\n');
+	//		continue;
+	//	}
 
-		Actor actor;
+	//	Actor actor;
 
-		char symbol;
-		int level, exp, money, hp, mp, str, def, intl, wil, agi;
+	//	char symbol;
+	//	int level, exp, money, hp, mp, str, def, intl, wil, agi;
 
-		textFile >> actor.name >> symbol >> level >> exp >> money >> hp >> mp >> str >> def >> intl >> wil >> agi;
+	//	textFile >> actor.name >> symbol >> level >> exp >> money >> hp >> mp >> str >> def >> intl >> wil >> agi;
 
-		std::replace(actor.name.begin(), actor.name.end(), '_', ' '); //This handles any multi-word names
+	//	std::replace(actor.name.begin(), actor.name.end(), '_', ' '); //This handles any multi-word names
 
-		actor.symbol = symbol;
-		actor.getStat(StatType::LEVEL).setCurr(level);
-		actor.getStat(StatType::EXP).setCurr(exp);
-		actor.getStat(StatType::MONEY).setCurr(money);
+	//	actor.symbol = symbol;
+	//	actor.getStat(StatType::LEVEL).setCurr(level);
+	//	actor.getStat(StatType::EXP).setCurr(exp);
+	//	actor.money.setCurr(money);
 
-		actor.getStat(StatType::HP).setCurrMax(hp);
-		actor.getStat(StatType::HP).maxOut();
-		actor.getStat(StatType::MP).setCurrMax(mp);
-		actor.getStat(StatType::MP).maxOut();
+	//	actor.getStat(StatType::HP).setCurrMax(hp);
+	//	actor.getStat(StatType::HP).maxOut();
+	//	actor.getStat(StatType::MP).setCurrMax(mp);
+	//	actor.getStat(StatType::MP).maxOut();
 
-		actor.getStat(StatType::STRENGTH).setCurr(str);
-		actor.getStat(StatType::DEFENSE).setCurr(def);
-		actor.getStat(StatType::INTELLIGENCE).setCurr(intl);
-		actor.getStat(StatType::WILL).setCurr(wil);
-		actor.getStat(StatType::AGILITY).setCurr(agi);
+	//	actor.getStat(StatType::STRENGTH).setCurr(str);
+	//	actor.getStat(StatType::DEFENSE).setCurr(def);
+	//	actor.getStat(StatType::INTELLIGENCE).setCurr(intl);
+	//	actor.getStat(StatType::WILL).setCurr(wil);
+	//	actor.getStat(StatType::AGILITY).setCurr(agi);
 
-		actors.insert(std::make_pair(actor.name, actor));
-	}
+	//	actors.insert(std::make_pair(actor.name, actor));
+	//}
 
 }
 
 void WadDatabase::loadGameMapsFromDir(FileDirectory& dir)
 {
 	//get list of map files
-	std::string filter = "map";
-	std::list<dirent> files = dir.getFiles(false, filter);
+	//std::string filter = "map";
+	//std::list<dirent> files = dir.getFiles(false, filter);
 
-	int id = 0;
-	for each (dirent file in files)
-	{
-		MapRoom gameMap;
-		gameMap.load(dir.getPath() + '\\' + file.d_name);
+	//int id = 0;
+	//for each (dirent file in files)
+	//{
+	//	MapRoom gameMap;
+	//	gameMap.load(dir.getPath() + '\\' + file.d_name);
 
-		gameMaps.insert(std::make_pair(id++, gameMap)); //id is set automatically not manually
-	}
+	//	gameMaps.insert(std::make_pair(id++, gameMap)); //id is set automatically not manually
+	//}
 }

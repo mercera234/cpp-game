@@ -10,7 +10,7 @@ private:
 	static GameState* instance;
 	
 	BattleProcessor battleProcessor;
-	Actor e1; //temporary!!!
+	std::list<Actor> enemies; //temporary!!!
 
 public:
 	static GameState* getInstance(); //since static, cannot be virtual in super class

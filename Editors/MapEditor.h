@@ -12,8 +12,9 @@
 #include "Editor.h"
 #include "SimpleControlCommand.h"
 #include "TextBoard.h"
+#include "EditMode.h"
 
-const std::string DEF_MAP_EXTENSION = ".map";
+
 
 class MapEditor : Editor<MapEditor>
 {
@@ -32,16 +33,17 @@ private:
 	FreeMovementProcessor mp;
 
 	Frame mapFrame;
-	MapRoom map;
-	Image* image;//a convenience pointer to the map's image
+	
+	//convenience vars that already exist in the different mode types
+	MapRoom* room;
+	Image* image;
 
 	char drawChar;
 
 	//Labels
 	TextLabel topRuler;
 	TextLabel sideRuler;
-	TextLabel xyLbl;
-
+	
 	TextBoard coordDisplay;
 	
 	TextLabel hLbl;
@@ -76,11 +78,14 @@ private:
 	SimpleControlCommand<MapEditor> controlCmd;
 	SimpleControlCommand<MapEditor> globalCmd;
 
+	
+	MapRoomEditMode mapRoomEditMode;
+	ImageEditMode imageEditMode;
+	
 	void setupPalettes();
 	void setupRulers();
-	//void setCanvasSize(int rows, int cols);
-	void setConvenienceVariables();
-
+	void setupCommands();
+	
 	int processMapInput(Controllable* c, int input);
 	void processMouseInput(int input);
 
@@ -95,8 +100,9 @@ private:
 
 	void applyTool(int y, int x);
 	void createNew();
-	void load(std::string fileName);
-	void save(std::string fileName);
+	void load(const std::string& fileName);
+	void save(const std::string& fileName);
+	void cycleMode();
 	
 	void fill(int sourceRow, int sourceCol);
 

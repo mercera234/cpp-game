@@ -15,6 +15,7 @@ const int encounterChance = 5;//percent chance
 
 const std::string actorFile = "data\\actors.txt";
 const std::string dataDirName = "data";
+const std::string mapFile = "data\\maps.txt";
 
 //////strings
 

@@ -137,6 +137,7 @@
     <ClCompile Include="MockTitle.cpp" />
     <ClCompile Include="movement_tests.cpp" />
     <ClCompile Include="music_player_test.cpp" />
+    <ClCompile Include="resource_manager_tests.cpp" />
     <ClCompile Include="turntracker_tests.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -152,6 +153,7 @@
     <ClInclude Include="MockTitle.h" />
     <ClInclude Include="movement_tests.h" />
     <ClInclude Include="music_player_test.h" />
+    <ClInclude Include="resource_manager_tests.h" />
     <ClInclude Include="turntracker_tests.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

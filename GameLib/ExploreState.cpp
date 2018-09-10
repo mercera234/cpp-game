@@ -31,18 +31,19 @@ void ExploreState::initDefaults()
 	//like starting a new game here
 	setupDefaultDataKeys(*resourceManager);
 
+
 	loadResourceManagerData();
 
 	//setup exploration processor
-	map->setControlActor(&player1);
-	map->setWindow(newwin(screenHeight, screenWidth, 0, 0));
-
-	mapRepo.add(*map);
-	explorationProcessor.setMapRepo(&mapRepo);
-	explorationProcessor.setCursor(&(player1.y), &(player1.x));
-	explorationProcessor.setCurrMap(map->getId());
+	explorationProcessor.setResourceManager(resourceManager);
+	explorationProcessor.setControlActor(&player1);	
+	//set start position
+	Pos start(startY, startX);
+	explorationProcessor.setCursor(start);
 	explorationProcessor.setViewMode(ViewMode::DYNAMIC);
 
+	
+	
 	//setup trackers
 	encounterTracker.setMinSteps(minPeaceSteps);
 	encounterTracker.setMaxSteps(maxPeaceSteps);
@@ -51,13 +52,17 @@ void ExploreState::initDefaults()
 
 void ExploreState::loadResourceManagerData()
 {
-	//load default map
-	auto it = resourceManager->gameMaps.find(startingMapId);
+	//load default megamap
+	auto it = resourceManager->gameMaps.find("TestRegion");
 	if (it == resourceManager->gameMaps.end())
 	{
-		it = resourceManager->gameMaps.find(nullId); //load null map if default isn't found
+		it = resourceManager->gameMaps.find(nullName);
 	}
-	map = &(it->second);
+	MegaMap& mm = explorationProcessor.getMap();
+	mm = it->second;
+	mm.setUnitHeight(screenHeight);
+	mm.setUnitWidth(screenWidth);
+	mm.setFloor(0);
 
 	//load default main character
 	auto it2 = resourceManager->actors.find(player1Name);
@@ -67,10 +72,6 @@ void ExploreState::loadResourceManagerData()
 	}
 	player1 = (it2->second); //get copy of player1
 	player1.type = ActorType::HUMAN;
-
-	//set start position
-	player1.x = startX;
-	player1.y = startY;
 
 	resourceManager->playerParty.clear(); //clear out old data first
 	resourceManager->playerParty.push_back(&player1);
@@ -88,11 +89,11 @@ void ExploreState::unloadState()
 	
 }
 
-void ExploreState::processStepTaken(Axis stepAxis)
+void ExploreState::processStepTaken(Movement& stepTaken)
 {
 	resourceManager->theData.alterIntData(STEPS, 1);
 	
-	encounterTracker.takeStep(stepAxis);
+	encounterTracker.takeStep(getAxis(stepTaken.dir));
 	if (encounterTracker.didEncounterOccur())
 	{
 		//change state to battle state and load the appropriate enemy details
@@ -110,14 +111,17 @@ void ExploreState::processStepTaken(Axis stepAxis)
 
 void ExploreState::processDirectionalInput(int input)
 {
-	bool stepTaken = false;
-	Axis stepAxis = Axis::HORIZONTAL;
+	//bool stepTaken = false;
+	//Axis stepAxis = Axis::HORIZONTAL;
+
+	MovementChain moves;
 	switch (input)
 	{
-	case GameInput::UP_INPUT: stepTaken = explorationProcessor.processMovementInput(KEY_UP); stepAxis = Axis::VERTICAL; break;
-	case GameInput::DOWN_INPUT: stepTaken = explorationProcessor.processMovementInput(KEY_DOWN); stepAxis = Axis::VERTICAL; break;
-	case GameInput::LEFT_INPUT: stepTaken = explorationProcessor.processMovementInput(KEY_LEFT); break;
-	case GameInput::RIGHT_INPUT: stepTaken = explorationProcessor.processMovementInput(KEY_RIGHT); break;
+		//These should all be only one move at a time
+	case GameInput::UP_INPUT: moves = explorationProcessor.processMovementInput(KEY_UP); break;
+	case GameInput::DOWN_INPUT: moves = explorationProcessor.processMovementInput(KEY_DOWN); break;
+	case GameInput::LEFT_INPUT: moves = explorationProcessor.processMovementInput(KEY_LEFT); break;
+	case GameInput::RIGHT_INPUT: moves = explorationProcessor.processMovementInput(KEY_RIGHT); break;
 	}
 
 	//verify that actor is still alive
@@ -127,9 +131,10 @@ void ExploreState::processDirectionalInput(int input)
 		return;
 	}
 
-	if (stepTaken)
+	Movement stepTaken = moves.moves.back();
+	if (stepTaken.magnitude > 0)
 	{
-		processStepTaken(stepAxis);
+		processStepTaken(stepTaken);
 	}
 }
 
@@ -151,11 +156,10 @@ void ExploreState::processInput(GameStateManager& manager, int input)
 		GameState* state = BattleState::getInstance();
 		manager.setState(state);
 	}
-	break;
+		break;
 	case GameInput::TOGGLE_ENCOUNTERS:
 	{
-		int chance = encounterTracker.getEncounterChance() > 0 ? 0 : encounterChance;
-		encounterTracker.setEncounterChance(chance);
+		encounterTracker.setTracking(!encounterTracker.getTracking());
 	}
 		
 		break;
@@ -181,8 +185,7 @@ void ExploreState::processInput(GameStateManager& manager, int input)
 
 void ExploreState::draw()
 {
-	Map* m = explorationProcessor.getCurrMap();
-	m->draw();	
+	explorationProcessor.draw();
 }
 
 

@@ -6,6 +6,7 @@
 #include "inventory_tests.h"
 #include "misc_tests.h"
 #include "mapRoom_tests.h"
+#include "resource_manager_tests.h"
 
 //RPG LIB UI TESTER
 int main()
@@ -14,7 +15,7 @@ int main()
 	tui.init();
 	
 
-	spriteOnMapTest();
+	loadMapsFromTextFile();
 	
 	tui.shutdown();
 		

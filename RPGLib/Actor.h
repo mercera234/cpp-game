@@ -6,6 +6,7 @@
 #include "BoundInt.h"
 #include "Storable.h"
 #include "GridMenu.h"
+#include "Stats.h"
 
 //character types
 enum class ActorType
@@ -30,20 +31,7 @@ enum class Ailment
 	REVEALED
 };
 
-//modifiable stat types
-enum class StatType
-{
-	LEVEL,
-	EXP,
-	HP,
-	MP,
-	STRENGTH,
-	DEFENSE,
-	INTELLIGENCE,
-	WILL,
-	AGILITY,
-	MONEY
-};
+
 
 /*
 An actor represents individual user controlled players, enemies, and NPCs
@@ -55,7 +43,6 @@ struct Actor : public Thing, public Storable
 	BoundInt money;
 
 	//GridMenu* inventory;
-	//int y, x;
 	//do this differently!
 	//int skills; //each bit represents 1 ability so, there are a max of 32
 	
@@ -64,7 +51,6 @@ struct Actor : public Thing, public Storable
 	//item
 	
 	//int ailments; //not sure if this should be with Actor or ActorDef
-	//bool save(ofstream* saveFile);
 	int save(std::ofstream& saveFile);
 	int load(std::ifstream& loadFile);
 

@@ -9,6 +9,41 @@
 #include "ExplorationProcessor.h"
 #include "MusicPlayer.h"
 #include "GameItem.h"
+#include "TitleScreen.h"
+
+void titleScreenTest()
+{
+	TitleScreen titleScreen;
+
+	InputManager inputManager;
+	defaultGameInputs(inputManager);
+
+	bool playing = true;
+	while (playing)
+	{
+		titleScreen.draw();
+		doupdate();
+
+		int input = getInput(inputManager);
+
+		switch (input)
+		{
+		case GameInput::QUIT_INPUT:
+			playing = false;
+			break;
+		default:
+		{
+			switch (titleScreen.processInput(input))
+			{
+
+			case ExitCode::TERMINATE: playing = false; break;
+			}
+
+		}
+		break;
+		}
+	}
+}
 
 void mainMenuTest()
 {
@@ -32,6 +67,7 @@ void mainMenuTest()
 	setupDefaultDataKeys(rm);
 
 	MainMenu mm;
+	mm.setResourceManager(&rm);
 	mm.setWindow(newwin(screenHeight, screenWidth, 0, 0));
 	mm.addPlayerParty(playerParty);
 	
@@ -284,12 +320,14 @@ void exploreOneMapTest()
 	ResourceManager rm;
 	setupDefaultDataKeys(rm);
 
-	//rm.loadNullResources();
-	//std::ifstream is(actorFile);
-	//rm.loadActorsFromTextFile(is);
+	std::ifstream is2(actorFile);
+	rm.loadActorsFromTextFile(is2); //TODO we don't need this yet, but I need the ids to be populated correctly for now
 
 	FileDirectory dataDir(dataDirName);
 	rm.loadGameMapsFromDir(dataDir);
+
+	std::ifstream is(mapFile);
+	rm.loadMapsFromTextFile(is);
 
 	//setup main character
 	Actor mainC;
@@ -298,37 +336,43 @@ void exploreOneMapTest()
 	mainC.type = ActorType::HUMAN;
 	mainC.symbol = 'A' | COLOR_YELLOW_BOLD << TEXTCOLOR_OFFSET;
 	
-	int itemRoomId = 6;
+	int itemRoomId = 15;
 
-	Image map;
-	map.setDimensions(2, 3);
-	map.setTile(0, 0, 7);
-	map.setTile(0, 1, 7);
-	map.setTile(1, 0, itemRoomId);
-	map.setTile(1, 1, 5);
-	map.setTile(0, 2, nullId);
-	map.setTile(1, 2, nullId);
-
-	MegaMap mm;
-	mm.setMapRoomLayout(map);
+	MegaMap& mm = rm.gameMaps["TestRegion"];
 	mm.setUnitHeight(screenHeight);
 	mm.setUnitWidth(screenWidth);
+	mm.setFloor(-1);
+	
 
 	//create an item in the item room
 	GameItem money;
-	money.id = 30; //making this large to avoid conflicting with maps
+	money.id = 300; //making this large to avoid conflicting with maps
 	money.name = GOLD$;
 	money.type = GameItemType::MONEY;
 
 	Sprite s;
-	s.pos.y = 23;
+	s.pos.y = 13;
 	s.pos.x = 23;
 	s.quantity = 5;
 	s.symbol = '$' | COLOR_YELLOW_BOLD << TEXTCOLOR_OFFSET;
 	s.thing = &money;
 
-	MapRoom& itemRoom = rm.gameMaps[6];
+	GameItem item;
+	item.name = "Potion";
+	item.cost = 10;
+	item.type = GameItemType::CONSUMABLE;
+	item.value = 25;
+
+	Sprite s2;
+	s2.pos.y = 13;
+	s2.pos.x = 33;
+	s2.quantity = 1;
+	s2.symbol = '*' | COLOR_MAGENTA_BOLD << TEXTCOLOR_OFFSET;
+	s2.thing = &item;
+
+	MapRoom& itemRoom = rm.mapRooms[itemRoomId];
 	itemRoom.things.push_back(&s);
+	itemRoom.things.push_back(&s2);
 
 	ExplorationProcessor mp;
 	mp.setMap(mm);
@@ -336,6 +380,7 @@ void exploreOneMapTest()
 	mp.setControlActor(&mainC);
 	Pos pos(32, 54);
 	mp.setCursor(pos);
+	mm.setCursor(&pos.y, &pos.x);
 	mp.setViewMode(ViewMode::DYNAMIC); //position map so character is visible (not sure if this is the best way to do this)
 
 	WINDOW* screen = mp.getScreen();

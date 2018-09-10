@@ -151,11 +151,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ConfirmCommand.h" />
+    <ClInclude Include="EditMode.h" />
     <ClInclude Include="Editor.h" />
     <ClInclude Include="MapEditor.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Editor.cpp" />
+    <ClCompile Include="EditMode.cpp" />
     <ClCompile Include="driver.cpp" />
     <ClCompile Include="MapEditor.cpp" />
   </ItemGroup>

@@ -1,6 +1,9 @@
 #include "ResourceManager.h"
 #include "KeyComparators.h"
 
+
+const char commentRecordId = '#';
+
 ResourceManager::ResourceManager() : actors(stringCompare)
 {
 	loadNullResources();
@@ -8,10 +11,12 @@ ResourceManager::ResourceManager() : actors(stringCompare)
 
 int ResourceManager::loadActorsFromTextFile(std::ifstream& textFile)
 {
+	int loaded = actors.size();
+
 	char lineFirstChar;
 	while ((lineFirstChar = (char)textFile.peek()) != EOF)
 	{
-		if (lineFirstChar == '#') //skip to next line
+		if (lineFirstChar == commentRecordId) //skip to next line
 		{
 			//see max conflict with windef.h, hence the extra ()s
 			textFile.ignore((std::numeric_limits<int>::max)(), '\n');
@@ -30,7 +35,7 @@ int ResourceManager::loadActorsFromTextFile(std::ifstream& textFile)
 		actor.symbol = symbol | getColor(color) << TEXTCOLOR_OFFSET;
 		actor.getStat(StatType::LEVEL).setCurr(level);
 		actor.getStat(StatType::EXP).setCurr(exp);
-		actor.getStat(StatType::MONEY).setCurr(money);
+		actor.money.setCurr(money);
 
 		actor.getStat(StatType::HP).setCurrMax(hp);
 		actor.getStat(StatType::HP).maxOut();
@@ -47,7 +52,7 @@ int ResourceManager::loadActorsFromTextFile(std::ifstream& textFile)
 		actors.insert(std::make_pair(actor.name, actor));
 	}
 
-	return actors.size();
+	return actors.size() - loaded;
 }
 
 void ResourceManager::fixString(std::string& s)
@@ -83,6 +88,7 @@ int ResourceManager::getColor(char c)
 
 int ResourceManager::loadGameMapsFromDir(FileDirectory& dir)
 {
+	int loaded = gameItems.size();
 	//get list of map files
 	std::string filter = "map";
 	std::list<dirent> files = dir.getFiles(false, filter);
@@ -90,21 +96,25 @@ int ResourceManager::loadGameMapsFromDir(FileDirectory& dir)
 	for each (dirent file in files)
 	{
 		MapRoom gameMap;
-		gameMap.load(dir.getPath() + '\\' + file.d_name);
+
+		std::ifstream is(dir.getPath() + '\\' + file.d_name);
+		gameMap.load(is);
 
 		gameMap.setId(getNextId());
-		gameMaps.insert(std::make_pair(gameMap.getId(), gameMap)); //id is set automatically not manually
+		mapRooms.insert(std::make_pair(gameMap.getId(), gameMap)); //id is set automatically not manually
 	}
 
-	return gameMaps.size();
+	return mapRooms.size() - loaded;
 }
 
 int ResourceManager::loadMapRoomsFromTextFile(std::ifstream& textFile)
 {
+	int loaded = mapRooms.size();
+
 	char lineFirstChar;
 	while ((lineFirstChar = (char)textFile.peek()) != EOF)
 	{
-		if (lineFirstChar == '#') //skip to next line
+		if (lineFirstChar == commentRecordId) //skip to next line
 		{
 			//see max conflict with windef.h, hence the extra ()s
 			textFile.ignore((std::numeric_limits<int>::max)(), '\n');
@@ -128,10 +138,121 @@ int ResourceManager::loadMapRoomsFromTextFile(std::ifstream& textFile)
 		room.setId(getNextId());
 		//so far this loads the map metadata, but not the image, effectslayer, overlays, or items
 
-		gameMaps.insert(std::make_pair(room.getId(), room));
+		mapRooms.insert(std::make_pair(room.getId(), room));
 	}
 
-	return gameMaps.size();
+	return mapRooms.size() - loaded;
+}
+
+
+int ResourceManager::loadMapsFromTextFile(std::ifstream& textFile)
+{
+	/*TODO function is setup to read in map data from file, this should come from separate image file identified in the map text file
+	Currently unable to edit MegaMaps
+	*/
+	int loaded = gameMaps.size();
+
+	MegaMap map; 
+
+	Image* image = nullptr;
+	int currRow = 0;
+
+	char lineFirstChar;
+	while ((lineFirstChar = (char)textFile.peek()) != EOF)
+	{
+		switch (lineFirstChar)
+		{
+		case commentRecordId:  //skip to next line
+			//see max conflict with windef.h, hence the extra ()s
+			textFile.ignore((std::numeric_limits<int>::max)(), '\n');
+			continue;
+		case 'D': 
+		{
+			textFile.ignore(1, ' ');
+			int rows, cols;
+			int floors, groundFloor;
+			textFile >> map.name >> rows >> cols >> floors >> groundFloor;
+			fixString(map.name);
+			map.setDimensions(rows, cols, floors);
+			
+			image = new Image[floors];
+
+			for (int i = 0; i < floors; i++)
+			{
+				image[i].setDimensions(rows, cols);
+				image[i].getTileMap()->fill(INT_MAX);
+			}
+			map.setGroundFloor(groundFloor);
+		}
+			break;
+		case 'R': 
+		{
+			textFile.ignore(1, ' ');
+
+			int floor;
+			textFile >> floor;
+			
+			floor = map.getRealIndexFromFloor(floor);
+			for (int i = 0; i < map.getUnitCols(); i++)
+			{
+				chtype c;
+				textFile >> c;
+				image[floor].setTile(currRow, i, c);
+			}
+			currRow++;
+			currRow %= map.getUnitRows();
+		}
+			break;
+		default:
+			textFile.get();//advance one character
+		}
+	}
+
+	for (int i = 0; i < map.getDepth(); i++)
+	{
+		map.setLayerImage(map.getFloorFromIndex(i), image[i]);
+	}
+	
+
+	gameMaps.insert(std::make_pair(map.name, map));
+
+	delete [] image;
+
+	return gameMaps.size() - loaded;
+}
+
+
+int ResourceManager::loadItemsFromTextFile(std::ifstream& textFile)
+{
+	int loaded = gameItems.size();
+
+	char lineFirstChar;
+	while ((lineFirstChar = (char)textFile.peek()) != EOF)
+	{
+		if (lineFirstChar == commentRecordId) //skip to next line
+		{
+			//see max conflict with windef.h, hence the extra ()s
+			textFile.ignore((std::numeric_limits<int>::max)(), '\n');
+			continue;
+		}
+
+		GameItem item;
+		char type;
+
+		textFile >> item.name >> type >> item.cost >> item.value;
+
+		switch (type)
+		{
+		case 'C': item.type = GameItemType::CONSUMABLE;
+		case 'E': item.type = GameItemType::EQUIPPABLE;
+		case 'K': item.type = GameItemType::KEY;
+		}
+		fixString(item.name);
+
+		gameItems.insert(std::make_pair(item.name, item));
+	}
+
+	return gameItems.size() - loaded;
 }
 
 void ResourceManager::loadNullResources()
@@ -144,9 +265,9 @@ void ResourceManager::loadNullResources()
 	actors.insert(std::make_pair(nullActor.name, nullActor));
 
 	//load null map
-	MapRoom nullMap;
-	nullMap.setDimensions(screenHeight, screenWidth);
-	Image* img = nullMap.getDisplay();
+	MapRoom nullRoom;
+	nullRoom.setDimensions(screenHeight, screenWidth);
+	Image* img = nullRoom.getDisplay();
 	TwoDStorage<chtype>* tiles = img->getTileMap();
 
 	for (int row = 0; row < screenHeight; row++)
@@ -158,6 +279,16 @@ void ResourceManager::loadNullResources()
 		}
 	}
 
-	gameMaps.insert(std::make_pair(nullId, nullMap));
+	mapRooms.insert(std::make_pair(nullId, nullRoom));
 
+	//load null megamap
+	MegaMap nullMap;
+	nullMap.setDimensions(1, 1);
+	
+	Image layout;
+	layout.setDimensions(1, 1);
+	layout.setTile(0, 0, nullId);
+	nullMap.setLayerImage(0, layout);
+
+	gameMaps.insert(std::make_pair(nullName, nullMap));
 }

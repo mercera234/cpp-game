@@ -145,11 +145,9 @@ void textParamValueTest()
 	WINDOW* win = newwin(5, 30, 1, 1);
 	wbkgd(win, COLOR_RED << BKGDCOLOR_OFFSET);//use this more often! very helpful!
 
-	LineFormat fmt(0, Justf::RIGHT);
-
 	BoundInt gold$(0, 9999999);
-	TextParamValue tpv;
-	tpv.setFormat(&fmt);
+	TextParamValue<BoundInt> tpv;
+	tpv.setFormat(new LineFormat(0, Justf::RIGHT));
 	tpv.setText("Gold$");
 	tpv.setValue(&gold$);
 
@@ -171,28 +169,24 @@ void textBoardTest()
 	WINDOW* win = newwin(5, 30, 1, 1);
 	wbkgd(win, COLOR_RED << BKGDCOLOR_OFFSET);//use this more often! very helpful!
 
-	LineFormat hpFmt(0, Justf::RIGHT);
 	BoundInt hp(0, 9999, 245);
+	BoundInt mp(0, 999, 200);
 	hp.setCurrMax(500);
-
-	TextParamCurrMaxValue pcmv;
-	pcmv.setFormat(&hpFmt);
-	pcmv.setText("HP");
-	pcmv.setValue(&hp);
-	
-	LineFormat fmt(2, Justf::RIGHT);
+	mp.setCurrMax(333);
 
 	BoundInt strength(0, 250, 47);
-	TextParamValue tpv;
-	tpv.setFormat(&fmt);
-	tpv.setText("Strength");
-	tpv.setValue(&strength);
-	
+	int x = 35;
+	std::string label = "Some words";
+
 	TextBoard board;
 	board.setWindow(win);
-	board.addPiece(&tpv);
-	board.addPiece(&pcmv);
-
+	board.addPiece(new TextParamValue<BoundInt>(new LineFormat(0, Justf::RIGHT), "HP", &hp, 5));
+	board.addPiece(new TextParamCurrMaxValue(new LineFormat(1, Justf::RIGHT), "MP:", &mp, 4));
+	board.addPiece(new TextParamValue<BoundInt>(new LineFormat(2, Justf::RIGHT), "Strength", &strength));
+	board.addPiece(new TextParamValue<int>(new LineFormat(3, Justf::RIGHT), "X:", &x, 4));
+	board.addPiece(new TextParamValue<std::string>(new LineFormat(4, Justf::RIGHT), "Label:", &label, label.length()));
+	
+	
 	board.draw();
 	wnoutrefresh(win);
 	doupdate();
@@ -200,6 +194,10 @@ void textBoardTest()
 
 	strength.setCurr(358);
 	hp.setCurr(3);
+	mp.setCurrMax(350);
+	mp.setCurr(250);
+	x = 9648;
+	label = "What?";
 
 	board.draw();
 	wnoutrefresh(win);
@@ -254,33 +252,6 @@ void textBoardTest()
 //
 //}
 
-//bool saveActorDef(string fileName, ActorDef* def)
-//{
-//	ofstream file;
-//
-//	file.open(fileName, ios::trunc | ios::binary);
-//	if (file.is_open() == false)
-//		return false;
-//
-//	//save only the necessary pieces of data
-//	file.write((char*)def->name.c_str(), def->name.length());
-//	file.write((char*)&def->symbol, sizeof(int));
-//	file.write((char*)&def->level, sizeof(short));
-//	file.write((char*)&def->exp, sizeof(int));
-//	file.write((char*)&def->money, sizeof(int));
-//	file.write((char*)&def->maxHp, sizeof(int));
-//	file.write((char*)&def->maxMp, sizeof(int));
-//	file.write((char*)&def->strength, sizeof(short));
-//	file.write((char*)&def->defense, sizeof(short));
-//	file.write((char*)&def->agility, sizeof(short));
-//	file.write((char*)&def->accuracy, sizeof(int));
-//	file.write((char*)&def->luck, sizeof(int));
-//
-//	//file.write((char*)dataBuf, size);
-//	file.close();
-//
-//	return true;
-//}
 
 
 

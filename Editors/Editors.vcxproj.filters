@@ -27,15 +27,18 @@
     <ClInclude Include="ConfirmCommand.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="EditMode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Editor.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="driver.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MapEditor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EditMode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

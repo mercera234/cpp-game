@@ -18,7 +18,9 @@ MapRoom::MapRoom(const std::string& name, int rows, int cols, WINDOW* win) :
 MapRoom::MapRoom(WINDOW* win, const std::string& fileName)
 {
 	Controllable::setWindow(win);
-	load(fileName);
+
+	std::ifstream is(fileName);
+	load(is);
 }
 
 void MapRoom::setWindow(WINDOW* win)
@@ -50,49 +52,51 @@ void MapRoom::draw()
 	//draw map things
 	for each (Sprite* thing in things)
 	{
-		mvwaddch(win, thing->pos.y, thing->pos.x, thing->symbol);
+		TUI::printOnBkgd(thing->symbol, win, thing->pos.y, thing->pos.x);
+		//mvwaddch(win, thing->pos.y, thing->pos.x, thing->symbol);
 	}
 	wnoutrefresh(win);
 }
 
 
-bool MapRoom::save(const std::string& fileName)
+int MapRoom::save(std::ofstream& saveFile)
 {
-	std::ofstream gFile;
+	/*std::ofstream gFile;
 	gFile.open(fileName, std::ios::trunc | std::ios::binary);
 	if (gFile.is_open() == false)
-		return false;
+		return false;*/
 
-	gFile.write((char*) &id, sizeof(int));
+//	gFile.write((char*) &id, sizeof(int));
 
-	display.save(gFile);
+	//save only graphical details that cannot be easily stored in text file
+	display.save(saveFile);
 	
 	std::vector<EffectType> v = effectsLayer.getData();
 
 	std::for_each(v.begin(), v.end(), [&](EffectType& type) 
 	{
-		gFile.write((char*) &type, sizeof(EffectType));
+		saveFile.write((char*) &type, sizeof(EffectType));
 	});
 
-	gFile.close();
+	saveFile.close();
 
 	return true;
 }
 
-bool MapRoom::load(const std::string& fileName)
+int MapRoom::load(std::ifstream& loadFile)
 {
-	std::ifstream gFile;
+	/*std::ifstream gFile;
 	gFile.open(fileName, std::ios::binary);
 	if (gFile.is_open() == false)
-		return false;
+		return false;*/
 
-	gFile.read((char*)&id, sizeof(int));
+	//loadFile.read((char*)&id, sizeof(int));
 
 
 	if(display.getWindow() == nullptr)
 		display.setWindow(win);
 
-	display.load(gFile); //this maybe shouldn't be here. This along with the effects layer will be costly loads especially if multiple maps are present in game
+	display.load(loadFile); //this maybe shouldn't be here. This along with the effects layer will be costly loads especially if multiple maps are present in game
 		//this could be loaded only when needed
 	
 	setDimensions(display.getTotalRows(), display.getTotalCols());
@@ -101,12 +105,12 @@ bool MapRoom::load(const std::string& fileName)
 	for (unsigned int i = 0; i < totalTiles; i++)
 	{
 		EffectType type;
-		gFile.read((char*)&type, sizeof(EffectType));
+		loadFile.read((char*)&type, sizeof(EffectType));
 
 		effectsLayer.setDatum(i, type);
 	}
 
-	gFile.close();
+	loadFile.close();
 
 	//! these parameters are not saved and loaded yet
 	brightness = true;

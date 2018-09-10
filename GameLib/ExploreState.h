@@ -12,8 +12,8 @@ private:
 	ExploreState(); //private so class is Singleton
 	static GameState* instance;
 	ExplorationProcessor explorationProcessor;
-	MapRepository mapRepo;
-	Map* map;
+	
+	//MapRoom* map;
 	Actor player1;
 
 	EncounterTracker encounterTracker;
@@ -21,7 +21,7 @@ private:
 	void loadResourceManagerData();
 
 	void processDirectionalInput(int input);
-	void processStepTaken(Axis stepAxis);
+	void processStepTaken(Movement& stepTaken);
 public:
 	static GameState* getInstance(); //since static, cannot be virtual in super class
 	void initDefaults();

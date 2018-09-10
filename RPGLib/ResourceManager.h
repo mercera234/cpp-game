@@ -5,6 +5,8 @@
 #include "MapRoom.h"
 #include "FileDirectory.h"
 #include "GameData.h"
+#include "MegaMap.h"
+#include "GameItem.h"
 
 //null resources
 const int nullId = -1;
@@ -26,8 +28,10 @@ private:
 	void fixString(std::string& s);
 public:
 	std::map<std::string, Actor, std::function<bool(std::string, std::string)> > actors;
-	std::map<int, MapRoom> gameMaps;
-
+	std::map<int, MapRoom> mapRooms;
+	std::map<std::string, MegaMap> gameMaps;
+	std::map<std::string, GameItem> gameItems;
+	std::map<std::string, int> keyCrossRef;
 
 	GameData theData;
 
@@ -45,11 +49,16 @@ public:
 	/*Load Actors from text file. Returns the count of Actors loaded.*/
 	int loadActorsFromTextFile(std::ifstream& textFile);
 
-	/*Load Maps from separate data files in one directory. Returns the count of Maps loaded.*/
+	/*Load Maps from separate data files in one directory. Returns the count of MapRooms loaded.*/
 	int loadGameMapsFromDir(FileDirectory& dir);
 
 	/*Load maps both from text file and data files. 
 	The location of the map image files is included in the textfile.*/
 	int loadMapRoomsFromTextFile(std::ifstream& textFile);
 
+	/*Load Maps from text file. Returns the count of Maps loaded.*/
+	int loadMapsFromTextFile(std::ifstream& textFile);
+
+	/*Load items from text file. Returns the count of Items loaded.*/
+	int loadItemsFromTextFile(std::ifstream& textFile);
 };
