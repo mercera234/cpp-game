@@ -27,7 +27,6 @@ private:
 
 	/*
 	Controls are in a stack order where the back is the top of the stack
-	Input is tested starting at the back and continues to front until the appropriate control can handle the input
 	An actual <stack> is not used because we want to have access to all elements at all times
 	*/
 	std::vector<Registration*> controls;
@@ -36,6 +35,7 @@ private:
 	std::map<Controllable*, Registration*, std::function<bool(Controllable*, Controllable*)> > quickRef;
 	std::map<int, ControlCommand*> globalShortcuts; //shortcuts are global input
 	
+
 	/*if a control is focused, then this will point to it*/
 	Registration* focusedReg = nullptr;
 
@@ -50,6 +50,10 @@ private:
 	int handleMouseInput(int input, Registration* r);
 	int handleKeyInput(int input, Registration* r);
 	bool isGlobalInput(int input);
+	int processModalInput(int input);
+	int processNonModalInput(int input);
+
+	Registration* findMouseInputRecipient();
 
 	bool authorizeCyclicKeyChoice(int key);
 	void unsetFocus();

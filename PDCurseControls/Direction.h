@@ -41,7 +41,7 @@ const std::vector<Dir> allDirs({ Dir::UP, Dir::DOWN, Dir::LEFT, Dir::RIGHT });
 Dir getOppositeDir(Dir dir);
 Axis getAxis(Dir dir);
 
-//TODO create a ChainedMovement object that can track multiple movements
+
 struct Movement
 {
 	int magnitude = 0;

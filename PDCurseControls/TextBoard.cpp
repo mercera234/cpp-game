@@ -6,6 +6,10 @@ TextBoard::TextBoard()
 
 TextBoard::~TextBoard()
 {
+	for each (TextPiece* piece in pieces)
+	{
+		delete piece;
+	}
 }
 
 void TextBoard::addPiece(TextPiece* piece)

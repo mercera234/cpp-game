@@ -64,23 +64,6 @@ bool ControlManager::authorizeCyclicKeyChoice(int key)
 	return true;
 }
 
-//void ControlManager::registerControl(Controllable* c, char listeners, int(*callback) (void*, void*, int))
-//{
-//	Registration* r = new Registration();
-//
-//	r->c = c;
-//	c->setControlManager(this);
-//	r->callback = callback;
-//	r->listen_map = listeners;
-//
-//	
-//	controls.push_back(r);
-//	quickRef.insert(std::make_pair(c, r));
-//
-//	c->setFocus(false); //unfocus all newly registered controls by default
-//
-//	assert(quickRef.size() == controls.size());
-//}
 
 void ControlManager::registerControl(Controllable* c, char listeners, ControlCommand* cmd)
 {
@@ -100,24 +83,6 @@ void ControlManager::registerControl(Controllable* c, char listeners, ControlCom
 	assert(quickRef.size() == controls.size());
 }
 
-//void ControlManager::registerControl(Controllable* c, char listeners, int(*callback) (void*, void*, int), Command* cmd)
-//{
-//	Registration* r = new Registration();
-//
-//	r->c = c;
-//	c->setControlManager(this);
-//	r->callback = callback;
-//	r->cmd = cmd;
-//	r->listen_map = listeners;
-//
-//
-//	controls.push_back(r);
-//	quickRef.insert(std::make_pair(c, r));
-//
-//	c->setFocus(false); //unfocus all newly registered controls by default
-//
-//	assert(quickRef.size() == controls.size());
-//}
 
 void ControlManager::unRegisterControl(Controllable* c)
 {
@@ -152,7 +117,7 @@ void ControlManager::popControl()
 	{
 		focusedReg = nullptr;
 		//if object was focused then set focus to next 
-		for (auto it = ++controls.rbegin(); it != controls.rend(); it++)//, focusNdx--) //we start from the end, so modal windows are always processed first
+		for (auto it = ++controls.rbegin(); it != controls.rend(); it++)//we start from the end, so modal windows are always processed first
 		{
 			Registration* r = *it;
 			Controllable* c = r->c;
@@ -256,7 +221,6 @@ int ControlManager::handleGlobalInput(int input)
 	auto mapping = *shortcutMapping;
 	auto cmd = mapping.second; 
 
-	//return callback(caller, this, input);
 	return cmd->execute(nullptr, input);
 }
 
@@ -288,44 +252,97 @@ int ControlManager::handleInput(int input)
 
 int ControlManager::handleControlInput(int input)
 {
-	int handled = NOT_HANDLED;
-	//process input through registered controls
+	//check first if focused control is Modal. If so, then it is the only control capable of processing input	
+	return (focusedReg->c->isModal()) ? processModalInput(input) : processNonModalInput(input);
+}
 
-	//TODO why are we iterating through all the controls? We should just process the focused one!
-	for (auto it = controls.rbegin(); it != controls.rend(); it++) //we start from the end, so modal windows are always processed first
+int ControlManager::processModalInput(int input)
+{
+	int exitCode = NOT_HANDLED;
+
+	if (focusedReg->cmd == nullptr) //no point in checking registration with no callback
+		return exitCode; //modal window cannot handle the input (this implies a soft lock so design your UI carefully!)
+
+	if (input == KEY_MOUSE && (focusedReg->listen_map & MOUSE_LISTENER))
+		exitCode = handleMouseInput(input, focusedReg);
+	else if (input != KEY_MOUSE && focusedReg->listen_map & KEY_LISTENER)
+		exitCode = handleKeyInput(input, focusedReg);
+
+	return exitCode;
+}
+
+int ControlManager::processNonModalInput(int input)
+{
+	int exitCode = NOT_HANDLED;
+	if (input == KEY_MOUSE) //input could be delivered to any control
+	{
+		//find control being operated on
+		Registration* r = findMouseInputRecipient();
+		if (r == nullptr)
+			return exitCode;
+
+		exitCode = handleMouseInput(input, r);
+	}
+	else if (focusedReg->listen_map & KEY_LISTENER)//keyboard input goes directly to focused control only, which is capable of handling key input
+	{
+		exitCode = handleKeyInput(input, focusedReg);
+	}
+	return exitCode;
+}
+
+Registration* ControlManager::findMouseInputRecipient()
+{
+	for (auto it = controls.rbegin(); it != controls.rend(); it++) //we start from the end so highest overlapping windows are processed first
 	{
 		Registration* r = *it;
-		bool isModal = r->c->isModal();
+		Controllable* c = r->c;
+		MEVENT event;
+		nc_getmouse(&event);
 
-		if (isModal)
-		{
-			if (r->cmd == nullptr) //no point in checking registration with no callback
-			//if (r->callback == nullptr) //no point in checking registration with no callback
-				break; //modal window cannot handle the input
-		}
-		else if (r->cmd == nullptr) //non-modal window cannot handle the input, so we will check the next
-		//else if (r->callback == nullptr) //non-modal window cannot handle the input, so we will check the next
-			continue;
-		
-		if (input == KEY_MOUSE && (r->listen_map & MOUSE_LISTENER))
-			handled = handleMouseInput(input, r);
-		else if (input != KEY_MOUSE && r->listen_map & KEY_LISTENER)
-			handled = handleKeyInput(input, r);
+		//control contains the mouse click, and can respond to mouse events
+		if (wenclose(c->getWindow(), event.y, event.x) && (r->listen_map & MOUSE_LISTENER))
+			return r;
+	}
 
-		if (handled >= 0 || (handled == NOT_HANDLED && isModal))
-			break;
-	}	
-	return handled;
+	return nullptr;
 }
+
+
+//int ControlManager::handleControlInput(int input)
+//{
+//	int handled = NOT_HANDLED;
+//	//process input through registered controls
+//
+//	//TODO why are we iterating through all the controls? We should just process the focused one!
+//	for (auto it = controls.rbegin(); it != controls.rend(); it++) //we start from the end, so modal windows are always processed first
+//	{
+//		Registration* r = *it;
+//		bool isModal = r->c->isModal();
+//
+//		if (isModal)
+//		{
+//			if (r->cmd == nullptr) //no point in checking registration with no callback
+//				break; //modal window cannot handle the input
+//		}
+//		else if (r->cmd == nullptr) //non-modal window cannot handle the input, so we will check the next
+//			continue;
+//		
+//		if (input == KEY_MOUSE && (r->listen_map & MOUSE_LISTENER))
+//			handled = handleMouseInput(input, r);
+//		else if (input != KEY_MOUSE && r->listen_map & KEY_LISTENER)
+//			handled = handleKeyInput(input, r);
+//
+//		if (handled >= 0 || (handled == NOT_HANDLED && isModal))
+//			break;
+//	}	
+//	return handled;
+//}
 
 int ControlManager::handleKeyInput(int input, Registration* r)
 {
 	if(focusedReg != r)
 		return NOT_HANDLED;
 
-	/*if (r->cmd == nullptr)
-		return r->callback(caller, r->c, input);
-	else*/
 	return r->cmd->execute(r->c, input);
 }
 
@@ -338,16 +355,9 @@ int ControlManager::handleMouseInput(int input, Registration* r)
 
 	if (wenclose(c->getWindow(), event.y, event.x))
 	{
+		setFocus(c);		
 		handled = r->cmd->execute(c, input);
-		//handled = r->callback(caller, c, input);
 	}
-
-	//if mouse input was handled then the control should gain focus if possible
-	if ((handled >= 0) && c->isFocusable())
-	{
-		setFocus(c);
-	}
-
 
 	return handled;
 }
@@ -372,7 +382,8 @@ void ControlManager::draw()
 	{
 		Registration* r = *it;
 		Controllable* c = r->c;
-		c->draw();
+		if(c->getShowing())
+			c->draw();
 	}
 	if(focusedReg != nullptr)
 		focusedReg->c->setFocus(true); //set focus again in case the cursor is involved

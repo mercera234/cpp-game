@@ -59,6 +59,7 @@ public:
 	virtual void setFocus(bool focusIn) { focus = focusIn; }
 	bool isFocused() { return focus; }
 	void setShowing(bool on) { showing = on; }
+	bool getShowing() { return showing; }
 	void setModal(bool on) { modal = on; }
 	bool isModal() { return modal; }
 	void setAcceptsMouseInput(bool status) { acceptsMouseInput = status; }

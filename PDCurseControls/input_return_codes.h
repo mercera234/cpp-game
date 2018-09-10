@@ -15,5 +15,11 @@ enum ExitCode
 	QUIT_TO_TITLE,
 
 	//input was handled and current application should terminate
-	TERMINATE
+	TERMINATE,
+
+	//input was handled and current application should begin a new instance
+	START_NEW,
+
+	//input was handled and current application should open a previously saved instance
+	OPEN
 };

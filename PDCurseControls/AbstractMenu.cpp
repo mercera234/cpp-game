@@ -136,9 +136,7 @@ bool AbstractMenu::setCurrentItem(int index)
 
 void AbstractMenu::clearItems()
 {
-	//TODO use a lambda and for each here
-	//std::for_each(items2.begin(), items2.end, ?)
-
+	//Decided not to replace this with std::for_each, since I need to set the item index to nullptr as well
 	for (int i = 0; i < (int)items.size(); i++)
 	{
 		delete items[i];

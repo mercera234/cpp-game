@@ -221,7 +221,3 @@ Image* Image::getScreenShot(unsigned int y, unsigned int x, unsigned int height,
 
 	return snapShot;
 }
-
-//This comment below could be used for an image factory method
-/*	chtype c = (chtype)(row % NULL_MARKER_SPACING == 0 &&
-col % NULL_MARKER_SPACING == 0) ? '!' : ' ';*/
