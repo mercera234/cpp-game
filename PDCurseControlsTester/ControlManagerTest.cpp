@@ -41,6 +41,19 @@ namespace PDCurseControlsTester
 			Assert::AreEqual(0, cm.getControlCount());
 		}
 
+		TEST_METHOD(reRegisterControlTest)
+		{
+			MockControl m;
+			int value = 3;
+			m.setX(value);
+			cm.registerControl(&m, NULL, NULL);
+			cm.unRegisterControl(&m);
+			cm.registerControl(&m, NULL, NULL);
+
+			Assert::AreEqual(1, cm.getControlCount()); //this is to prove that the control is not destroyed once unregistered
+			Assert::AreEqual(value, m.getX());
+		}
+
 		TEST_METHOD(popControlTest)
 		{
 			MockControl m;
@@ -48,6 +61,17 @@ namespace PDCurseControlsTester
 			cm.popControl();
 
 			Assert::AreEqual(0, cm.getControlCount()); //one was registered and then popped
+		}
+
+		TEST_METHOD(popControlReturnsControlTest)
+		{
+			MockControl m;
+			int value = 67;
+			m.setX(67);
+			cm.registerControl(&m, NULL, NULL);
+			Controllable* c = cm.popControl();
+
+			Assert::AreEqual(value, ((MockControl*)c)->getX()); 
 		}
 
 		TEST_METHOD(popFocusedControlTest)

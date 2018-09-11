@@ -149,8 +149,8 @@ void FileChooser::draw()
 
 	purposeLbl.draw();
 	pathLbl.draw();
-	fileNameField.draw();
 	vScroller.draw(); //will draw the menu as well
+	fileNameField.draw();
 }
 
 

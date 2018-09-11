@@ -6,79 +6,68 @@
 #include "TextParamValue.h"
 #include "TextBoard.h"
 
-void repositoryTest()
-{
-	/*Repository2<unsigned short, Map> mapRepo(lessThan);
-
-	Factory f;
-	Map* m = f.createMap(stdscr, 0, screenHeight, screenWidth, 'Y', 0, 0);
-
-	unsigned short id = 0;
-	mapRepo.add(id, *m);
-
-	Map* m2 = mapRepo.find(id);
-
-	_ASSERT(m == m2);*/
-
-
-	//Repository2<std::string, ActorDef> mapRepo;
-
-	//Actor* actor = createActor("data\\hero.actr", AT_HUMAN);
-	//mapRepo.add(actor->def->name, *(actor->def));
-
-	//ActorDef* act2 = mapRepo.find(actor->def->name);
-
-
-}
-
-void actorRepositoryTest()
-{
-	std::ifstream is("data\\actors.txt");
-	if (!is)
-		return;
-
-	ActorRepository repo;
-	repo.loadFromTextFile(is);
+//void repositoryTest()
+//{
+//	Repository2<unsigned short, Map> mapRepo(lessThan);
+//
+//	Factory f;
+//	Map* m = f.createMap(stdscr, 0, screenHeight, screenWidth, 'Y', 0, 0);
+//
+//	unsigned short id = 0;
+//	mapRepo.add(id, *m);
+//
+//	Map* m2 = mapRepo.find(id);
+//
+//	_ASSERT(m == m2);
+//
+//
+//	Repository2<std::string, ActorDef> mapRepo;
+//
+//	Actor* actor = createActor("data\\hero.actr", AT_HUMAN);
+//	mapRepo.add(actor->def->name, *(actor->def));
+//
+//	ActorDef* act2 = mapRepo.find(actor->def->name);
+//
+//
+//}
 
 
-}
+//void wadDatabaseTest()
+//{
+//	WadDatabase wd;
+//
+//	std::string dataDir = "data";
+//	std::string wadFileName = "data\\mainwad.dat";
+//
+//	//build wad file from separate data files in dataDirName
+//	//then write data out to one wad file
+//	wd.buildWad(dataDir); 
+//	std::ofstream os(wadFileName, std::ios::binary);
+//	wd.save(&os);
+//	os.close();
+//
+//	wd.print();
+//
+//	system("pause");
+//
+//	//use a second waddatabase to load the data just from the wad file
+//	//print methods should match except no individual source file names will be listed for the second call
+//	WadDatabase wd2;
+//	std::ifstream is(wadFileName, std::ios::binary);
+//	wd2.load(&is);
+//	is.close();
+//
+//	wd2.print();
+//	system("pause");
+//}
 
-void wadDatabaseTest()
-{
-	WadDatabase wd;
-
-	std::string dataDir = "data";
-	std::string wadFileName = "data\\mainwad.dat";
-
-	//build wad file from separate data files in dataDirName
-	//then write data out to one wad file
-	wd.buildWad(dataDir); 
-	std::ofstream os(wadFileName, std::ios::binary);
-	wd.save(&os);
-	os.close();
-
-	wd.print();
-
-	system("pause");
-
-	//use a second waddatabase to load the data just from the wad file
-	//print methods should match except no individual source file names will be listed for the second call
-	WadDatabase wd2;
-	std::ifstream is(wadFileName, std::ios::binary);
-	wd2.load(&is);
-	is.close();
-
-	wd2.print();
-	system("pause");
-}
-
-void wadDatabasePrintEmptyTest()
-{
-	WadDatabase wd;
-	wd.print(); //won't crash to print empty database
-
-	system("pause");
-}
+//void wadDatabasePrintEmptyTest()
+//{
+//	WadDatabase wd;
+//	wd.print(); //won't crash to print empty database
+//
+//	system("pause");
+//}
 
 
 

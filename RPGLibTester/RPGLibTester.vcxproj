@@ -178,11 +178,9 @@
     <ClCompile Include="MusicPlayerTest.cpp" />
     <ClCompile Include="PickupTest.cpp" />
     <ClCompile Include="PlayerActorTest.cpp" />
-    <ClCompile Include="RepositoryTest.cpp" />
     <ClCompile Include="ResourceManagerTest.cpp" />
     <ClCompile Include="DataPkgTest.cpp" />
     <ClCompile Include="TurnTrackerTest.cpp" />
-    <ClCompile Include="WadDatabaseTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PDCurseControls\PDCurseControls.vcxproj">

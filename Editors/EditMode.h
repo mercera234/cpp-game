@@ -14,6 +14,7 @@ protected:
 	static bool modified;
 public:
 	std::string extensionFilter;
+	std::string modeName;
 	
 	EditMode();
 	~EditMode();
@@ -28,6 +29,7 @@ public:
 
 	void resetFileName();
 	void setModified(bool modified); //all routines to perform when current mode has been modified from original state
+	void storeLastOpened(const std::string& path);
 
 	//getters/setters
 	void setFileName(const std::string& fileNameIn) { loadedFileName = fileNameIn; }
@@ -49,6 +51,7 @@ public:
 	MapRoom mapRoom;
 	MapRoomEditMode()
 	{
+		modeName = "MAP ROOM";
 		extensionFilter = DEF_MAP_EXTENSION;
 	}
 
@@ -64,6 +67,7 @@ public:
 	Image* image;
 	ImageEditMode()
 	{
+		modeName = "IMAGE";
 		extensionFilter = DEF_IMAGE_EXTENSION;
 	}
 

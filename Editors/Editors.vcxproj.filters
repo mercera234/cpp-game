@@ -24,9 +24,6 @@
     <ClInclude Include="MapEditor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ConfirmCommand.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="EditMode.h">
       <Filter>Header Files</Filter>
     </ClInclude>

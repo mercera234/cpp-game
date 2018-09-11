@@ -23,12 +23,18 @@ bool EditMode::hasSaved()
 	return loadedFileName.compare(DEF_FILENAME) != 0;
 }
 
+void EditMode::storeLastOpened(const std::string& path)
+{
+	int pos = path.find_last_of('\\');
+	setFileName(path.substr(pos + 1, path.length()));
+
+	//save path that file was opened/saved from as the start point for next time
+	setDefaultFilePath(path.substr(0, pos));
+}
+
 
 void EditMode::setModified(bool mod)
 {
-	//if (modified == mod && mod)//exit if no change in modified state and modified is set to true
-	//	return;
-
 	modified = mod;
 }
 

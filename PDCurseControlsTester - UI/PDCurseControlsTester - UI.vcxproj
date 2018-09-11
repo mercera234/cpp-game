@@ -119,6 +119,7 @@
   <ItemGroup>
     <ClCompile Include="ControlManageApp.cpp" />
     <ClCompile Include="control_manager_tests.cpp" />
+    <ClCompile Include="dialog_window_tests.cpp" />
     <ClCompile Include="driver.cpp" />
     <ClCompile Include="file_chooser_tests.cpp" />
     <ClCompile Include="filter_tests.cpp" />
@@ -136,6 +137,7 @@
   <ItemGroup>
     <ClInclude Include="ControlManageApp.h" />
     <ClInclude Include="control_manager_tests.h" />
+    <ClInclude Include="dialog_window_tests.h" />
     <ClInclude Include="file_chooser_tests.h" />
     <ClInclude Include="frame_tests.h" />
     <ClInclude Include="image_tests.h" />

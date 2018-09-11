@@ -119,7 +119,10 @@
   <ItemGroup>
     <ClInclude Include="Command.h" />
     <ClInclude Include="compare_functions.h" />
+    <ClInclude Include="ConfirmDialog.h" />
     <ClInclude Include="ControlCommand.h" />
+    <ClInclude Include="DialogWindow.h" />
+    <ClInclude Include="FileDialog.h" />
     <ClInclude Include="Format.h" />
     <ClInclude Include="input_return_codes.h" />
     <ClInclude Include="MenuItem2.h" />
@@ -170,7 +173,10 @@
     <ClInclude Include="TUI.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ConfirmDialog.cpp" />
+    <ClCompile Include="DialogWindow.cpp" />
     <ClCompile Include="Direction.cpp" />
+    <ClCompile Include="FileDialog.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="AbstractMenu.cpp" />
     <ClCompile Include="Animation.cpp" />

@@ -168,6 +168,7 @@
     <ClCompile Include="CommandTest.cpp" />
     <ClCompile Include="ControllableTest.cpp" />
     <ClCompile Include="ControlManagerTest.cpp" />
+    <ClCompile Include="DialogWindowTest.cpp" />
     <ClCompile Include="FileChooserTest.cpp" />
     <ClCompile Include="FileDirectoryTest.cpp" />
     <ClCompile Include="GridMenuTest.cpp" />

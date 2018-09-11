@@ -18,9 +18,8 @@ public:
 	void setBorder(int border) { this->border = border; }
 
 	/*
-	Sets text on the top border of the frame
+	Sets text anywhere within frame(even on border)
 	*/
-	
 	void setText(const std::string& text, int y, int x);
 	void draw();
 	~Frame();

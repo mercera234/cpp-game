@@ -130,14 +130,8 @@ void MapEditor::setupCommands()
 	globalCmd.setReceiver(this);
 	globalCmd.setAction(&MapEditor::processGlobalInput);
 
-	newCmd.setReceiver(this);
-	newCmd.setAction(&MapEditor::confirmNewDialogDriver);
-
-	openCmd.setReceiver(this);
-	openCmd.setAction(&MapEditor::confirmOpenDialogDriver);
-
-	quitCmd.setReceiver(this);
-	quitCmd.setAction(&MapEditor::confirmQuitDialogDriver);
+	confirmCmd.setReceiver(this);
+	confirmCmd.setAction(&MapEditor::confirmDialogDriver);
 
 	fileDialogCmd.setReceiver(this);
 	fileDialogCmd.setAction(&MapEditor::fileDialogDriver);
@@ -355,12 +349,7 @@ void MapEditor::save(const std::string& fileName)
 	(*mode)->save(fileName);
 }
 
-void MapEditor::cycleMode()
-{
-	mode++;
-	if (mode == modes.end())
-		mode = modes.begin();
-}
+
 
 
 int MapEditor::processPaletteInput(Controllable* c, int input)

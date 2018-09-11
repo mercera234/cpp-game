@@ -76,7 +76,7 @@ public:
 	Pop the control on top of the stack (end of the registered controls list).
 	If the top element was the control with focus then focus shifts to the previous element in list.
 	*/
-	void popControl();
+	Controllable* popControl();
 	
 	/*Move the control to the top of the control stack(back of the list)
 	This ensures it will always be drawn last*/

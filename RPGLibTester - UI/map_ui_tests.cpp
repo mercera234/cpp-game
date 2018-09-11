@@ -454,83 +454,83 @@ Only tests viewing a megamap as a high level map
 //	}
 //}
 
-void autoMapTest()
-{
-	Factory f;
-
-	int unitsWide = 51;
-	int unitsHigh = 23;
-	resize_term(unitsHigh, unitsWide);
-
-
-
-	MapRepository mapRepo(unitsHigh, unitsWide);
-
-
-	AutoMap autoMap(stdscr, 7, 9);
-
-	mapRepo.add(*(f.createMap(stdscr, 0, unitsHigh * 2, unitsWide * 2, '0', 0, 0)));
-	mapRepo.add(*(f.createMap(stdscr, 1, unitsHigh * 2, unitsWide, '1', 1, 2)));
-	mapRepo.add(*(f.createMap(stdscr, 2, unitsHigh * 5, unitsWide, '2', 2, 1)));
-	mapRepo.add(*(f.createMap(stdscr, 3, unitsHigh, unitsWide * 2, '3', 6, 2)));
-	mapRepo.add(*(f.createMap(stdscr, 4, unitsHigh, unitsWide, '4', 5, 3)));
-	mapRepo.add(*(f.createMap(stdscr, 5, unitsHigh * 3, unitsWide * 3, '5', 2, 3)));
-	mapRepo.add(*(f.createMap(stdscr, 6, unitsHigh, unitsWide * 3, '6', 3, 6)));
-	mapRepo.add(*(f.createMap(stdscr, 7, unitsHigh * 2, unitsWide, '7', 1, 8)));
-	mapRepo.add(*(f.createMap(stdscr, 8, unitsHigh * 2, unitsWide * 2, '8', 1, 6)));
-
-	autoMap.setMapRepo(&mapRepo);
-	autoMap.setCurrMap(0);
-	autoMap.updateDisplay();
-
-	int curY = 0;
-	int curX = 0;
-
-	Image* img = autoMap.getDisplay();
-
-	
-	FreeMovementProcessor mp(img, &curY, &curX);
-	mp.setViewMode(ViewMode::CENTER);
-	bool playing = true;
-
-	while (playing)
-	{
-		autoMap.draw();
-
-		//draw character location
-
-		TUI::printOnBkgd('A' | COLOR_PAIR(COLOR_YELLOW_BOLD), stdscr, 0 - img->getUlY(), 0 - img->getUlX());
-
-		wnoutrefresh(stdscr);
-
-		doupdate();
-
-		//process input
-		int input = getch();
-		switch (input)
-		{
-		case KEY_ESC: playing = false; break;
-
-			//move the active map around
-		case KEY_RIGHT:
-		case KEY_LEFT:
-		case KEY_UP:
-		case KEY_DOWN:
-			mp.processMovementInput(input);
-			break;
-		default:
-		{
-			int mapId = input - 48;
-			autoMap.setCurrMap(mapId);
-			autoMap.discover(mapId);
-			autoMap.visit(mapId, 0, 0);
-		}
-
-		break;
-		}
-	}
-
-}
+//void autoMapTest()
+//{
+//	Factory f;
+//
+//	int unitsWide = 51;
+//	int unitsHigh = 23;
+//	resize_term(unitsHigh, unitsWide);
+//
+//
+//
+//	MapRepository mapRepo(unitsHigh, unitsWide);
+//
+//
+//	AutoMap autoMap(stdscr, 7, 9);
+//
+//	mapRepo.add(*(f.createMap(stdscr, 0, unitsHigh * 2, unitsWide * 2, '0', 0, 0)));
+//	mapRepo.add(*(f.createMap(stdscr, 1, unitsHigh * 2, unitsWide, '1', 1, 2)));
+//	mapRepo.add(*(f.createMap(stdscr, 2, unitsHigh * 5, unitsWide, '2', 2, 1)));
+//	mapRepo.add(*(f.createMap(stdscr, 3, unitsHigh, unitsWide * 2, '3', 6, 2)));
+//	mapRepo.add(*(f.createMap(stdscr, 4, unitsHigh, unitsWide, '4', 5, 3)));
+//	mapRepo.add(*(f.createMap(stdscr, 5, unitsHigh * 3, unitsWide * 3, '5', 2, 3)));
+//	mapRepo.add(*(f.createMap(stdscr, 6, unitsHigh, unitsWide * 3, '6', 3, 6)));
+//	mapRepo.add(*(f.createMap(stdscr, 7, unitsHigh * 2, unitsWide, '7', 1, 8)));
+//	mapRepo.add(*(f.createMap(stdscr, 8, unitsHigh * 2, unitsWide * 2, '8', 1, 6)));
+//
+//	autoMap.setMapRepo(&mapRepo);
+//	autoMap.setCurrMap(0);
+//	autoMap.updateDisplay();
+//
+//	int curY = 0;
+//	int curX = 0;
+//
+//	Image* img = autoMap.getDisplay();
+//
+//	
+//	FreeMovementProcessor mp(img, &curY, &curX);
+//	mp.setViewMode(ViewMode::CENTER);
+//	bool playing = true;
+//
+//	while (playing)
+//	{
+//		autoMap.draw();
+//
+//		//draw character location
+//
+//		TUI::printOnBkgd('A' | COLOR_PAIR(COLOR_YELLOW_BOLD), stdscr, 0 - img->getUlY(), 0 - img->getUlX());
+//
+//		wnoutrefresh(stdscr);
+//
+//		doupdate();
+//
+//		//process input
+//		int input = getch();
+//		switch (input)
+//		{
+//		case KEY_ESC: playing = false; break;
+//
+//			//move the active map around
+//		case KEY_RIGHT:
+//		case KEY_LEFT:
+//		case KEY_UP:
+//		case KEY_DOWN:
+//			mp.processMovementInput(input);
+//			break;
+//		default:
+//		{
+//			int mapId = input - 48;
+//			autoMap.setCurrMap(mapId);
+//			autoMap.discover(mapId);
+//			autoMap.visit(mapId, 0, 0);
+//		}
+//
+//		break;
+//		}
+//	}
+//
+//}
 
 void highLevelMapTest()
 {
@@ -654,65 +654,7 @@ void factoryTest()
 	int input = getch();
 }
 
-void mapRepositoryTest()
-{
-	Factory f;
 
-	int unitsWide = 51;
-	int unitsHigh = 23;
-	resize_term(unitsHigh, unitsWide);
-
-	MapRoom* aMap = f.createMap(0, unitsHigh, unitsWide, '&', stdscr);
-	MapRoom* bMap = f.createMap(1, unitsHigh * 2, unitsWide, '2', stdscr);
-	MapRoom* cMap = f.createMap(2, unitsHigh, unitsWide * 2, 'l', stdscr);
-
-	MapRepository repo(unitsHigh, unitsWide);
-
-	repo.add(*aMap);
-	repo.add(*bMap);
-	repo.add(*cMap);
-
-	bool playing = true;
-
-	MapRoom* currMap = aMap;
-
-	while (playing)
-	{
-		//draw map
-		currMap->draw();
-
-		//add y,x coordinates to screen
-		//mvwprintw(screen, scrHeight - 2, scrWidth - 16, "y:%+4u x:%+4u", mainC->y, mainC->x);
-		wnoutrefresh(stdscr);
-
-		doupdate();
-
-		//process input
-		int input = getch();
-		switch (input)
-		{
-		case KEY_ESC: playing = false; break;
-
-			//move the active map around
-		case KEY_RIGHT:
-			currMap->getDisplay()->shift(0, 1);
-			break;
-		case KEY_LEFT:
-			currMap->getDisplay()->shift(0, -1);
-			break;
-		case KEY_UP:
-			currMap->getDisplay()->shift(-1, 0);
-			break;
-		case KEY_DOWN:
-			currMap->getDisplay()->shift(1, 0);
-			break;
-		default:
-			currMap = repo.find(input - 48);//switch the active map
-			break;
-		}
-	}
-
-}
 
 
 void animationTest()

@@ -21,7 +21,7 @@ void fileChooserTest(FileDialogType dialogType)
 	while (playing)
 	{
 		f.draw();
-		fd.setFocus();
+		fd.setFocus(true);
 		doupdate();
 
 		int c = getch();

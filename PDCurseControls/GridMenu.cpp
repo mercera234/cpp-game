@@ -19,14 +19,11 @@ GridMenu::GridMenu(WINDOW* win, int rows, int cols)
 
 void GridMenu::init()
 {
-	focusable = true; //all menus accept key input
-	showing = true; //shows by default
-
 	cursor = defaultCursor;
 
 	colSepLen = 1;
 
-	setItemWidth(16); //default is 16
+	setItemWidth(16); //TODO it would be better if this could change dynamically 
 
 	rowSepLen = 0; //most menus will have no gap between rows
 	setItemHeight(1);

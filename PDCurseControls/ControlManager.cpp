@@ -111,13 +111,13 @@ void ControlManager::registerShortcutKey(int key, ControlCommand* cmd)
 }
 
 
-void ControlManager::popControl()
+Controllable* ControlManager::popControl()
 {
 	if(controls.back() == focusedReg) //if the control being popped is focused
 	{
 		focusedReg = nullptr;
 		//if object was focused then set focus to next 
-		for (auto it = ++controls.rbegin(); it != controls.rend(); it++)//we start from the end, so modal windows are always processed first
+		for (auto it = ++controls.rbegin(); it != controls.rend(); it++)//we start from the end, so top most window is processed first
 		{
 			Registration* r = *it;
 			Controllable* c = r->c;
@@ -130,7 +130,9 @@ void ControlManager::popControl()
 		}
 	}
 
-	unRegisterControl(controls.back()->c);
+	Controllable* poppedControl = controls.back()->c;
+	unRegisterControl(poppedControl);
+	return poppedControl;
 }
 
 void ControlManager::unsetFocus()

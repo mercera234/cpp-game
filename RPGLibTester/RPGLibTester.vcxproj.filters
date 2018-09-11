@@ -80,12 +80,6 @@
     <ClCompile Include="MockState2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="WadDatabaseTest.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="RepositoryTest.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ResourceManagerTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

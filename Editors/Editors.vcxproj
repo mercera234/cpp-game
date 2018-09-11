@@ -150,7 +150,6 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ConfirmCommand.h" />
     <ClInclude Include="EditMode.h" />
     <ClInclude Include="Editor.h" />
     <ClInclude Include="MapEditor.h" />

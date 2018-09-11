@@ -10,6 +10,7 @@
 #include "misc_tests.h"
 #include "textboard_tests.h"
 #include "text_tests.h"
+#include "dialog_window_tests.h"
 
 //PDCURSE CONTROLS UI TESTER
 int main()
@@ -19,8 +20,8 @@ int main()
 	//DO NOT MODIFY ABOVE THIS LINE
 	
 	
-	statusBoardWithTextPieces();
-	
+	fileDialogWindowTest();
+	//fileChooserTest(FileDialogType::OPEN_DIALOG);
 	
 	
 	//DO NOT MODIFY BELOW THIS LINE

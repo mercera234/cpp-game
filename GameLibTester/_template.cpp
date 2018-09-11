@@ -3,7 +3,7 @@
 //
 //using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 //
-//namespace Project1Tester
+//namespace GameLibTester
 //{
 //	TEST_CLASS(ClassNameTest)
 //	{
