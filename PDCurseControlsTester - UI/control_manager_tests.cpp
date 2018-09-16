@@ -5,7 +5,7 @@
 #include "TextField.h"
 #include "Palette.h"
 #include "ControlManageApp.h"
-#include "SimpleControlCommand.h"
+#include "SimpleCommand.h"
 
 void controlManagerTest()
 {
@@ -33,23 +33,23 @@ void controlManagerTest()
 
 	ControlManageApp app;
 
-	SimpleControlCommand<ControlManageApp> cmd;
+	SimpleCommand<ControlManageApp> cmd;
 	cmd.setReceiver(&app);
 	cmd.setAction(&ControlManageApp::callBackTest2);
 
-	SimpleControlCommand<ControlManageApp> cmd2;
+	SimpleCommand<ControlManageApp> cmd2;
 	cmd2.setReceiver(&app);
 	cmd2.setAction(&ControlManageApp::textCallback);
 
-	SimpleControlCommand<ControlManageApp> cmd3;
+	SimpleCommand<ControlManageApp> cmd3;
 	cmd3.setReceiver(&app);
 	cmd3.setAction(&ControlManageApp::callBackTest);
 
-	SimpleControlCommand<ControlManageApp> cmd4;
+	SimpleCommand<ControlManageApp> cmd4;
 	cmd4.setReceiver(&app);
 	cmd4.setAction(&ControlManageApp::newCallback);
 
-	SimpleControlCommand<ControlManageApp> cmd5;
+	SimpleCommand<ControlManageApp> cmd5;
 	cmd5.setReceiver(&app);
 	cmd5.setAction(&ControlManageApp::quitCallback);
 
@@ -61,7 +61,9 @@ void controlManagerTest()
 	cm.registerShortcutKey(CTRL_N, &cmd4);
 	cm.registerShortcutKey(KEY_ESC, &cmd5);
 
-	cm.setFocus(&field1);
+	app.cm = &cm;
+
+	cm.setFocusedControl(&field1);
 
 	bool testing = true;
 	while (testing)
@@ -73,9 +75,12 @@ void controlManagerTest()
 		int c = getch();
 
 		clear();
-		if (cm.handleInput(c) > 0)
-			testing = false;
+		cm.handleInput(c);
+		switch (cm.getExitCode())
+		{
+		case ExitCode::TERMINATE: testing = false; break;
+		}
+		
+			
 	}
-	cm.shutdown();
-
 }

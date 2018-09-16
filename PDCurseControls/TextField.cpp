@@ -61,11 +61,11 @@ bool TextField::deleteChar()
 
 bool TextField::insertChar(int c)
 {
-	if (text.length() >= text.capacity()) //don't exceed the set capacity
+	if ((int)text.length() >= getmaxx(win)) //don't exceed the set capacity
 		return false;
 
 	//verify character is within ascii range
-	if (isprint(c) == false)
+	if (c < ' ' || c > 127) //using isprint should only be done with char, not int
 		return false;
 
 	std::string::iterator it = text.begin() + cursorPos;

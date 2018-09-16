@@ -240,7 +240,30 @@ ModelManifest.xml
 
 # FAKE - F# Make
 .fake/
+/GameLibTester/_template.cpp
 /Project1/spaceship.map
 *.map
 /Project1/Command.h
 /Project1/docs
+/Project1/TextDisplay.h
+/Project1/TextDisplay.cpp
+/Project1/Form.cpp
+/Project1/Form.h
+/Project1/character.h
+/Project2
+/PDCursesControls
+/PDCurseControlsTester/_template.cpp
+/RPGLib/ClassDiagram.cd
+/RPGLibTester/_template.cpp
+/Project1/allFiles.txt
+/Boost test
+/Misc C++ Testing/misc_methods.h
+/Misc C++ Testing/misc_methods.cpp
+/Misc C++ Testing/Misc C++ Testing.vcxproj.filters
+/Misc C++ Testing/Misc C++ Testing.vcxproj
+/Misc C++ Testing/driver.cpp
+/PDCurseControls/include/LineItem2.h
+/PDCurseControls/include/MenuItem2.h
+/RPGLib/ActorRepository.h
+/RPGLib/ActorRepository.cpp
+/PDCurseControlsTester - UI/allVals.txt

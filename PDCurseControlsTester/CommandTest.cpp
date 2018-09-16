@@ -26,20 +26,5 @@ namespace PDCurseControlsTester
 			Assert::AreEqual(234, app.x);
 		}
 
-		TEST_METHOD(intCommandTest)
-		{
-			SimpleCommand<MockApplication> simpleCmd;
-			MockApplication app;
-
-			simpleCmd.setReceiver(&app);
-			simpleCmd.setOneArgAction(&MockApplication::operation2); //must use method that matches signature of Action
-
-															  //executes using polymorphism and virtual method execute
-			Command* cmd;
-			cmd = &simpleCmd;
-			int x = cmd->execute(678);
-
-			Assert::AreEqual(x, app.x);
-		}
 	};
 }

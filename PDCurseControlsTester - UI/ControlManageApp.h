@@ -4,14 +4,16 @@
 class ControlManageApp
 {
 public:
+	ControlManager* cm;
+
 	ControlManageApp();
 	~ControlManageApp();
 
-	int modalCallback(Controllable* ptr, int input);
-	int newCallback(Controllable* ptr, int input);
-	int quitCallback(Controllable* ptr, int input);
-	int callBackTest(Controllable* ptr, int input);
-	int callBackTest2(Controllable* ptr, int input);
-	int textCallback(Controllable* ptr, int input);
+	void modalCallback();
+	void newCallback();
+	void quitCallback();
+	void callBackTest();
+	void callBackTest2();
+	void textCallback();
 };
 

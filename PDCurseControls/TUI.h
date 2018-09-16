@@ -118,6 +118,18 @@ const std::string colorNames[16] = {
 
 void setCursorType(CursorType typeIn);
 
+/*Get the mouse event following a mouse click.
+Will read as all 0s if no mouse click was made.*/
+MEVENT* getMouse();
+
+/*True allows user to simulate mouse input manually. 
+Mouse event properties are reset on each use.*/
+void simulateMouseOn(bool on);
+
+/*manually set the mouse event. 
+Useless without calling simulateMouseOn first.*/
+void setMouseEvent(int y, int x);
+
 class TUI
 {
 private:
@@ -126,8 +138,12 @@ private:
 public:
 	static void printOnBkgd(chtype c, WINDOW* win, int y, int x); //TUI must be initialized first to use this of course
 	static void printStrOnBkgd(std::string s, WINDOW* win, int y, int x);
-	
 
+	/*Resizes the terminal to height and width and centers on desktop*/
+	static void centerConsoleWindow(int height, int width);
+	
+	static bool simulateMouse; //true if mouse events are being set manually for testing
+	static MEVENT mouseEvent; //the one mouse event in the program
 	static CursorType cursorType;// = CursorType::INVISIBLE;
 	TUI();
 

@@ -3,6 +3,13 @@
 #include "InputManager.h"
 #include "ResourceManager.h"
 
+void loadDataFiles(ResourceManager& rm);
+void setupDefaultDataKeys(ResourceManager& rm);
+void defaultGameInputs(std::map<int, Input>& inputManager);
+//int getInput(std::map<int, Input>& inputs, bool useRawInput = false);
+int getInput(ResourceManager& resourceManager);
+
+
 //game defaults
 const std::string player1Name = "Hero";
 const int startingMapId = 5;
@@ -16,6 +23,7 @@ const int encounterChance = 5;//percent chance
 const std::string actorFile = "data\\actors.txt";
 const std::string dataDirName = "data";
 const std::string mapFile = "data\\maps.txt";
+const std::string configFile = "data\\configuration.ini";
 
 //////strings
 
@@ -58,6 +66,3 @@ const std::string AGILITY = "Agility";
 const std::string EXP = "Exp";
 const std::string TO_NEXT = "To Next";
 
-void setupDefaultDataKeys(ResourceManager& rm);
-void defaultGameInputs(InputManager& inputManager);
-int getInput(InputManager& inputManager);

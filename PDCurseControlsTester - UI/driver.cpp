@@ -20,7 +20,7 @@ int main()
 	//DO NOT MODIFY ABOVE THIS LINE
 	
 	
-	fileDialogWindowTest();
+	controlManagerTest();
 	//fileChooserTest(FileDialogType::OPEN_DIALOG);
 	
 	

@@ -56,7 +56,7 @@ void textLabelTest()
 
 void formFieldTest()
 {
-	TextLabel* lbl = new TextLabel(newwin(1, 10, 1, 1), "Testlabel");
+	/*TextLabel* lbl = new TextLabel(newwin(1, 10, 1, 1), "Testlabel");
 	TextField* field = new TextField(16, 2, 1);
 	FormField* fField = new FormField(lbl, field, 0, NULL);
 
@@ -74,5 +74,5 @@ void formFieldTest()
 		}
 		else
 			field->inputChar(c);
-	}
+	}*/
 }

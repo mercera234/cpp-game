@@ -124,9 +124,9 @@
     <ClInclude Include="DialogWindow.h" />
     <ClInclude Include="FileDialog.h" />
     <ClInclude Include="Format.h" />
+    <ClInclude Include="Input.h" />
     <ClInclude Include="input_return_codes.h" />
-    <ClInclude Include="MenuItem2.h" />
-    <ClInclude Include="InputManager.h" />
+    <ClInclude Include="key_strings.h" />
     <ClInclude Include="SimpleControlCommand.h" />
     <ClInclude Include="ObjectLinkedItem.h" />
     <ClInclude Include="SimpleCommand.h" />
@@ -177,7 +177,6 @@
     <ClCompile Include="DialogWindow.cpp" />
     <ClCompile Include="Direction.cpp" />
     <ClCompile Include="FileDialog.cpp" />
-    <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="AbstractMenu.cpp" />
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="BlitAnimation.cpp" />
@@ -198,6 +197,7 @@
     <ClCompile Include="GridMenu.cpp" />
     <ClCompile Include="Highlighter.cpp" />
     <ClCompile Include="Image.cpp" />
+    <ClCompile Include="key_strings.cpp" />
     <ClCompile Include="LineItem.cpp" />
     <ClCompile Include="MenuItem.cpp" />
     <ClCompile Include="Palette.cpp" />

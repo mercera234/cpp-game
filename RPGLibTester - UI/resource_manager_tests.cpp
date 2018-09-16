@@ -40,3 +40,16 @@ void loadItemsFromTextFile()
 	std::cout << "Total: " << count << std::endl;
 	system("pause");
 }
+
+void loadConfigurationTextFile()
+{
+	ResourceManager rm;
+
+	std::ifstream is;
+	is.open("data\\configuration.ini");
+
+	int count = rm.loadConfigurationFile(is);
+
+	std::cout << "Total: " << count << std::endl;
+	system("pause");
+}

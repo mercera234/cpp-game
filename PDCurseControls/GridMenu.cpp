@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <assert.h>
 #include "GridMenu.h"
 #include "curses.h"
 
@@ -225,11 +226,12 @@ void GridMenu::draw()
 {
 	//clear the menu
 	wclear(win);
-	if (posted == false)
+	assert(posted);
+	/*if (posted == false)
 	{
 		mvwaddstr(win, 0, 0, "NOT POSTED");
 		return;
-	}
+	}*/
 		
 
 	if (!showing) return;

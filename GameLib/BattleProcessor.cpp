@@ -178,11 +178,10 @@ void BattleProcessor::initControlManager()
 	cmd.setAction(&BattleProcessor::driver);
 
 	//setup controlmanager
-	cm = new ControlManager(this);
-	setControlManager(cm);
-	cm->registerControl(targetMenu, KEY_LISTENER, &cmd);
-	cm->registerControl(skillMenuFrame, KEY_LISTENER, &cmd);
-	cm->registerControl(msgDisplay, KEY_LISTENER, &cmd);
+	cm.setCaller(this);
+	cm.registerControl(targetMenu, KEY_LISTENER, &cmd);
+	cm.registerControl(skillMenuFrame, KEY_LISTENER, &cmd);
+	cm.registerControl(msgDisplay, KEY_LISTENER, &cmd);
 }
 
 bool BattleProcessor::advanceTurn()
@@ -198,7 +197,7 @@ bool BattleProcessor::advanceTurn()
 	{
 	case ActorType::HUMAN:
 		skillMenuFrame->setText(next->name, 0, 4);
-		cm->setFocus(skillMenuFrame);
+		cm.setFocusedControl(skillMenuFrame);
 		break;
 	case ActorType::CPU:
 		processCPUTurn();
@@ -219,7 +218,7 @@ void BattleProcessor::draw()
 
 	bool showMsgs = false;
 	bool showSkillMenu = true;
-	if (cm->getFocus() == msgDisplay)
+	if (cm.getFocusedControl() == msgDisplay)
 	{
 		showMsgs = true;
 		showSkillMenu = false;
@@ -227,24 +226,26 @@ void BattleProcessor::draw()
 	msgDisplay->setShowing(showMsgs);
 	skillMenu->setShowing(showSkillMenu);
 
-	cm->draw();
+	cm.draw();
 }
 
 
-int BattleProcessor::driver(Controllable* control, int input)
+void BattleProcessor::driver()
 {
-	int handled = NOT_HANDLED;
+	int input = cm.getInput();
+	Controllable* control = cm.getFocusedControl();
 	if (control == skillMenuFrame)
-		handled = skillMenuDriver(input);
+		skillMenuDriver(input);
 	else if (control == targetMenu)
-		handled = targetMenuDriver(input);
+		targetMenuDriver(input);
 	else if (control == msgDisplay)
-		handled = displayDriver(input);
+		displayDriver(input);
+	else
+		cm.setExitCode(ExitCode::NOT_HANDLED);
 
-	return handled;
 }
 
-int BattleProcessor::skillMenuDriver(int input)
+void BattleProcessor::skillMenuDriver(int input)
 {
 	MenuItem* item = nullptr;
 
@@ -260,29 +261,27 @@ int BattleProcessor::skillMenuDriver(int input)
 	default: break;
 	}
 
-	//int exitStatus = HANDLED;
+	
 	if (item != nullptr)
 	{
 		switch (item->index)
 		{
 		case 0: //attack
-			cm->setFocus(targetMenu);
+			cm.setFocusedControl(targetMenu);
 			targetMenu->setCurrentItem(humanActors.size()); //current item is first enemy to start with
 			break;
 		case 3: //run
 			stopBattle();
 			messages.push_back("You ran away.");
 			skillMenuFrame->setText("", 0, 4); //clear human's name from the frame
-			cm->setFocus(msgDisplay);
+			cm.setFocusedControl(msgDisplay);
 			setMessage();
 			break;
 		}
 	}
-
-	return HANDLED;
 }
 
-int BattleProcessor::targetMenuDriver(int input)
+void BattleProcessor::targetMenuDriver(int input)
 {
 	MenuItem* item = nullptr;
 
@@ -296,7 +295,7 @@ int BattleProcessor::targetMenuDriver(int input)
 		item = targetMenu->getCurrentItem();
 		break;
 	case GameInput::CANCEL_INPUT: 
-		cm->setFocus(skillMenuFrame);
+		cm.setFocusedControl(skillMenuFrame);
 		break;
 	default: break;
 	}
@@ -324,11 +323,9 @@ int BattleProcessor::targetMenuDriver(int input)
 
 		targetMenu->setCurrentItem(NO_CUR_ITEM);
 		skillMenuFrame->setText("", 0, 4); //clear human's name from the frame
-		cm->setFocus(msgDisplay);
+		cm.setFocusedControl(msgDisplay);
 		setMessage();
 	}
-
-	return HANDLED;
 }
 
 void BattleProcessor::stopBattle()
@@ -417,11 +414,11 @@ void BattleProcessor::transferRewards(int totalExp, int totalMoney)
 	}
 }
 
-int BattleProcessor::displayDriver(int input)
+void BattleProcessor::displayDriver(int input)
 {
 	//input can only come from the acknowledgement key(we'll do others later)
 	if (input != GameInput::OK_INPUT)
-		return HANDLED;
+		return;
 
 	clearDisplayDamage();
 
@@ -434,14 +431,13 @@ int BattleProcessor::displayDriver(int input)
 		{
 			inSession = false;
 			if (everyoneDied)
-				return QUIT_TO_TITLE;
+				cm.setExitCode(QUIT_TO_TITLE);
 			else
-				return GO_BACK;
+				cm.setExitCode(ExitCode::GO_BACK);
+				
 		}
 			
 	}
-	
-	return HANDLED;
 }
 
 void BattleProcessor::clearDisplayDamage()
@@ -479,10 +475,16 @@ void BattleProcessor::setMessage()
 
 int BattleProcessor::processInput(int input)
 {
+	cm.setExitCode(HANDLED);
 	if (inSession == false)
-		return 1;
+	{
+		cm.setExitCode(ExitCode::GO_BACK);
+		return cm.getExitCode();
+	}
+		
 
-	return cm->handleInput(input);
+	cm.handleInput(input);
+	return cm.getExitCode();
 }
 
 void BattleProcessor::processCPUTurn()
@@ -516,7 +518,7 @@ void BattleProcessor::processCPUTurn()
 		setupDeath();
 	}
 
-	cm->setFocus(msgDisplay);
+	cm.setFocusedControl(msgDisplay);
 	setMessage();
 }
 

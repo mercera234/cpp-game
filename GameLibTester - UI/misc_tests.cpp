@@ -10,13 +10,15 @@
 #include "MusicPlayer.h"
 #include "GameItem.h"
 #include "TitleScreen.h"
+#include "ConfigMenu.h"
 
 void titleScreenTest()
 {
 	TitleScreen titleScreen;
 
-	InputManager inputManager;
-	defaultGameInputs(inputManager);
+	ResourceManager rm;
+
+	loadDataFiles(rm);
 
 	bool playing = true;
 	while (playing)
@@ -24,7 +26,7 @@ void titleScreenTest()
 		titleScreen.draw();
 		doupdate();
 
-		int input = getInput(inputManager);
+		int input = getInput(rm);
 
 		switch (input)
 		{
@@ -64,7 +66,8 @@ void mainMenuTest()
 	playerParty.push_back(&player2);
 
 	ResourceManager rm;
-	setupDefaultDataKeys(rm);
+
+	loadDataFiles(rm);
 
 	MainMenu mm;
 	mm.setResourceManager(&rm);
@@ -72,22 +75,18 @@ void mainMenuTest()
 	mm.addPlayerParty(playerParty);
 	
 
-	InputManager inputManager;
-	defaultGameInputs(inputManager);
-
 	
-
 	bool playing = true;
 	while (playing)
 	{
 		mm.draw();
 		doupdate();
 
-		int input = getInput(inputManager);
+		int input = getInput(rm);
 
 		switch (input)
 		{
-		case KEY_ESC:
+		case GameInput::QUIT_INPUT:
 			playing = false;
 			break;
 		case GameInput::FIGHT_TRIGGER: //just testing
@@ -114,12 +113,14 @@ void battleProcessorTest()
 	bool testing = true;
 	while (testing)
 	{
-		InputManager inputManager;
-		defaultGameInputs(inputManager);
-
 		//retrieve all actors from a wad file (just for testing, this should be refined)
 		ResourceManager rm;
 		setupDefaultDataKeys(rm);
+
+		std::ifstream configStream(configFile);
+		rm.loadConfigurationFile(configStream);
+
+		defaultGameInputs(rm.inputs);
 
 		std::ifstream is(actorFile);
 		rm.loadActorsFromTextFile(is);
@@ -181,7 +182,7 @@ void battleProcessorTest()
 			bp.draw();
 			doupdate();
 
-			int input = getInput(inputManager);
+			int input = getInput(rm);
 
 			switch (input)
 			{
@@ -199,81 +200,15 @@ void battleProcessorTest()
 	}
 }
 
+//only saving this for musicplayer code
 void exploreMegaMapTest()
 {
-	//resize_term(screenHeight, screenWidth);
-
-	//bool playing = true;
-
-	//WINDOW* screen = newwin(screenHeight, screenWidth, 0, 0);
-
-	//ResourceManager rm;
-	//setupDefaultDataKeys(rm);
-
-	//rm.loadNullResources();
-	////std::ifstream is(actorFile);
-	////rm.loadActorsFromTextFile(is);
-
-	//FileDirectory dataDir(dataDirName);
-	//rm.loadGameMapsFromDir(dataDir);
-
-	//Map map0 = rm.gameMaps[11];
-	//map0.setWindow(screen);
-
-	//Map map1 = rm.gameMaps[12];
-	//Map map2 = rm.gameMaps[5];
-	//map1.setWindow(screen);
-	//map2.setWindow(screen);
-
-	////setup main character
-	//Actor mainC;
-	//initTestActor(mainC);
-	//mainC.name = "hero.actr";
-	//mainC.type = ActorType::HUMAN;
-	//mainC.symbol = 'A' | COLOR_YELLOW_BOLD << TEXTCOLOR_OFFSET;
-	//mainC.x = 48;
-	//mainC.y = 20;
-
-	//map0.setControlActor(&mainC);
-
-	////MapRepository repo(23, 51);
-
-	//ExplorationProcessor mp(&(mainC.y), &(mainC.x));
-	//unsigned short id0 = 0;
-	//unsigned short id1 = 1;
-	//unsigned short id2 = 2;
-	//map0.setId(id0);
-	//map1.setId(id1);
-	//map2.setId(id2);
-
-	//MapRepository& repo = mp.getMapRepo();
-	//repo.addMapSeam(map0, map1, Axis::HORIZONTAL, 0, 1, 1);
-	//repo.addMapSeam(map2, map0, Axis::VERTICAL, 0, 0, 1);
-	//repo.addMapSeam(map2, map1, Axis::HORIZONTAL, 0, 0, 1);
-	//repo.add(map0); //could combine this without previous method
-	//repo.add(map1);
-	//repo.add(map2);
-
-	//int currId = map0.getId();
-	//mp.setCurrMap(currId);
-	//mp.setViewMode(ViewMode::DYNAMIC); //position map so character is visible (not sure if this is the best way to do this)
-
 	//MusicPlayer musicPlayer;
 	//std::string song1 = "01-02- 12 Microtonal Etudes, Op 28 I 16 notes Andantino.wav";
 	//std::string song2 = "11 CONTEMPLATIVE INTERMISSION.wav";
 	//int ret = musicPlayer.playFile(song1);
 
-	//while (playing)
-	//{
-	//	//draw map
-	//	mp.draw();
-
-	//	//add y,x coordinates to screen
-	//	mvwprintw(screen, screenHeight - 2, screenWidth - 16, "y:%+4u x:%+4u", mainC.y, mainC.x);
-	//	wnoutrefresh(screen);
-
-	//	doupdate();
-
+	
 
 	//	//update music if changing maps
 	//	if ((currId <= 1) && mp.getCurrMap()->getId() == 2)
@@ -288,26 +223,6 @@ void exploreMegaMapTest()
 	//		musicPlayer.playFile(song1);
 	//		currId = mp.getCurrMap()->getId();
 	//	}
-
-
-	//	//process input
-	//	int input = getch();
-	//	switch (input)
-	//	{
-	//	case KEY_ESC: playing = false; break;
-	//	case KEY_RIGHT:
-	//	case KEY_LEFT:
-	//	case KEY_UP:
-	//	case KEY_DOWN:
-	//		mp.processMovementInput(input); break;
-	//	case '\t': //toggle automap
-	//		break;
-	//	default:
-	//		break;
-	//	}
-	//}
-
-	//delwin(screen);
 }
 
 
@@ -318,16 +233,8 @@ void exploreOneMapTest()
 	bool playing = true;
 
 	ResourceManager rm;
-	setupDefaultDataKeys(rm);
+	loadDataFiles(rm);
 
-	std::ifstream is2(actorFile);
-	rm.loadActorsFromTextFile(is2); //TODO we don't need this yet, but I need the ids to be populated correctly for now
-
-	FileDirectory dataDir(dataDirName);
-	rm.loadGameMapsFromDir(dataDir);
-
-	std::ifstream is(mapFile);
-	rm.loadMapsFromTextFile(is);
 
 	//setup main character
 	Actor mainC;
@@ -416,4 +323,37 @@ void exploreOneMapTest()
 	}
 
 	delwin(screen);
+}
+
+
+
+void configMenuTest()
+{
+	ResourceManager rm;
+	loadDataFiles(rm);
+
+	ConfigMenu menu;
+	WINDOW* win = newwin(10, 20, 1, 1);
+	
+	menu.setWindow(win);
+	menu.setResourceManager(&rm);
+	
+
+	bool playing = true;
+	while (playing)
+	{
+		menu.draw();
+		doupdate();
+		int c = getInput(rm);
+
+		switch(c)
+		{
+		case QUIT_INPUT: playing = false; continue;
+		default:
+			menu.processInput(c);
+		}
+
+		
+	}
+	
 }

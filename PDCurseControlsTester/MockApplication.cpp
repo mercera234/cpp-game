@@ -24,21 +24,33 @@ int MockApplication::operation2(int xIn)
 	return x;
 }
 
-int MockApplication::mockCallback(Controllable* c, int input)
+void MockApplication::mockCallback()
 {
-	c->setPosition(input, 0);
-	return HANDLED;
+	cm->getFocusedControl()->setPosition(cm->getInput(), 0);
 }
 
 
-int MockApplication::mockCallBack2(Controllable* c, int input)
+void MockApplication::mockCallBack2()
 {
-	return HANDLED;
+	
 }
 
-int MockApplication::setXinMockControl(Controllable* c, int input)
+void MockApplication::setXinMockControl()
 {
-	MockControl* mc = (MockControl*)c;
-	mc->setX(input);
-	return HANDLED;
+	MockControl* mc = (MockControl*)cm->getFocusedControl();
+	mc->setX(cm->getInput());
+	
+}
+
+void MockApplication::setXinMockControl2()
+{
+	MockControl* mc = (MockControl*)childCM->getFocusedControl();
+	mc->setX(childCM->getInput());
+}
+
+void MockApplication::transferControl()
+{
+	ControlManager* manager = (ControlManager*)cm->getFocusedControl();
+	manager->handleInput(cm->getInput());
+	cm->setExitCode(manager->getExitCode());
 }

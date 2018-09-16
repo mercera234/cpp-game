@@ -115,6 +115,8 @@
   <ItemGroup>
     <ClCompile Include="BattleProcessor.cpp" />
     <ClCompile Include="BattleState.cpp" />
+    <ClCompile Include="ConfigMenu.cpp" />
+    <ClCompile Include="ConfigMenuItem.cpp" />
     <ClCompile Include="defaults.cpp" />
     <ClCompile Include="ExplorationProcessor.cpp" />
     <ClCompile Include="ExploreState.cpp" />
@@ -128,6 +130,8 @@
   <ItemGroup>
     <ClInclude Include="BattleProcessor.h" />
     <ClInclude Include="BattleState.h" />
+    <ClInclude Include="ConfigMenu.h" />
+    <ClInclude Include="ConfigMenuItem.h" />
     <ClInclude Include="defaults.h" />
     <ClInclude Include="ExplorationProcessor.h" />
     <ClInclude Include="ExploreState.h" />

@@ -1,6 +1,6 @@
 #include "ResourceManager.h"
 #include "KeyComparators.h"
-
+#include "key_strings.h"
 
 const char commentRecordId = '#';
 
@@ -8,6 +8,7 @@ ResourceManager::ResourceManager() : actors(stringCompare)
 {
 	loadNullResources();
 }
+
 
 int ResourceManager::loadActorsFromTextFile(std::ifstream& textFile)
 {
@@ -255,6 +256,30 @@ int ResourceManager::loadItemsFromTextFile(std::ifstream& textFile)
 	return gameItems.size() - loaded;
 }
 
+int ResourceManager::loadConfigurationFile(std::ifstream& textFile)
+{
+	char lineFirstChar;
+	while ((lineFirstChar = (char)textFile.peek()) != EOF)
+	{
+		if (lineFirstChar == commentRecordId) //skip to next line
+		{
+			//see max conflict with windef.h, hence the extra ()s
+			textFile.ignore((std::numeric_limits<int>::max)(), '\n');
+			continue;
+		}
+
+		std::string textInput;
+		std::string textKey;
+
+		textFile >> textInput >> textKey;
+		int key = getKeyFromString(textKey);
+
+		inputs.insert(std::make_pair(key, Input(textInput, -1)));
+	}
+
+	return inputs.size();
+}
+
 void ResourceManager::loadNullResources()
 {
 	//load null actor
@@ -292,3 +317,6 @@ void ResourceManager::loadNullResources()
 
 	gameMaps.insert(std::make_pair(nullName, nullMap));
 }
+
+
+

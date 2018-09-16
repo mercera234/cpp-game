@@ -1,4 +1,5 @@
 #include <iostream>
+#include <Windows.h>
 #include "TUI.h"
 
 chtype setBkgdColor(int color)
@@ -44,6 +45,8 @@ TUI::TUI()
 }
 
 CursorType TUI::cursorType = CursorType::INVISIBLE;
+bool TUI::simulateMouse = false;
+MEVENT TUI::mouseEvent;
 
 void TUI::init()
 {
@@ -58,7 +61,10 @@ void TUI::init()
 	initColors();
 	
 	setCursorType(cursorType);
+
 	mousemask(ALL_MOUSE_EVENTS, NULL); //allow mouse usage
+	simulateMouseOn(false);//this should be false by default
+	
 	refresh();//do this once so that first call to getch doesn't do this
 }
 
@@ -67,6 +73,28 @@ void setCursorType(CursorType typeIn)
 {
 	TUI::cursorType = typeIn;
 	curs_set((int)TUI::cursorType); //this should not be called anywhere else
+}
+
+void simulateMouseOn(bool on)
+{
+	TUI::simulateMouse = on;
+	TUI::mouseEvent.x = 0;
+	TUI::mouseEvent.y = 0;
+	TUI::mouseEvent.bstate = 0;
+}
+
+MEVENT* getMouse()
+{
+	if (TUI::simulateMouse == false)
+		nc_getmouse(&TUI::mouseEvent);
+
+	return &TUI::mouseEvent;
+}
+
+void setMouseEvent(int y, int x)
+{
+	TUI::mouseEvent.y = y;
+	TUI::mouseEvent.x = x;
 }
 
 
@@ -116,6 +144,27 @@ void TUI::printStrOnBkgd(std::string s, WINDOW* win, int y, int x)
 		printOnBkgd(ct, win, y, col++);
 	}
 }
+
+void TUI::centerConsoleWindow(int height, int width)
+{
+	resize_term(height, width); /*Always ensure that your terminal is sized to contain all windows that it renders or else window creation routines will return null*/
+
+	HWND consoleWindow = GetConsoleWindow();
+	RECT consoleRect;
+	GetWindowRect(consoleWindow, &consoleRect);
+
+	HWND desktopWindow = GetDesktopWindow();
+	RECT desktopRect;
+	GetWindowRect(desktopWindow, &desktopRect);
+
+	int y = (desktopRect.bottom - (consoleRect.bottom - consoleRect.top)) / 2;
+	int x = (desktopRect.right - (consoleRect.right - consoleRect.left)) / 2;
+
+	SetWindowPos(consoleWindow, 0,
+		x, y, //x, y
+		0, 0, SWP_NOSIZE | SWP_NOZORDER);
+}
+
 
 
 void TUI::shutdown()

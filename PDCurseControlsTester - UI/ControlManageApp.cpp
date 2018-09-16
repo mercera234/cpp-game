@@ -5,7 +5,7 @@
 #include "LineItem.h"
 #include "TextField.h"
 #include "Palette.h"
-#include "SimpleControlCommand.h"
+#include "SimpleCommand.h"
 
 
 ControlManageApp::ControlManageApp()
@@ -18,13 +18,13 @@ ControlManageApp::~ControlManageApp()
 }
 
 
-int ControlManageApp::modalCallback(Controllable* ptr, int input)
+void ControlManageApp::modalCallback()
 {
-	Frame* f = (Frame*)ptr;
+	Frame* f = (Frame*)cm->getFocusedControl();
 	GridMenu* m = (GridMenu*)f->getControl();
 
 	MenuItem* item = NULL;
-	switch (input)
+	switch (cm->getInput())
 	{
 	case KEY_LEFT: m->driver(REQ_LEFT_ITEM);  break;
 	case KEY_RIGHT: m->driver(REQ_RIGHT_ITEM);  break;
@@ -35,44 +35,39 @@ int ControlManageApp::modalCallback(Controllable* ptr, int input)
 		break;
 	}
 
-
-	int handled = HANDLED;
 	if (item != NULL)
 	{
-		ControlManager* cm = f->getControlManager();
 		switch (item->index)
 		{
-		case 0: handled = 1; break;
+		case 0: cm->setExitCode(ExitCode::TERMINATE); break;
 		case 1: cm->popControl();
-
+			cm->setExitCode(ExitCode::HANDLED);
 			break;
 		}
 	}
-
-	return handled;
 }
 
 
-int ControlManageApp::newCallback(Controllable* ptr, int input)
+void ControlManageApp::newCallback()
 {
 	clear();
 	mvaddstr(20, 25, "new callback called");
 	refresh();
-	return HANDLED;
+	cm->setExitCode(ExitCode::HANDLED);
 }
 
-int ControlManageApp::quitCallback(Controllable* ptr, int input)
+void ControlManageApp::quitCallback()
 {
-	return 1;
+	cm->setExitCode(ExitCode::TERMINATE);
 }
 
 
-int ControlManageApp::callBackTest(Controllable* ptr, int input)
+void ControlManageApp::callBackTest()
 {
-	GridMenu* m = (GridMenu*)ptr;
+	GridMenu* m = (GridMenu*)cm->getFocusedControl();
 	MenuItem* item = NULL;
 
-	switch (input)
+	switch (cm->getInput())
 	{
 	case KEY_LEFT: m->driver(REQ_LEFT_ITEM);  break;
 	case KEY_RIGHT: m->driver(REQ_RIGHT_ITEM);  break;
@@ -101,37 +96,37 @@ int ControlManageApp::callBackTest(Controllable* ptr, int input)
 			Frame* f = new Frame(win, modal);
 			f->setText("Are you sure you want to quit?", 1, 1);
 			f->setModal(true);
-			ControlManager* cm = m->getControlManager();
 
-			SimpleControlCommand<ControlManageApp>* cmd = new SimpleControlCommand<ControlManageApp>();
+			SimpleCommand<ControlManageApp>* cmd = new SimpleCommand<ControlManageApp>();
 			cmd->setReceiver(this);
 			cmd->setAction(&ControlManageApp::modalCallback);
 
 			cm->registerControl(f, KEY_LISTENER, cmd);
-			cm->setFocus(f);
+			cm->setFocusedControl(f);
 		}
 		break;
 
 		}
 	}
-	return HANDLED;
+	cm->setExitCode(ExitCode::HANDLED);
 }
 
 
 
-int ControlManageApp::callBackTest2(Controllable* ptr, int input)
+void ControlManageApp::callBackTest2()
 {
-	Palette* p = (Palette*)ptr;
-	p->driver(input);
+	Palette* p = (Palette*)cm->getFocusedControl();
+	p->driver(cm->getInput());
 
-	return HANDLED;
+	cm->setExitCode(ExitCode::HANDLED);
 }
 
 
-int ControlManageApp::textCallback(Controllable* ptr, int input)
+void ControlManageApp::textCallback()
 {
-	TextField* field = (TextField*)ptr;
+	TextField* field = (TextField*)cm->getFocusedControl();
 
+	int input = cm->getInput();
 	switch (input)
 	{
 	case KEY_BTAB:
@@ -139,5 +134,5 @@ int ControlManageApp::textCallback(Controllable* ptr, int input)
 	default: field->inputChar(input); break;
 	}
 
-	return HANDLED;
+	cm->setExitCode(ExitCode::HANDLED);
 }

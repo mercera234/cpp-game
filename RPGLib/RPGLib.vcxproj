@@ -118,7 +118,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ActorRepository.h" />
     <ClInclude Include="actor_helper.h" />
     <ClInclude Include="Actor.h" />
     <ClInclude Include="AutoMap.h" />
@@ -136,7 +135,6 @@
     <ClInclude Include="Inventory.h" />
     <ClInclude Include="GameItem.h" />
     <ClInclude Include="KeyComparators.h" />
-    <ClInclude Include="Lump.h" />
     <ClInclude Include="MapRoom.h" />
     <ClInclude Include="ActorCard.h" />
     <ClInclude Include="BattleAlgorithm.h" />
@@ -144,7 +142,6 @@
     <ClInclude Include="MapExit.h" />
     <ClInclude Include="MapKeyComparators.h" />
     <ClInclude Include="MapMetadata.h" />
-    <ClInclude Include="MapRepository.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="MegaMap.h" />
     <ClInclude Include="Money.h" />
@@ -154,23 +151,17 @@
     <ClInclude Include="Pickup.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerActor.h" />
-    <ClInclude Include="Repository.h" />
-    <ClInclude Include="Repository2.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Spell.h" />
     <ClInclude Include="Stats.h" />
-    <ClInclude Include="StepTracker.h" />
     <ClInclude Include="TextParamValue.h" />
     <ClInclude Include="Thing.h" />
     <ClInclude Include="TileEffect.h" />
     <ClInclude Include="TurnTracker.h" />
-    <ClInclude Include="WadDatabase.h" />
-    <ClInclude Include="WadDatabaseQuery.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Actor.cpp" />
     <ClCompile Include="ActorCard.cpp" />
-    <ClCompile Include="ActorRepository.cpp" />
     <ClCompile Include="actor_helper.cpp" />
     <ClCompile Include="AutoMap.cpp" />
     <ClCompile Include="BattleAlgorithm.cpp" />
@@ -188,7 +179,6 @@
     <ClCompile Include="MapRoom.cpp" />
     <ClCompile Include="MapEffectFilterPattern.cpp" />
     <ClCompile Include="mapKeyComparators.cpp" />
-    <ClCompile Include="MapRepository.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="MegaMap.cpp" />
     <ClCompile Include="MovementProcessor.cpp" />
@@ -196,10 +186,8 @@
     <ClCompile Include="Overlay.cpp" />
     <ClCompile Include="PlayerActor.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
-    <ClCompile Include="StepTracker.cpp" />
     <ClCompile Include="TextParamValue.cpp" />
     <ClCompile Include="TurnTracker.cpp" />
-    <ClCompile Include="WadDatabase.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />

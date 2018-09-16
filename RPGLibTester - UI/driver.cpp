@@ -15,7 +15,7 @@ int main()
 	tui.init();
 	
 
-	loadMapsFromTextFile();
+	loadConfigurationTextFile();
 	
 	tui.shutdown();
 		

@@ -6,6 +6,8 @@
 #include "TextBoard.h"
 #include "TextParamValue.h"
 #include "defaults.h"
+#include "DialogWindow.h"
+#include "ConfigMenu.h"
 
 MainMenu::MainMenu()
 {
@@ -23,6 +25,9 @@ MainMenu::MainMenu()
 	playerMenuCmd.setReceiver(this);
 	playerMenuCmd.setAction(&MainMenu::processPlayerMenuInput);
 
+	configMenuCmd.setReceiver(this);
+	configMenuCmd.setAction(&MainMenu::processConfigMenuInput);
+
 	setupBodyFields();
 	setupStatusFields();
 
@@ -32,7 +37,7 @@ MainMenu::MainMenu()
 	cm.registerControl(&mainFrame, KEY_LISTENER, &mainMenuCmd);
 	cm.registerControl(&playerFrame, KEY_LISTENER, &playerMenuCmd);
 	cm.registerControl(&bodyFrame, 0, nullptr);
-	cm.setFocus(&mainFrame);
+	cm.setFocusedControl(&mainFrame);
 }
 
 void MainMenu::setupStatusFields()
@@ -160,15 +165,19 @@ void MainMenu::setupPlayerMenu()
 
 int MainMenu::processInput(int input)
 {
-	return cm.handleInput(input);
+	cm.setExitCode(HANDLED);
+	cm.handleInput(input);
+	return cm.getExitCode();
 }
 
 
-int MainMenu::processMainMenuInput(Controllable* c, int input)
+void MainMenu::processMainMenuInput()
 {
+	int input = cm.getInput();
 	if (input == GameInput::CANCEL_INPUT)
 	{		
-		return ExitCode::GO_BACK;
+		cm.setExitCode(ExitCode::GO_BACK);
+		return;
 	}
 
 
@@ -179,21 +188,35 @@ int MainMenu::processMainMenuInput(Controllable* c, int input)
 		switch (((LineItem*)item)->getCrossRef())
 		{
 		case MainMenuOption::STATUS:
-			cm.setFocus(&playerFrame);
+			cm.setFocusedControl(&playerFrame);
 			playerMenu.setCurrentItem(0);
 			bodyFrame.setControl(&statusContent);
 			setupStatusContent();
 			break;
+		case MainMenuOption::CONFIG:
+		{
+			ConfigMenu* configMenu = new ConfigMenu(resourceManager);
+			DialogWindow* configWindow = new DialogWindow();
+
+			int controlWidth = getmaxx(win);
+
+			configWindow->setWindow(newwin(bottomFrameHeight, controlWidth, topFrameHeight - 1, 0));
+			configWindow->setControl(configMenu);
+
+			cm.registerControl(configWindow, KEY_LISTENER, &configMenuCmd);
+			cm.setFocusedControl(configWindow);
+		}
+			
+			break;
 		case MainMenuOption::MAIN_QUIT: 
-			return ExitCode::QUIT_TO_TITLE;
+			cm.setExitCode(ExitCode::QUIT_TO_TITLE);
+			return;
 		}
 	}
 	else //no item selected, render default data
 	{
 		setupHubContent();
 	}
-
-	return HANDLED;
 }
 
 void MainMenu::setResourceManager(ResourceManager* resourceManagerIn)
@@ -210,23 +233,40 @@ void MainMenu::setupHubContent()
 	battlesWon->setValue(&resourceManager->theData.retrieveIntData(BATTLES_WON));
 }
 
-int MainMenu::processPlayerMenuInput(Controllable* c, int input)
+void MainMenu::processPlayerMenuInput()
 {
 	//right now this only handles the status menu!!!
+	int input = cm.getInput();
 	if (input == GameInput::CANCEL_INPUT)
 	{
 		playerMenu.setCurrentItem(NO_CUR_ITEM);
-		cm.setFocus(&mainFrame);
+		cm.setFocusedControl(&mainFrame);
 		bodyFrame.setControl(&bodyContent);
-		return HANDLED;
+		return;
 	}
 
 
 	MenuItem* item = menuDriver(input, &playerMenu);
 
 	setupStatusContent();
+}
 
-	return HANDLED;
+void MainMenu::processConfigMenuInput()
+{
+	int input = cm.getInput();
+
+	DialogWindow* configDialog = (DialogWindow*)cm.getFocusedControl();
+	ConfigMenu* menu = (ConfigMenu*)configDialog->getControl();
+
+	if (input == GameInput::CANCEL_INPUT && menu->editState == false) //don't accept cancel if we're editing a configuration item
+	{
+		cm.popControl();
+		cm.setFocusedControl(&mainFrame);
+		return;
+	}
+
+
+	menu->processInput(input);
 }
 
 void MainMenu::setupStatusContent()

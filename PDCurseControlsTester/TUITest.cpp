@@ -1,5 +1,6 @@
 #include "CppUnitTest.h"
 #include "TUI.h"
+#include <Windows.h>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -62,6 +63,29 @@ namespace PDCurseControlsTester
 			Assert::IsTrue(color == COLOR_YELLOW);
 		}
 
+		TEST_METHOD(getMouseTest) //get mouse event without mouse click 
+		{
+			simulateMouseOn(false);
+			getMouse();
+			MEVENT* m = &TUI::mouseEvent;
+
+			Assert::AreEqual(0, m->x);
+			Assert::AreEqual(0, m->y);
+			Assert::AreEqual(0, (int)m->bstate);
+		}
+
+		TEST_METHOD(simulateMouseTest) //simulate mouse click 
+		{
+			int y = 4;
+			int x = 6;
+			simulateMouseOn(true);
+			setMouseEvent(y, x);
+			getMouse();
+			MEVENT* m = &TUI::mouseEvent;
+
+			Assert::AreEqual(x, m->x);
+			Assert::AreEqual(y, m->y);
+		}
 
 		TEST_METHOD(shutdownTest)
 		{
@@ -69,6 +93,17 @@ namespace PDCurseControlsTester
 			Assert::IsTrue(isendwin() != 0);
 		}
 
+		//Console windows are not instantiated by unit test
+		/*TEST_METHOD(consoleCenterTest)
+		{
+			TUI::centerConsoleWindow(100, 200);
+
+			HWND consoleWindow = GetConsoleWindow();
+			RECT consoleRect;
+			GetWindowRect(consoleWindow, &consoleRect);
+
+			Assert::AreEqual(100, (int)(consoleRect.bottom - consoleRect.top));
+		}*/
 		
 
 	};

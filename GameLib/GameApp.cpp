@@ -10,20 +10,9 @@
 
 GameApp::GameApp()
 {	
-	//setup input manager and default keys
-	defaultGameInputs(inputManager);
-	
 	//load resources
-	resourceManager.loadNullResources();
+	loadDataFiles(resourceManager);
 
-	std::ifstream is(actorFile);
-	resourceManager.loadActorsFromTextFile(is);
-
-	FileDirectory dataDir(dataDirName);
-	resourceManager.loadGameMapsFromDir(dataDir);
-
-	std::ifstream is2(mapFile);
-	resourceManager.loadMapsFromTextFile(is2);
 	tui.init();
 	
 	GameState* openingState = TitleScreenState::getInstance();
@@ -52,7 +41,7 @@ bool GameApp::run()
 		doupdate();
 
 		//input/process
-		int input = getInput(inputManager);
+		int input = getInput(resourceManager);
 		playing = stateMngr.processInput(input);
 			
 	}

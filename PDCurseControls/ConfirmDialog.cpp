@@ -17,11 +17,11 @@ ConfirmDialog::ConfirmDialog(const std::string& msg, ConfirmMethod methodIn)
 	menu->post(true);
 }
 
-int ConfirmDialog::processInput(int input)
+ExitCode ConfirmDialog::processInput(int input)
 {
 	MenuItem* item = AbstractMenu::basicMenuDriver(input, menu);
 
-	int exitCode = 0;
+	ExitCode exitCode = ExitCode::HANDLED;
 	if (item)
 	{
 		switch (item->index)

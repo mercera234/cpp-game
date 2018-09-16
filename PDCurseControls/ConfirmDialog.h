@@ -1,6 +1,7 @@
 #pragma once
 #include "DialogWindow.h"
 #include "GridMenu.h"
+#include "input_return_codes.h"
 
 enum class ConfirmMethod
 {
@@ -10,8 +11,8 @@ enum class ConfirmMethod
 	QUIT
 };
 
-const int yesOption = 1;
-const int noOption = -1;
+const ExitCode yesOption = ExitCode::GO_BACK;
+const ExitCode noOption = ExitCode::NOT_HANDLED;
 
 class ConfirmDialog : public DialogWindow
 {
@@ -21,7 +22,7 @@ private:
 public:
 	ConfirmDialog(const std::string& msg, ConfirmMethod methodIn);
 
-	int processInput(int input);
+	ExitCode processInput(int input);
 
 
 	void setMethod(ConfirmMethod methodIn) { method = methodIn; }

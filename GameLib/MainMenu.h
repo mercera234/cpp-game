@@ -3,11 +3,12 @@
 #include "Frame.h"
 #include "GridMenu.h"
 #include "ControlManager.h"
-#include "SimpleControlCommand.h"
+#include "SimpleCommand.h"
 #include "Actor.h"
 #include "TextBoard.h"
 #include "ResourceManager.h"
 #include "TextParamValue.h"
+#include "DialogWindow.h"
 
 //Main Menu options
 enum MainMenuOption
@@ -30,8 +31,9 @@ class MainMenu : public Controllable
 {
 private:
 	ControlManager cm;
-	SimpleControlCommand<MainMenu> mainMenuCmd;
-	SimpleControlCommand<MainMenu> playerMenuCmd;
+	SimpleCommand<MainMenu> mainMenuCmd;
+	SimpleCommand<MainMenu> playerMenuCmd;
+	SimpleCommand<MainMenu> configMenuCmd;
 
 	ResourceManager* resourceManager;
 
@@ -59,8 +61,9 @@ private:
 	Frame descFrame;
 	GridMenu descMenu;
 
-	int processMainMenuInput(Controllable* c, int input);
-	int processPlayerMenuInput(Controllable* c, int input);
+	void processMainMenuInput();
+	void processPlayerMenuInput();
+	void processConfigMenuInput();
 
 	void setupMainMenu();
 	void setupPlayerMenu();

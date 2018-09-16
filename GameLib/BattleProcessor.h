@@ -10,18 +10,19 @@
 #include "ActorCard.h"
 #include "Frame.h"
 #include "PlayerActor.h"
-#include "SimpleControlCommand.h"
+#include "SimpleCommand.h"
 #include "ResourceManager.h"
 
 class BattleProcessor : public Controllable
 {
 private:
-	SimpleControlCommand<BattleProcessor> cmd;
+	ControlManager cm;
+	SimpleCommand<BattleProcessor> cmd;
 	bool inSession = false;
 	bool everyoneDied = false;
 	ResourceManager* resourceManager;
 
-	int driver(Controllable* control, int input);
+	void driver();
 	bool advanceTurn(); //returns true if the turn was advanced to the next player
 	void processCPUTurn();
 	void initTurnTracker();
@@ -30,9 +31,9 @@ private:
 	void initMessageDisplay();
 	void initControlManager();
 	
-	int skillMenuDriver(int input);
-	int targetMenuDriver(int input);
-	int displayDriver(int input);
+	void skillMenuDriver(int input);
+	void targetMenuDriver(int input);
+	void displayDriver(int input);
 
 	void setMessage();
 

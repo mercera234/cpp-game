@@ -1,6 +1,7 @@
 #pragma once
 #include "DialogWindow.h"
 #include "FileChooser.h"
+#include "input_return_codes.h"
 
 class FileDialog : public DialogWindow
 {
@@ -11,7 +12,7 @@ private:
 public:
 	FileDialog(const std::string& defaultFilePath, FileDialogType type, const std::string& extensionFilter);
 
-	int processInput(int input);
+	ExitCode processInput(int input);
 
 	void setWindow(WINDOW* win);
 	std::string getFileChosen() { return fileChosen; }

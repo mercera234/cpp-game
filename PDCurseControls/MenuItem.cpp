@@ -51,7 +51,6 @@ void MenuItem::draw()
 	calcDrawingVars();
 
 	if (menu != NULL &&
-	//	menu->isFocused() &&
 		(this == menu->getCurrentItem() || selected))
 	{
 		drawCursor();
@@ -206,7 +205,6 @@ void MenuItem::linkItemGroups(std::list<MenuItem*>& group1, std::list<MenuItem*>
 	for (int i = 0; i < smallestSize; i++)
 	{
 		(*it1++)->link(link, *it2++);
-		//group1[i]->link(link, group2[i]);
 	}
 }
 
@@ -220,11 +218,6 @@ void MenuItem::positionItemGroup(std::list<MenuItem*>& group, int posY, int posX
 		item->setPosition(posY, posX);
 		posY += 4;
 	}
-
-	/*for (int i = 0; i < group.size(); i++, posY += 4)
-	{
-		group[i]->setPosition(posY, posX);
-	}*/
 }
 
 

@@ -5,6 +5,8 @@ class MockApplication
 {
 private:
 public:
+	ControlManager* cm;
+	ControlManager* childCM; 
 	int x = -1;
 	MockApplication();
 	~MockApplication();
@@ -12,8 +14,10 @@ public:
 	void operation();
 	int operation2(int xIn);
 
-	int mockCallback(Controllable* c, int input);
-	int mockCallBack2(Controllable* c, int input);
-	int setXinMockControl(Controllable* c, int input);
+	void mockCallback();
+	void mockCallBack2();
+	void setXinMockControl();
+	void setXinMockControl2();
+	void transferControl();
 };
 

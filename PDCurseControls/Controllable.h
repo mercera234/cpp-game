@@ -17,8 +17,6 @@ protected:
 	bool standout = false; //true if the control should be drawn with bold attribute on
 	bool acceptsMouseInput = false; //true if the control can accept mouse input
 
-	//Rect* r; //A rectangle to save the true dimensions of the window in case it should go off screen
-	
 	int ulY = 0; //the top row that is visible
 	int ulX = 0; //the left most col that is visible
 
@@ -37,11 +35,10 @@ protected:
 	Modal components can only be at the top of the stack
 	*/
 	bool modal; 
-	ControlManager* cm;
+	//ControlManager* cm;
 
 	chtype color; //a color pair that can be used for the entire control if desired
 
-	//void setWindow(Rect* bounds);
 public:
 	virtual void move(int y, int x);
 	virtual void setPosition(int y, int x); //set position of control within window
@@ -51,8 +48,8 @@ public:
 	//getters/setters
 	virtual void setWindow(WINDOW* win);
 	WINDOW* getWindow() { return win; };
-	void setControlManager(ControlManager* cm) { this->cm = cm; }
-	ControlManager* getControlManager() { return cm; }
+	/*void setControlManager(ControlManager* cm) { this->cm = cm; }
+	ControlManager* getControlManager() { return cm; }*/
 
 	bool isFocusable() { return focusable; }
 	void setFocusable(bool canFocus) { focusable = canFocus; }

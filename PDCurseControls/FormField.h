@@ -1,7 +1,7 @@
 #pragma once
 #include <iostream>
-using namespace std;
 #include "FormControl.h"
+#include "TextField.h"
 #include "TextLabel.h"
 
 /* field justification */
@@ -32,47 +32,24 @@ using namespace std;
 class FormField : public Controllable
 {
 private:
-	TextLabel* label;
-	FormControl* field;
-	int type;
-	void* data;
-
+	TextLabel label;
+	TextField field;
 public:
-	FormField(TextLabel* label, FormControl* field, int type, void* data);
+	FormField() {}
+	FormField(const std::string& labelText);
 	void draw();
-	void setFocus();
-	//void setCursorFocus();
-	int getType() { return type; }
-	void* getData() { return data; }
-	void clear() { field->clear(); }
-	FormControl* getField() { return field; }
-//	void saveField();
+	virtual void setFocus(bool focusIn);
+
+	void setContent(WINDOW* labelWin, const std::string& labelText, int textFieldLength, int textFieldY, int textFieldX);
+
+	//setters/getters
+	std::string getText() { return field.getText(); }
+	void setText(const std::string& textIn) { field.setText(textIn); }
+
+	void setLabelText(const std::string& labelText);
+	TextLabel& getLabel() { return label; }
+
+	void clear() { field.clear(); }
+	TextField& getField() { return field; }
 };
 
-
-
-
-
-//struct FormField
-//{
-//	short index;
-//	
-//	/*FormField* prev;
-//	FormField* next;
-//	*/
-//	unsigned short yPos, xPos;
-//
-//	virtual void draw(WINDOW* win, int offY = 0, int offX = 0) = 0;
-//	FormField();
-//	FormField(unsigned short y, unsigned short x);
-//	void setPosition(unsigned short y, unsigned short x);
-//	void clear();
-//	
-//};
-//
-//struct FormTextField : public FormField
-//{
-//	/*string label;
-//	string buffer;*/
-//	void draw(WINDOW* win, int offY = 0, int offX = 0) = 0;
-//};

@@ -171,10 +171,11 @@
     <ClCompile Include="DialogWindowTest.cpp" />
     <ClCompile Include="FileChooserTest.cpp" />
     <ClCompile Include="FileDirectoryTest.cpp" />
+    <ClCompile Include="FormFieldTest.cpp" />
     <ClCompile Include="GridMenuTest.cpp" />
     <ClCompile Include="HighlighterTest.cpp" />
     <ClCompile Include="ImageTest.cpp" />
-    <ClCompile Include="InputManagerTest.cpp" />
+    <ClCompile Include="KeyStringTest.cpp" />
     <ClCompile Include="LineItemTest.cpp" />
     <ClCompile Include="MenuItemTest.cpp" />
     <ClCompile Include="MockApplication.cpp" />

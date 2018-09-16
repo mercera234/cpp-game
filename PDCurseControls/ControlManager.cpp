@@ -65,12 +65,12 @@ bool ControlManager::authorizeCyclicKeyChoice(int key)
 }
 
 
-void ControlManager::registerControl(Controllable* c, char listeners, ControlCommand* cmd)
+void ControlManager::registerControl(Controllable* c, char listeners, Command* cmd)
 {
 	Registration* r = new Registration();
 
 	r->c = c;
-	c->setControlManager(this);
+	//c->setControlManager(this);
 	r->cmd = cmd;
 	r->listen_map = listeners;
 
@@ -104,7 +104,7 @@ void ControlManager::unRegisterControl(Controllable* c)
 	assert(quickRef.size() == controls.size());
 }
 
-void ControlManager::registerShortcutKey(int key, ControlCommand* cmd)
+void ControlManager::registerShortcutKey(int key, Command* cmd)
 {
 	auto shortcutMapping = std::make_pair(key, cmd);
 	globalShortcuts.insert(shortcutMapping);
@@ -115,7 +115,7 @@ Controllable* ControlManager::popControl()
 {
 	if(controls.back() == focusedReg) //if the control being popped is focused
 	{
-		focusedReg = nullptr;
+		//focusedReg = nullptr;
 		//if object was focused then set focus to next 
 		for (auto it = ++controls.rbegin(); it != controls.rend(); it++)//we start from the end, so top most window is processed first
 		{
@@ -124,7 +124,7 @@ Controllable* ControlManager::popControl()
 
 			if (c->isFocusable())
 			{
-				setFocus(c);
+				setFocusedControl(c);
 				break;
 			}
 		}
@@ -143,7 +143,7 @@ void ControlManager::unsetFocus()
 	focusedReg->c->setFocus(false);
 }
 
-Controllable* ControlManager::getFocus()
+Controllable* ControlManager::getFocusedControl()
 {
 	if (focusedReg == nullptr) //nothing to get
 		return nullptr;
@@ -176,7 +176,7 @@ void ControlManager::cycleFocus(short key)
 				it--;
 		}
 	} while ( (*it)->c->isFocusable() == false);
-	setFocus((*it)->c);
+	setFocusedControl((*it)->c);
 }
 
 
@@ -196,11 +196,8 @@ void ControlManager::moveControlToTop(Controllable* c)
 }
 
 
-void ControlManager::setFocus(Controllable* c)
+void ControlManager::setFocusedControl(Controllable* c)
 { 
-	if (c->isFocusable() == false)
-		return;
-
 	unsetFocus();
 
 	auto it = quickRef.find(c);
@@ -210,20 +207,20 @@ void ControlManager::setFocus(Controllable* c)
 	r->c->setFocus(true);
 } 
 
-int ControlManager::handleGlobalInput(int input)
+void ControlManager::handleGlobalInput()
 {
 	//check for cycle key
 	if (input == cycleKey || input == revCycleKey)
 	{
 		cycleFocus(input);
-		return HANDLED;
+		return;
 	}
 
 	auto shortcutMapping = globalShortcuts.find(input);
 	auto mapping = *shortcutMapping;
 	auto cmd = mapping.second; 
 
-	return cmd->execute(nullptr, input);
+	cmd->execute();
 }
 
 bool ControlManager::isGlobalInput(int input)
@@ -231,49 +228,50 @@ bool ControlManager::isGlobalInput(int input)
 	return input == cycleKey || input == revCycleKey || (globalShortcuts.count(input) > 0);
 }
 
-int ControlManager::handleInput(int input)
+void ControlManager::handleInput(int input)
 {
-	int handled = NOT_HANDLED;
+	this->input = input;
+	
 	if (controls.empty() == false) //there are controls
 	{
 		if (focusedReg->c->isModal())
-			handled = handleControlInput(input);
+			handleControlInput();
 		else if (isGlobalInput(input))
-			handled = handleGlobalInput(input);
+			handleGlobalInput();
 		else
-			handled = handleControlInput(input);
+			handleControlInput();
 	}
 	else //there are no controls, input can only be global
 	{
-		if(isGlobalInput(input))
-			handled = handleGlobalInput(input);
+		if (isGlobalInput(input))
+			handleGlobalInput();
+		else
+			setExitCode(ExitCode::NOT_HANDLED);
 	}
-
-	return handled;
 }
 
-int ControlManager::handleControlInput(int input)
+void ControlManager::handleControlInput()
 {
 	//check first if focused control is Modal. If so, then it is the only control capable of processing input	
-	return (focusedReg->c->isModal()) ? processModalInput(input) : processNonModalInput(input);
+	(focusedReg->c->isModal()) ? processModalInput() : processNonModalInput();
 }
 
-int ControlManager::processModalInput(int input)
+void ControlManager::processModalInput()
 {
-	int exitCode = NOT_HANDLED;
-
 	if (focusedReg->cmd == nullptr) //no point in checking registration with no callback
-		return exitCode; //modal window cannot handle the input (this implies a soft lock so design your UI carefully!)
+	{
+		setExitCode(ExitCode::NOT_HANDLED);
+		return; //modal window cannot handle the input (this implies a soft lock so design your UI carefully!)
+	}
+		
 
 	if (input == KEY_MOUSE && (focusedReg->listen_map & MOUSE_LISTENER))
-		exitCode = handleMouseInput(input, focusedReg);
+		handleMouseInput(focusedReg);
 	else if (input != KEY_MOUSE && focusedReg->listen_map & KEY_LISTENER)
-		exitCode = handleKeyInput(input, focusedReg);
-
-	return exitCode;
+		handleKeyInput(focusedReg);
 }
 
-int ControlManager::processNonModalInput(int input)
+void ControlManager::processNonModalInput()
 {
 	int exitCode = NOT_HANDLED;
 	if (input == KEY_MOUSE) //input could be delivered to any control
@@ -281,15 +279,18 @@ int ControlManager::processNonModalInput(int input)
 		//find control being operated on
 		Registration* r = findMouseInputRecipient();
 		if (r == nullptr)
-			return exitCode;
+		{
+			setExitCode(ExitCode::NOT_HANDLED);
+			return;
+		}
+			
 
-		exitCode = handleMouseInput(input, r);
+		handleMouseInput(r);
 	}
 	else if (focusedReg->listen_map & KEY_LISTENER)//keyboard input goes directly to focused control only, which is capable of handling key input
 	{
-		exitCode = handleKeyInput(input, focusedReg);
+		handleKeyInput(focusedReg);
 	}
-	return exitCode;
 }
 
 Registration* ControlManager::findMouseInputRecipient()
@@ -298,84 +299,61 @@ Registration* ControlManager::findMouseInputRecipient()
 	{
 		Registration* r = *it;
 		Controllable* c = r->c;
-		MEVENT event;
-		nc_getmouse(&event);
+	/*	MEVENT event;
+		nc_getmouse(&event);*/
+
+		MEVENT* event = getMouse();
 
 		//control contains the mouse click, and can respond to mouse events
-		if (wenclose(c->getWindow(), event.y, event.x) && (r->listen_map & MOUSE_LISTENER))
-			return r;
+		if (wenclose(c->getWindow(), event->y, event->x) && (r->listen_map & MOUSE_LISTENER))
+		{
+			if (dynamic_cast<ControlManager*>(c)) //if control is a manager, then check all controls and back out if none found
+			{
+				ControlManager* cm = (ControlManager*)c;
+				r = cm->findMouseInputRecipient();
+			}
+			else
+				return r;
+		}
+			
 	}
 
 	return nullptr;
 }
 
 
-//int ControlManager::handleControlInput(int input)
-//{
-//	int handled = NOT_HANDLED;
-//	//process input through registered controls
-//
-//	//TODO why are we iterating through all the controls? We should just process the focused one!
-//	for (auto it = controls.rbegin(); it != controls.rend(); it++) //we start from the end, so modal windows are always processed first
-//	{
-//		Registration* r = *it;
-//		bool isModal = r->c->isModal();
-//
-//		if (isModal)
-//		{
-//			if (r->cmd == nullptr) //no point in checking registration with no callback
-//				break; //modal window cannot handle the input
-//		}
-//		else if (r->cmd == nullptr) //non-modal window cannot handle the input, so we will check the next
-//			continue;
-//		
-//		if (input == KEY_MOUSE && (r->listen_map & MOUSE_LISTENER))
-//			handled = handleMouseInput(input, r);
-//		else if (input != KEY_MOUSE && r->listen_map & KEY_LISTENER)
-//			handled = handleKeyInput(input, r);
-//
-//		if (handled >= 0 || (handled == NOT_HANDLED && isModal))
-//			break;
-//	}	
-//	return handled;
-//}
-
-int ControlManager::handleKeyInput(int input, Registration* r)
+void ControlManager::handleKeyInput(Registration* r)
 {
-	if(focusedReg != r)
-		return NOT_HANDLED;
-
-	return r->cmd->execute(r->c, input);
-}
-
-int ControlManager::handleMouseInput(int input, Registration* r)
-{
-	int handled = NOT_HANDLED;
-	Controllable* c = r->c;
-	MEVENT event;
-	nc_getmouse(&event);
-
-	if (wenclose(c->getWindow(), event.y, event.x))
+	if (focusedReg != r)
 	{
-		setFocus(c);		
-		handled = r->cmd->execute(c, input);
+		setExitCode(ExitCode::NOT_HANDLED);
+		return;
 	}
+		
 
-	return handled;
+	r->cmd->execute();
 }
 
-bool ControlManager::shutdown()
+void ControlManager::handleMouseInput(Registration* r)
 {
-	if (!active)
+	Controllable* c = r->c;
+	/*MEVENT event;
+	nc_getmouse(&event);*/
+	MEVENT* event = getMouse();
+
+	if (wenclose(c->getWindow(), event->y, event->x))
 	{
-		//pop all controls
-		controls.clear();
-		globalShortcuts.clear();
-		return true;
+		Registration* prevFocusedReg = focusedReg;
+		setFocusedControl(c);		
+		r->cmd->execute();
+
+		if (c->isFocusable() == false)
+			setFocusedControl(prevFocusedReg->c);
 	}
 	else
-		return false;
+		setExitCode(ExitCode::NOT_HANDLED);
 }
+
 
 void ControlManager::draw()
 {

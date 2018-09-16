@@ -3,6 +3,7 @@
 #include "panel.h"
 //No user made classes should be included here
 #include <iostream>
+#include <iomanip>
 #include <dirent.h>
 #include <fstream>
 #include <string>
@@ -874,3 +875,75 @@ void mockMainMenuTest()
 		mode = getch();
 	}
 }
+
+void chtypeAppearanceTest()
+{
+	int rows, cols;
+	rows = 30;
+	cols = 100;
+	resize_term(rows, cols); //1000 chtype display at a time
+
+	bool playing = true;
+	int chtypeVal = 0;
+
+	while (playing)
+	{
+		erase();
+		for (int i = 0; i < rows; i++)
+		{
+			/*for (int j = 0; j < cols / 2; j++)
+			{*/
+
+			mvprintw(i, 0, "%#0.8x %.9u", chtypeVal, chtypeVal);
+			mvaddch(i, 21, chtypeVal);
+			//	mvaddch(i, j * 2, chtypeVal++);
+			//}
+			chtypeVal++;
+		}
+
+		wnoutrefresh(stdscr);
+		doupdate();
+		int c = getch();
+		if (c == 0x1B) //escape key
+			playing = false;
+	}
+}
+
+void getchtypeAppearanceFileTest()
+{
+	std::wofstream os("allVals.txt");
+
+	for (wchar_t i = 0; i <= 0xffff; i++)
+	{
+		if (i == 255)
+			int y = 1;
+
+		os << std::hex << std::setw(8) << std::setfill((wchar_t)'0') << (int)i << ' '
+			<< std::dec << std::setw(9) << std::setfill((wchar_t)' ') << (int)i << ' '
+			<< i //for some reason when I include this line, it only prints up to 255 lines and then quits
+			<< std::endl;
+
+		os.flush();
+		if(i % 10 == 0)
+			std::cout << (int)i << std::endl;
+
+		if (i == 65535)
+			break;
+		/*if (i > 255)
+			os.write((const wchar_t*)"What happened", 10);
+*/
+	}
+	
+		
+}
+
+
+
+
+
+
+
+
+
+
+

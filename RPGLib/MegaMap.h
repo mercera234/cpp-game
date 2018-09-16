@@ -11,7 +11,6 @@ private:
 	Every tile in the image will contain the map id to be loaded. Image's technically hold chtype, but this is really
 	a typedef of unsigned int.
 	*/
-	//Image mapRoomLayout;
 	std::vector<Image> mapRoomLayout;
 
 	/*An offset to identify which Image is groundLevel*/

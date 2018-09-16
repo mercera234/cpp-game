@@ -3,9 +3,8 @@
 #include "MockControl.h"
 #include "mockCallbacks.h"
 #include "SimpleCommand.h"
-#include "MockControlCommand.h"
 #include "MockApplication.h"
-
+#include "MockCommand.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -17,11 +16,19 @@ namespace PDCurseControlsTester
 	{
 		ControlManager cm;
 		MockApplication app;
-		MockControlCommand<MockApplication> cmd;
+		SimpleCommand<MockApplication> cmd;
 
+		TUI tui;
+		
 		TEST_METHOD_INITIALIZE(begin)
 		{
 			cm.setCaller(this);
+			tui.init();
+		}
+
+		TEST_METHOD_CLEANUP(end)
+		{
+			tui.shutdown();
 		}
 
 		TEST_METHOD(registerControlTest)
@@ -80,10 +87,10 @@ namespace PDCurseControlsTester
 			MockControl m1;
 			cm.registerControl(&m, NULL, NULL);
 			cm.registerControl(&m1, NULL, NULL);
-			cm.setFocus(&m1);
+			cm.setFocusedControl(&m1);
 			cm.popControl(); //m1 is popped, transferring focus to the next control, which is m
 			
-			Controllable* c = cm.getFocus();
+			Controllable* c = cm.getFocusedControl();
 
 			Assert::AreEqual((int)c, (int)&m); //one was registered and then popped
 		}
@@ -91,6 +98,7 @@ namespace PDCurseControlsTester
 		TEST_METHOD(registerShortcutKeyTest)
 		{
 			cmd.setReceiver(&app);
+			app.cm = &cm;
 			cmd.setAction(&MockApplication::mockCallback);
 
 
@@ -128,7 +136,7 @@ namespace PDCurseControlsTester
 			MockControl m;
 			cm.registerControl(&m, NULL, NULL);
 		
-			Controllable* c = cm.getFocus();
+			Controllable* c = cm.getFocusedControl();
 
 			Assert::IsTrue(c == nullptr);
 		}
@@ -140,8 +148,8 @@ namespace PDCurseControlsTester
 			cm.registerControl(&m, NULL, NULL); 
 			cm.registerControl(&m1, NULL, NULL); 
 
-			cm.setFocus(&m1);
-			Controllable* c = cm.getFocus();
+			cm.setFocusedControl(&m1);
+			Controllable* c = cm.getFocusedControl();
 
 			bool pointersMatch = &m1 == c;
 			Assert::IsTrue(pointersMatch);
@@ -154,28 +162,9 @@ namespace PDCurseControlsTester
 			cm.registerControl(&m, NULL, NULL);
 			cm.registerControl(&m1, NULL, NULL);
 
-			cm.setFocus(&m1); //giving m1 focus, should unset focus from m
+			cm.setFocusedControl(&m1); //giving m1 focus, should unset focus from m
 			
 			Assert::IsFalse(m.isFocused());
-		}
-
-		TEST_METHOD(shutdownTest)
-		{
-			MockControl m;
-			MockControl m1;
-			cm.registerControl(&m, NULL, NULL);
-			cm.setActive(false);
-			
-			Assert::IsTrue(cm.shutdown()); 
-		}
-
-		TEST_METHOD(illegalShutdownTest)
-		{
-			MockControl m;
-			MockControl m1;
-			cm.registerControl(&m, NULL, NULL);
-			
-			Assert::IsFalse(cm.shutdown());  //won't work since still active
 		}
 
 		TEST_METHOD(handleGlobalInputTest)
@@ -187,22 +176,24 @@ namespace PDCurseControlsTester
 
 			cm.registerShortcutKey(value, &cmd); //just a callback we can use to prove that input was handled successfully
 			
-			int retval = cm.handleInput(value);
+			cm.handleInput(value);
 
-			Assert::AreEqual((int)ExitCode::HANDLED, retval);
+			Assert::IsTrue(ExitCode::HANDLED == cm.getExitCode());
 		}
 
 		TEST_METHOD(handleGlobalCyclicInputTest)
 		{
 			int value = '\t';
 			cm.setCycleKey(value); //should be default anyway, but just being explicit
-			
-			Assert::IsTrue(cm.handleInput(value) == ExitCode::HANDLED);
+			cm.handleInput(value);
+
+			Assert::IsTrue(cm.getExitCode() == ExitCode::HANDLED);
 		}
 
 		TEST_METHOD(handleNonGlobalInputWithNoControlsTest)
 		{
-			Assert::IsFalse(cm.handleInput('5') == ExitCode::HANDLED);
+			cm.handleInput('5');
+			Assert::IsFalse(cm.getExitCode() == ExitCode::HANDLED);
 		}
 
 		TEST_METHOD(handleModalInputTest)
@@ -210,14 +201,16 @@ namespace PDCurseControlsTester
 			MockControl m; 
 
 			cmd.setReceiver(&app);
+			app.cm = &cm;
 			cmd.setAction(&MockApplication::mockCallback);
 
 			cm.registerControl(&m, KEY_LISTENER, &cmd);
 			int value = 89;
 			m.setModal(true); //it is modal by default, but we set it here explicitly to be clear about what is going on
-			cm.setFocus(&m);
+			cm.setFocusedControl(&m);
+			cm.handleInput(value);
 
-			Assert::IsTrue(cm.handleInput(value) == HANDLED);
+			Assert::IsTrue(cm.getExitCode() == HANDLED);
 		}
 
 		TEST_METHOD(handleInputTest)
@@ -226,12 +219,13 @@ namespace PDCurseControlsTester
 			cm.setCaller(&m);
 
 			cmd.setReceiver(&app);
+			app.cm = &cm;
 			cmd.setAction(&MockApplication::setXinMockControl);
 
 			cm.registerControl(&m, KEY_LISTENER, &cmd);
 			int value = 9001;
 			m.setModal(false);
-			cm.setFocus(&m);
+			cm.setFocusedControl(&m);
 
 			cm.handleInput(value);
 			Assert::AreEqual(value, m.getX());
@@ -267,17 +261,81 @@ namespace PDCurseControlsTester
 			m1.setModal(false);
 
 			cmd.setReceiver(&app);
+			app.cm = &cm;
 			cmd.setAction(&MockApplication::mockCallback);
 
 			cm.registerControl(&m1, KEY_LISTENER, &cmd);
 
-			cm.setFocus(&m1);
+			cm.setFocusedControl(&m1);
 
 			int input = 800;
-			int retval = cm.handleInput(input);
-			Assert::AreEqual((int)ExitCode::HANDLED, retval);
+			cm.handleInput(input);
+			Assert::IsTrue(ExitCode::HANDLED == cm.getExitCode());
 
 		}
 
+		//mouse input tests
+
+		TEST_METHOD(mouseInputTest)
+		{
+			app.cm = &cm;
+
+			MockControl m1;
+			m1.setModal(false);
+
+			int y, x;
+			y = 4;
+			x = 3;
+
+			WINDOW* win = newwin(1, 1, y, x);
+			m1.setWindow(win);
+
+			cmd.setReceiver(&app);
+			cmd.setAction(&MockApplication::setXinMockControl);
+			cm.registerControl(&m1, MOUSE_LISTENER, &cmd);
+			cm.setFocusedControl(&m1);
+
+			//preset mouse event to simulate mouse input
+			simulateMouseOn(true);
+			setMouseEvent(y, x);
+			cm.handleInput(KEY_MOUSE);
+
+			Assert::AreEqual(KEY_MOUSE, m1.getX());
+		}
+
+
+		/*Control Managers can be chained, but the application must be referring to the correct instance to process their leaves correctly*/
+		TEST_METHOD(controlManagerChainingTest)
+		{
+			app.cm = &cm;
+
+			cmd.setReceiver(&app);
+			cmd.setAction(&MockApplication::setXinMockControl2);
+			SimpleCommand<MockApplication> cmd2;
+			cmd2.setReceiver(&app);
+			cmd2.setAction(&MockApplication::transferControl);
+
+			ControlManager cm2;
+			app.childCM = &cm2;
+			MockControl m1;
+
+			cm2.registerControl(&m1, KEY_LISTENER, &cmd);
+			cm2.setFocusedControl(&m1);
+
+			cm.registerControl(&cm2, KEY_LISTENER, &cmd2);
+			cm.setFocusedControl(&cm2);
+
+			int input = 800;
+			cm.handleInput(input);
+			Assert::AreEqual(input, m1.getX());
+		}
+
+
+		
+
+
+		//TODO
+		//add test to verify that registered controls that turn on the cursor also have them turned off once unregistered
+		//since mouse control can be accepted by any component, verify that focus goes back to previously registered component( or never appears to change)
 	};
 }

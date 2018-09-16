@@ -5,7 +5,7 @@ template <class Receiver>
 class MockControlCommand : public ControlCommand
 {
 private:
-	typedef int (Receiver::* Action)(Controllable*, int);
+	typedef int (Receiver::* Action)();
 
 	Receiver* receiver;
 	Action action;

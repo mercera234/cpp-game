@@ -26,3 +26,7 @@ void mockSimpleFight();
 void mockBattleScreen();
 void mockExploreTest();
 void mockMainMenuTest();
+
+
+void chtypeAppearanceTest();
+void getchtypeAppearanceFileTest();

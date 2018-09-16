@@ -15,15 +15,15 @@ const int MOUSE_LISTENER = 0x02;
 struct Registration
 {
 	Controllable* c;
-	ControlCommand* cmd = nullptr;
+	Command* cmd = nullptr;
 	char listen_map = 0; //bit map of all listeners
 	Registration() {};
 };
 
 
-class ControlManager : public Drawable
+class ControlManager : public Controllable
 {
-private:
+protected:
 
 	/*
 	Controls are in a stack order where the back is the top of the stack
@@ -33,27 +33,31 @@ private:
 
 	//a quick reference map used to quickly find the registration associated with a controllable
 	std::map<Controllable*, Registration*, std::function<bool(Controllable*, Controllable*)> > quickRef;
-	std::map<int, ControlCommand*> globalShortcuts; //shortcuts are global input
+	std::map<int, Command*> globalShortcuts; //shortcuts are global input
+	
+	//holds the status of the last executed input
+	ExitCode exitCode = ExitCode::HANDLED;
 	
 
 	/*if a control is focused, then this will point to it*/
 	Registration* focusedReg = nullptr;
 
-	bool active = true; //the active state of the Control Manager
 	void* caller; //the type of class that utilizes the Control Manager
 	short cycleKey; //to cycle focus forward to the next control
 	short revCycleKey; //to cycle focus backwards to the previous control
 
-	void setDefaultCycleKeys();
-	int handleGlobalInput(int input);
-	int handleControlInput(int input); 
-	int handleMouseInput(int input, Registration* r);
-	int handleKeyInput(int input, Registration* r);
-	bool isGlobalInput(int input);
-	int processModalInput(int input);
-	int processNonModalInput(int input);
+	int input; //the input delivered to the Control Manager
 
-	Registration* findMouseInputRecipient();
+	void setDefaultCycleKeys();
+	void handleGlobalInput();
+	void handleControlInput();
+	virtual void handleMouseInput(Registration* r);
+	void handleKeyInput(Registration* r);
+	bool isGlobalInput(int input);
+	void processModalInput();
+	void processNonModalInput();
+
+	virtual Registration* findMouseInputRecipient();
 
 	bool authorizeCyclicKeyChoice(int key);
 	void unsetFocus();
@@ -64,12 +68,11 @@ public:
 	ControlManager(void* caller);
 	void setCaller(void* caller);
 	
-	void registerControl(Controllable* c, char listeners, ControlCommand* cmd);
+	void registerControl(Controllable* c, char listeners, Command* cmd);
 	void unRegisterControl(Controllable* c);
 	
-	/*Shortcuts can only be called by the client object.
-	TODO should this use a different kind of command that doesn't require a control?*/
-	void registerShortcutKey(int key, ControlCommand* cmd);
+	/*Shortcuts can only be called by the client object.*/
+	void registerShortcutKey(int key, Command* cmd);
 
 	void draw();
 	/*
@@ -83,19 +86,21 @@ public:
 	void moveControlToTop(Controllable* c);
 
 	Controllable* getTopControl() { return controls.back()->c; }
-	/*
-	Shuts down the control manager only if deactivated. Return true if shutdown is successful.
-	This prevents a registered control from shutting down the manager thus resulting in the destruction of the calling control.
-	*/
-	bool shutdown();
 
 	/*
 	Handles input routed to control manager via key or mouse. 
 	Returns true if successfully handled, false it nothing could handle it.
 	*/
-	int handleInput(int input);
+	void handleInput(int input);
 
 	//getters/setters
+
+	int getInput() { return input; }
+
+
+	void setExitCode(ExitCode exitCodeIn) { exitCode = exitCodeIn; }
+	ExitCode getExitCode() { return exitCode; }
+
 
 	/*
 	Set the key used to cycle forwards through the registered controls.
@@ -116,15 +121,15 @@ public:
 	/*
 	Get the focused control. There will always only be one controllable with focus.
 	*/
-	Controllable* getFocus();
+	Controllable* getFocusedControl();
 
 	/*
 	Set c as the focused control. Assumes that c is already a registered control. If not then nothing happens.
 	*/
-	void setFocus(Controllable* c);
+	void setFocusedControl(Controllable* c);
 	
+	//setters/getters
+
 	int getControlCount() { return controls.size(); }
 	int getKeyAcceleratorCount() { return globalShortcuts.size(); }
-	void setActive(bool status) { active = status; }
-	bool isActive() { return active; }
 };

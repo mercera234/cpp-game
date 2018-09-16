@@ -14,7 +14,7 @@ void FileDialog::setWindow(WINDOW* win)
 	chooser->setupChooser(innerWin);
 }
 
-int FileDialog::processInput(int input)
+ExitCode FileDialog::processInput(int input)
 {
 	switch (input)
 	{
@@ -37,5 +37,5 @@ int FileDialog::processInput(int input)
 		break;
 	}
 
-	return HANDLED;
+	return ExitCode::HANDLED;
 }
