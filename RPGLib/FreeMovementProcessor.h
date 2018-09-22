@@ -9,7 +9,7 @@ A basic implementation of MovementProcessor
 class FreeMovementProcessor : public MovementProcessor
 {
 private:
-	bool processMovement(Movement& move);
+	bool processMovement();
 	void bringCursorInBounds(); //Brings cursor back within bounds based on last move taken
 	void bringCursorInWindow(); //Reverse 'move' as the last move taken
 	

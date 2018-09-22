@@ -6,7 +6,7 @@ MapRoom* Factory::createMap(unsigned short id, unsigned short height, unsigned s
 	//create map
 	std::string name = "Map " + id;
 	MapRoom* newMap = new MapRoom(name, height, width, win);
-	newMap->setId(id);
+	newMap->id = id;
 
 	//populate the map with patternChar
 	Image* display = newMap->getDisplay();
@@ -28,7 +28,7 @@ MapRoom* Factory::createMap(WINDOW* win, unsigned short id, unsigned short heigh
 	//create map
 	std::string name = "Map " + id;
 	MapRoom* newMap = new MapRoom(name, height, width, win);
-	newMap->setId(id);
+	newMap->id = id;
 
 	//populate the map with patternChar
 	Image* display = newMap->getDisplay();

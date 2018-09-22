@@ -9,16 +9,6 @@ namespace GameLibTester
 	{
 		TUI tui;
 
-		TEST_METHOD_INITIALIZE(startTUI)
-		{
-			tui.init(); //stdscr is initialized after init is called
-		}
-
-		TEST_METHOD_CLEANUP(endTUI)
-		{
-			tui.shutdown();
-		}
-
 		TEST_METHOD(noParticipantTest)
 		{
 			BattleProcessor bp;

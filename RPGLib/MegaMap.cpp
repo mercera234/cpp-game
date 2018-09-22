@@ -53,9 +53,10 @@ Pos MegaMap::getMapRoomPos()
 
 	int tile = img.getTile(map.y, map.x);
 
-	if (tile == INT_MAX)
+	if (tile < 0) //null map loaded
 	{
-		Pos oob(-1, -1);
+		Pos oob(*curY - map.y * unitHeight , 
+			*curX - map.x * unitWidth);
 		return oob;
 	}
 
@@ -151,7 +152,7 @@ int MegaMap::getFloorIndex()
 	return floorIndex - groundFloorOffset; 
 }
 
-std::string MegaMap::getFloorLabel()
+std::string& MegaMap::getFloorLabel()
 {
 	std::ostringstream oss;
 	int floor = floorIndex - groundFloorOffset;
@@ -164,7 +165,8 @@ std::string MegaMap::getFloorLabel()
 		oss << 'B' << abs(floor);
 	}
 
-	return oss.str();
+	floorLabel = oss.str();
+	return floorLabel;
 }
 
 bool MegaMap::setFloor(int floorIn)

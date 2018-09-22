@@ -17,6 +17,7 @@ MainMenu::MainMenu()
 	mainFrame.setControl(&mainMenu);
 	playerFrame.setControl(&playerMenu);
 	bodyFrame.setControl(&bodyContent);
+	descFrame.setControl(&descContent);
 
 	//setup cmds
 	mainMenuCmd.setReceiver(this);
@@ -28,6 +29,7 @@ MainMenu::MainMenu()
 	configMenuCmd.setReceiver(this);
 	configMenuCmd.setAction(&MainMenu::processConfigMenuInput);
 
+	setupDescFields();
 	setupBodyFields();
 	setupStatusFields();
 
@@ -36,6 +38,7 @@ MainMenu::MainMenu()
 	//register controls
 	cm.registerControl(&mainFrame, KEY_LISTENER, &mainMenuCmd);
 	cm.registerControl(&playerFrame, KEY_LISTENER, &playerMenuCmd);
+	cm.registerControl(&descFrame, 0, nullptr);
 	cm.registerControl(&bodyFrame, 0, nullptr);
 	cm.setFocusedControl(&mainFrame);
 }
@@ -60,6 +63,17 @@ void MainMenu::setupStatusFields()
 	statusContent.addPiece(willRow);
 	statusContent.addPiece(agilityRow);
 	statusContent.addPiece(expRow);
+}
+
+void MainMenu::setupDescFields()
+{
+	mapText = new TextPiece(new LineFormat(0, Justf::LEFT), "");
+	roomText = new TextPiece(new LineFormat(1, Justf::LEFT), "");
+	floor = new TextParamValue<std::string>(new LineFormat(2, Justf::LEFT), S_LEVEL, nullptr, 2);
+
+	descContent.addPiece(mapText);
+	descContent.addPiece(roomText);
+	descContent.addPiece(floor);
 }
 
 void MainMenu::setupBodyFields()
@@ -90,8 +104,13 @@ void MainMenu::setWindow(WINDOW* win)
 	setupMainMenu();
 	setupPlayerMenu();
 
+	
+	descContent.setWindow(newwin(topFrameHeight - 2, rightFrameWidth - 2, 1, leftFrameWidth + 1));
+	descFrame.setWindow(newwin(topFrameHeight, rightFrameWidth, 0, leftFrameWidth));
+
 	bodyContent.setWindow(newwin(bottomFrameHeight - 2, rightFrameWidth - 2, 6, leftFrameWidth + 1));
 	bodyFrame.setWindow(newwin(bottomFrameHeight, rightFrameWidth, 5, leftFrameWidth));
+	
 
 	statusContent.setWindow(newwin(bottomFrameHeight - 2, rightFrameWidth - 2, 6, leftFrameWidth + 1));
 }
@@ -215,6 +234,7 @@ void MainMenu::processMainMenuInput()
 	}
 	else //no item selected, render default data
 	{
+		setupDescContent();
 		setupHubContent();
 	}
 }
@@ -222,6 +242,7 @@ void MainMenu::processMainMenuInput()
 void MainMenu::setResourceManager(ResourceManager* resourceManagerIn)
 {
 	resourceManager = resourceManagerIn;
+	setupDescContent();
 	setupHubContent();
 }
 
@@ -231,6 +252,19 @@ void MainMenu::setupHubContent()
 	steps->setValue(&resourceManager->theData.retrieveIntData(STEPS));
 	enemiesKilled->setValue(&resourceManager->theData.retrieveIntData(ENEMIES_KILLED));
 	battlesWon->setValue(&resourceManager->theData.retrieveIntData(BATTLES_WON));
+}
+
+void MainMenu::setupDescContent()
+{
+	MegaMap* currMap = resourceManager->currMap;
+	mapText->setText(currMap->name);
+	int id = currMap->getCurrMapRoomId();
+	MapRoom& room = resourceManager->mapRooms[id];
+
+	roomText->setText(room.name);
+
+	//floorLabel = currMap->getFloorLabel();
+	floor->setValue(&currMap->getFloorLabel());
 }
 
 void MainMenu::processPlayerMenuInput()

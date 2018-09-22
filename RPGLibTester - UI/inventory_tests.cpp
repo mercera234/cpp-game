@@ -4,7 +4,7 @@
 /*Works, but I'm not sure I like how I am referencing both the inventory and the gridmenu separately*/
 void inventoryTest() 
 {
-	resize_term(screenHeight, screenWidth);
+	resize_term(23, 51);
 
 	GameItem* item1 = new GameItem;
 	item1->name = "Cell Water";

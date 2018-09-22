@@ -12,18 +12,27 @@ private:
 	Action action;
 public:
 	SimpleCommand() {}
+	SimpleCommand(Receiver* r, Action a);
 	~SimpleCommand() {}
 
 	virtual void execute();
 	
 	void setReceiver(Receiver* r);
 	void setAction(Action a);
+
 };
 
 template <class Receiver>
 void SimpleCommand<Receiver>::setReceiver(Receiver* r)
 {
 	receiver = r;
+}
+
+template <class Receiver>
+SimpleCommand<Receiver>::SimpleCommand(Receiver* r, Action a)
+{
+	setReceiver(r);
+	setAction(a);
 }
 
 template <class Receiver>

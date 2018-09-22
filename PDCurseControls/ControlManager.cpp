@@ -70,7 +70,7 @@ void ControlManager::registerControl(Controllable* c, char listeners, Command* c
 	Registration* r = new Registration();
 
 	r->c = c;
-	//c->setControlManager(this);
+	
 	r->cmd = cmd;
 	r->listen_map = listeners;
 

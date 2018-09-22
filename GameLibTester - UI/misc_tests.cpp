@@ -11,6 +11,7 @@
 #include "GameItem.h"
 #include "TitleScreen.h"
 #include "ConfigMenu.h"
+#include "Barrier.h"
 
 void titleScreenTest()
 {
@@ -68,10 +69,17 @@ void mainMenuTest()
 	ResourceManager rm;
 
 	loadDataFiles(rm);
+	//load one megamap so we can test that it's properties display in the main menu
+	rm.currMap = &rm.gameMaps["TestRegion"];
+	rm.currMap->setUnitHeight(gameScreenHeight);
+	rm.currMap->setUnitWidth(gameScreenWidth);
+
+	Pos pos(32, 54);
+	rm.currMap->setCursor(&pos.y, &pos.x);
 
 	MainMenu mm;
 	mm.setResourceManager(&rm);
-	mm.setWindow(newwin(screenHeight, screenWidth, 0, 0));
+	mm.setWindow(newwin(gameScreenHeight, gameScreenWidth, 0, 0));
 	mm.addPlayerParty(playerParty);
 	
 
@@ -115,15 +123,8 @@ void battleProcessorTest()
 	{
 		//retrieve all actors from a wad file (just for testing, this should be refined)
 		ResourceManager rm;
-		setupDefaultDataKeys(rm);
 
-		std::ifstream configStream(configFile);
-		rm.loadConfigurationFile(configStream);
-
-		defaultGameInputs(rm.inputs);
-
-		std::ifstream is(actorFile);
-		rm.loadActorsFromTextFile(is);
+		loadDataFiles(rm);
 
 		Actor p1, p2, p3, p4;
 		Actor e1, e2, e3, e4;
@@ -228,7 +229,7 @@ void exploreMegaMapTest()
 
 void exploreOneMapTest()
 {
-	resize_term(screenHeight, screenWidth);
+	resize_term(gameScreenHeight, gameScreenWidth);
 
 	bool playing = true;
 
@@ -237,58 +238,82 @@ void exploreOneMapTest()
 
 
 	//setup main character
-	Actor mainC;
-	initTestActor(mainC);
-	mainC.name = "hero.actr";
-	mainC.type = ActorType::HUMAN;
-	mainC.symbol = 'A' | COLOR_YELLOW_BOLD << TEXTCOLOR_OFFSET;
-	
+	Actor& player1 = rm.getActor(player1Name);
+	player1.type = ActorType::HUMAN;
+
+	rm.playerParty.push_back(&player1);
+
 	int itemRoomId = 15;
 
-	MegaMap& mm = rm.gameMaps["TestRegion"];
-	mm.setUnitHeight(screenHeight);
-	mm.setUnitWidth(screenWidth);
-	mm.setFloor(-1);
 	
-
-	//create an item in the item room
-	GameItem money;
-	money.id = 300; //making this large to avoid conflicting with maps
-	money.name = GOLD$;
-	money.type = GameItemType::MONEY;
-
+	rm.currMap = &rm.getMap("TestRegion");
+	rm.currMap->setUnitHeight(gameScreenHeight);
+	rm.currMap->setUnitWidth(gameScreenWidth);
+	rm.currMap->setFloor(0);
+	
 	Sprite s;
 	s.pos.y = 13;
 	s.pos.x = 23;
 	s.quantity = 5;
 	s.symbol = '$' | COLOR_YELLOW_BOLD << TEXTCOLOR_OFFSET;
-	s.thing = &money;
-
-	GameItem item;
-	item.name = "Potion";
-	item.cost = 10;
-	item.type = GameItemType::CONSUMABLE;
-	item.value = 25;
+	s.thing = &rm.gameItems[GOLD$];
+	s.impassible = false;
 
 	Sprite s2;
 	s2.pos.y = 13;
 	s2.pos.x = 33;
 	s2.quantity = 1;
 	s2.symbol = '*' | COLOR_MAGENTA_BOLD << TEXTCOLOR_OFFSET;
-	s2.thing = &item;
-
-	MapRoom& itemRoom = rm.mapRooms[itemRoomId];
-	itemRoom.things.push_back(&s);
-	itemRoom.things.push_back(&s2);
+	s2.thing = &rm.gameItems["Potion"];
+	s2.impassible = false;
 
 	ExplorationProcessor mp;
-	mp.setMap(mm);
 	mp.setResourceManager(&rm);
-	mp.setControlActor(&mainC);
+	mp.setControlActor(&player1);
 	Pos pos(32, 54);
 	mp.setCursor(pos);
-	mm.setCursor(&pos.y, &pos.x);
 	mp.setViewMode(ViewMode::DYNAMIC); //position map so character is visible (not sure if this is the best way to do this)
+
+
+	Sprite s3;
+	s3.pos.y = 2;
+	s3.pos.x = 2;
+	s3.height = 3;
+	s3.width = 4;
+	s3.impassible = true;
+	s3.quantity = 1;
+	s3.symbol = '&';
+
+	SimpleCommand<ExplorationProcessor> barrierCmd;
+	barrierCmd.setReceiver(&mp);
+	barrierCmd.setAction(&ExplorationProcessor::barrierRoutine);
+
+	Reactor<ExplorationProcessor> barrier;
+	barrier.cmd = &barrierCmd;
+
+	s3.thing = &barrier;
+
+	Sprite s4;
+	s4.pos.y = 7;
+	s4.pos.x = 40;
+	s4.impassible = true;
+	s4.quantity = 1;
+	s4.symbol = '!';
+
+	SimpleCommand<ExplorationProcessor> signCmd;
+	signCmd.setReceiver(&mp);
+	signCmd.setAction(&ExplorationProcessor::signRoutine);
+
+	Reactor<ExplorationProcessor> sign;
+	sign.cmd = &signCmd;
+
+	s4.thing = &sign;
+
+	MapRoom& itemRoom = rm.mapRooms[itemRoomId];
+	itemRoom.sprites.push_back(&s);
+	itemRoom.sprites.push_back(&s2);
+	itemRoom.sprites.push_back(&s3);
+	itemRoom.sprites.push_back(&s4);
 
 	WINDOW* screen = mp.getScreen();
 	while (playing)
@@ -298,31 +323,25 @@ void exploreOneMapTest()
 
 		//add y,x coordinates to screen
 		Pos cursor = mp.getCursor();
-		mvwprintw(screen, screenHeight - 2, screenWidth - 16, "y:%+4u x:%+4u", cursor.y, cursor.x);
+		mvwprintw(screen, gameScreenHeight - 2, gameScreenWidth - 16, "y:%+4u x:%+4u", cursor.y, cursor.x);
 		wnoutrefresh(screen);
 
 		doupdate();
 
 		//process input
-		int input = getch();
+		int input = getInput(rm);
 		switch (input)
 		{
-		case KEY_ESC: playing = false; break;
-		case KEY_RIGHT:
-		case KEY_LEFT:
-		case KEY_UP:
-		case KEY_DOWN:
-			mp.processMovementInput(input); break;
-		case '\t': //toggle automap
-			break;
-		case '+': mp.setClipMode(true); break;
-		case '-': mp.setClipMode(false); break;
+		case GameInput::QUIT_INPUT: playing = false; break;
+		//case '\t': //toggle automap
+		//	break;
+	/*	case '+': mp.setClipMode(true); break;
+		case '-': mp.setClipMode(false); break;*/
 		default:
+			mp.processInput(input); break;
 			break;
 		}
 	}
-
-	delwin(screen);
 }
 
 

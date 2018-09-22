@@ -9,10 +9,8 @@ class GameApp
 {
 private:
 	TUI tui;
-	//InputManager inputManager;
 	ResourceManager resourceManager;
 
-	//int getInput();
 public:
 	GameApp();
 	

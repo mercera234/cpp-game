@@ -47,7 +47,7 @@ void imageLoadUnloadTest()
 {
 	Image img;
 	img.setWindow(stdscr);
-	img.setDimensions(screenHeight, screenWidth);
+	img.setDimensions(23, 51);
 
 	std::ifstream is;
 	is.open("data\\itest.img", std::ios::binary);
@@ -72,7 +72,7 @@ void imageLoadUnloadTest()
 void imageWithoutWindowTest()
 {
 	Image img;
-	img.setDimensions(screenHeight, screenWidth);
+	img.setDimensions(23, 51);
 
 	img.draw(); //without win it will draw nothing
 
@@ -99,7 +99,7 @@ void imageWithoutDataTest()
 {
 	Image img;
 	img.setWindow(stdscr);
-	img.setDimensions(screenHeight, screenWidth);
+	img.setDimensions(23, 51);
 
 	//technically draws a black screen. Set dimensions, also sets the dimensions on the tilemap and prefills it with spaces
 	img.draw();

@@ -6,7 +6,7 @@
 #include <functional>
 #include "Command.h"
 #include "ControlCommand.h"
-#include "input_return_codes.h"
+#include "ExitCode.h"
 
 const int KEY_LISTENER = 0x01;
 const int MOUSE_LISTENER = 0x02;

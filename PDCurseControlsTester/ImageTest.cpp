@@ -8,6 +8,8 @@ namespace PDCurseControlsTester
 {
 	TEST_CLASS(ImageTest)
 	{
+		TUI tui;
+
 		TEST_METHOD(constructorTest)
 		{
 			Image img;
@@ -76,6 +78,28 @@ namespace PDCurseControlsTester
 			img.setTile(0, 1, c);
 
 			Assert::IsTrue(c == img.getTile(0, 1));
+		}
+
+		TEST_METHOD(getFullScreenShotTest)
+		{
+			Image img;
+			
+			getFullScreenShot(img); //no data to capture, but the img should be resized to match stdscr
+			
+			Assert::AreEqual(getmaxy(stdscr), (int)img.getTotalRows());
+			Assert::AreEqual(getmaxx(stdscr), (int)img.getTotalCols());
+		}
+
+		TEST_METHOD(getScreenShotTest)
+		{
+			Image img;
+
+			int rows = 2;
+			int cols = 3;
+			getScreenShot(img, 1, 1, rows, cols); //no data to capture, but the img should be resized to match stdscr
+
+			Assert::AreEqual(rows, (int)img.getTotalRows());
+			Assert::AreEqual(cols, (int)img.getTotalCols());
 		}
 	};
 }

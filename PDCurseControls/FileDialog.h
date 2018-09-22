@@ -1,7 +1,7 @@
 #pragma once
 #include "DialogWindow.h"
 #include "FileChooser.h"
-#include "input_return_codes.h"
+#include "ExitCode.h"
 
 class FileDialog : public DialogWindow
 {

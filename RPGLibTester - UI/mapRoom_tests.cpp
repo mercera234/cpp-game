@@ -124,6 +124,8 @@ void realMapTest()
 
 void spriteOnImageTest()
 {
+	int screenHeight = 23;
+	int screenWidth = 51;
 	resize_term(screenHeight, screenWidth);
 
 	Image img;
@@ -214,6 +216,8 @@ void spriteOnImageTest()
 
 void spriteOnMapTest()
 {
+	int screenHeight = 23;
+	int screenWidth = 51;
 	resize_term(screenHeight, screenWidth);
 
 	WINDOW* screen = dupwin(stdscr);
@@ -273,9 +277,9 @@ void spriteOnMapTest()
 	thing3.pos.x = 20;
 	thing3.symbol = '@' | COLOR_CYAN << TEXTCOLOR_OFFSET;
 
-	room.things.push_back(&thing1);
-	room.things.push_back(&thing2);
-	room.things.push_back(&thing3);
+	room.sprites.push_back(&thing1);
+	room.sprites.push_back(&thing2);
+	room.sprites.push_back(&thing3);
 
 	int totalGold = 0;
 	
@@ -318,14 +322,14 @@ void spriteOnMapTest()
 				{
 				case GameItemType::MONEY: 
 					totalGold += item->cost;
-					room.things.remove(s);
+					room.sprites.remove(s);
 					break;
 				case GameItemType::CONSUMABLE:
 					//
 					((Actor*)control.thing)->alterStat(StatType::HP, 50);
 					break;
 				}
-				room.things.remove(s);
+				room.sprites.remove(s);
 			}
 			else if (Actor* actor = dynamic_cast<Actor*>(s->thing))
 			{

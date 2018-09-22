@@ -36,46 +36,28 @@ void ExploreState::initDefaults()
 
 	//setup exploration processor
 	explorationProcessor.setResourceManager(resourceManager);
-	explorationProcessor.setControlActor(&player1);	
+	explorationProcessor.setControlActor(resourceManager->playerParty.front());	
 	//set start position
 	Pos start(startY, startX);
 	explorationProcessor.setCursor(start);
 	explorationProcessor.setViewMode(ViewMode::DYNAMIC);
-
-	
-	
-	//setup trackers
-	encounterTracker.setMinSteps(minPeaceSteps);
-	encounterTracker.setMaxSteps(maxPeaceSteps);
-	encounterTracker.setEncounterChance(encounterChance);
 }
 
 void ExploreState::loadResourceManagerData()
 {
 	//load default megamap
-	auto it = resourceManager->gameMaps.find("TestRegion");
-	if (it == resourceManager->gameMaps.end())
-	{
-		it = resourceManager->gameMaps.find(nullName);
-	}
-	MegaMap& mm = explorationProcessor.getMap();
-	mm = it->second;
-	mm.setUnitHeight(screenHeight);
-	mm.setUnitWidth(screenWidth);
-	mm.setFloor(0);
+	resourceManager->currMap = &resourceManager->getMap("TestRegion");
+	MegaMap* currMap = resourceManager->currMap;
+	currMap->setUnitHeight(gameScreenHeight);
+	currMap->setUnitWidth(gameScreenWidth);
+	currMap->setFloor(0);
 
 	//load default main character
-	auto it2 = resourceManager->actors.find(player1Name);
-	if (it2 == resourceManager->actors.end())
-	{
-		it2 = resourceManager->actors.find(nullName); //loud null Actor if default isn't found
-	}
-	player1 = (it2->second); //get copy of player1
+	Actor& player1 = resourceManager->getActor(player1Name);
 	player1.type = ActorType::HUMAN;
 
 	resourceManager->playerParty.clear(); //clear out old data first
 	resourceManager->playerParty.push_back(&player1);
-
 }
 
 
@@ -89,97 +71,34 @@ void ExploreState::unloadState()
 	
 }
 
-void ExploreState::processStepTaken(Movement& stepTaken)
-{
-	resourceManager->theData.alterIntData(STEPS, 1);
-	
-	encounterTracker.takeStep(getAxis(stepTaken.dir));
-	if (encounterTracker.didEncounterOccur())
-	{
-		//change state to battle state and load the appropriate enemy details
-		GameState* state = BattleState::getInstance();
-		getManager()->setState(state);
-		encounterTracker.resetSteps(); //prepare for next time
-
-		//get enemy pool from current map
-
-		//get specific enemy group
-
-		//pass enemies into BattleState
-	}
-}
-
-void ExploreState::processDirectionalInput(int input)
-{
-	//bool stepTaken = false;
-	//Axis stepAxis = Axis::HORIZONTAL;
-
-	MovementChain moves;
-	switch (input)
-	{
-		//These should all be only one move at a time
-	case GameInput::UP_INPUT: moves = explorationProcessor.processMovementInput(KEY_UP); break;
-	case GameInput::DOWN_INPUT: moves = explorationProcessor.processMovementInput(KEY_DOWN); break;
-	case GameInput::LEFT_INPUT: moves = explorationProcessor.processMovementInput(KEY_LEFT); break;
-	case GameInput::RIGHT_INPUT: moves = explorationProcessor.processMovementInput(KEY_RIGHT); break;
-	}
-
-	//verify that actor is still alive
-	if (isAlive(player1) == false)
-	{
-		player1.symbol = nullSymbol;
-		return;
-	}
-
-	Movement stepTaken = moves.moves.back();
-	if (stepTaken.magnitude > 0)
-	{
-		processStepTaken(stepTaken);
-	}
-}
-
 void ExploreState::processInput(GameStateManager& manager, int input)
 {
-	if (isAlive(player1) == false && input != GameInput::OK_INPUT) //only accept ok input if player has died
-		return;
+	int exitCode = explorationProcessor.processInput(input);
 
-	switch (input)
-	{	
-	case GameInput::UP_INPUT: 
-	case GameInput::DOWN_INPUT: 
-	case GameInput::LEFT_INPUT: 
-	case GameInput::RIGHT_INPUT: 
-		processDirectionalInput(input);
-		break;
-	case GameInput::FIGHT_TRIGGER: //we will remove this later, but this is for triggering a fight immediately
+	switch (exitCode)
 	{
-		GameState* state = BattleState::getInstance();
+	case ExitCode::QUIT_TO_TITLE: 
+	{
+		GameState* state = TitleScreenState::getInstance();
 		manager.setState(state);
 	}
 		break;
-	case GameInput::TOGGLE_ENCOUNTERS:
-	{
-		encounterTracker.setTracking(!encounterTracker.getTracking());
 	}
-		
-		break;
-	case GameInput::OK_INPUT:
-		if (isAlive(player1) == false)
-		{
-			GameState* state = TitleScreenState::getInstance();
-			manager.setState(state);
-		}
-		break;
-	case GameInput::OPEN_MENU_INPUT: 
+
+
+	if (explorationProcessor.getInFight())
+	{
+		GameState* state = BattleState::getInstance();
+		manager.setState(state);
+		explorationProcessor.setInFight(false); //clear for next time
+	}
+	else if (explorationProcessor.getInMenu())
 	{
 		GameState* state = MainMenuState::getInstance();
 		manager.setState(state);
-	}
-		
-		break;
+		explorationProcessor.setInMenu(false);
 	}
 
-	
 }
 
 

@@ -15,7 +15,7 @@ void RandomBlitAnimation::frame()
 	Sleep(speed);
 
 	//process
-	if(tilesChangedCount == totalScreenTiles)
+	if(tilesChangedCount == getScreenHeight() * getScreenWidth())
 	{
 		playing = false;
 	}
@@ -33,7 +33,7 @@ void RandomBlitAnimation::frame()
 void RandomBlitAnimation::prepare() //overridden
 {
 	BlitAnimation::prepare();
-	for (int i = 0; i < totalScreenTiles; i++)
+	for (int i = 0; i < getScreenHeight() * getScreenWidth(); i++)
 	{
 		tileTracker.push_back(i);
 	}

@@ -1,5 +1,5 @@
 #include "FileDialog.h"
-#include "input_return_codes.h"
+#include "ExitCode.h"
 
 FileDialog::FileDialog(const std::string& defaultFilePath, FileDialogType type, const std::string& extensionFilter)
 {

@@ -68,138 +68,77 @@ void MovementProcessor::centerView()
 }
 
 
-MovementChain MovementProcessor::processHomeEndInput(int key)
+void MovementProcessor::processHomeEndInput(int key)
 {
 	assert(key == CTL_HOME || key == CTL_END);
-	bool movedHorz = false;
-	bool movedVert = false;
-	Dir horzDir;
-	Dir vertDir;
+
+	int horzKey;
+	int vertKey;
 	switch (key)
 	{
 	case CTL_HOME: //use two movements to upper left corner
-		horzDir = Dir::LEFT;
-		vertDir = Dir::UP;
+		horzKey = KEY_HOME;
+		vertKey = KEY_SHOME;
 		break;
 	case CTL_END: //use two movements to lower right corner
-		horzDir = Dir::RIGHT;
-		vertDir = Dir::DOWN;
+		horzKey = KEY_END;
+		vertKey = KEY_SEND;
 		break;
 	}
 
-	MovementChain movesTaken;
-	Movement horzMove, vertMove;
-	horzMove = processDirectionalInput(horzDir, moveControl->getTotalCols());
-	vertMove = processDirectionalInput(vertDir, moveControl->getTotalRows());
-
-	movesTaken.moves.push_back(horzMove);
-	movesTaken.moves.push_back(vertMove);
-	return movesTaken;
+	processDirectionalInput(getAxisFromKey(horzKey), getMagnitudeFromKey(horzKey, moveControl));
+	processDirectionalInput(getAxisFromKey(vertKey), getMagnitudeFromKey(vertKey, moveControl));
 }
 
-MovementChain MovementProcessor::processMovementInput(int input)
+std::vector<Movement>& MovementProcessor::processMovementInput(int input)
 {
-	MovementChain movesTaken;
+	movementChain.clear();
 	
 	switch (input)
 	{
 	case CTL_HOME: 
-		movesTaken = processHomeEndInput(CTL_HOME);
+		processHomeEndInput(CTL_HOME);
 		break;
 	case CTL_END: 
-		movesTaken = processHomeEndInput(CTL_END);
+		processHomeEndInput(CTL_END);
 		break;
 	default:
 	{
-		Movement move = processDirectionalInput(getDirectionFromKey(input), getMoveMagnitudeFromKey(input));
-		movesTaken.moves.push_back(move);
+		processDirectionalInput(getAxisFromKey(input), getMagnitudeFromKey(input, moveControl));
 	}
 		break;
 	}
 
-	return movesTaken;
+	return movementChain;
 }
 
-int MovementProcessor::getMoveMagnitudeFromKey(int key)
+void MovementProcessor::processDirectionalInput(Axis axis, int magnitude)
 {
-	int magnitude = 0;
-	int visibleRows;
-	int visibleCols;
-	getmaxyx(moveControl->getWindow(), visibleRows, visibleCols);
+	currMove.axis = axis;
+	currMove.magnitude = magnitude;
 
-	switch (key)
+	processMovement();  //to be handled differently by concrete implementations of this abstract class
+	movementChain.push_back(currMove);
+}
+
+void MovementProcessor::moveCursor()
+{
+	if(currMove.magnitude != 0)
+		movementChain.push_back(currMove);
+
+	switch (currMove.axis)
 	{
-	case KEY_UP:
-	case KEY_DOWN:
-	case KEY_LEFT:
-	case KEY_RIGHT: magnitude = 1;
-		break;
-	case KEY_PGUP://up down paging
-	case KEY_PGDN: magnitude = visibleRows;
-		break;
-	case CTL_PGUP://left right paging
-	case CTL_PGDN: magnitude = visibleCols;
-		break;
-
-	case KEY_HOME:
-	case KEY_END: magnitude = moveControl->getTotalCols();
-		break;
-	}
-	return magnitude;
-}
-
-Dir MovementProcessor::getDirectionFromKey(int key)
-{
-	Dir dir;
-	switch (key)
-	{
-	case KEY_PGUP:
-	case KEY_UP: dir = Dir::UP;
-		break;
-	case KEY_PGDN:
-	case KEY_DOWN: dir = Dir::DOWN;
-		break;
-	case KEY_HOME:
-	case CTL_PGUP:
-	case KEY_LEFT: dir = Dir::LEFT;
-		break;
-	case KEY_END:
-	case CTL_PGDN:
-	case KEY_RIGHT: dir = Dir::RIGHT;
-		break;
-	default:
-		dir = Dir::UNKNOWN;
-	}
-	return dir;
-}
-
-Movement MovementProcessor::processDirectionalInput(Dir dirInput, int magnitude)
-{
-	Movement move;
-	move.dir = dirInput;
-	move.magnitude = magnitude;
-
-	processMovement(move);  //to be handled differently by concrete implementations of this abstract class
-	return move;
-}
-
-void MovementProcessor::moveCursor(Movement& move)
-{
-	switch (move.dir)
-	{
-	case Dir::UP: *curY -= move.magnitude; break;
-	case Dir::DOWN: *curY += move.magnitude; break;
-	case Dir::LEFT: *curX -= move.magnitude; break;
-	case Dir::RIGHT: *curX += move.magnitude; break;
+	case Axis::VERTICAL: *curY += currMove.magnitude; break;
+	case Axis::HORIZONTAL: *curX += currMove.magnitude; break;
 	}
 }
 
 
-void MovementProcessor::reverseMovement(Movement& move)
+void MovementProcessor::reverseMovement()
 {
-	Movement reverseMove(move.dir, -move.magnitude);
-	moveCursor(reverseMove);
-	move.magnitude = 0; //original move could not complete
+	movementChain.pop_back(); //remove last move taken
+	currMove.magnitude = -currMove.magnitude;
+	moveCursor();
 }
 
 
@@ -207,12 +146,11 @@ Boundary MovementProcessor::inBounds()
 {
 	if (*curX < 0) return Boundary::WEST;
 	if (*curY < 0) return Boundary::NORTH;
-	if ((unsigned int)*curX >= moveControl->getTotalCols()) return Boundary::EAST;
-	if ((unsigned int)*curY >= moveControl->getTotalRows()) return Boundary::SOUTH;
+	if (*curX >= moveControl->getTotalCols()) return Boundary::EAST;
+	if (*curY >= moveControl->getTotalRows()) return Boundary::SOUTH;
 
 	return Boundary::IN_BOUNDS;
 }
-
 
 
 bool MovementProcessor::inWindow()

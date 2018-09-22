@@ -121,8 +121,10 @@
     <ClInclude Include="actor_helper.h" />
     <ClInclude Include="Actor.h" />
     <ClInclude Include="AutoMap.h" />
+    <ClInclude Include="Barrier.h" />
     <ClInclude Include="BoundInt.h" />
     <ClInclude Include="DataPkg.h" />
+    <ClInclude Include="data_loaders.h" />
     <ClInclude Include="EncounterTracker.h" />
     <ClInclude Include="EnemyPool.h" />
     <ClInclude Include="Factory.h" />
@@ -142,6 +144,7 @@
     <ClInclude Include="MapExit.h" />
     <ClInclude Include="MapKeyComparators.h" />
     <ClInclude Include="MapMetadata.h" />
+    <ClInclude Include="Reactor.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="MegaMap.h" />
     <ClInclude Include="Money.h" />
@@ -164,9 +167,11 @@
     <ClCompile Include="ActorCard.cpp" />
     <ClCompile Include="actor_helper.cpp" />
     <ClCompile Include="AutoMap.cpp" />
+    <ClCompile Include="Barrier.cpp" />
     <ClCompile Include="BattleAlgorithm.cpp" />
     <ClCompile Include="BoundInt.cpp" />
     <ClCompile Include="DataPkg.cpp" />
+    <ClCompile Include="data_loaders.cpp" />
     <ClCompile Include="EncounterTracker.cpp" />
     <ClCompile Include="EnemyPool.cpp" />
     <ClCompile Include="Factory.cpp" />

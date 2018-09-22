@@ -14,7 +14,6 @@ private:
 	unsigned int stepsLeft;
 	unsigned int stepsToEdge;
 
-	void takeStep_old();
 	void takeStep();
 public:
 	SpiralBlitAnimation(Image* background, bool playForwards = true);

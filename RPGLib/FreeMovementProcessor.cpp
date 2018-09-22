@@ -10,7 +10,7 @@ FreeMovementProcessor::FreeMovementProcessor(Controllable* c, int* curY, int* cu
 }
 
 
-bool FreeMovementProcessor::processMovement(Movement& move)
+bool FreeMovementProcessor::processMovement()
 {
 	//save start pos
 	int prevY = *curY;
@@ -18,7 +18,7 @@ bool FreeMovementProcessor::processMovement(Movement& move)
 
 	setConvenienceVariables(); //do this for every movement in case dimensions change
 
-	moveCursor(move);
+	moveCursor();
 
 	//verify that cursor is within bounds
 	if (bounded && (inBounds() != Boundary::IN_BOUNDS))

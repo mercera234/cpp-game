@@ -1,6 +1,6 @@
 #include "resource_manager_tests.h"
 #include "ResourceManager.h"
-
+#include "data_loaders.h"
 
 void loadMapsFromTextFile()
 {
@@ -9,7 +9,7 @@ void loadMapsFromTextFile()
 	std::ifstream is;
 	is.open("data\\maps.txt");
 
-	int count = rm.loadMapsFromTextFile(is);
+	int count = loadMapsFromTextFile(is, rm);
 
 	std::cout << "Total: " << count << std::endl;
 	system("pause");
@@ -22,7 +22,7 @@ void loadActorsFromTextFile()
 	std::ifstream is;
 	is.open("data\\actors.txt");
 
-	int count = rm.loadActorsFromTextFile(is);
+	int count = loadActorsFromTextFile(is, rm);
 
 	std::cout << "Total: " << count << std::endl;
 	system("pause");
@@ -35,7 +35,7 @@ void loadItemsFromTextFile()
 	std::ifstream is;
 	is.open("data\\items.txt");
 
-	int count = rm.loadItemsFromTextFile(is);
+	int count = loadItemsFromTextFile(is, rm);
 
 	std::cout << "Total: " << count << std::endl;
 	system("pause");
@@ -48,7 +48,7 @@ void loadConfigurationTextFile()
 	std::ifstream is;
 	is.open("data\\configuration.ini");
 
-	int count = rm.loadConfigurationFile(is);
+	int count = loadConfigurationFile(is, rm);
 
 	std::cout << "Total: " << count << std::endl;
 	system("pause");

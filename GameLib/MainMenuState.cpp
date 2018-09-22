@@ -21,7 +21,7 @@ GameState* MainMenuState::getInstance()
 
 MainMenuState::MainMenuState()
 {
-	mm.setWindow(newwin(screenHeight, screenWidth, 0, 0));
+	mm.setWindow(newwin(gameScreenHeight, gameScreenWidth, 0, 0));
 }
 
 

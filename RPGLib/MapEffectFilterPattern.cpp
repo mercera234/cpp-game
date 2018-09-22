@@ -12,9 +12,9 @@ void MapEffectFilterPattern::applyFilterPattern()
 	MapRoom* m = (MapRoom*)c;
 
 	//add filter to map
-	for (unsigned int row = 0; row < m->getTotalRows(); row++)
+	for (int row = 0; row < m->getTotalRows(); row++)
 	{
-		for (unsigned int col = 0; col < m->getTotalCols(); col++)
+		for (int col = 0; col < m->getTotalCols(); col++)
 		{
 			//translate map coordinates to window coords
 			int trueRow = row - m->getUlY();

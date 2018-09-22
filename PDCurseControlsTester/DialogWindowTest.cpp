@@ -9,15 +9,6 @@ namespace PDCurseControlsTester
 	TEST_CLASS(DialogWindowTest)
 	{
 		TUI tui;
-		TEST_METHOD_INITIALIZE(startTUI)
-		{
-			tui.init();
-		}
-
-		TEST_METHOD_CLEANUP(stopTUI)
-		{
-			tui.shutdown();
-		}
 
 		TEST_METHOD(ctorTest)
 		{

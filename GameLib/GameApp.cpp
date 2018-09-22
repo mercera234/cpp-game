@@ -12,8 +12,6 @@ GameApp::GameApp()
 {	
 	//load resources
 	loadDataFiles(resourceManager);
-
-	tui.init();
 	
 	GameState* openingState = TitleScreenState::getInstance();
 	openingState->setResourceManager(&resourceManager);
@@ -32,7 +30,7 @@ bool GameApp::run()
 	/*resize the terminal once before first draw. 
 	Having it resize in the loop below before every draw causes issues.
 	Lots of black gets drawn where there shouldn't be any*/
-	resize_term(screenHeight, screenWidth);
+	resize_term(gameScreenHeight, gameScreenWidth);
 
 	while (playing)
 	{

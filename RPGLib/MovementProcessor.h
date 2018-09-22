@@ -9,7 +9,6 @@ enum class ViewMode
 	DYNAMIC //cursor stays in center of screen, until it gets close to map edge
 };
 
-
 class MovementProcessor
 {
 protected:
@@ -17,6 +16,11 @@ protected:
 	int* curY;
 	int* curX;
 	
+	/*The current move being made in response to user input
+	If a new move is being made, the current one will be pushed onto the movement chain*/
+	Movement currMove;
+	std::vector<Movement> movementChain; //the total list of moves being tracked
+
 	//the controllable that the cursor is being moved within
 	Controllable* moveControl = nullptr;
 
@@ -25,6 +29,8 @@ protected:
 
 	//True if movement outside the edges of the control is disallowed. (not the window, it would always be bounded in that)
 	bool bounded = true;
+
+	
 
 	//convenience variables
 	int viewHeight = 0;
@@ -38,17 +44,14 @@ protected:
 
 	void setConvenienceVariables();
 
-	int getMoveMagnitudeFromKey(int key);
-	Direction getDirectionFromKey(int key);
-
 	/*Process movement after pressing Home or End keys. 
 	Return value is the move that was taken.*/
-	MovementChain processHomeEndInput(int key);
+	void processHomeEndInput(int key);
 
 	/*Process movement after pressing directional arrows. 
 	Return value is the move that was taken.*/
-	Movement processDirectionalInput(Dir input, int magnitude);
-	void moveCursor(Movement& move);
+	void processDirectionalInput(Axis axis, int magnitude);
+	void moveCursor();
 
 	void adjustView();
 	void centerView();
@@ -62,13 +65,13 @@ protected:
 
 	/* Adjust the view if viewMode is set to dynamic. Adjustment occurs when cursor is too close to the boundaries of control.
 	Return true if movement took place. move is updated with the actual move taken.*/
-	virtual bool processMovement(Movement& move) = 0;
-	void reverseMovement(Movement& move);
+	virtual bool processMovement() = 0;
+	void reverseMovement();
 	
 public:
 	/*Process movement after pressing any key.
 	Return value is the move that was taken.*/
-	MovementChain processMovementInput(int input);
+	std::vector<Movement>& processMovementInput(int input);
 
 	//getters/setters
 	void setViewMode(ViewMode mode);

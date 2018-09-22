@@ -123,6 +123,30 @@ namespace RPGLibTester
 			Assert::AreEqual(x - unitWidth, roomPos.x);
 		}
 
+		TEST_METHOD(getNullMapRoomPosTest)
+		{
+			Image img;
+			map.setDimensions(2, 1);
+			img.setDimensions(2, 1);
+			int mapId = -1;
+			img.setTile(0, 0, mapId); //no real room loaded
+			img.setTile(1, 0, mapId);
+
+			int unitLength = 6;
+			map.setUnitWidth(unitLength);
+			map.setUnitHeight(unitLength);
+			map.setLayerImage(0, img);
+
+			int y = 9;
+			int x = 2;
+
+			map.setCursor(&y, &x);
+
+			Pos roomPos = map.getMapRoomPos();
+			Assert::AreEqual(y - unitLength, roomPos.y);
+			Assert::AreEqual(x , roomPos.x);
+		}
+
 		TEST_METHOD(getDepthTest)
 		{
 			int row = 1;

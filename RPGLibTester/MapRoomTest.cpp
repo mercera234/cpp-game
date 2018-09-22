@@ -10,16 +10,6 @@ namespace RPGLibTester
 	{
 		TUI tui;
 
-		TEST_METHOD_INITIALIZE(startTUI)
-		{
-			tui.init();
-		}
-
-		TEST_METHOD_CLEANUP(stopTUI)
-		{
-			tui.shutdown();
-		}
-
 		TEST_METHOD(newMapConstructorTest)
 		{
 			int rows = 3;
@@ -29,7 +19,7 @@ namespace RPGLibTester
 			std::string name = "test map";
 			MapRoom theMap(name, rows, cols, win);
 
-			Assert::AreEqual(0, theMap.getName().compare(name));
+			Assert::AreEqual(0, theMap.name.compare(name));
 			Assert::AreEqual(rows, (int)theMap.getTotalRows());
 			Assert::AreEqual(cols, (int)theMap.getTotalCols());
 			Assert::IsTrue(win == theMap.getWindow());

@@ -9,8 +9,8 @@ class GameState : public Drawable
 {
 protected:
 	bool active = true;
-	std::string name; //TODO you should be able to get rid of this
-	void setName(const std::string& nameIn) { this->name = nameIn; } //only derived states should be allowed to use this method
+	//std::string name; //TODO you should be able to get rid of this
+	//void setName(const std::string& nameIn) { this->name = nameIn; } //only derived states should be allowed to use this method
 	WINDOW* win;
 	GameStateManager* manager;
 	ResourceManager* resourceManager;
@@ -24,7 +24,7 @@ public:
 	//getters/setters
 	void setWindow(WINDOW* win) { this->win = win; }
 	bool isActive() { return active; }
-	std::string& getName() { return name; }
+	//std::string& getName() { return name; }
 	void setManager(GameStateManager* manager) { this->manager = manager; }
 	GameStateManager* getManager() { return manager; }
 	void setResourceManager(ResourceManager* rm) { resourceManager = rm; }

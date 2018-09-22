@@ -1,36 +1,10 @@
-#include "WadDatabase.h"
+//#include "WadDatabase.h"
 #include "actor_helper.h"
 #include "MusicPlayer.h"
 #include "misc_tests.h"
-#include "ActorRepository.h"
+//#include "ActorRepository.h"
 #include "TextParamValue.h"
 #include "TextBoard.h"
-
-//void repositoryTest()
-//{
-//	Repository2<unsigned short, Map> mapRepo(lessThan);
-//
-//	Factory f;
-//	Map* m = f.createMap(stdscr, 0, screenHeight, screenWidth, 'Y', 0, 0);
-//
-//	unsigned short id = 0;
-//	mapRepo.add(id, *m);
-//
-//	Map* m2 = mapRepo.find(id);
-//
-//	_ASSERT(m == m2);
-//
-//
-//	Repository2<std::string, ActorDef> mapRepo;
-//
-//	Actor* actor = createActor("data\\hero.actr", AT_HUMAN);
-//	mapRepo.add(actor->def->name, *(actor->def));
-//
-//	ActorDef* act2 = mapRepo.find(actor->def->name);
-//
-//
-//}
-
 
 //void wadDatabaseTest()
 //{
@@ -61,20 +35,13 @@
 //	system("pause");
 //}
 
-//void wadDatabasePrintEmptyTest()
-//{
-//	WadDatabase wd;
-//	wd.print(); //won't crash to print empty database
-//
-//	system("pause");
-//}
 
 
 
 
 void statusDisplayTest()
 {
-	WINDOW* win = newwin(18, 31, 0, 0);
+	/*WINDOW* win = newwin(18, 31, 0, 0);
 	box(win, 0, 0);
 
 	Actor player;
@@ -126,72 +93,72 @@ void statusDisplayTest()
 
 	wnoutrefresh(win);
 	doupdate();
-	getch();
+	getch();*/
 }
 
 void textParamValueTest()
 {
-	WINDOW* win = newwin(5, 30, 1, 1);
-	wbkgd(win, COLOR_RED << BKGDCOLOR_OFFSET);//use this more often! very helpful!
+	//WINDOW* win = newwin(5, 30, 1, 1);
+	//wbkgd(win, COLOR_RED << BKGDCOLOR_OFFSET);//use this more often! very helpful!
 
-	BoundInt gold$(0, 9999999);
-	TextParamValue<BoundInt> tpv;
-	tpv.setFormat(new LineFormat(0, Justf::RIGHT));
-	tpv.setText("Gold$");
-	tpv.setValue(&gold$);
+	//BoundInt gold$(0, 9999999);
+	//TextParamValue<BoundInt> tpv;
+	//tpv.setFormat(new LineFormat(0, Justf::RIGHT));
+	//tpv.setText("Gold$");
+	//tpv.setValue(&gold$);
 
-	tpv.draw(win);
-	wnoutrefresh(win);
-	doupdate();
-	getch();
+	//tpv.draw(win);
+	//wnoutrefresh(win);
+	//doupdate();
+	//getch();
 
-	gold$.setCurr(10000000);
+	//gold$.setCurr(10000000);
 
-	tpv.draw(win);
-	wnoutrefresh(win);
-	doupdate();
-	getch();
+	//tpv.draw(win);
+	//wnoutrefresh(win);
+	//doupdate();
+	//getch();
 }
 
 void textBoardTest()
 {
-	WINDOW* win = newwin(5, 30, 1, 1);
-	wbkgd(win, COLOR_RED << BKGDCOLOR_OFFSET);//use this more often! very helpful!
+	//WINDOW* win = newwin(5, 30, 1, 1);
+	//wbkgd(win, COLOR_RED << BKGDCOLOR_OFFSET);//use this more often! very helpful!
 
-	BoundInt hp(0, 9999, 245);
-	BoundInt mp(0, 999, 200);
-	hp.setCurrMax(500);
-	mp.setCurrMax(333);
+	//BoundInt hp(0, 9999, 245);
+	//BoundInt mp(0, 999, 200);
+	//hp.setCurrMax(500);
+	//mp.setCurrMax(333);
 
-	BoundInt strength(0, 250, 47);
-	int x = 35;
-	std::string label = "Some words";
+	//BoundInt strength(0, 250, 47);
+	//int x = 35;
+	//std::string label = "Some words";
 
-	TextBoard board;
-	board.setWindow(win);
-	board.addPiece(new TextParamValue<BoundInt>(new LineFormat(0, Justf::RIGHT), "HP", &hp, 5));
-	board.addPiece(new TextParamCurrMaxValue(new LineFormat(1, Justf::RIGHT), "MP:", &mp, 4));
-	board.addPiece(new TextParamValue<BoundInt>(new LineFormat(2, Justf::RIGHT), "Strength", &strength));
-	board.addPiece(new TextParamValue<int>(new LineFormat(3, Justf::RIGHT), "X:", &x, 4));
-	board.addPiece(new TextParamValue<std::string>(new LineFormat(4, Justf::RIGHT), "Label:", &label, label.length()));
-	
-	
-	board.draw();
-	wnoutrefresh(win);
-	doupdate();
-	getch();
+	//TextBoard board;
+	//board.setWindow(win);
+	//board.addPiece(new TextParamValue<BoundInt>(new LineFormat(0, Justf::RIGHT), "HP", &hp, 5));
+	//board.addPiece(new TextParamCurrMaxValue(new LineFormat(1, Justf::RIGHT), "MP:", &mp, 4));
+	//board.addPiece(new TextParamValue<BoundInt>(new LineFormat(2, Justf::RIGHT), "Strength", &strength));
+	//board.addPiece(new TextParamValue<int>(new LineFormat(3, Justf::RIGHT), "X:", &x, 4));
+	//board.addPiece(new TextParamValue<std::string>(new LineFormat(4, Justf::RIGHT), "Label:", &label, label.length()));
+	//
+	//
+	//board.draw();
+	//wnoutrefresh(win);
+	//doupdate();
+	//getch();
 
-	strength.setCurr(358);
-	hp.setCurr(3);
-	mp.setCurrMax(350);
-	mp.setCurr(250);
-	x = 9648;
-	label = "What?";
+	//strength.setCurr(358);
+	//hp.setCurr(3);
+	//mp.setCurrMax(350);
+	//mp.setCurr(250);
+	//x = 9648;
+	//label = "What?";
 
-	board.draw();
-	wnoutrefresh(win);
-	doupdate();
-	getch();
+	//board.draw();
+	//wnoutrefresh(win);
+	//doupdate();
+	//getch();
 }
 
 

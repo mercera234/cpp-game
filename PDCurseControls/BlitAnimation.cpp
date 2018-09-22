@@ -5,7 +5,7 @@ void BlitAnimation::init(Image* background, bool playForwards)
 	this->background = background;
 	playing = true;
 
-	blitMap = new TwoDStorage<bool>(screenHeight, screenWidth);
+	blitMap = new TwoDStorage<bool>(getScreenHeight(), getScreenWidth());
 	
 	playDirection = playForwards;
 	prepare();
@@ -33,8 +33,8 @@ void BlitAnimation::drawBlitMap()
 			continue;
 
 		//we're assuming for now that the animation will always cover the full screen
-		int row = i / screenWidth;
-		int col = i % screenWidth;
+		int row = i / getScreenHeight();
+		int col = i % getScreenWidth();
 		mvwaddch(stdscr, row, col, ' ');
 	}
 	wnoutrefresh(stdscr);

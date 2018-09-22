@@ -17,7 +17,7 @@ GameState* MockMainMenu::getInstance()
 
 MockMainMenu::MockMainMenu()
 {
-	setName("MockMainMenu");
+
 }
 
 void MockMainMenu::processInput(GameStateManager& manager, int input)
@@ -40,6 +40,6 @@ void MockMainMenu::processInput(GameStateManager& manager, int input)
 void MockMainMenu::draw()
 {
 	clear();
-	mvaddstr(1, 1, name.c_str());
+	mvaddstr(1, 1, "MockMainMenu");
 	wnoutrefresh(stdscr);
 }

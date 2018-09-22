@@ -15,7 +15,7 @@ GameState* MockStatus::getInstance()
 
 MockStatus::MockStatus()
 { 
-	setName("MockStatus"); 
+	
 }
 
 
@@ -34,6 +34,6 @@ void MockStatus::processInput(GameStateManager& manager, int input)
 void MockStatus::draw()
 {
 	clear();
-	mvaddstr(1, 1, name.c_str());
+	mvaddstr(1, 1, "MockStatus");
 	wnoutrefresh(stdscr);
 }

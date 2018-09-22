@@ -8,67 +8,94 @@
 #include "MegaMap.h"
 #include "ResourceManager.h"
 #include "Sprite.h"
+#include "ControlManager.h"
+#include "ControlHandle.h"
+#include "SimpleCommand.h"
+#include "EncounterTracker.h"
 
 class ExplorationProcessor : public MovementProcessor
 {
 private:
-	MapRoom* currMap = nullptr;
+	ControlManager cm;
+	SimpleCommand<ExplorationProcessor> exploreCmd;
+	SimpleCommand<ExplorationProcessor> dialogCmd;
+
+	ControlHandle room; //a wrapper for the current room being explored(not sure if I like this idea, but it works in a pinch)
+	Sprite controlSprite; //The sprite that is seen as the character we are controlling.
+	Sprite* objectSprite; //A sprite that the control Sprite has collided with
 	
-	//The sprite that is seen as the character we are controlling.
-	Sprite controlSprite;
 	Pos cursor; //position of exploration in map
-
-	//return true if movement was possible
-	bool processMovement(Movement& move);
-
 	WINDOW* screen = nullptr;
 
-	MegaMap map;
-	ResourceManager* resourceManager;
+	MegaMap* map; //the larger map being explored. The current room is just one room in this map
+	ResourceManager* resourceManager; 
 
-	bool clipMode = false;
-	bool findMapExit(Boundary& edge, Movement& move);
+	EncounterTracker encounterTracker;
+
+	bool inFight = false;
+	bool inMenu = false;
+
+	bool clipMode = false; //if true then character can walk anywhere without triggering anything or being obstructed
 	int jumpGap = 0; //testing the jumpable tiles
+	int damage = 0; //damage taken by actor while traversing the map
 
+
+	void setCurrRoomId(int id);
+
+	//return true if movement was possible
+	void processDirectionalInput(int input);
+	bool processMovement();
+	bool processThingCollisions();
+	bool processTileEffect();
+	void processStepTaken(Movement& stepTaken);
+
+	void changeFloor(int amount);
+	
+
+	void processExploreCmd();
+	void processDialogCmd();
+
+	bool findMapExit(Boundary& edge, Movement& move);
 	void moveActorAcrossMapSeam(MapExit& fromMap, MapExit& toMap);
-
-	bool processThingCollisions(Movement& move);
-	bool processTileEffect(Movement& move);
 
 	//returns true if actor lived. False if died
 	void alterActorHP(int amount);
 	
-	int damage = 0; //damage taken by actor while traversing the map
 public:
 	ExplorationProcessor();
+	~ExplorationProcessor();
 	
-	void setCursor(Pos cursorIn);
-
+	void setResourceManager(ResourceManager* resourceManagerIn);
+	void setControlActor(Actor* controlActorIn);
+	void setCursor(Pos& cursorIn);
+	void draw();
 	
-	Pos	getCursor() { return cursor; }
 
-
-
-	void setCurrMap(int id);
+	int processInput(int input);
+	
+	void barrierRoutine();
+	void signRoutine();
 
 	//getters/setters
+
+	Actor* getControlActor() { return (Actor*)controlSprite.thing; }
+
+	Pos	getCursor() { return cursor; }
+	ResourceManager* getResourceManager() { return resourceManager; }
+	WINDOW* getScreen() { return screen; }
+	
 	void setClipMode(bool clipModeIn) { clipMode = clipModeIn; }
 	bool getClipMode() { return clipMode; }
-
-	void setResourceManager(ResourceManager* resourceManagerIn) { resourceManager = resourceManagerIn; }
-	ResourceManager* getResourceManager() { return resourceManager; }
-
-
-	void setMap(MegaMap& mapIn) { map = mapIn; }
-	MegaMap& getMap() { return map; }
-
-
-	WINDOW* getScreen() { return screen; }
-
-
-	void setControlActor(Actor* controlActorIn);
 	
-	MapRoom* getCurrMap() { return currMap; }
 
-	void draw();
+	void setInFight(bool inFightIn) { inFight = inFightIn; }
+	bool getInFight() { return inFight; }
+
+
+	void setInMenu(bool inMenuIn) { inMenu = inMenuIn; }
+	bool getInMenu() { return inMenu; }
+
+
+	void setMap(MegaMap* mapIn) { map = mapIn; }
+	MegaMap* getMap() { return map; }
 };

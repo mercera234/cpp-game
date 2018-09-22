@@ -5,6 +5,7 @@
 #include "GameStateManager.h"
 #include "actor_helper.h"
 #include "EnemyPool.h"
+#include "defaults.h"
 
 GameState* BattleState::instance = nullptr;
 
@@ -18,7 +19,7 @@ GameState* BattleState::getInstance() //since static, cannot be virtual in super
 
 BattleState::BattleState()
 {
-	battleProcessor.setWindow(newwin(screenHeight, screenWidth, 0, 0));	
+	battleProcessor.setWindow(newwin(gameScreenHeight, gameScreenWidth, 0, 0));	
 }
 
 void BattleState::initDefaults()

@@ -153,6 +153,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BattleProcessorTest.cpp" />
+    <ClCompile Include="ExplorationProcessorTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GameLib\GameLib.vcxproj">

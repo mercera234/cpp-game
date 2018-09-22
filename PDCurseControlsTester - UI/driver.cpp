@@ -11,21 +11,18 @@
 #include "textboard_tests.h"
 #include "text_tests.h"
 #include "dialog_window_tests.h"
+#include "twod_storage_tests.h"
 
 //PDCURSE CONTROLS UI TESTER
 int main()
 {
 	TUI tui;
-	tui.init();
-	//DO NOT MODIFY ABOVE THIS LINE
 	
-	
-	controlManagerTest();
+	testProxy();
+	//controlManagerTest();
 	//fileChooserTest(FileDialogType::OPEN_DIALOG);
 	
 	
-	//DO NOT MODIFY BELOW THIS LINE
-	tui.shutdown();
 		
 	return 0;
 }

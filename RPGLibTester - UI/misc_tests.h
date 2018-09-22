@@ -1,11 +1,11 @@
 #pragma once
 
 
-void repositoryTest();
-void actorRepositoryTest();
-
-void wadDatabaseTest();
-void wadDatabasePrintEmptyTest();
+//void repositoryTest();
+//void actorRepositoryTest();
+//
+//void wadDatabaseTest();
+//void wadDatabasePrintEmptyTest();
 
 
 
@@ -18,4 +18,4 @@ void textBoardTest();
 
 //these should maybe not be in here
 void mapEditorTest();
-void masterEditorTest();
+//void masterEditorTest();

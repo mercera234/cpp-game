@@ -1,12 +1,145 @@
 #include "ExplorationProcessor.h"
 #include <sstream>
 #include "GameItem.h"
+#include "GameInput.h"
 #include "defaults.h"
+#include "Reactor.h"
+#include "actor_helper.h"
+#include "Barrier.h"
+#include "DialogWindow.h"
+#include "TextBoard.h"
 
 ExplorationProcessor::ExplorationProcessor()
 {	
+	exploreCmd.setReceiver(this);
+	exploreCmd.setAction(&ExplorationProcessor::processExploreCmd);
+
+	cm.registerControl(&room, KEY_LISTENER, &exploreCmd);
+	cm.setFocusedControl(&room);
+	
+	dialogCmd.setReceiver(this);
+	dialogCmd.setAction(&ExplorationProcessor::processDialogCmd);
+
+	encounterTracker.setMinSteps(minPeaceSteps);
+	encounterTracker.setMaxSteps(maxPeaceSteps);
+	encounterTracker.setEncounterChance(encounterChance);
 }
 
+void ExplorationProcessor::processExploreCmd()
+{
+	int input = cm.getInput();
+
+	if (isAlive(*resourceManager->getPlayer1()) == false && input != GameInput::OK_INPUT) //only accept ok input if player has died
+		return;
+
+	switch (input)
+	{
+	case GameInput::UP_INPUT:
+	case GameInput::DOWN_INPUT:
+	case GameInput::LEFT_INPUT:
+	case GameInput::RIGHT_INPUT:
+		processDirectionalInput(input);
+		break;
+	case GameInput::FIGHT_TRIGGER: //we will remove this later, but this is for triggering a fight immediately
+	{
+		inFight = true;
+	}
+	break;
+	case GameInput::TOGGLE_ENCOUNTERS:
+	{
+		encounterTracker.setTracking(!encounterTracker.getTracking());
+	}
+
+	break;
+	/*case GameInput::OK_INPUT:
+		if (isAlive(player1) == false)
+		{
+			GameState* state = TitleScreenState::getInstance();
+			manager.setState(state);
+		}
+		break;*/
+	case GameInput::OPEN_MENU_INPUT:
+	{
+		inMenu = true;
+	}
+
+	break;
+	}
+
+
+
+}
+
+void ExplorationProcessor::processDialogCmd()
+{
+	int input = cm.getInput();
+
+	if (input == GameInput::OK_INPUT)
+	{
+		Controllable* c = cm.popControl();
+		delete c;
+		cm.setFocusedControl(&room);
+	}
+}
+
+void ExplorationProcessor::processDirectionalInput(int input)
+{
+	int dirKey = -1;
+	switch (input)
+	{
+		//These should all be only one move at a time
+	case GameInput::UP_INPUT: dirKey = KEY_UP; break;
+	case GameInput::DOWN_INPUT: dirKey = KEY_DOWN; break;
+	case GameInput::LEFT_INPUT: dirKey = KEY_LEFT; break;
+	case GameInput::RIGHT_INPUT: dirKey = KEY_RIGHT; break;
+	}
+
+	std::vector<Movement> moveChain = processMovementInput(dirKey);
+
+	//verify that actor is still alive
+	Actor* player1 = resourceManager->getPlayer1();
+	if (isAlive(*player1) == false)
+	{
+		player1->symbol = nullSymbol;
+		return;
+	}
+
+	Movement stepTaken = moveChain.back();
+	if (moveChain.size() > 0)
+	{
+		processStepTaken(stepTaken);
+	}
+}
+
+void ExplorationProcessor::processStepTaken(Movement& stepTaken)
+{
+	resourceManager->theData.alterIntData(STEPS, 1);
+
+	encounterTracker.takeStep(stepTaken.axis);
+	if (encounterTracker.didEncounterOccur())
+	{
+		inFight = true;
+		
+		encounterTracker.resetSteps(); //prepare for next time
+
+		//get enemy pool from current map
+
+		//get specific enemy group
+
+		//pass enemies into BattleState
+	}
+}
+
+ExplorationProcessor::~ExplorationProcessor()
+{
+	delwin(screen);
+}
+
+void ExplorationProcessor::setResourceManager(ResourceManager* resourceManagerIn)
+{
+	resourceManager = resourceManagerIn;
+	map = resourceManager->currMap;
+}
 
 void ExplorationProcessor::setControlActor(Actor* controlActorIn)
 {
@@ -14,83 +147,67 @@ void ExplorationProcessor::setControlActor(Actor* controlActorIn)
 	controlSprite.quantity = 1;
 }
 
-void ExplorationProcessor::setCursor(Pos cursorIn)
+void ExplorationProcessor::setCursor(Pos& cursorIn)
 {
 	cursor = cursorIn;
 
 	MovementProcessor::setCursor(&cursor.y, &cursor.x);
-	map.setCursor(&cursor.y, &cursor.x);
-	setCurrMap(map.getCurrMapRoomId());
+	map->setCursor(&cursor.y, &cursor.x);
+	setCurrRoomId(map->getCurrMapRoomId());
 }
 
-
-
-void ExplorationProcessor::setCurrMap(int id)
+void ExplorationProcessor::setCurrRoomId(int id)
 {
 	if(screen == nullptr)
-		screen = newwin(map.getUnitHeight(), map.getUnitWidth(), 0, 0);
+		screen = newwin(map->getUnitHeight(), map->getUnitWidth(), 0, 0);
 
-	currMap = &resourceManager->mapRooms.find(id)->second;
-	currMap->setWindow(screen);
+	MapRoom* currRoom = &resourceManager->getRoom(id);
+	currRoom->setWindow(screen);
 
-	moveControl = currMap->getDisplay();
+	moveControl = currRoom->getDisplay();
+
+	room.control = currRoom;
 }
 
-bool ExplorationProcessor::findMapExit(Boundary& edge, Movement& move )
+int ExplorationProcessor::processInput(int input)
 {
-	//MapExit* sourceExit = new MapExit();
-	//sourceExit->mapId = currMap->getId();
-	//sourceExit->edge = edge;
-
-	//Axis axis = getAxis(move.dir);
-
-	//int* perpAxis = (axis == Axis::HORIZONTAL) ? curY : curX;
-	//int unitMapSize = (axis == Axis::HORIZONTAL) ? mapRepo.getUnitMapHeight() : mapRepo.getUnitMapWidth();
-	//sourceExit->unit = *perpAxis / unitMapSize;
-
-	//MapExit* destExit = mapRepo.getExit(sourceExit);
-
-	//if (destExit == nullptr) //no opening found, reverse the step
-	//{
-	//	reverseMovement(move);
-	//	return false;
-	//}
-
-	//moveActorAcrossMapSeam(*sourceExit, *destExit); //it->second is destination map
-	return true;
+	cm.handleInput(input);
+	return cm.getExitCode();
 }
 
 
-bool ExplorationProcessor::processMovement(Movement& move)
+
+
+bool ExplorationProcessor::processMovement()
 {
 	//move cursor by step
-	moveCursor(move);
+	moveCursor();
 
 
-	//keep cursor within bounds for right now
+	//keep cursor within map bounds for right now
 	if (*curX < 0 ||
 		*curY < 0 ||
-		*curX >= map.getRealWidth() ||
-		*curY >= map.getRealHeight())
+		*curX >= map->getRealWidth() ||
+		*curY >= map->getRealHeight())
 	{
-		reverseMovement(move); //later this should be replaced with searching for an exit to another map
+		reverseMovement(); //later this should be replaced with searching for an exit to another map
 		return false;
 	}
 
-	//check what new map id is and compare it to old one
-	int currMapId = map.getCurrMapRoomId();
+	//check what new room id is and compare it to old one
+	int currMapId = map->getCurrMapRoomId();
 
-	if (currMapId != currMap->getId()) //map has changed
+	if (currMapId != ((MapRoom*)(room.control))->id) //map has changed
 	{
-		setCurrMap(currMapId);
+		setCurrRoomId(currMapId);
 	}
 	else if (clipMode == false)//still on same map, and we're not clipping
 	{
-		if (processThingCollisions(move) == false) //false means move could not be completed
+		if (processThingCollisions() == false) //false means move could not be completed
 			return false;
 		
 		
-		if (processTileEffect(move) == false) //false means move could not be completed
+		if (processTileEffect() == false) //false means move could not be completed
 			return false;
 
 
@@ -103,51 +220,82 @@ bool ExplorationProcessor::processMovement(Movement& move)
 	return true;
 }
 
-bool ExplorationProcessor::processThingCollisions(Movement& move)
+bool ExplorationProcessor::processThingCollisions()
 {
-	Pos roomPos = map.getMapRoomPos();
-	Sprite* s = currMap->checkCollisionDetection(roomPos);
-	if (s == nullptr)
+	Pos roomPos = map->getMapRoomPos();
+	MapRoom* currRoom = (MapRoom*)room.control;
+
+	objectSprite = currRoom->checkCollisionDetection(roomPos);
+	if (objectSprite == nullptr) //no collisions
 		return true;
 
-	if (GameItem* item = dynamic_cast<GameItem*>(s->thing))
+	//check if s is passable
+	if (objectSprite->impassible) //push into sprite
 	{
-		switch (item->type)
+		if (Actor* actor = dynamic_cast<Actor*>(objectSprite->thing))
 		{
-		case GameItemType::MONEY:
-			resourceManager->theData.alterIntData(GOLD$, item->cost);
-			currMap->things.remove(s);
-			break;
-
-			//all other types should be transferred to inventory
-		/*case GameItemType::CONSUMABLE: 
-			((Actor*)controlSprite.thing)->alterStat(StatType::HP, item->value);*/
-			break;
+			//run through actor dialog then reverse the move
+			reverseMovement();
+			return false;
 		}
-		currMap->things.remove(s);
-	}
-	else if (Actor* actor = dynamic_cast<Actor*>(s->thing))
-	{
-		//control.pos.x++; //do not allow movement on top of npc
-		//move could not occur
-		reverseMovement(move);
-		return false;
-	}
 	
+		Reactor<ExplorationProcessor>* r = (Reactor<ExplorationProcessor>*)objectSprite->thing;
+		r->cmd->execute();
+	}
+	else //interact with sprite
+	{
+		if (GameItem* item = dynamic_cast<GameItem*>(objectSprite->thing))
+		{
+			switch (item->type)
+			{
+			case GameItemType::MONEY:
+				resourceManager->theData.alterIntData(GOLD$, item->cost);
+				currRoom->sprites.remove(objectSprite);
+				break;
+
+				//all other types should be transferred to inventory
+				/*case GameItemType::CONSUMABLE:
+				((Actor*)controlSprite.thing)->alterStat(StatType::HP, item->value);*/
+				break;
+			}
+			currRoom->sprites.remove(objectSprite);
+		}
+	}
 	return true;
 }
 
-bool ExplorationProcessor::processTileEffect(Movement& move)
+void ExplorationProcessor::barrierRoutine()
 {
+	reverseMovement();
+}
+
+void ExplorationProcessor::signRoutine()
+{
+	reverseMovement();
+	DialogWindow* post = new DialogWindow();
+	//post-> TODO Control that handles a stream of text
+	post->setWindow(newwin(6, gameScreenWidth, 0, 0));
+	TextBoard* board = new TextBoard;
+	post->setControl(board);
+	TextPiece* piece = new TextPiece(new LineFormat(1, Justf::CENTER), "The Test Region");
+	board->addPiece(piece);
+
+	cm.registerControl(post, KEY_LISTENER, &dialogCmd);
+	cm.setFocusedControl(post);
+}
+
+bool ExplorationProcessor::processTileEffect()
+{
+	MapRoom* currRoom = (MapRoom*)room.control;
 	//check what character stepped on
-	TwoDStorage<EffectType>& eLayer = currMap->getEffectsLayer();
-	Pos mapCoords = map.getMapRoomPos();
+	TwoDStorage<EffectType>& eLayer = currRoom->getEffectsLayer();
+	Pos mapCoords = map->getMapRoomPos();
 	EffectType type = eLayer.getDatum(mapCoords.y, mapCoords.x);
 
 	switch (type)
 	{
 	case EffectType::OBSTR:
-		reverseMovement(move);
+		reverseMovement();
 		return false;
 		break;
 	case EffectType::HP_DECREASE: alterActorHP(-1); break;
@@ -163,48 +311,41 @@ bool ExplorationProcessor::processTileEffect(Movement& move)
 		//check if tile beyond is passable
 		if (jumpGap > 0) //can't cross 2 jump blocks in a row
 		{
-			reverseMovement(move);
+			reverseMovement();
 			return false;
 		}
 
 		jumpGap++;
-		Movement jumpMove(move.dir, move.magnitude);
-		if (processMovement(jumpMove) == false) //move again to test next block
+		movementChain.push_back(currMove);
+		//Movement jumpMove(move.axis, move.magnitude);
+		if (processMovement() == false) //move again to test next block
 		{
 			jumpGap = 0; //reset jumpGap
-			reverseMovement(move);
+			reverseMovement();
 
 			return false;
 		}
 		jumpGap = 0;
 	}
 		break;
-	case EffectType::UP_EXIT: 
-	{
-		map.changeLayer(1);
-		int currMapId = map.getCurrMapRoomId();
-
-		if (currMapId != currMap->getId()) //map has changed
-		{
-			setCurrMap(currMapId);
-		}
-	}
-		break;
-	case EffectType::DOWN_EXIT: 
-	{
-		map.changeLayer(-1);
-		int currMapId = map.getCurrMapRoomId();
-
-		if (currMapId != currMap->getId()) //map has changed
-		{
-			setCurrMap(currMapId);
-		}
-	}
-		break;
+	case EffectType::UP_EXIT: changeFloor(1); break;
+	case EffectType::DOWN_EXIT: changeFloor(-1); break;
 	}
 	
 
 	return true;
+}
+
+void ExplorationProcessor::changeFloor(int amount)
+{
+	MapRoom* currRoom = (MapRoom*)room.control;
+	map->changeLayer(amount);
+	int currMapId = map->getCurrMapRoomId();
+
+	if (currMapId != currRoom->id) //map has changed
+	{
+		setCurrRoomId(currMapId);
+	}
 }
 
 void ExplorationProcessor::alterActorHP(int amount)
@@ -232,6 +373,30 @@ void ExplorationProcessor::alterActorHP(int amount)
 //		findMapExit(edge, move);
 //	}
 
+bool ExplorationProcessor::findMapExit(Boundary& edge, Movement& move)
+{
+	//MapExit* sourceExit = new MapExit();
+	//sourceExit->mapId = currMap->getId();
+	//sourceExit->edge = edge;
+
+	//Axis axis = getAxis(move.dir);
+
+	//int* perpAxis = (axis == Axis::HORIZONTAL) ? curY : curX;
+	//int unitMapSize = (axis == Axis::HORIZONTAL) ? mapRepo.getUnitMapHeight() : mapRepo.getUnitMapWidth();
+	//sourceExit->unit = *perpAxis / unitMapSize;
+
+	//MapExit* destExit = mapRepo.getExit(sourceExit);
+
+	//if (destExit == nullptr) //no opening found, reverse the step
+	//{
+	//	reverseMovement(move);
+	//	return false;
+	//}
+
+	//moveActorAcrossMapSeam(*sourceExit, *destExit); //it->second is destination map
+	return true;
+}
+
 
 
 void ExplorationProcessor::moveActorAcrossMapSeam(MapExit& fromMap, MapExit& toMap)
@@ -239,9 +404,9 @@ void ExplorationProcessor::moveActorAcrossMapSeam(MapExit& fromMap, MapExit& toM
 	//!!method is either broken or obsolete now
 //	Actor* controlActor = currMap->getControlActor(); //save controlActor
 
-	setCurrMap(toMap.mapId);
+	setCurrRoomId(toMap.mapId);
 
-	int unitMapSize = (toMap.edge == Boundary::WEST || toMap.edge == Boundary::EAST ) ? map.getUnitHeight() : map.getUnitWidth();
+	int unitMapSize = (toMap.edge == Boundary::WEST || toMap.edge == Boundary::EAST ) ? map->getUnitHeight() : map->getUnitWidth();
 
 	int unitMultiplier = fromMap.unit > toMap.unit ? -unitMapSize : unitMapSize;
 	int unitOffset = abs(fromMap.unit - toMap.unit) * unitMultiplier;
@@ -275,12 +440,14 @@ void ExplorationProcessor::moveActorAcrossMapSeam(MapExit& fromMap, MapExit& toM
 
 void ExplorationProcessor::draw()
 {
-	currMap->draw();
-	Image* display = currMap->getDisplay();
+	cm.draw();
+	
+	MapRoom* currRoom = (MapRoom*)room.control;
+	Image* display = currRoom->getDisplay();
 
 	if (controlSprite.thing != nullptr) //draw actor if present
 	{
-		Pos mapCoords = map.getMapRoomPos();
+		Pos mapCoords = map->getMapRoomPos();
 		int y = mapCoords.y - display->getUlY();
 		int x = mapCoords.x - display->getUlX();
 		

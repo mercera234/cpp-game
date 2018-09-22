@@ -14,7 +14,7 @@ GameState* MockState2::getInstance()
 
 MockState2::MockState2()
 {
-	setName("MockState2");
+
 }
 
 void MockState2::processInput(GameStateManager& manager, int input)

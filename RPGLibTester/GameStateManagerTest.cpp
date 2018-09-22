@@ -29,7 +29,7 @@ namespace RPGLibTester
 		{
 			manager.setState(MockState1::getInstance());
 			
-			Assert::IsTrue("MockState1" == manager.getState()->getName()); //state is now 2 instead of 1
+			Assert::IsTrue(MockState1::getInstance() == manager.getState()); //state is now 2 instead of 1
 		}
 
 	};

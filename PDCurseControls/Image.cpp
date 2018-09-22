@@ -1,4 +1,5 @@
 #include <fstream>
+#include <assert.h>
 #include "Image.h"
 #include "TUI.h"
 
@@ -6,27 +7,19 @@ const int NULL_MARKER_SPACING = 8;
 
 Image::Image()
 {
-	init();
 }
 
 
 Image::Image(WINDOW* win)
 {
-	init();
 	setWindow(win);
 }
 
 Image::Image(int rows, int cols, WINDOW* win)
 {
-	init();
 	setWindow(win);
 
 	setDimensions(rows, cols);	
-}
-
-void Image::init()
-{
-	
 }
 
 
@@ -129,7 +122,7 @@ int Image::save(std::ofstream& saveFile)
 	saveFile.write((char*)&totalCols, sizeof(int));
 	
 	chtype c;
-	for (unsigned int i = 0; i < totalTiles; i++)
+	for (int i = 0; i < totalTiles; i++)
 	{
 		c = tileMap.getDatum(i);
 		saveFile.write((char*)&c, sizeof(chtype));
@@ -157,7 +150,7 @@ int Image::load(std::ifstream& loadFile)
 	setDimensions(rows, cols);
 
 	chtype c;
-	for (unsigned int i = 0; i < totalTiles; i++)
+	for (int i = 0; i < totalTiles; i++)
 	{
 		loadFile.read((char*)&c, sizeof(chtype));
 		tileMap.setDatum(i, c);
@@ -187,37 +180,38 @@ chtype Image::getTile(unsigned int row, unsigned int col)
 }
 
 
-Image* Image::getFullScreenShot() //static
+void getFullScreenShot(Image& snapShot) //static
 {
-	return getScreenShot(0, 0, screenHeight, screenWidth);
+	return getScreenShot(snapShot, 0, 0, getmaxy(stdscr), getmaxx(stdscr));
 }
 
-Image* Image::getScreenShot(unsigned int y, unsigned int x, unsigned int height, unsigned int width) //static
+void getScreenShot(Image& snapShot, int y, int x, int height, int width) //static
 {
-	//get actual screen dimensions for error checking
-	if (x > screenWidth || y > screenHeight) //nothing to return if coordinates are outside of screen
-		return NULL;
+	int winheight = getmaxy(stdscr);
+	int winWidth = getmaxx(stdscr);
+
+	assert(x >= 0 && y >= 0 && x < winWidth && y < winheight);
+		
 
 	//if width/height was set too long, then take a snapshot of what is available
-	if (x + width > screenWidth)
-		width = screenWidth - x;
+	if (x + width > winWidth)
+		width = winWidth - x;
 
-	if (y + height > screenHeight)
-		height = screenHeight - y;
+	if (y + height > winheight)
+		height = winheight - y;
 
 
 	//create new snapshot
-	Image* snapShot = new Image(height, width, stdscr);
+	snapShot.setDimensions(height, width);
+	snapShot.setWindow(stdscr);
 
-	TwoDStorage<chtype>* tileMap = snapShot->getTileMap();
+	TwoDStorage<chtype>* tileMap = snapShot.getTileMap();
 
-	for (unsigned int i = 0; i < snapShot->getTotalTiles(); i++)
+	for (int i = 0; i < snapShot.getTotalTiles(); i++)
 	{
 		int row = i / width;
 		int col = i % width;
 		chtype c = mvwinch(stdscr, row + y, col + x);
 		tileMap->setDatum(row, col, c);
 	}
-
-	return snapShot;
 }

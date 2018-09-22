@@ -42,24 +42,30 @@ private:
 	int topFrameHeight;
 	int bottomFrameHeight;
 
-
 	Frame mainFrame;
 	GridMenu mainMenu;
-
+	
 	Frame playerFrame;
 	GridMenu playerMenu;
 
 	Frame bodyFrame;
 	TextBoard bodyContent;
-	
+
 	TextBoard statusContent;
 	TextParamCurrMaxValue* hpRow, *mpRow;
 	TextParamValue<BoundInt>* strengthRow, *defenseRow, *intelRow, *willRow, *agilityRow, *expRow;
 
 	TextParamValue<BoundInt>* gold, *steps, *enemiesKilled, *battlesWon;
 
+	
 	Frame descFrame;
-	GridMenu descMenu;
+	TextBoard descContent;
+	TextPiece* mapText;
+	TextPiece* roomText;
+	TextParamValue<std::string>* floor;
+
+	
+
 
 	void processMainMenuInput();
 	void processPlayerMenuInput();
@@ -68,8 +74,11 @@ private:
 	void setupMainMenu();
 	void setupPlayerMenu();
 
+	void setupDescFields();
+
 	void setupBodyFields();
 	void setupHubContent();
+	void setupDescContent();
 	void setupStatusFields();
 	void setupStatusContent();
 	

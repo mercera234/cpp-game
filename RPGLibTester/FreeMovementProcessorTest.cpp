@@ -16,17 +16,10 @@ namespace RPGLibTester
 
 		TEST_METHOD_INITIALIZE(startTUI)
 		{
-			tui.init();
-
 			img.setWindow(stdscr);
 			img.setDimensions(5, 5);
 			fmp.setMoveControl(&img);
 			fmp.setCursor(&y, &x);
-		}
-
-		TEST_METHOD_CLEANUP(stopTUI)
-		{
-			tui.shutdown();
 		}
 
 		TEST_METHOD(setViewMode)

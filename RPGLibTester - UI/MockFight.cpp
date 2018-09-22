@@ -15,7 +15,6 @@ GameState* MockFight::getInstance()
 
 MockFight::MockFight()
 { 
-	setName("MockFight"); 
 }
 
 
@@ -34,6 +33,6 @@ void MockFight::processInput(GameStateManager& manager, int input)
 void MockFight::draw()
 {
 	clear();
-	mvaddstr(1, 1, name.c_str());
+	mvaddstr(1, 1, "MockFight");
 	wnoutrefresh(stdscr);
 }

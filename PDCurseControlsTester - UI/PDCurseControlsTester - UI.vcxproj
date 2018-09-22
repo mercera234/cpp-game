@@ -132,6 +132,7 @@
     <ClCompile Include="textboard_tests.cpp" />
     <ClCompile Include="text_tests.cpp" />
     <ClCompile Include="tui_tests.cpp" />
+    <ClCompile Include="twod_storage_tests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ControlManageApp.h" />
@@ -147,6 +148,7 @@
     <ClInclude Include="textboard_tests.h" />
     <ClInclude Include="text_tests.h" />
     <ClInclude Include="tui_tests.h" />
+    <ClInclude Include="twod_storage_tests.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PDCurseControls\PDCurseControls.vcxproj">

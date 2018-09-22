@@ -50,10 +50,16 @@ void MapRoom::draw()
 	display.draw();	
 
 	//draw map things
-	for each (Sprite* thing in things)
+	for each (Sprite* thing in sprites)
 	{
-		TUI::printOnBkgd(thing->symbol, win, thing->pos.y, thing->pos.x);
-		//mvwaddch(win, thing->pos.y, thing->pos.x, thing->symbol);
+		for (int i = 0; i < thing->height; i++)
+		{
+			for (int j = 0; j < thing->width; j++)
+			{
+				TUI::printOnBkgd(thing->symbol, win, thing->pos.y + i, thing->pos.x + j);
+			}
+		}
+		
 	}
 	wnoutrefresh(win);
 }
@@ -61,13 +67,6 @@ void MapRoom::draw()
 
 int MapRoom::save(std::ofstream& saveFile)
 {
-	/*std::ofstream gFile;
-	gFile.open(fileName, std::ios::trunc | std::ios::binary);
-	if (gFile.is_open() == false)
-		return false;*/
-
-//	gFile.write((char*) &id, sizeof(int));
-
 	//save only graphical details that cannot be easily stored in text file
 	display.save(saveFile);
 	
@@ -85,14 +84,6 @@ int MapRoom::save(std::ofstream& saveFile)
 
 int MapRoom::load(std::ifstream& loadFile)
 {
-	/*std::ifstream gFile;
-	gFile.open(fileName, std::ios::binary);
-	if (gFile.is_open() == false)
-		return false;*/
-
-	//loadFile.read((char*)&id, sizeof(int));
-
-
 	if(display.getWindow() == nullptr)
 		display.setWindow(win);
 
@@ -102,7 +93,7 @@ int MapRoom::load(std::ifstream& loadFile)
 	setDimensions(display.getTotalRows(), display.getTotalCols());
 
 	effectsLayer.setDimensions(totalRows, totalCols);
-	for (unsigned int i = 0; i < totalTiles; i++)
+	for (int i = 0; i < totalTiles; i++)
 	{
 		EffectType type;
 		loadFile.read((char*)&type, sizeof(EffectType));
@@ -139,11 +130,12 @@ void MapRoom::resize(int rows, int cols)
 
 Sprite* MapRoom::checkCollisionDetection(Pos& pos)
 {
-	for each (Sprite* thing in things)
+	for each (Sprite* sprite in sprites)
 	{
-		if (pos.y == thing->pos.y && pos.x == thing->pos.x)//if item is stepped over
+		if (pos.y >= sprite->pos.y && pos.y < sprite->pos.y + sprite->height
+			&& pos.x >= sprite->pos.x && pos.x < sprite->pos.x + sprite->width)//if item is stepped over
 		{
-			return thing;
+			return sprite;
 		}
 	}
 	return nullptr;

@@ -23,12 +23,6 @@ namespace PDCurseControlsTester
 		TEST_METHOD_INITIALIZE(begin)
 		{
 			cm.setCaller(this);
-			tui.init();
-		}
-
-		TEST_METHOD_CLEANUP(end)
-		{
-			tui.shutdown();
 		}
 
 		TEST_METHOD(registerControlTest)

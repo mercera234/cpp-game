@@ -12,12 +12,10 @@
 int main()
 {
 	TUI tui;
-	tui.init();
 	
 
-	loadConfigurationTextFile();
+	freeMovementProcessorTest();
 	
-	tui.shutdown();
 		
 	return 0;
 }

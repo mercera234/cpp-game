@@ -4,7 +4,7 @@
 #include "FileDialog.h"
 #include "GridMenu.h"
 #include "LineItem.h"
-#include "input_return_codes.h"
+#include "ExitCode.h"
 
 void dialogWindowTest()
 {

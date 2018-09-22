@@ -20,10 +20,3 @@ enum GameInput
 	TOGGLE_ENCOUNTERS
 };
 
-
-//
-//const Input inputs[2] = {
-//	Input("Ok", OK_INPUT, false),
-//	Input("Cancel", CANCEL_INPUT, false)
-//
-//};

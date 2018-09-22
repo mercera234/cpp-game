@@ -2,11 +2,11 @@
 #include "LineItem.h"
 #include "defaults.h"
 #include "menu_drivers.h"
-#include "input_return_codes.h"
+#include "ExitCode.h"
 
 TitleScreen::TitleScreen()
 {
-	win = newwin(screenHeight, screenWidth, 0, 0);
+	win = newwin(gameScreenHeight, gameScreenWidth, 0, 0);
 	titleMenu.resetItems(3, 1);
 
 

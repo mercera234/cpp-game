@@ -1,11 +1,14 @@
 #pragma once
 #include <algorithm>
 #include <vector>
+#include <assert.h>
+#include <fstream>
+#include "Storable.h"
 
 template <class T>
-class TwoDStorage
+class TwoDStorage : public Storable
 {
-private:
+protected:
 	unsigned int rows = 0;
 	unsigned int cols = 0;
 	std::vector<T> data;
@@ -34,7 +37,55 @@ public:
 	bool setDatum(unsigned int y, unsigned int x, const T &datum);
 
 	std::vector<T>& getData() { return data; }
+
+	//Storable override
+	int save(std::ofstream& saveFile);
+	int load(std::ifstream& loadFile);
 };
+
+
+//Storable override
+template <class T>
+int TwoDStorage<T>::save(std::ofstream& saveFile)
+{
+	std::streampos startPos = saveFile.tellp();
+
+	saveFile.write((char*)&rows, sizeof(int))
+			.write((char*)&cols, sizeof(int));
+
+	T datum;
+	for (unsigned int i = 0; i < data.size(); i++)
+	{
+		datum = data[i];
+		saveFile.write((char*)&datum, sizeof(T));
+	}
+
+	std::streampos endPos = saveFile.tellp();
+
+	return (int)(endPos - startPos);
+}
+
+template <class T>
+int TwoDStorage<T>::load(std::ifstream& loadFile)
+{
+	std::streampos startPos = loadFile.tellg();
+
+	loadFile.read((char*)&rows, sizeof(int))
+			.read((char*)&cols, sizeof(int));
+
+	setDimensions(rows, cols);
+
+	T datum;
+	for (unsigned int i = 0; i < data.size(); i++)
+	{
+		loadFile.read((char*)&datum, sizeof(T));
+		setDatum(i, datum);
+	}
+
+	std::streampos endPos = loadFile.tellg();
+
+	return (int)(endPos - startPos);
+}
 
 template <class T>
 TwoDStorage<T>::TwoDStorage(unsigned int rows, unsigned int cols)
@@ -102,18 +153,16 @@ void TwoDStorage<T>::resize(unsigned int newRows, unsigned int newCols, std::vec
 template <class T>
 T TwoDStorage<T>::getDatum(unsigned int y, unsigned int x)
 {
-	/*if (y >= rows || x >= cols)
-		throw new exception;*/
-
+	assert(y < rows && x < cols);
+	
 	return getDatum(y * cols + x);
 }
 
 template <class T>
 T TwoDStorage<T>::getDatum(unsigned int element)
 {
-	/*if (element >= size)
-		throw new exception;*/
-
+	assert(element < data.size());
+	
 	return data[element];
 }
 

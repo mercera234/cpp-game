@@ -648,7 +648,7 @@ void factoryTest()
 	MapRoom* aMap = f.createMap(7, 23, 51, '&', stdscr);
 
 	aMap->draw();
-	mvaddch(1, 1, aMap->getId()); //displays ^G for 7
+	mvaddch(1, 1, aMap->id); //displays ^G for 7
 	doupdate();
 
 	int input = getch();
@@ -659,7 +659,7 @@ void factoryTest()
 
 void animationTest()
 {
-	resize_term(screenHeight, screenWidth);
+	resize_term(23, 51);
 
 	MapRoom map0(stdscr, "data\\water_templ.map");
 	Image* img = map0.getDisplay();

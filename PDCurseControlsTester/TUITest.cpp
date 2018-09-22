@@ -10,16 +10,6 @@ namespace PDCurseControlsTester
 	{
 		TUI tui;
 
-		TEST_METHOD_INITIALIZE(startTUI)
-		{
-			tui.init(); //stdscr is initialized after init is called
-		}
-
-		TEST_METHOD_CLEANUP(endTUI)
-		{
-			tui.shutdown();
-		}
-
 		TEST_METHOD(init_stdscrTest)
 		{
 			Assert::IsNotNull(stdscr);
@@ -28,6 +18,18 @@ namespace PDCurseControlsTester
 		TEST_METHOD(init_stdscrHeightTest)
 		{
 			Assert::AreEqual(LINES, getmaxy(stdscr));
+		}
+
+		TEST_METHOD(getScreenHeightTest)
+		{
+			int y = getmaxy(stdscr);
+			Assert::AreEqual(y, getScreenHeight());
+		}
+
+		TEST_METHOD(getScreenWidthTest)
+		{
+			int x = getmaxx(stdscr);
+			Assert::AreEqual(x, getScreenWidth());
 		}
 
 		TEST_METHOD(init_stdscrWidthTest)
@@ -87,11 +89,6 @@ namespace PDCurseControlsTester
 			Assert::AreEqual(y, m->y);
 		}
 
-		TEST_METHOD(shutdownTest)
-		{
-			tui.shutdown();
-			Assert::IsTrue(isendwin() != 0);
-		}
 
 		//Console windows are not instantiated by unit test
 		/*TEST_METHOD(consoleCenterTest)

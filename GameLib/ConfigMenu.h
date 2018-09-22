@@ -4,7 +4,7 @@
 #include "ResourceManager.h"
 #include "Input.h"
 #include <map>
-#include "input_return_codes.h"
+#include "ExitCode.h"
 /*
 Config item is selected using key mapped to OK
 configuration of item is canceled by pressing Cancel

@@ -14,7 +14,7 @@ GameState* MockState1::getInstance()
 
 MockState1::MockState1()
 { 
-	setName("MockState1"); 
+	
 }
 
 

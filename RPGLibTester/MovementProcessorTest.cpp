@@ -2,6 +2,7 @@
 #include "MovementProcessor.h"
 #include "MockMovementProcessor.h"
 #include "Image.h"
+#include "MockControl.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -10,16 +11,6 @@ namespace RPGLibTester
 	TEST_CLASS(MovementProcessorTest)
 	{
 		TUI tui;
-
-		TEST_METHOD_INITIALIZE(startTUI)
-		{
-			tui.init();
-		}
-
-		TEST_METHOD_CLEANUP(stopTUI)
-		{
-			tui.shutdown();
-		}
 
 		TEST_METHOD(setMoveControlTest)
 		{
@@ -62,6 +53,27 @@ namespace RPGLibTester
 			Assert::AreEqual(1, x);
 		}
 
+		TEST_METHOD(processComplexMovementInputTest)
+		{
+			MockMovementProcessor mmp;
+
+			MockControl control;
+			WINDOW* win = dupwin(stdscr);
+			control.setWindow(win);
+			control.setDimensions(75, 19);
+
+			mmp.setMoveControl(&control);
+			int y = 0;
+			int x = 0;
+			mmp.setCursor(&y, &x);
+
+			mmp.processMovementInput(CTL_END);
+
+			Assert::AreEqual((int)control.getTotalCols(), x);
+			Assert::AreEqual((int)control.getTotalRows(), y);
+			delwin(win);
+		}
+
 		TEST_METHOD(checkReturnValTest)
 		{
 			MockMovementProcessor mmp;
@@ -74,10 +86,10 @@ namespace RPGLibTester
 			int x = 0;
 			mmp.setCursor(&y, &x);
 
-			MovementChain mc = mmp.processMovementInput(CTL_END);
+			std::vector<Movement> chain = mmp.processMovementInput(CTL_END);
 
-			Movement& move1 = mc.moves[0];
-			Movement& move2 = mc.moves[1];
+			Movement& move1 = chain[0];
+			Movement& move2 = chain[1];
 
 			Assert::AreEqual(cols, move1.magnitude);
 			Assert::AreEqual(rows, move2.magnitude);

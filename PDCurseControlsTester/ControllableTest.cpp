@@ -11,16 +11,6 @@ namespace PDCurseControlsTester
 		TUI tui;
 		MockControl control;
 
-		TEST_METHOD_INITIALIZE(startTUI)
-		{
-			tui.init();
-		}
-
-		TEST_METHOD_CLEANUP(stopTUI)
-		{
-			tui.shutdown();
-		}
-
 		TEST_METHOD(getWindowTest)
 		{
 			control.setWindow(stdscr);

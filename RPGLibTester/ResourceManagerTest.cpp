@@ -7,16 +7,8 @@ namespace RPGLibTester
 {
 	TEST_CLASS(ResourceManagerTest)
 	{
+		TUI tui;
 		ResourceManager rm;
-
-		TEST_METHOD(getActorsTest)
-		{
-			std::ifstream is;
-			int actorsLoaded = rm.loadActorsFromTextFile(is);
-
-			//loads nothing since we aren't connecting to filesystem
-			Assert::AreEqual(0, actorsLoaded); 
-		}
 
 		TEST_METHOD(getNullResourcesTest)
 		{
@@ -43,6 +35,12 @@ namespace RPGLibTester
 			chtype c = tileMap->getDatum(4, 8);
 
 			Assert::AreEqual('!', (char)c); 
+		}
+
+		TEST_METHOD(getNextIdTest)
+		{
+			rm.resetNextId();
+			Assert::AreEqual(0, rm.getNextId()); //without being called before, next id will be 0
 		}
 	};
 }

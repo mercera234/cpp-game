@@ -8,11 +8,27 @@ namespace PDCurseControlsTester
 {
 	TEST_CLASS(GridMenuTest)
 	{
+		TUI tui;
+		WINDOW* stdscrCpy = nullptr;
+		TEST_METHOD_INITIALIZE(startTUI)
+		{
+			stdscrCpy = dupwin(stdscr);
+		}
+
+	/*	TEST_METHOD_CLEANUP(endTUI)
+		{
+			if(stdscrCpy != nullptr) //for some reason stdscrCpy is already deleted before it gets here
+				delwin(stdscrCpy);
+		}*/
+
+		
+
 		TEST_METHOD(constructorTest)
 		{
 			int rows = 3;
 			int cols = 7;
-			GridMenu menu(stdscr, rows, cols);
+			
+			GridMenu menu(stdscrCpy, rows, cols);
 
 			Assert::AreEqual(rows * cols, (int)menu.getMaxItems());
 		}
@@ -21,7 +37,7 @@ namespace PDCurseControlsTester
 		{
 			int rows = 1;
 			int cols = 1;
-			GridMenu menu(stdscr, rows, cols);
+			GridMenu menu(stdscrCpy, rows, cols);
 
 			MockMenuItem* mmi = new MockMenuItem();
 			mmi->index = 0;
@@ -35,7 +51,7 @@ namespace PDCurseControlsTester
 		{
 			int rows = 1;
 			int cols = 2;
-			GridMenu menu(stdscr, rows, cols);
+			GridMenu menu(stdscrCpy, rows, cols);
 
 			MockMenuItem* mmi = new MockMenuItem();
 			mmi->index = 0;
@@ -48,7 +64,7 @@ namespace PDCurseControlsTester
 		{
 			int rows = 1;
 			int cols = 2;
-			GridMenu menu(stdscr, rows, cols);
+			GridMenu menu(stdscrCpy, rows, cols);
 
 			MockMenuItem* mmi = new MockMenuItem();
 			mmi->index = 1;
@@ -61,7 +77,7 @@ namespace PDCurseControlsTester
 		{
 			int rows = 1;
 			int cols = 2;
-			GridMenu menu(stdscr, rows, cols);
+			GridMenu menu(stdscrCpy, rows, cols);
 
 			MockMenuItem* mmi = new MockMenuItem();
 			menu.setItem(mmi, 0, 0);
@@ -80,7 +96,7 @@ namespace PDCurseControlsTester
 		{
 			int rows = 3;
 			int cols = 1;
-			GridMenu menu(stdscr, rows, cols);
+			GridMenu menu(stdscrCpy, rows, cols);
 
 			MockMenuItem* mmi = new MockMenuItem();
 			menu.setItem(mmi, 0, 0);

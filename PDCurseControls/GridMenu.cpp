@@ -227,12 +227,6 @@ void GridMenu::draw()
 	//clear the menu
 	wclear(win);
 	assert(posted);
-	/*if (posted == false)
-	{
-		mvwaddstr(win, 0, 0, "NOT POSTED");
-		return;
-	}*/
-		
 
 	if (!showing) return;
 

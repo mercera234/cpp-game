@@ -2,7 +2,6 @@
 #include "GameState.h"
 #include "GridMenu.h"
 #include "curses.h"
-#include "WadDatabase.h"
 #include "TitleScreen.h"
 
 

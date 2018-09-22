@@ -17,7 +17,6 @@ GameState* MockExplore::getInstance()
 
 MockExplore::MockExplore()
 {
-	setName("MockExplore");
 }
 
 void MockExplore::processInput(GameStateManager& manager, int input)
@@ -40,6 +39,6 @@ void MockExplore::processInput(GameStateManager& manager, int input)
 void MockExplore::draw()
 {
 	clear();
-	mvaddstr(1, 1, name.c_str());
+	mvaddstr(1, 1, "MockExplore");
 	wnoutrefresh(stdscr);
 }

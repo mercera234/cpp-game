@@ -90,15 +90,12 @@ int getKeyFromString(const std::string& text)
 	std::string upperText(text.length(), ' ');
 	std::transform(text.begin(), text.end(), upperText.begin(), toupper);
 	
-
-
-	//TODO these strings should be stored globally
-	if (upperText.compare("UP") == 0) return KEY_UP;
-	if (upperText.compare("DOWN") == 0) return KEY_DOWN;
-	if (upperText.compare("LEFT") == 0) return KEY_LEFT;
-	if (upperText.compare("RIGHT") == 0) return KEY_RIGHT;
-	if (upperText.compare("SPACE") == 0) return ' ';
-	if (upperText.compare("ENTER") == 0) return '\r';
+	if (upperText.compare(UP) == 0) return KEY_UP;
+	if (upperText.compare(DOWN) == 0) return KEY_DOWN;
+	if (upperText.compare(LEFT) == 0) return KEY_LEFT;
+	if (upperText.compare(RIGHT) == 0) return KEY_RIGHT;
+	if (upperText.compare(SPACE) == 0) return ' ';
+	if (upperText.compare(ENTER) == 0) return '\r';
 
 	return -1; //string could not be converted
 }

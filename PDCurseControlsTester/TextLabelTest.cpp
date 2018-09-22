@@ -10,16 +10,6 @@ namespace PDCurseControlsTester
 	{
 		TUI tui;
 
-		TEST_METHOD_INITIALIZE(startTUI)
-		{
-			tui.init();
-		}
-
-		TEST_METHOD_CLEANUP(stopTUI)
-		{
-			tui.shutdown();
-		}
-
 		TEST_METHOD(getTextTest)
 		{
 			std::string txt = "Test";

@@ -95,9 +95,7 @@ enum class CursorType
 	BOLD = 2
 };
 
-const unsigned short screenHeight = 23;
-const unsigned short screenWidth = 51;
-const unsigned short totalScreenTiles = screenHeight * screenWidth;
+
 const std::string colorNames[16] = {
 	"Black", //0
 	"Blue", //1
@@ -115,6 +113,10 @@ const std::string colorNames[16] = {
 	"Bold Magenta",
 	"Bold Yellow",
 	"Bold White" };
+
+
+int getScreenHeight();
+int getScreenWidth();
 
 void setCursorType(CursorType typeIn);
 
@@ -146,11 +148,9 @@ public:
 	static MEVENT mouseEvent; //the one mouse event in the program
 	static CursorType cursorType;// = CursorType::INVISIBLE;
 	TUI();
+	~TUI();
 
 	WINDOW* win;
-	void init();
-	void shutdown(); //shutdown curses and other functions
-
-
+	//void init();
 	
 };

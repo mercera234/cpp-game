@@ -31,7 +31,7 @@ private:
 	/*The current layer being occupied by a player, or being displayed.
 	The index representing the players point of view of what floor they are on*/
 	int floorIndex = 0;
-	
+	std::string floorLabel;
 public:
 	MegaMap() {}; //set unit height and width, then cursor
 
@@ -78,7 +78,7 @@ public:
 
 	int getFloorIndex();
 
-	std::string getFloorLabel();
+	std::string& getFloorLabel();
 
 	bool setFloor(int floorIn);
 

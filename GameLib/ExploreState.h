@@ -2,7 +2,6 @@
 #include "GameState.h"
 #include "ExplorationProcessor.h"
 #include "MapRepository.h"
-#include "WadDatabase.h"
 #include "EncounterTracker.h"
 
 
@@ -13,15 +12,8 @@ private:
 	static GameState* instance;
 	ExplorationProcessor explorationProcessor;
 	
-	//MapRoom* map;
-	Actor player1;
-
-	EncounterTracker encounterTracker;
-	
 	void loadResourceManagerData();
 
-	void processDirectionalInput(int input);
-	void processStepTaken(Movement& stepTaken);
 public:
 	static GameState* getInstance(); //since static, cannot be virtual in super class
 	void initDefaults();

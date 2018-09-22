@@ -1,21 +1,17 @@
 #include "TUI.h"
 #include "misc_tests.h"
+#include "defaults.h"
 
 //GAMELIB UI TESTER
 int main()
 {
 	TUI tui;
-	tui.init();
-	resize_term(screenHeight, screenWidth);
+	resize_term(gameScreenHeight, gameScreenWidth);
 
 
 
 
-	mainMenuTest();
-
-
-
-	tui.shutdown();
+	exploreOneMapTest();
 
 	return 0;
 }

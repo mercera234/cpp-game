@@ -9,7 +9,7 @@
 #include "TileEffect.h"
 #include "Sprite.h"
 
-class MapRoom : public Controllable, Thing, Storable
+class MapRoom : public Controllable, public Thing, public Storable
 {
 private:
 	//data storage
@@ -27,7 +27,7 @@ public:
 	/*All things that can be on a map (
 	pickups (items and money)
 	actors)*/
-	std::list<Sprite*> things;
+	std::list<Sprite*> sprites;
 	
 	MapRoom() {}
 	MapRoom(const std::string& name, int rows, int cols, WINDOW* win); //create new map
@@ -59,21 +59,12 @@ public:
 	//getters/setters
 	Image* getDisplay() { return &display; }
 	TwoDStorage<EffectType>& getEffectsLayer() { return effectsLayer; }
-	
-	unsigned short getId() { return id; }
-	void setId(unsigned short id) { this->id = id; }
-
 
 	void setBrightness(bool brightnessIn) { brightness = brightnessIn; }
 	bool getBrightness() { return brightness; }
 
-
 	void setRandomEncounters(bool randomEncountersIn) { randomEncounters = randomEncountersIn; }
 	bool getRandomEncounters() { return randomEncounters; }
 
-
-
-	void setName(const std::string& name) { this->name = name; }
-	std::string getName() { return name; }
 	void setPosition(int y, int x);
 };

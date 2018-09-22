@@ -58,6 +58,8 @@ void freeMovementProcessorTest()
 		case KEY_END: //all the way right
 		case CTL_HOME://upper left corner
 		case CTL_END: //lower right corner
+		case KEY_SHOME://all the way up
+		case KEY_SEND://all the way down
 			mp->processMovementInput(input); break;
 		case KEY_ESC: playing = false; break;
 

@@ -6,11 +6,13 @@
 void loadDataFiles(ResourceManager& rm);
 void setupDefaultDataKeys(ResourceManager& rm);
 void defaultGameInputs(std::map<int, Input>& inputManager);
-//int getInput(std::map<int, Input>& inputs, bool useRawInput = false);
 int getInput(ResourceManager& resourceManager);
 
 
 //game defaults
+const int gameScreenHeight = 23;
+const int gameScreenWidth = 51;
+
 const std::string player1Name = "Hero";
 const int startingMapId = 5;
 const int startY = 9;
@@ -66,3 +68,5 @@ const std::string AGILITY = "Agility";
 const std::string EXP = "Exp";
 const std::string TO_NEXT = "To Next";
 
+//
+const std::string S_LEVEL = "Level";

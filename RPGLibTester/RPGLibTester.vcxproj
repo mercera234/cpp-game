@@ -152,6 +152,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="MockControl.h" />
     <ClInclude Include="MockMovementProcessor.h" />
     <ClInclude Include="MockMusicPlayer.h" />
     <ClInclude Include="MockPlayer.h" />

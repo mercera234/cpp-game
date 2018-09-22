@@ -121,11 +121,12 @@
     <ClInclude Include="compare_functions.h" />
     <ClInclude Include="ConfirmDialog.h" />
     <ClInclude Include="ControlCommand.h" />
+    <ClInclude Include="ControlHandle.h" />
     <ClInclude Include="DialogWindow.h" />
     <ClInclude Include="FileDialog.h" />
     <ClInclude Include="Format.h" />
     <ClInclude Include="Input.h" />
-    <ClInclude Include="input_return_codes.h" />
+    <ClInclude Include="ExitCode.h" />
     <ClInclude Include="key_strings.h" />
     <ClInclude Include="SimpleControlCommand.h" />
     <ClInclude Include="ObjectLinkedItem.h" />
@@ -171,9 +172,11 @@
     <ClInclude Include="TextField.h" />
     <ClInclude Include="TextLabel.h" />
     <ClInclude Include="TUI.h" />
+    <ClInclude Include="TwoDStorageProxy.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ConfirmDialog.cpp" />
+    <ClCompile Include="ControlHandle.cpp" />
     <ClCompile Include="DialogWindow.cpp" />
     <ClCompile Include="Direction.cpp" />
     <ClCompile Include="FileDialog.cpp" />

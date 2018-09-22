@@ -1,7 +1,7 @@
 #pragma once
 #include "DialogWindow.h"
 #include "GridMenu.h"
-#include "input_return_codes.h"
+#include "ExitCode.h"
 
 enum class ConfirmMethod
 {

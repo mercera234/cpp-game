@@ -8,7 +8,7 @@ AutoMap::AutoMap(WINDOW* win, int height, int width)
 	display->setBordered(false);
 	TwoDStorage<chtype>* tileMap = display->getTileMap();
 	
-	for (unsigned int i = 0; i < display->getTotalTiles(); i++)
+	for (int i = 0; i < display->getTotalTiles(); i++)
 	{
 		tileMap->setDatum(i, ' ');
 	}

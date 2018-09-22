@@ -2,12 +2,13 @@
 #include <algorithm>
 #include "GameInput.h"
 #include "TUI.h"
+#include "data_loaders.h"
 
 void loadDataFiles(ResourceManager& rm)
 {
 	//configuration file
 	std::ifstream configStream(configFile);
-	rm.loadConfigurationFile(configStream);
+	loadConfigurationFile(configStream, rm);
 
 	defaultGameInputs(rm.inputs);
 
@@ -15,7 +16,7 @@ void loadDataFiles(ResourceManager& rm)
 
 	//actors
 	std::ifstream actorStream(actorFile);
-	rm.loadActorsFromTextFile(actorStream);
+	loadActorsFromTextFile(actorStream, rm);
 
 	//map rooms
 	FileDirectory dataDir(dataDirName);
@@ -23,7 +24,7 @@ void loadDataFiles(ResourceManager& rm)
 
 	//megamaps
 	std::ifstream mapStream(mapFile);
-	rm.loadMapsFromTextFile(mapStream);
+	loadMapsFromTextFile(mapStream, rm);
 }
 
 
