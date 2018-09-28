@@ -309,11 +309,28 @@ void exploreOneMapTest()
 
 	s4.thing = &sign;
 
+	Sprite s5;
+	s5.pos.y = 7;
+	s5.pos.x = 30;
+	s5.impassible = true;
+	s5.quantity = 1;
+	s5.symbol = '#' | COLOR_BLUE << TEXTCOLOR_OFFSET;
+
+	SimpleCommand<ExplorationProcessor> blockCmd;
+	blockCmd.setReceiver(&mp);
+	blockCmd.setAction(&ExplorationProcessor::blockRoutine);
+
+	Reactor<ExplorationProcessor> block;
+	block.cmd = &blockCmd;
+
+	s5.thing = &block;
+
 	MapRoom& itemRoom = rm.mapRooms[itemRoomId];
 	itemRoom.sprites.push_back(&s);
 	itemRoom.sprites.push_back(&s2);
 	itemRoom.sprites.push_back(&s3);
 	itemRoom.sprites.push_back(&s4);
+	itemRoom.sprites.push_back(&s5);
 
 	WINDOW* screen = mp.getScreen();
 	while (playing)

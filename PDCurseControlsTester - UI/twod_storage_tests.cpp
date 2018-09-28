@@ -43,3 +43,16 @@ void testProxy()
 	std::cout << proxy2.getSize() << ' ' << proxy2.getDatum(2, 4) << std::endl;
 	system("pause");
 }
+
+void testProxyWithoutFile()
+{
+
+	TwoDStorageProxy<int> proxy;
+	proxy.setFileName("2dtest.2ds");
+
+	//proxy.setDimensions(4, 6);
+	proxy.fill(6);
+
+	std::cout << proxy.getSize() << ' ' << proxy.getDatum(2, 4) << std::endl;
+	system("pause");
+}

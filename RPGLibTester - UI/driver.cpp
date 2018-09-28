@@ -7,6 +7,7 @@
 #include "misc_tests.h"
 #include "mapRoom_tests.h"
 #include "resource_manager_tests.h"
+#include "data_loader_tests.h"
 
 //RPG LIB UI TESTER
 int main()
@@ -14,7 +15,7 @@ int main()
 	TUI tui;
 	
 
-	freeMovementProcessorTest();
+	jsonTest();
 	
 		
 	return 0;

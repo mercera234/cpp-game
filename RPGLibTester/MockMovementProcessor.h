@@ -5,5 +5,5 @@ class MockMovementProcessor : public MovementProcessor
 {
 private:
 public:
-	bool processMovement(Movement& move);
+	bool processMovement();
 };

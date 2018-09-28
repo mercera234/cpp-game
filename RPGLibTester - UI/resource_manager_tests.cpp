@@ -17,7 +17,7 @@ void loadMapsFromTextFile()
 
 void loadActorsFromTextFile()
 {
-	ResourceManager rm;
+	/*ResourceManager rm;
 
 	std::ifstream is;
 	is.open("data\\actors.txt");
@@ -25,12 +25,12 @@ void loadActorsFromTextFile()
 	int count = loadActorsFromTextFile(is, rm);
 
 	std::cout << "Total: " << count << std::endl;
-	system("pause");
+	system("pause");*/
 }
 
 void loadItemsFromTextFile()
 {
-	ResourceManager rm;
+	/*ResourceManager rm;
 
 	std::ifstream is;
 	is.open("data\\items.txt");
@@ -38,7 +38,7 @@ void loadItemsFromTextFile()
 	int count = loadItemsFromTextFile(is, rm);
 
 	std::cout << "Total: " << count << std::endl;
-	system("pause");
+	system("pause");*/
 }
 
 void loadConfigurationTextFile()

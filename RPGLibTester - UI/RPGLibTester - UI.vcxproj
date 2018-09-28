@@ -125,6 +125,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="comparator_tests.cpp" />
+    <ClCompile Include="data_loader_tests.cpp" />
     <ClCompile Include="driver.cpp" />
     <ClCompile Include="inventory_tests.cpp" />
     <ClCompile Include="mapRoom_tests.cpp" />
@@ -142,6 +143,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="comparator_tests.h" />
+    <ClInclude Include="data_loader_tests.h" />
     <ClInclude Include="inventory_tests.h" />
     <ClInclude Include="mapRoom_tests.h" />
     <ClInclude Include="map_ui_tests.h" />

@@ -15,8 +15,9 @@ void loadDataFiles(ResourceManager& rm)
 	setupDefaultDataKeys(rm);
 
 	//actors
-	std::ifstream actorStream(actorFile);
-	loadActorsFromTextFile(actorStream, rm);
+	/*std::ifstream actorStream(actorFile);
+	loadActorsFromTextFile(actorStream, rm);*/
+	loadDataFile("data\\jsontest.txt", rm);
 
 	//map rooms
 	FileDirectory dataDir(dataDirName);

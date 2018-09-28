@@ -273,7 +273,7 @@ void ExplorationProcessor::signRoutine()
 {
 	reverseMovement();
 	DialogWindow* post = new DialogWindow();
-	//post-> TODO Control that handles a stream of text
+	
 	post->setWindow(newwin(6, gameScreenWidth, 0, 0));
 	TextBoard* board = new TextBoard;
 	post->setControl(board);
@@ -282,6 +282,35 @@ void ExplorationProcessor::signRoutine()
 
 	cm.registerControl(post, KEY_LISTENER, &dialogCmd);
 	cm.setFocusedControl(post);
+}
+
+void ExplorationProcessor::blockRoutine()
+{
+	//check if space behind block is unobstructed
+	int pushAmount = currMove.magnitude;
+
+	MapRoom* currRoom = (MapRoom*)room.control;
+	TwoDStorage<EffectType>& eLayer = currRoom->getEffectsLayer();
+	Pos mapCoords = map->getMapRoomPos();
+
+	Pos pushSpace = mapCoords;
+	if (currMove.axis == Axis::HORIZONTAL)
+	{
+		pushSpace.x += pushAmount;
+	}
+	else 
+	{
+		pushSpace.y += pushAmount;
+	}
+	
+	EffectType type = eLayer.getDatum(pushSpace.y, pushSpace.x);
+
+	if (type == EffectType::NONE) //if so, then move is legal and block is pushed
+	{
+		objectSprite->pos = pushSpace;
+	}
+	else
+		reverseMovement();
 }
 
 bool ExplorationProcessor::processTileEffect()

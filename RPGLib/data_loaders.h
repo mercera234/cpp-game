@@ -2,7 +2,7 @@
 #include "ResourceManager.h"
 
 /*Load Actors from text file. Returns the count of Actors loaded.*/
-int loadActorsFromTextFile(std::ifstream& textFile, ResourceManager& rm);
+//int loadActorsFromTextFile(std::ifstream& textFile, ResourceManager& rm);
 
 /*Load maps both from text file and data files.
 The location of the map image files is included in the textfile.*/
@@ -17,3 +17,6 @@ int loadItemsFromTextFile(std::ifstream& textFile, ResourceManager& rm);
 /*Load entries from configuration file.
 The configuration file is human readable and should be modifiable in-game and on the file system.*/
 int loadConfigurationFile(std::ifstream& textFile, ResourceManager& rm);
+
+void loadDataFile(const std::string& jsonFile, ResourceManager& rm);
+

@@ -75,6 +75,7 @@ public:
 	
 	void barrierRoutine();
 	void signRoutine();
+	void blockRoutine();
 
 	//getters/setters
 

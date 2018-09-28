@@ -344,3 +344,18 @@ void statusBoardWithTextPieces()
 	getch();
 }
 
+void dialogueTest()
+{
+	WINDOW* win = newwin(10, 10, 1, 1);
+
+	//TextPiece piece(new LineFormat(0, Justf::LEFT), "Here are some words.");
+	TextPiece piece(new BookLineFormat(0), "Here are some words.");
+
+	wbkgd(win, COLOR_RED << BKGDCOLOR_OFFSET);
+	piece.draw(win);
+
+	wnoutrefresh(win);
+	doupdate();
+	getch();
+
+}

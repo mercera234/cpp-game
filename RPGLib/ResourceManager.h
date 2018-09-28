@@ -9,6 +9,7 @@
 #include "GameItem.h"
 #include "InputManager.h"
 #include "Input.h"
+#include "EnemyPool.h"
 
 //null resources
 const int nullId = -1;
@@ -31,6 +32,7 @@ public:
 	std::map<std::string, GameItem> gameItems;
 	std::map<std::string, int> idLookup;
 	std::map<int, Input> inputs;
+	std::map<std::string, EnemyPool> enemyPools;
 
 	GameData theData;
 	std::vector<Actor*> playerParty;

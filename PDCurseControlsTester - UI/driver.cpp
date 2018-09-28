@@ -18,7 +18,8 @@ int main()
 {
 	TUI tui;
 	
-	testProxy();
+	testProxyWithoutFile();
+	//dialogueTest();
 	//controlManagerTest();
 	//fileChooserTest(FileDialogType::OPEN_DIALOG);
 	

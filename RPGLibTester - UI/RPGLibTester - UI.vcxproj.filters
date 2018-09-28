@@ -60,6 +60,9 @@
     <ClCompile Include="resource_manager_tests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="data_loader_tests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="map_ui_tests.h">
@@ -102,6 +105,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="resource_manager_tests.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="data_loader_tests.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

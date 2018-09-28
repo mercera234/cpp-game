@@ -2,3 +2,4 @@
 
 void testSaveLoad();
 void testProxy();
+void testProxyWithoutFile();

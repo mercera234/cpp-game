@@ -31,23 +31,8 @@ void BattleState::loadState()
 {
 	std::list<Actor*> players = { resourceManager->playerParty.begin(), resourceManager->playerParty.end() };
 	
-	//TODO pool is being set manually right now, should be read in from file
-	EnemyPool pool;
-	EnemyGroup group1;
-	group1.weight = 1;
-	group1.enemyNames.push_back("Toadie");
-	group1.enemyNames.push_back("Toadie");
-
-	EnemyGroup group2;
-	group2.weight = 1;
-	group2.enemyNames.push_back("Toadie");
-	group2.enemyNames.push_back("Skittler");
-
-	std::vector<EnemyGroup> groups;
-	groups.push_back(group1);
-	groups.push_back(group2);
-
-	pool.setGroups(groups);
+	std::string currMap = resourceManager->currMap->name;
+	EnemyPool& pool = resourceManager->enemyPools[currMap];
 
 	EnemyGroup randomGroup = pool.getRandomGroup();
 

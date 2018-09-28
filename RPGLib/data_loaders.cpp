@@ -1,7 +1,30 @@
 #include "data_loaders.h"
 #include "key_strings.h"
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
 
 const char commentRecordId = '#';
+
+
+const std::map<std::string, int> colorNameCrossRef = 
+{
+	{ colorNames[0], 0},
+	{ colorNames[1], 1 },
+	{ colorNames[2], 2 },
+	{ colorNames[3], 3 },
+	{ colorNames[4], 4 },
+	{ colorNames[5], 5 },
+	{ colorNames[6], 6 },
+	{ colorNames[7], 7 },
+	{ colorNames[8], 8 },
+	{ colorNames[9], 9 },
+	{ colorNames[10], 10 },
+	{ colorNames[11], 11 },
+	{ colorNames[12], 12 },
+	{ colorNames[13], 13 },
+	{ colorNames[14], 14 },
+	{ colorNames[15], 15 }
+};
 
 /*Replace underscores with spaces.
 Strings have to be stored in text file with underscores or else they will not be parsed correctly.*/
@@ -36,58 +59,59 @@ int getColor(char c)
 	return color;
 }
 
-void loadActorFromTextFile(std::ifstream& textFile, ResourceManager& rm)
-{
-	Actor actor;
 
-	char symbol, color;
-	int level, exp, money, hp, mp, str, def, intl, wil, agi;
+//void loadActorFromTextFile(std::ifstream& textFile, ResourceManager& rm)
+//{
+//	Actor actor;
+//
+//	char symbol, color;
+//	int level, exp, money, hp, mp, str, def, intl, wil, agi;
+//
+//	textFile >> actor.name >> symbol >> color >> level >> exp >> money >> hp >> mp >> str >> def >> intl >> wil >> agi;
+//
+//	fixString(actor.name);
+//
+//	actor.symbol = symbol | getColor(color) << TEXTCOLOR_OFFSET;
+//	actor.getStat(StatType::LEVEL).setCurr(level);
+//	actor.getStat(StatType::EXP).setCurr(exp);
+//	actor.money.setCurr(money);
+//
+//	actor.getStat(StatType::HP).setCurrMax(hp);
+//	actor.getStat(StatType::HP).maxOut();
+//	actor.getStat(StatType::MP).setCurrMax(mp);
+//	actor.getStat(StatType::MP).maxOut();
+//
+//	actor.getStat(StatType::STRENGTH).setCurr(str);
+//	actor.getStat(StatType::DEFENSE).setCurr(def);
+//	actor.getStat(StatType::INTELLIGENCE).setCurr(intl);
+//	actor.getStat(StatType::WILL).setCurr(wil);
+//	actor.getStat(StatType::AGILITY).setCurr(agi);
+//	actor.id = rm.getNextId();
+//
+//	rm.actors.insert(std::make_pair(actor.name, actor));
+//}
 
-	textFile >> actor.name >> symbol >> color >> level >> exp >> money >> hp >> mp >> str >> def >> intl >> wil >> agi;
 
-	fixString(actor.name);
-
-	actor.symbol = symbol | getColor(color) << TEXTCOLOR_OFFSET;
-	actor.getStat(StatType::LEVEL).setCurr(level);
-	actor.getStat(StatType::EXP).setCurr(exp);
-	actor.money.setCurr(money);
-
-	actor.getStat(StatType::HP).setCurrMax(hp);
-	actor.getStat(StatType::HP).maxOut();
-	actor.getStat(StatType::MP).setCurrMax(mp);
-	actor.getStat(StatType::MP).maxOut();
-
-	actor.getStat(StatType::STRENGTH).setCurr(str);
-	actor.getStat(StatType::DEFENSE).setCurr(def);
-	actor.getStat(StatType::INTELLIGENCE).setCurr(intl);
-	actor.getStat(StatType::WILL).setCurr(wil);
-	actor.getStat(StatType::AGILITY).setCurr(agi);
-	actor.id = rm.getNextId();
-
-	rm.actors.insert(std::make_pair(actor.name, actor));
-}
-
-
-int loadActorsFromTextFile(std::ifstream& textFile, ResourceManager& rm)
-{
-	int loaded = rm.actors.size();
-
-	char lineFirstChar;
-	while ((lineFirstChar = (char)textFile.peek()) != EOF)
-	{
-		if (lineFirstChar == commentRecordId) //skip to next line
-		{
-			//see max conflict with windef.h, hence the extra ()s
-			textFile.ignore((std::numeric_limits<int>::max)(), '\n');
-			continue;
-		}
-
-		loadActorFromTextFile(textFile, rm);
-
-	}
-
-	return rm.actors.size() - loaded;
-}
+//int loadActorsFromTextFile(std::ifstream& textFile, ResourceManager& rm)
+//{
+//	int loaded = rm.actors.size();
+//
+//	char lineFirstChar;
+//	while ((lineFirstChar = (char)textFile.peek()) != EOF)
+//	{
+//		if (lineFirstChar == commentRecordId) //skip to next line
+//		{
+//			//see max conflict with windef.h, hence the extra ()s
+//			textFile.ignore((std::numeric_limits<int>::max)(), '\n');
+//			continue;
+//		}
+//
+//		loadActorFromTextFile(textFile, rm);
+//
+//	}
+//
+//	return rm.actors.size() - loaded;
+//}
 
 int loadMapRoomsFromTextFile(std::ifstream& textFile, ResourceManager& rm)
 {
@@ -261,3 +285,113 @@ int loadConfigurationFile(std::ifstream& textFile, ResourceManager& rm)
 
 	return rm.inputs.size();
 }
+
+void loadEnemyPools(boost::property_tree::ptree& tree, ResourceManager& rm)
+{
+	for each (boost::property_tree::ptree::value_type pair in tree)
+	{
+		EnemyPool pool;
+
+		boost::property_tree::ptree& poolData = pair.second;
+		std::string mapName = poolData.get<std::string>("map");
+		
+		boost::property_tree::ptree& groupData = poolData.get_child("groups");
+
+		for each (boost::property_tree::ptree::value_type groupTree in groupData)
+		{
+			EnemyGroup group;
+			group.weight = groupTree.second.get<int>("weight");
+	
+			std::vector<EnemyGroup>& groups = pool.getGroups();		
+			boost::property_tree::ptree& enemyData = groupTree.second.get_child("enemies");
+
+			for each (boost::property_tree::ptree::value_type enemyTree in enemyData)
+			{
+				group.enemyNames.push_back(enemyTree.second.get_value<std::string>());
+			}
+
+			groups.push_back(group);
+		}
+
+		rm.enemyPools.insert(std::make_pair(mapName, pool));
+	}
+}
+
+void loadItems(boost::property_tree::ptree& tree, ResourceManager& rm)
+{
+	for each (boost::property_tree::ptree::value_type pair in tree)
+	{
+		GameItem item;
+		char type;
+
+		boost::property_tree::ptree& itemData = pair.second;
+		item.name = itemData.get<std::string>("name");
+		item.value = itemData.get<int>("value");
+		item.cost = itemData.get<int>("cost");
+
+		type = itemData.get<char>("type");
+		switch (type)
+		{
+		case 'M': item.type = GameItemType::MONEY; break;
+		case 'C': item.type = GameItemType::CONSUMABLE; break;
+		case 'E': item.type = GameItemType::EQUIPPABLE; break;
+		case 'K': item.type = GameItemType::KEY; break;
+		}
+
+		rm.gameItems.insert(std::make_pair(item.name, item));
+	}
+}
+
+void loadActors(boost::property_tree::ptree& tree, ResourceManager& rm)
+{
+	for each (boost::property_tree::ptree::value_type pair in tree)
+	{
+		Actor actor;
+
+		char symbol;
+		
+		
+		boost::property_tree::ptree& actorData = pair.second;
+
+		actor.name = actorData.get<std::string>("name");
+		symbol = actorData.get<char>("symbol");
+		const std::string color = actorData.get<std::string>("color");
+		
+		const int& colorValue = colorNameCrossRef.at(color);
+	
+		actor.symbol = symbol | colorValue << TEXTCOLOR_OFFSET;
+		actor.getStat(StatType::LEVEL).setCurr(actorData.get<int>("level"));
+		actor.getStat(StatType::EXP).setCurr(actorData.get<int>("exp"));
+		actor.money.setCurr(actorData.get<int>("money"));
+
+		actor.getStat(StatType::HP).setCurrMax(actorData.get<int>("hp"));
+		actor.getStat(StatType::HP).maxOut();
+		actor.getStat(StatType::MP).setCurrMax(actorData.get<int>("mp"));
+		actor.getStat(StatType::MP).maxOut();
+
+		actor.getStat(StatType::STRENGTH).setCurr(actorData.get<int>("strength"));
+		actor.getStat(StatType::DEFENSE).setCurr(actorData.get<int>("defense"));
+		actor.getStat(StatType::INTELLIGENCE).setCurr(actorData.get<int>("intelligence"));
+		actor.getStat(StatType::WILL).setCurr(actorData.get<int>("will"));
+		actor.getStat(StatType::AGILITY).setCurr(actorData.get<int>("agility"));
+		actor.id = rm.getNextId();
+
+		rm.actors.insert(std::make_pair(actor.name, actor));
+	}
+	
+}
+
+
+void loadDataFile(const std::string& jsonFile, ResourceManager& rm)
+{
+	namespace pt = boost::property_tree;
+	pt::ptree root;
+	pt::read_json(jsonFile, root); //reading in the file also validates it
+
+	loadItems(root.get_child("items"), rm);
+	loadActors(root.get_child("actors"), rm);
+	loadEnemyPools(root.get_child("enemy pools"), rm);
+	
+	
+}
+
