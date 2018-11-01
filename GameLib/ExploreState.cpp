@@ -36,7 +36,9 @@ void ExploreState::initDefaults()
 
 	//setup exploration processor
 	explorationProcessor.setResourceManager(resourceManager);
-	explorationProcessor.setControlActor(resourceManager->playerParty.front());	
+
+	Actor* contrlActor = &resourceManager->playerParty.front();
+	explorationProcessor.setControlActor(contrlActor);	
 	//set start position
 	Pos start(startY, startX);
 	explorationProcessor.setCursor(start);
@@ -46,18 +48,18 @@ void ExploreState::initDefaults()
 void ExploreState::loadResourceManagerData()
 {
 	//load default megamap
-	resourceManager->currMap = &resourceManager->getMap("TestRegion");
+	resourceManager->currMap = &resourceManager->getData().getMap("TestRegion");
 	MegaMap* currMap = resourceManager->currMap;
 	currMap->setUnitHeight(gameScreenHeight);
 	currMap->setUnitWidth(gameScreenWidth);
 	currMap->setFloor(0);
 
 	//load default main character
-	Actor& player1 = resourceManager->getActor(player1Name);
+	Actor player1 = resourceManager->getData().getActor(player1Name);
 	player1.type = ActorType::HUMAN;
 
 	resourceManager->playerParty.clear(); //clear out old data first
-	resourceManager->playerParty.push_back(&player1);
+	resourceManager->playerParty.push_back(player1);
 }
 
 

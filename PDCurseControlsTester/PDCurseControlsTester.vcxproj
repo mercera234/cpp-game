@@ -158,6 +158,7 @@
     <ClInclude Include="MockControl.h" />
     <ClInclude Include="MockControlCommand.h" />
     <ClInclude Include="MockFileDirectory.h" />
+    <ClInclude Include="MockFilePath.h" />
     <ClInclude Include="MockMenu.h" />
     <ClInclude Include="MockMenuItem.h" />
     <ClInclude Include="MockObjectLinkedItem.h" />
@@ -165,6 +166,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AbstractMenuTest.cpp" />
+    <ClCompile Include="CenteredFormatTest.cpp" />
     <ClCompile Include="CommandTest.cpp" />
     <ClCompile Include="ControllableTest.cpp" />
     <ClCompile Include="ControlManagerTest.cpp" />
@@ -172,16 +174,20 @@
     <ClCompile Include="DirectionTest.cpp" />
     <ClCompile Include="FileChooserTest.cpp" />
     <ClCompile Include="FileDirectoryTest.cpp" />
+    <ClCompile Include="FormatTest.cpp" />
     <ClCompile Include="FormFieldTest.cpp" />
     <ClCompile Include="GridMenuTest.cpp" />
+    <ClCompile Include="FilePathTest.cpp" />
     <ClCompile Include="HighlighterTest.cpp" />
     <ClCompile Include="ImageTest.cpp" />
+    <ClCompile Include="InputManagerTest.cpp" />
     <ClCompile Include="KeyStringTest.cpp" />
     <ClCompile Include="LineItemTest.cpp" />
     <ClCompile Include="MenuItemTest.cpp" />
     <ClCompile Include="MockApplication.cpp" />
     <ClCompile Include="mockCallbacks.cpp" />
     <ClCompile Include="MockFileDirectory.cpp" />
+    <ClCompile Include="MockFilePath.cpp" />
     <ClCompile Include="MockMenu.cpp" />
     <ClCompile Include="MockStorable.cpp" />
     <ClCompile Include="ObjectLinkedTest.cpp" />
@@ -191,7 +197,9 @@
     <ClCompile Include="TextFieldTest.cpp" />
     <ClCompile Include="TextLabelTest.cpp" />
     <ClCompile Include="TUITest.cpp" />
+    <ClCompile Include="TwoDStorageProxyTest.cpp" />
     <ClCompile Include="TwoDStorageTest.cpp" />
+    <ClCompile Include="WindowManagerTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PDCurseControls\PDCurseControls.vcxproj">

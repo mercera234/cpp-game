@@ -51,29 +51,29 @@ namespace PDCurseControlsTester
 			Assert::AreEqual(fillDatum, displayData.getDatum(14));
 		}
 
-		TEST_METHOD(copyTest)
-		{
-			TwoDStorage<int> displayData(5, 3);
-			
-			for (unsigned int i = 0; i < displayData.getSize(); i++)
-			{
-				displayData.setDatum(i, i); //set datum equal to element
-			}
+		//TEST_METHOD(copyTest)
+		//{
+		//	TwoDStorage<int> displayData(5, 3);
+		//	
+		//	for (int i = 0; i < displayData.getSize(); i++)
+		//	{
+		//		displayData.setDatum(i, i); //set datum equal to element
+		//	}
 
-			TwoDStorage<int> newData(7, 2);
+		//	TwoDStorage<int> newData(7, 2);
 
-			newData.copyFrom(displayData);
+		//	newData.copyFrom(displayData);
 
-			//we assert that the last shared element in each object matches in value
-			int longestWidth = std::max(displayData.getCols(), newData.getCols());
-			int shortWidth = std::min(displayData.getCols(), newData.getCols());
-			int longestHeight = std::max(displayData.getRows(), newData.getRows());
-			int shortHeight = std::min(displayData.getRows(), newData.getRows());
-			
-			int lastSharedY = shortHeight - 1;
-			int lastSharedX = shortWidth - 1;
-			Assert::AreEqual(displayData.getDatum(lastSharedY, lastSharedX), newData.getDatum(lastSharedY, lastSharedX));
-		}
+		//	//we assert that the last shared element in each object matches in value
+		//	int longestWidth = std::max(displayData.getCols(), newData.getCols());
+		//	int shortWidth = std::min(displayData.getCols(), newData.getCols());
+		//	int longestHeight = std::max(displayData.getRows(), newData.getRows());
+		//	int shortHeight = std::min(displayData.getRows(), newData.getRows());
+		//	
+		//	int lastSharedY = shortHeight - 1;
+		//	int lastSharedX = shortWidth - 1;
+		//	Assert::AreEqual(displayData.getDatum(lastSharedY, lastSharedX), newData.getDatum(lastSharedY, lastSharedX));
+		//}
 
 		TEST_METHOD(getDataTest)
 		{
@@ -101,7 +101,7 @@ namespace PDCurseControlsTester
 			int cols = 3;
 		
 			TwoDStorage<int> displayData(rows, cols);
-			for (unsigned int i = 0; i < displayData.getSize(); i++)
+			for (int i = 0; i < displayData.getSize(); i++)
 			{
 				displayData.setDatum(i, i + 10);
 			}
@@ -117,7 +117,7 @@ namespace PDCurseControlsTester
 			int cols = 3;
 
 			TwoDStorage<int> displayData(rows, cols);
-			for (unsigned int i = 0; i < displayData.getSize(); i++)
+			for (int i = 0; i < displayData.getSize(); i++)
 			{
 				displayData.setDatum(i, i + 10);
 			}
@@ -137,7 +137,7 @@ namespace PDCurseControlsTester
 
 			int newRows = 3;
 			int newCols = 4;
-			displayData.setDimensions(newRows, newCols, 0);
+			displayData.setDimensions(newRows, newCols);
 			
 			Assert::IsTrue((int)displayData.getRows() == newRows);
 			Assert::IsTrue((int)displayData.getCols() == newCols);

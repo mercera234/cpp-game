@@ -76,9 +76,10 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>F:\Program Files\boost\boost_1_65_1;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>F:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\PDCurseControls\Debug;F:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\RPGLib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>F:\Program Files\boost\boost_1_65_1\stage\lib;F:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\PDCurseControls\Debug;F:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\RPGLib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>Winmm.lib;F:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\PDCurseControls\lib\pdcurses.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -125,9 +126,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="comparator_tests.cpp" />
-    <ClCompile Include="data_loader_tests.cpp" />
+    <ClCompile Include="game_data_tests.cpp" />
     <ClCompile Include="driver.cpp" />
-    <ClCompile Include="inventory_tests.cpp" />
+    <ClCompile Include="input_manager_tests.cpp" />
     <ClCompile Include="mapRoom_tests.cpp" />
     <ClCompile Include="map_ui_tests.cpp" />
     <ClCompile Include="misc_tests.cpp" />
@@ -143,8 +144,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="comparator_tests.h" />
-    <ClInclude Include="data_loader_tests.h" />
-    <ClInclude Include="inventory_tests.h" />
+    <ClInclude Include="game_data_tests.h" />
+    <ClInclude Include="input_manager_tests.h" />
     <ClInclude Include="mapRoom_tests.h" />
     <ClInclude Include="map_ui_tests.h" />
     <ClInclude Include="misc_tests.h" />

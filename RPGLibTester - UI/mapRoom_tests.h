@@ -7,3 +7,5 @@ void realMapTest();
 void spriteOnImageTest();
 
 void spriteOnMapTest();
+
+void loadMapRoomTest();

@@ -2,6 +2,7 @@
 #include "TextField.h"
 #include "TextLabel.h"
 #include "FormField.h"
+#include "VerticalLineFormat.h"
 
 void textFieldtest()
 {
@@ -43,15 +44,13 @@ void textFieldtest()
 
 void textLabelTest()
 {
-	WINDOW* win = newwin(10, 1, 2, 2);
+	WINDOW* win = TUI::winMgr.newWin(10, 1, 2, 2);
 	TextLabel label(win, "12345678901");
 	label.setFormat(new VerticalLineFormat(0, Justf::RIGHT));
 
 	label.draw();
 	doupdate();
 	getch();
-
-	delwin(win);
 }
 
 void formFieldTest()

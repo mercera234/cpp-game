@@ -28,14 +28,12 @@ void frameTest()
 
 void drawEmptyFrameTest()
 {
-	WINDOW* win = newwin(4, 5, 1, 1);
+	WINDOW* win = TUI::winMgr.newWin(4, 5, 1, 1);
 	Frame f(win, nullptr);
 
 	f.draw();
 	doupdate();
 	getch();
-
-	delwin(win);
 }
 
 void frameWithImageTest()
@@ -53,8 +51,8 @@ void frameWithImageTest()
 	int y = -1;
 	int x = -1;
 	img.setPosition(y, x);
-	TwoDStorage<chtype>* tileMap = img.getTileMap();
-	tileMap->fill('!' | COLOR_BLUE << BKGDCOLOR_OFFSET);
+	ITwoDStorage<chtype>& tileMap = img.getTileMap();
+	tileMap.fill('!' | COLOR_BLUE << BKGDCOLOR_OFFSET);
 
 	bool playing = true;
 	while (playing)

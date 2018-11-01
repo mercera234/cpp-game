@@ -3,6 +3,7 @@
 #include <sstream>
 #include <list>
 #include "LineItem.h"
+#include "LineFormat.h"
 
 const char* divider = "----------------------------------------";
 
@@ -185,7 +186,7 @@ std::string FileChooser::filePathDriver()
 
 bool FileChooser::navigateUpDirectory()
 {
-	directory.removeDirFromPath();
+	directory.removeLastFromPath();
 	resetDirEntries();
 
 	return true;
@@ -193,7 +194,7 @@ bool FileChooser::navigateUpDirectory()
 
 bool FileChooser::navigateDownDirectory(const std::string& dirName)
 {
-	directory.addDirToPath(dirName);
+	directory.addToPath(dirName);
 	resetDirEntries();
 
 	return true;

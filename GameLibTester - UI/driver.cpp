@@ -11,7 +11,7 @@ int main()
 
 
 
-	exploreOneMapTest();
+	mainMenuTest();
 
 	return 0;
 }

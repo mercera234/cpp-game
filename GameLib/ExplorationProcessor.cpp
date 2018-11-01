@@ -8,6 +8,7 @@
 #include "Barrier.h"
 #include "DialogWindow.h"
 #include "TextBoard.h"
+#include "LineFormat.h"
 
 ExplorationProcessor::ExplorationProcessor()
 {	
@@ -113,7 +114,7 @@ void ExplorationProcessor::processDirectionalInput(int input)
 
 void ExplorationProcessor::processStepTaken(Movement& stepTaken)
 {
-	resourceManager->theData.alterIntData(STEPS, 1);
+	resourceManager->getData().alterIntData(STEPS, 1);
 
 	encounterTracker.takeStep(stepTaken.axis);
 	if (encounterTracker.didEncounterOccur())
@@ -161,10 +162,16 @@ void ExplorationProcessor::setCurrRoomId(int id)
 	if(screen == nullptr)
 		screen = newwin(map->getUnitHeight(), map->getUnitWidth(), 0, 0);
 
-	MapRoom* currRoom = &resourceManager->getRoom(id);
+	MapRoom* currRoom = &resourceManager->getData().getRoom(id);
 	currRoom->setWindow(screen);
-
-	moveControl = currRoom->getDisplay();
+	
+	if (currRoom->getTotalTiles() <= 0)
+	{
+		FilePath path("data", currRoom);
+		path.load(currRoom->name + ".map");
+	}
+	
+	moveControl = &currRoom->getDisplay();
 
 	room.control = currRoom;
 }
@@ -249,13 +256,13 @@ bool ExplorationProcessor::processThingCollisions()
 			switch (item->type)
 			{
 			case GameItemType::MONEY:
-				resourceManager->theData.alterIntData(GOLD$, item->cost);
+				resourceManager->getData().alterIntData(GOLD$, item->cost);
+
 				currRoom->sprites.remove(objectSprite);
 				break;
 
-				//all other types should be transferred to inventory
-				/*case GameItemType::CONSUMABLE:
-				((Actor*)controlSprite.thing)->alterStat(StatType::HP, item->value);*/
+			default:
+			//TODO broken	resourceManager->inventory.push_back(item);
 				break;
 			}
 			currRoom->sprites.remove(objectSprite);
@@ -290,7 +297,7 @@ void ExplorationProcessor::blockRoutine()
 	int pushAmount = currMove.magnitude;
 
 	MapRoom* currRoom = (MapRoom*)room.control;
-	TwoDStorage<EffectType>& eLayer = currRoom->getEffectsLayer();
+	ITwoDStorage<EffectType>& eLayer = currRoom->getEffectsLayer();
 	Pos mapCoords = map->getMapRoomPos();
 
 	Pos pushSpace = mapCoords;
@@ -317,7 +324,7 @@ bool ExplorationProcessor::processTileEffect()
 {
 	MapRoom* currRoom = (MapRoom*)room.control;
 	//check what character stepped on
-	TwoDStorage<EffectType>& eLayer = currRoom->getEffectsLayer();
+	ITwoDStorage<EffectType>& eLayer = currRoom->getEffectsLayer();
 	Pos mapCoords = map->getMapRoomPos();
 	EffectType type = eLayer.getDatum(mapCoords.y, mapCoords.x);
 
@@ -472,13 +479,13 @@ void ExplorationProcessor::draw()
 	cm.draw();
 	
 	MapRoom* currRoom = (MapRoom*)room.control;
-	Image* display = currRoom->getDisplay();
+	Image& display = currRoom->getDisplay();
 
 	if (controlSprite.thing != nullptr) //draw actor if present
 	{
 		Pos mapCoords = map->getMapRoomPos();
-		int y = mapCoords.y - display->getUlY();
-		int x = mapCoords.x - display->getUlX();
+		int y = mapCoords.y - display.getUlY();
+		int x = mapCoords.x - display.getUlX();
 		
 		chtype mainCImageNormal = controlSprite.thing->symbol;
 

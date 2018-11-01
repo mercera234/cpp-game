@@ -6,7 +6,7 @@
 
 void turnTrackerTest()
 {
-	std::list<Actor*> players;
+	/*std::list<Actor*> players;
 	players.push_back(loadActor("hero.actr", ActorType::HUMAN));
 
 
@@ -17,7 +17,7 @@ void turnTrackerTest()
 	enemies.push_back(loadActor("wispwing.actr", ActorType::CPU));
 
 	int turns = players.size() + enemies.size();
-	TurnTracker tracker;
+	TurnTracker tracker;*/
 
 	//tracker.addPlayers(players);
 	//tracker.addPlayers(enemies);

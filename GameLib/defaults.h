@@ -5,8 +5,8 @@
 
 void loadDataFiles(ResourceManager& rm);
 void setupDefaultDataKeys(ResourceManager& rm);
-void defaultGameInputs(std::map<int, Input>& inputManager);
-int getInput(ResourceManager& resourceManager);
+void setupDefaultGameInputs(std::map<int, Input>& inputManager);
+//int getInput(ResourceManager& resourceManager);
 
 
 //game defaults
@@ -26,6 +26,9 @@ const std::string actorFile = "data\\actors.txt";
 const std::string dataDirName = "data";
 const std::string mapFile = "data\\maps.txt";
 const std::string configFile = "data\\configuration.ini";
+
+const chtype moneySymbol = '$' | COLOR_YELLOW_BOLD << TEXTCOLOR_OFFSET;
+const chtype itemSymbol = '*' | COLOR_MAGENTA_BOLD << TEXTCOLOR_OFFSET;
 
 //////strings
 

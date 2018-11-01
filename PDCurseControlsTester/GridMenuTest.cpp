@@ -15,14 +15,6 @@ namespace PDCurseControlsTester
 			stdscrCpy = dupwin(stdscr);
 		}
 
-	/*	TEST_METHOD_CLEANUP(endTUI)
-		{
-			if(stdscrCpy != nullptr) //for some reason stdscrCpy is already deleted before it gets here
-				delwin(stdscrCpy);
-		}*/
-
-		
-
 		TEST_METHOD(constructorTest)
 		{
 			int rows = 3;
@@ -109,6 +101,18 @@ namespace PDCurseControlsTester
 
 			Assert::IsFalse(menu.isPosted()); //menu will not be posted
 			Assert::IsFalse(mmi->getLinkedItem(Dir::DOWN) == mmi2); //items 1 and 2 will not be linked
+		}
+
+		TEST_METHOD(postEmptyTest)
+		{
+			int rows = 0;//if either of these is 0 then the menu can't hold any items
+			int cols = 1;
+			GridMenu menu(stdscrCpy, rows, cols);
+
+			menu.post(true);
+
+			//wrap around links are correct
+			Assert::IsFalse(menu.isPosted());
 		}
 
 		/*TEST_METHOD(swapItemsTest)

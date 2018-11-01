@@ -10,7 +10,7 @@ void dialogWindowTest()
 {
 	DialogWindow dialog;
 
-	WINDOW* win = newwin(5, 10, 1, 1);
+	WINDOW* win = TUI::winMgr.newWin(5, 10, 1, 1);
 	wbkgd(win, COLOR_RED << BKGDCOLOR_OFFSET);
 	dialog.setWindow(win);
 
@@ -25,7 +25,7 @@ void mockConfirmDialogWindowTest()
 	DialogWindow confirmDialog;
 
 	std::string confirmMsg = "!Confirm Overwrite?";
-	WINDOW* win = newwin(3, confirmMsg.length() + 2, 1, 1);
+	WINDOW* win = TUI::winMgr.newWin(3, confirmMsg.length() + 2, 1, 1);
 	wattron(win, COLOR_WHITE << TEXTCOLOR_OFFSET | COLOR_BLUE << BKGDCOLOR_OFFSET);
 	confirmDialog.setWindow(win);
 
@@ -70,7 +70,7 @@ void confirmDialogWindowTest()
 {
 	std::string confirmMsg = "!Confirm Overwrite?";
 	ConfirmDialog dialog(confirmMsg, ConfirmMethod::NEW);
-	dialog.setWindow(newwin(3, confirmMsg.length() + 2, 1, 1));
+	dialog.setWindow(TUI::winMgr.newWin(3, confirmMsg.length() + 2, 1, 1));
 
 	bool playing = true;
 	while (playing)
@@ -94,7 +94,7 @@ void fileDialogWindowTest()
 
 	FileDialog dialog(fullPath, FileDialogType::OPEN_DIALOG, ".img");
 
-	WINDOW* win = newwin(12, 42, 1, 1);
+	WINDOW* win = TUI::winMgr.newWin(12, 42, 1, 1);
 	dialog.setWindow(win);
 
 	bool playing = true;

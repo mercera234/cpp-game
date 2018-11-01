@@ -12,6 +12,8 @@
 #include "TitleScreen.h"
 #include "ConfigMenu.h"
 #include "Barrier.h"
+#include "ItemBrowser.h"
+#include "CenteredFormat.h"
 
 void titleScreenTest()
 {
@@ -27,7 +29,7 @@ void titleScreenTest()
 		titleScreen.draw();
 		doupdate();
 
-		int input = getInput(rm);
+		int input = rm.getInputManager().getInput();
 
 		switch (input)
 		{
@@ -48,6 +50,86 @@ void titleScreenTest()
 	}
 }
 
+void mockLoadInputs(std::map<int, Input>& inputs)
+{
+	inputs.insert(std::make_pair('c', Input("ok", GameInput::OK_INPUT)));
+	inputs.insert(std::make_pair('x', Input("cancel", GameInput::CANCEL_INPUT)));
+	inputs.insert(std::make_pair(KEY_UP, Input("up", GameInput::UP_INPUT)));
+	inputs.insert(std::make_pair(KEY_DOWN, Input("down", GameInput::DOWN_INPUT)));
+	inputs.insert(std::make_pair(KEY_LEFT, Input("left", GameInput::LEFT_INPUT)));
+	inputs.insert(std::make_pair(KEY_RIGHT, Input("right", GameInput::RIGHT_INPUT)));
+	inputs.insert(std::make_pair('v', Input("openmenu", GameInput::OPEN_MENU_INPUT)));
+	inputs.insert(std::make_pair('s', Input("cycleleft", GameInput::CYCLE_LEFT_INPUT)));
+	inputs.insert(std::make_pair('d', Input("cycleright", GameInput::CYCLE_RIGHT_INPUT)));
+}
+
+
+void inventoryTest()
+{
+	ItemBrowser inventory;
+	inventory.setWindow(newwin(10, 20, 1, 1));
+
+
+
+	std::vector<OwnedItem*> items;
+	
+	OwnedItem blankItem;
+	blankItem.item = nullptr;
+	blankItem.quantity = 0;
+	items.push_back(&blankItem);
+
+	/*GameItem potion;
+	potion.name = "Potion";
+	potion.description = "Restores 50 hp";
+
+	GameItem knife;
+	knife.name = "Knife";
+	knife.description = "A weapon for stabbing";
+
+	OwnedItem item;
+	item.item = &potion;
+	item.quantity = 1;
+
+	OwnedItem item2;
+	item2.item = &knife;
+	item2.quantity = 1;
+
+	items.push_back(&item);
+	items.push_back(&item2);*/
+	
+	
+	
+	inventory.setItems(items);
+
+	Frame playerFrame;
+	Frame descFrame;
+	TextLabel descLbl;
+	descLbl.setFormat(new CenteredFormat);
+	descLbl.setWindow(newwin(4, 18, 12, 2));
+	descFrame.setControl(&descLbl);
+
+	inventory.setPlayerFrame(&playerFrame); //TODO will need to use a real player menu at some point
+	inventory.setDescFrame(&descFrame);
+	descFrame.setWindow(newwin(6, 20, 11, 1));
+
+	inventory.registerControls();
+
+	InputManager mgr;
+	mockLoadInputs(mgr.getInputs());
+	
+	bool playing = true;
+	while (playing)
+	{
+		descFrame.draw();
+		inventory.draw();
+		doupdate();
+
+		inventory.setInput(mgr.getInput());
+		inventory.processInput();	
+	}
+
+}
+
 void mainMenuTest()
 {
 	Actor player1;
@@ -62,15 +144,16 @@ void mainMenuTest()
 	player2.stats.hp.setCurrMax(68);
 	player2.stats.hp.setCurr(62);
 
-	std::vector<Actor*> playerParty;
-	playerParty.push_back(&player1);
-	playerParty.push_back(&player2);
-
 	ResourceManager rm;
+	GameData& data = rm.getData();
 
 	loadDataFiles(rm);
+
+	rm.playerParty.push_back(player1);
+	rm.playerParty.push_back(player2);
+
 	//load one megamap so we can test that it's properties display in the main menu
-	rm.currMap = &rm.gameMaps["TestRegion"];
+	rm.currMap = &data.getMap("TestRegion");
 	rm.currMap->setUnitHeight(gameScreenHeight);
 	rm.currMap->setUnitWidth(gameScreenWidth);
 
@@ -80,8 +163,20 @@ void mainMenuTest()
 	MainMenu mm;
 	mm.setResourceManager(&rm);
 	mm.setWindow(newwin(gameScreenHeight, gameScreenWidth, 0, 0));
-	mm.addPlayerParty(playerParty);
+
+	mm.addPlayerParty(rm.playerParty);
 	
+	//setup some items
+	/*OwnedItem item1;
+	item1.item = &data.getItem("Potion");
+	item1.quantity = 1;
+
+	OwnedItem item2;
+	item2.item = &data.getItem("Knife");
+	item2.quantity = 1;
+
+	rm.inventory.push_back(&item1);
+	rm.inventory.push_back(&item2);*/
 
 	
 	bool playing = true;
@@ -90,7 +185,7 @@ void mainMenuTest()
 		mm.draw();
 		doupdate();
 
-		int input = getInput(rm);
+		int input = rm.getInputManager().getInput();
 
 		switch (input)
 		{
@@ -98,7 +193,7 @@ void mainMenuTest()
 			playing = false;
 			break;
 		case GameInput::FIGHT_TRIGGER: //just testing
-			rm.theData.updateIntData("Gold$", 50);
+			data.updateIntData("Gold$", 50);
 			break;
 		default:
 		{
@@ -121,18 +216,18 @@ void battleProcessorTest()
 	bool testing = true;
 	while (testing)
 	{
-		//retrieve all actors from a wad file (just for testing, this should be refined)
 		ResourceManager rm;
-
+		GameData& data = rm.getData();
 		loadDataFiles(rm);
 
 		Actor p1, p2, p3, p4;
 		Actor e1, e2, e3, e4;
 
-		p1 = rm.actors.find("Hero")->second;
-		p2 = rm.actors.find("Lab Tech")->second;
-		p3 = rm.actors.find("Navigator")->second;
-		p4 = rm.actors.find("Mechanic")->second;
+		
+		p1 = data.getActor("Hero");
+		p2 = data.getActor("Lab Tech");
+		p3 = data.getActor("Navigator");
+		p4 = data.getActor("Mechanic");
 
 		p1.type = ActorType::HUMAN;
 		p2.type = ActorType::HUMAN;
@@ -142,17 +237,17 @@ void battleProcessorTest()
 		std::list<Actor*> players;
 
 		players.push_back(&p1);
-	/*	players.push_back(&p2);
-		players.push_back(&p3);*/
-		//players.push_back(&p4);
+		players.push_back(&p2);
+		players.push_back(&p3);
+		players.push_back(&p4);
 		
 
 		std::list<Actor*> enemies;
 
-		e1 = rm.actors.find("Toadie")->second;
-		e2 = rm.actors.find("Bigbug")->second;
-		e3 = rm.actors.find("Skittler")->second;
-		e4 = rm.actors.find("Wispwing")->second;
+		e1 = data.getActor("Toadie");
+		e2 = data.getActor("Bigbug");
+		e3 = data.getActor("Skittler");
+		e4 = data.getActor("Wispwing");
 		
 		e1.type = ActorType::CPU;
 		e2.type = ActorType::CPU;
@@ -160,9 +255,9 @@ void battleProcessorTest()
 		e4.type = ActorType::CPU;
 
 		enemies.push_back(&e1);
-		/*enemies.push_back(&e2);
+		enemies.push_back(&e2);
 		enemies.push_back(&e3);
-		enemies.push_back(&e4);*/
+		enemies.push_back(&e4);
 	
 
 		int totalRows = 23;
@@ -183,7 +278,7 @@ void battleProcessorTest()
 			bp.draw();
 			doupdate();
 
-			int input = getInput(rm);
+			int input = rm.getInputManager().getInput();
 
 			switch (input)
 			{
@@ -235,38 +330,22 @@ void exploreOneMapTest()
 
 	ResourceManager rm;
 	loadDataFiles(rm);
-
+	GameData& data = rm.getData();
 
 	//setup main character
-	Actor& player1 = rm.getActor(player1Name);
+	Actor& player1 = data.getActor(player1Name);
 	player1.type = ActorType::HUMAN;
 
-	rm.playerParty.push_back(&player1);
-
-	int itemRoomId = 15;
+	rm.playerParty.push_back(player1);
 
 	
-	rm.currMap = &rm.getMap("TestRegion");
+
+	
+	rm.currMap = &data.getMap("TestRegion");
 	rm.currMap->setUnitHeight(gameScreenHeight);
 	rm.currMap->setUnitWidth(gameScreenWidth);
 	rm.currMap->setFloor(0);
 	
-	Sprite s;
-	s.pos.y = 13;
-	s.pos.x = 23;
-	s.quantity = 5;
-	s.symbol = '$' | COLOR_YELLOW_BOLD << TEXTCOLOR_OFFSET;
-	s.thing = &rm.gameItems[GOLD$];
-	s.impassible = false;
-
-	Sprite s2;
-	s2.pos.y = 13;
-	s2.pos.x = 33;
-	s2.quantity = 1;
-	s2.symbol = '*' | COLOR_MAGENTA_BOLD << TEXTCOLOR_OFFSET;
-	s2.thing = &rm.gameItems["Potion"];
-	s2.impassible = false;
-
 	ExplorationProcessor mp;
 	mp.setResourceManager(&rm);
 	mp.setControlActor(&player1);
@@ -274,6 +353,21 @@ void exploreOneMapTest()
 	mp.setCursor(pos);
 	mp.setViewMode(ViewMode::DYNAMIC); //position map so character is visible (not sure if this is the best way to do this)
 
+	Sprite s;
+	s.pos.y = 13;
+	s.pos.x = 23;
+	s.quantity = 5;
+	s.symbol = '$' | COLOR_YELLOW_BOLD << TEXTCOLOR_OFFSET;
+	s.thing = &data.getItem(GOLD$);
+	s.impassible = false;
+
+	Sprite s2;
+	s2.pos.y = 13;
+	s2.pos.x = 33;
+	s2.quantity = 1;
+	s2.symbol = '*' | COLOR_MAGENTA_BOLD << TEXTCOLOR_OFFSET;
+	s2.thing = &data.getItem("Potion");
+	s2.impassible = false;
 
 	Sprite s3;
 	s3.pos.y = 2;
@@ -325,13 +419,8 @@ void exploreOneMapTest()
 
 	s5.thing = &block;
 
-	MapRoom& itemRoom = rm.mapRooms[itemRoomId];
-	itemRoom.sprites.push_back(&s);
-	itemRoom.sprites.push_back(&s2);
-	itemRoom.sprites.push_back(&s3);
-	itemRoom.sprites.push_back(&s4);
-	itemRoom.sprites.push_back(&s5);
-
+	MapRoom& itemRoom = data.getRoom("Labyrinth2");
+	
 	WINDOW* screen = mp.getScreen();
 	while (playing)
 	{
@@ -346,7 +435,7 @@ void exploreOneMapTest()
 		doupdate();
 
 		//process input
-		int input = getInput(rm);
+		int input = rm.getInputManager().getInput();
 		switch (input)
 		{
 		case GameInput::QUIT_INPUT: playing = false; break;
@@ -380,7 +469,7 @@ void configMenuTest()
 	{
 		menu.draw();
 		doupdate();
-		int c = getInput(rm);
+		int c = rm.getInputManager().getInput();
 
 		switch(c)
 		{

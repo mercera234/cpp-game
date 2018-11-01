@@ -33,7 +33,7 @@ private:
 	Image* img;
 
 	//the tilemap of data to be altered during highlighting processes. For now, this will also be the tileMap associated with img.
-	TwoDStorage<chtype>* tileMap;
+	ITwoDStorage<chtype>* tileMap;
 
 	//Returns a rectangle of the highlit region. The pointer needs to be deleted after usage.
 	Rect* getHighlitRegion();

@@ -33,21 +33,21 @@ void initTestActor(Actor& player)
 
 
 
-
-Actor* loadActor(const std::string& filename, ActorType type)
-{
-	Actor* actor = new Actor();
-
-	std::ifstream is;
-	is.open("data\\" + filename, std::ios::binary);
-
-	actor->load(is);
-	actor->type = type;
-
-	is.close();
-
-	return actor;
-}
+//
+//Actor* loadActor(const std::string& filename, ActorType type)
+//{
+//	Actor* actor = new Actor();
+//
+//	std::ifstream is;
+//	is.open("data\\" + filename, std::ios::binary);
+//
+//	actor->load(is);
+//	actor->type = type;
+//
+//	is.close();
+//
+//	return actor;
+//}
 
 
 void alterStatValue(BoundInt& stat, int amount)

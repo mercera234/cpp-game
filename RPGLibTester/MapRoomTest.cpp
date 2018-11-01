@@ -34,15 +34,15 @@ namespace RPGLibTester
 			std::string name = "test map";
 			MapRoom theMap(name, rows, cols, win);
 
-			Image* img = theMap.getDisplay();
+			Image& img = theMap.getDisplay();
 
-			TwoDStorage<chtype>* tileMap = img->getTileMap();
+			ITwoDStorage<chtype>& tileMap = img.getTileMap();
 
-			tileMap->fill('A');
+			tileMap.fill('A');
 
 			theMap.reset();
 
-			Assert::AreEqual(' ', (char)tileMap->getDatum(0));
+			Assert::AreEqual(' ', (char)tileMap.getDatum(0));
 		}
 
 		TEST_METHOD(setDimensionsTest)
@@ -52,12 +52,12 @@ namespace RPGLibTester
 			MapRoom theMap;
 			theMap.setDimensions(rows, cols);
 
-			Image* display = theMap.getDisplay();
+			Image& display = theMap.getDisplay();
 
 			Assert::AreEqual(rows, (int)theMap.getTotalRows());
 			Assert::AreEqual(cols, (int)theMap.getTotalCols());
-			Assert::AreEqual(rows, (int)display->getTotalRows());
-			Assert::AreEqual(cols, (int)display->getTotalCols());
+			Assert::AreEqual(rows, (int)display.getTotalRows());
+			Assert::AreEqual(cols, (int)display.getTotalCols());
 		}
 
 		TEST_METHOD(resizeTest)
@@ -88,11 +88,11 @@ namespace RPGLibTester
 			int newCols = 1;
 			theMap.resize(newRows, newCols);
 
-			TwoDStorage<chtype>* img = theMap.getDisplay()->getTileMap();
-			TwoDStorage<EffectType> tileEffects = theMap.getEffectsLayer();
+			ITwoDStorage<chtype>& img = theMap.getDisplay().getTileMap();
+			ITwoDStorage<EffectType>& tileEffects = theMap.getEffectsLayer();
 
-			Assert::AreEqual(newRows * newCols, (int)img->getSize());
-			Assert::AreEqual(newRows * newCols, (int)tileEffects.getSize());
+			Assert::AreEqual(newRows * newCols, img.getSize());
+			Assert::AreEqual(newRows * newCols, tileEffects.getSize());
 		}
 
 		TEST_METHOD(resizeLayersDataTest)
@@ -108,10 +108,10 @@ namespace RPGLibTester
 			int newCols = 1;
 			theMap.resize(newRows, newCols);
 
-			TwoDStorage<chtype>* img = theMap.getDisplay()->getTileMap();
-			TwoDStorage<EffectType> tileEffects = theMap.getEffectsLayer();
+			ITwoDStorage<chtype>& img = theMap.getDisplay().getTileMap();
+			ITwoDStorage<EffectType>& tileEffects = theMap.getEffectsLayer();
 
-			Assert::AreEqual(newRows * newCols, (int)img->getSize());
+			Assert::AreEqual(newRows * newCols, (int)img.getSize());
 			Assert::AreEqual(newRows * newCols, (int)tileEffects.getSize());
 		}
 
@@ -125,7 +125,7 @@ namespace RPGLibTester
 			std::string name = "test map";
 			MapRoom theMap(name, rows, cols, win);
 
-			TwoDStorage<EffectType> tileEffects = theMap.getEffectsLayer();
+			ITwoDStorage<EffectType>& tileEffects = theMap.getEffectsLayer();
 			Assert::IsTrue(EffectType::NONE == tileEffects.getDatum(0));
 		}
 

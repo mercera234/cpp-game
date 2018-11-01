@@ -13,8 +13,8 @@ DialogWindow::~DialogWindow()
 	if(control != nullptr)
 		delete control;
 
-	if(innerWin != nullptr)
-		delwin(innerWin);
+	/*if(innerWin != nullptr)
+		delwin(innerWin);*/
 }
 
 void DialogWindow::setFocus(bool focusIn)
@@ -47,7 +47,7 @@ void DialogWindow::setWindow(WINDOW* win)
 	int controlRows = getmaxy(win) - 2;
 	int controlX = getbegx(win) + 1;
 	int controlY = getbegy(win) + 1;
-	innerWin = newwin(controlRows, controlCols, controlY, controlX);
+	innerWin = TUI::winMgr.newWin(controlRows, controlCols, controlY, controlX);
 
 	if(control != nullptr)
 		control->setWindow(innerWin);

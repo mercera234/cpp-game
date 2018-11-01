@@ -59,12 +59,12 @@ namespace PDCurseControlsTester
 			int cols = 2;
 			img.setDimensions(rows, cols);
 
-			TwoDStorage<chtype>* map = img.getTileMap();
-			map->setDatum(0, 1, 'A');
+			ITwoDStorage<chtype>& map = img.getTileMap();
+			map.setDatum(0, 1, 'A');
 
 			img.reset(); //will clear the A
 
-			Assert::IsTrue(' ' == map->getDatum(0,1));
+			Assert::IsTrue(' ' == map.getDatum(0,1));
 		}
 
 		TEST_METHOD(setTileTest)
@@ -100,6 +100,14 @@ namespace PDCurseControlsTester
 
 			Assert::AreEqual(rows, (int)img.getTotalRows());
 			Assert::AreEqual(cols, (int)img.getTotalCols());
+		}
+
+		TEST_METHOD(fakeTest)
+		{
+			ITwoDStorage<chtype>* tileMap;
+
+			tileMap = new TwoDStorage<chtype>();
+			tileMap = new TwoDStorageProxy<chtype>();
 		}
 	};
 }

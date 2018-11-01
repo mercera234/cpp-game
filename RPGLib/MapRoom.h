@@ -9,6 +9,8 @@
 #include "TileEffect.h"
 #include "Sprite.h"
 
+const std::string mapRoomExt = "mrm";
+
 class MapRoom : public Controllable, public Thing, public Storable
 {
 private:
@@ -18,10 +20,9 @@ private:
 
 	Image display;
 	TwoDStorage<EffectType> effectsLayer;
-
 	//saveable data during game
 
-	//overlay data (eventually this should be private)
+	//overlay data
 
 public:
 	/*All things that can be on a map (
@@ -31,7 +32,7 @@ public:
 	
 	MapRoom() {}
 	MapRoom(const std::string& name, int rows, int cols, WINDOW* win); //create new map
-	MapRoom(WINDOW* win, const std::string& fileName); //load map from file
+	//MapRoom(WINDOW* win, const std::string& fileName); //load map from file
 
 	void setWindow(WINDOW* win);
 	void setDimensions(unsigned int rows, unsigned int cols);
@@ -42,13 +43,13 @@ public:
 	/*Resize the map. Resizes the display and effects layer, but not the window itself.*/
 	void resize(int rows, int cols);
 
-	/*Save map data from editor. This will not include every field. 
-	Notably, anything that is simple data that can be stored in a text file will not be saved here.*/
-	int save(std::ofstream& saveFile);
+	/*Save display and effects layer.*/
+	void save(std::ofstream& saveFile); //override
 
-	/*Load map data. This will not include every field.
-	Notably, anything that is simple data that can be stored in a text file will not be saved here.*/
-	int load(std::ifstream& loadFile);
+	/*Load display and effects layer.*/
+	void load(std::ifstream& loadFile); //override
+
+	
 	void draw();
 
 	Sprite* checkCollisionDetection(Pos& pos);
@@ -57,8 +58,8 @@ public:
 	~MapRoom();
 
 	//getters/setters
-	Image* getDisplay() { return &display; }
-	TwoDStorage<EffectType>& getEffectsLayer() { return effectsLayer; }
+	Image& getDisplay() { return display; }
+	ITwoDStorage<EffectType>& getEffectsLayer() { return effectsLayer; }
 
 	void setBrightness(bool brightnessIn) { brightness = brightnessIn; }
 	bool getBrightness() { return brightness; }

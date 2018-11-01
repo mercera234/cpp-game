@@ -12,7 +12,7 @@ void simpleMapTest()
 	int width = 30;
 	MapRoom* map = new MapRoom("test", height, width, viewport);
 
-	Image* display = map->getDisplay();
+	Image& display = map->getDisplay();
 
 	short centerY = getmaxy(viewport) / 2;
 	short centerX = getmaxx(viewport) / 2;
@@ -21,14 +21,14 @@ void simpleMapTest()
 	short curY = 1;
 	short curX = 1;
 
-	display->setPosition(y, x);
+	display.setPosition(y, x);
 
 	char asciiStart = ' ';
 	char asciiEnd = '~';
 	char asciiPtr = asciiStart;
 	int totalTiles = height * width;
 
-	TwoDStorage<chtype>* data = display->getTileMap();
+	ITwoDStorage<chtype>& data = display.getTileMap();
 
 	for (int i = 0; i < totalTiles; i++)
 	{
@@ -43,7 +43,7 @@ void simpleMapTest()
 		else if (x < 30)
 			c = (chtype)asciiPtr++ | (COLOR_YELLOW_BOLD << 28); //yellow background
 
-		data->setDatum(i, c);
+		data.setDatum(i, c);
 
 		if (asciiPtr >= asciiEnd)
 			asciiPtr = asciiStart;
@@ -97,7 +97,8 @@ void realMapTest()
 	m.setPosition(y, x);
 
 	bool playing = true;
-	Image* img = m.getDisplay();
+	Image& img = m.getDisplay();
+	img.getTileMap().fill(' ');
 
 	while (playing)
 	{
@@ -133,8 +134,8 @@ void spriteOnImageTest()
 	img.setWindow(screen);
 	img.setDimensions(screenHeight, screenWidth);
 
-	TwoDStorage<chtype>* tileMap = img.getTileMap();
-	tileMap->fill('.');
+	ITwoDStorage<chtype>& tileMap = img.getTileMap();
+	tileMap.fill('.');
 
 	Actor actor;
 	actor.symbol = '@' | COLOR_YELLOW_BOLD << TEXTCOLOR_OFFSET;
@@ -214,6 +215,22 @@ void spriteOnImageTest()
 
 }
 
+
+void loadMapRoomTest()
+{
+	MapRoom room;
+	room.name = "Labyrinth4";
+	FilePath path("data", &room);
+	
+	path.load(room.name + ".map");
+	room.setWindow(dupwin(stdscr));
+
+	room.draw();
+
+	doupdate();
+	getch();
+}
+
 void spriteOnMapTest()
 {
 	int screenHeight = 23;
@@ -226,10 +243,10 @@ void spriteOnMapTest()
 	room.setWindow(screen);
 	room.setDimensions(screenHeight, screenWidth);
 
-	Image* img = room.getDisplay();
+	Image& img = room.getDisplay();
 	
-	TwoDStorage<chtype>* tileMap = img->getTileMap();
-	tileMap->fill('.');
+	ITwoDStorage<chtype>& tileMap = img.getTileMap();
+	tileMap.fill('.');
 
 	
 	Actor actor;

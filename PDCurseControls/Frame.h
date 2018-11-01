@@ -22,5 +22,4 @@ public:
 	*/
 	void setText(const std::string& text, int y, int x);
 	void draw();
-	~Frame();
 };

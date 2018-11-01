@@ -1,4 +1,5 @@
 #include "FormField.h"
+#include "LineFormat.h"
 #include <algorithm>
 
 FormField::FormField(const std::string& labelText)

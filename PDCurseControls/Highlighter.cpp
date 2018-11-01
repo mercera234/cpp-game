@@ -11,7 +11,7 @@ Highlighter::Highlighter(Image* imgIn, int* y, int* x)
 void Highlighter::positionHighlighter(Image* imgIn, int* y, int* x)
 {
 	img = imgIn;
-	tileMap = img->getTileMap();
+	tileMap = &img->getTileMap();
 	highlighting = false;
 	pinPushed = false;
 
@@ -95,8 +95,8 @@ void Highlighter::paste()
 	int maxY = *curY + clipBoard.getRows();
 	int maxX = *curX + clipBoard.getCols();
 
-	unsigned int containerWidth = tileMap->getCols();
-	unsigned int containerHeight = tileMap->getRows();
+	int containerWidth = tileMap->getCols();
+	int containerHeight = tileMap->getRows();
 
 	maxX = clipBoard.getCols() > containerWidth - *curX ? containerWidth : maxX;
 	maxY = clipBoard.getRows() > containerHeight - *curY ? containerHeight : maxY;

@@ -11,7 +11,7 @@ void freeMovementProcessorTest()
 	int mapWidth = 11;//width + (width / 2);
 
 	Image* map = new Image(mapHeight, mapWidth, viewport);
-	TwoDStorage<chtype>* tileMap = map->getTileMap();
+	ITwoDStorage<chtype>& tileMap = map->getTileMap();
 
 	short centerY = getmaxy(viewport) / 2;
 	short centerX = getmaxx(viewport) / 2;
@@ -20,10 +20,10 @@ void freeMovementProcessorTest()
 	int curY = 7;
 	int curX = 7;
 
-	tileMap->setDatum(0, 0, '1'); //upper left
-	tileMap->setDatum(0, mapWidth - 1, '2'); //upper right
-	tileMap->setDatum(mapHeight - 1, 0, '3'); //lower left
-	tileMap->setDatum(mapHeight - 1, mapWidth - 1, '4'); //lower right
+	tileMap.setDatum(0, 0, '1'); //upper left
+	tileMap.setDatum(0, mapWidth - 1, '2'); //upper right
+	tileMap.setDatum(mapHeight - 1, 0, '3'); //lower left
+	tileMap.setDatum(mapHeight - 1, mapWidth - 1, '4'); //lower right
 
 	FreeMovementProcessor* mp = new FreeMovementProcessor(map, &curY, &curX);
 

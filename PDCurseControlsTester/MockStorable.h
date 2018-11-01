@@ -6,10 +6,9 @@ class MockStorable : public Storable
 {
 private:
 public:
+	bool saveOccurred = false;
+	bool loadOccurred = false;
 	//Storable overrides
-	//return value should be # of bytes written. -1 indicates error
-	int save(std::ofstream& saveFile);
-
-	//return value should be # of bytes read. -1 indicates error
-	int load(std::ifstream& loadFile);
+	void save(std::ofstream& saveFile);
+	void load(std::ifstream& loadFile);
 };

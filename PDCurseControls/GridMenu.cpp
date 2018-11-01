@@ -131,6 +131,9 @@ bool GridMenu::post(bool post)
 
 bool GridMenu::validateForPost()
 {
+	if (items.size() == 0) //don't post an empty menu
+		return false;
+
 	//std::for_each(items.begin(), items.end(), )
 	for each (MenuItem* item in items)
 	{

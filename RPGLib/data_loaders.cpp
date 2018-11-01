@@ -60,207 +60,6 @@ int getColor(char c)
 }
 
 
-//void loadActorFromTextFile(std::ifstream& textFile, ResourceManager& rm)
-//{
-//	Actor actor;
-//
-//	char symbol, color;
-//	int level, exp, money, hp, mp, str, def, intl, wil, agi;
-//
-//	textFile >> actor.name >> symbol >> color >> level >> exp >> money >> hp >> mp >> str >> def >> intl >> wil >> agi;
-//
-//	fixString(actor.name);
-//
-//	actor.symbol = symbol | getColor(color) << TEXTCOLOR_OFFSET;
-//	actor.getStat(StatType::LEVEL).setCurr(level);
-//	actor.getStat(StatType::EXP).setCurr(exp);
-//	actor.money.setCurr(money);
-//
-//	actor.getStat(StatType::HP).setCurrMax(hp);
-//	actor.getStat(StatType::HP).maxOut();
-//	actor.getStat(StatType::MP).setCurrMax(mp);
-//	actor.getStat(StatType::MP).maxOut();
-//
-//	actor.getStat(StatType::STRENGTH).setCurr(str);
-//	actor.getStat(StatType::DEFENSE).setCurr(def);
-//	actor.getStat(StatType::INTELLIGENCE).setCurr(intl);
-//	actor.getStat(StatType::WILL).setCurr(wil);
-//	actor.getStat(StatType::AGILITY).setCurr(agi);
-//	actor.id = rm.getNextId();
-//
-//	rm.actors.insert(std::make_pair(actor.name, actor));
-//}
-
-
-//int loadActorsFromTextFile(std::ifstream& textFile, ResourceManager& rm)
-//{
-//	int loaded = rm.actors.size();
-//
-//	char lineFirstChar;
-//	while ((lineFirstChar = (char)textFile.peek()) != EOF)
-//	{
-//		if (lineFirstChar == commentRecordId) //skip to next line
-//		{
-//			//see max conflict with windef.h, hence the extra ()s
-//			textFile.ignore((std::numeric_limits<int>::max)(), '\n');
-//			continue;
-//		}
-//
-//		loadActorFromTextFile(textFile, rm);
-//
-//	}
-//
-//	return rm.actors.size() - loaded;
-//}
-
-int loadMapRoomsFromTextFile(std::ifstream& textFile, ResourceManager& rm)
-{
-	int loaded = rm.mapRooms.size();
-
-	char lineFirstChar;
-	while ((lineFirstChar = (char)textFile.peek()) != EOF)
-	{
-		if (lineFirstChar == commentRecordId) //skip to next line
-		{
-			//see max conflict with windef.h, hence the extra ()s
-			textFile.ignore((std::numeric_limits<int>::max)(), '\n');
-			continue;
-		}
-
-		MapRoom room;
-
-		bool brightness;
-		bool randomEncounters;
-		std::string name;
-		std::string imagePath;
-
-		textFile >> name >> imagePath >> brightness >> randomEncounters;
-
-		fixString(name);
-
-		room.name = name;
-		room.setBrightness(brightness);
-		room.setRandomEncounters(randomEncounters);
-		room.id = rm.getNextId();
-		//so far this loads the map metadata, but not the image, effectslayer, overlays, or items
-
-		rm.mapRooms.insert(std::make_pair(room.id, room));
-	}
-
-	return rm.mapRooms.size() - loaded;
-}
-
-
-int loadMapsFromTextFile(std::ifstream& textFile, ResourceManager& rm)
-{
-	/*TODO function is setup to read in map data from file, this should come from separate image file identified in the map text file
-	Currently unable to edit MegaMaps
-	*/
-	int loaded = rm.gameMaps.size();
-
-	MegaMap map;
-
-	Image* image = nullptr;
-	int currRow = 0;
-
-	char lineFirstChar;
-	while ((lineFirstChar = (char)textFile.peek()) != EOF)
-	{
-		switch (lineFirstChar)
-		{
-		case commentRecordId:  //skip to next line
-							   //see max conflict with windef.h, hence the extra ()s
-			textFile.ignore((std::numeric_limits<int>::max)(), '\n');
-			continue;
-		case 'D':
-		{
-			textFile.ignore(1, ' ');
-			int rows, cols;
-			int floors, groundFloor;
-			textFile >> map.name >> rows >> cols >> floors >> groundFloor;
-			fixString(map.name);
-			map.setDimensions(rows, cols, floors);
-
-			image = new Image[floors];
-
-			for (int i = 0; i < floors; i++)
-			{
-				image[i].setDimensions(rows, cols);
-				image[i].getTileMap()->fill(INT_MAX);
-			}
-			map.setGroundFloor(groundFloor);
-		}
-		break;
-		case 'R':
-		{
-			textFile.ignore(1, ' ');
-
-			int floor;
-			textFile >> floor;
-
-			floor = map.getRealIndexFromFloor(floor);
-			for (int i = 0; i < map.getUnitCols(); i++)
-			{
-				chtype c;
-				textFile >> c;
-				image[floor].setTile(currRow, i, c);
-			}
-			currRow++;
-			currRow %= map.getUnitRows();
-		}
-		break;
-		default:
-			textFile.get();//advance one character
-		}
-	}
-
-	for (int i = 0; i < map.getDepth(); i++)
-	{
-		map.setLayerImage(map.getFloorFromIndex(i), image[i]);
-	}
-
-
-	rm.gameMaps.insert(std::make_pair(map.name, map));
-
-	delete[] image;
-
-	return rm.gameMaps.size() - loaded;
-}
-
-
-int loadItemsFromTextFile(std::ifstream& textFile, ResourceManager& rm)
-{
-	int loaded = rm.gameItems.size();
-
-	char lineFirstChar;
-	while ((lineFirstChar = (char)textFile.peek()) != EOF)
-	{
-		if (lineFirstChar == commentRecordId) //skip to next line
-		{
-			//see max conflict with windef.h, hence the extra ()s
-			textFile.ignore((std::numeric_limits<int>::max)(), '\n');
-			continue;
-		}
-
-		GameItem item;
-		char type;
-
-		textFile >> item.name >> type >> item.cost >> item.value;
-
-		switch (type)
-		{
-		case 'M': item.type = GameItemType::MONEY;
-		case 'C': item.type = GameItemType::CONSUMABLE;
-		case 'E': item.type = GameItemType::EQUIPPABLE;
-		case 'K': item.type = GameItemType::KEY;
-		}
-		fixString(item.name);
-
-		rm.gameItems.insert(std::make_pair(item.name, item));
-	}
-
-	return rm.gameItems.size() - loaded;
-}
 
 int loadConfigurationFile(std::ifstream& textFile, ResourceManager& rm)
 {
@@ -286,36 +85,7 @@ int loadConfigurationFile(std::ifstream& textFile, ResourceManager& rm)
 	return rm.inputs.size();
 }
 
-void loadEnemyPools(boost::property_tree::ptree& tree, ResourceManager& rm)
-{
-	for each (boost::property_tree::ptree::value_type pair in tree)
-	{
-		EnemyPool pool;
 
-		boost::property_tree::ptree& poolData = pair.second;
-		std::string mapName = poolData.get<std::string>("map");
-		
-		boost::property_tree::ptree& groupData = poolData.get_child("groups");
-
-		for each (boost::property_tree::ptree::value_type groupTree in groupData)
-		{
-			EnemyGroup group;
-			group.weight = groupTree.second.get<int>("weight");
-	
-			std::vector<EnemyGroup>& groups = pool.getGroups();		
-			boost::property_tree::ptree& enemyData = groupTree.second.get_child("enemies");
-
-			for each (boost::property_tree::ptree::value_type enemyTree in enemyData)
-			{
-				group.enemyNames.push_back(enemyTree.second.get_value<std::string>());
-			}
-
-			groups.push_back(group);
-		}
-
-		rm.enemyPools.insert(std::make_pair(mapName, pool));
-	}
-}
 
 void loadItems(boost::property_tree::ptree& tree, ResourceManager& rm)
 {
@@ -337,8 +107,10 @@ void loadItems(boost::property_tree::ptree& tree, ResourceManager& rm)
 		case 'E': item.type = GameItemType::EQUIPPABLE; break;
 		case 'K': item.type = GameItemType::KEY; break;
 		}
+		item.id = rm.getNextId();
 
 		rm.gameItems.insert(std::make_pair(item.name, item));
+		rm.idLookup.insert(std::make_pair(item.name, item.id));
 	}
 }
 
@@ -377,10 +149,154 @@ void loadActors(boost::property_tree::ptree& tree, ResourceManager& rm)
 		actor.id = rm.getNextId();
 
 		rm.actors.insert(std::make_pair(actor.name, actor));
+		rm.idLookup.insert(std::make_pair(actor.name, actor.id));
 	}
 	
 }
 
+void loadRooms(boost::property_tree::ptree& tree, ResourceManager& rm)
+{
+	for each (boost::property_tree::ptree::value_type pair in tree)
+	{
+		MapRoom room;
+
+		boost::property_tree::ptree& roomData = pair.second;
+
+		room.setRandomEncounters(roomData.get<bool>("random encounters", true));
+		room.setBrightness(roomData.get<bool>("brightness", true));
+		room.name = roomData.get<std::string>("name");
+
+		boost::optional<boost::property_tree::ptree&> thingsData = roomData.get_child_optional("things");
+		if (thingsData)
+		{
+			for each (boost::property_tree::ptree::value_type thing in *thingsData)
+			{
+				boost::property_tree::ptree& thingData = thing.second;
+				Sprite* s = new Sprite;
+				s->thing = &rm.gameItems[thingData.get<std::string>("name")];
+				s->pos.y = thingData.get<int>("y");
+				s->pos.x = thingData.get<int>("x");
+				s->quantity = thingData.get<int>("quantity", 1);
+				s->height = thingData.get<int>("height", 1);
+				s->width = thingData.get<int>("width", 1);
+				s->impassible = thingData.get<bool>("impassible", false);
+				s->symbol = thingData.get<chtype>("symbol", 0);
+
+				room.sprites.push_back(s);
+			}
+		}
+		
+		room.id = rm.getNextId();
+
+		rm.mapRooms.insert(std::make_pair(room.id, room));
+		rm.idLookup.insert(std::make_pair(room.name, room.id));
+	}
+}
+
+void loadEnemyPools(boost::property_tree::ptree& tree, ResourceManager& rm)
+{
+	for each (boost::property_tree::ptree::value_type pair in tree)
+	{
+		EnemyPool pool;
+
+		boost::property_tree::ptree& poolData = pair.second;
+		boost::property_tree::ptree& groupData = poolData.get_child("groups");
+
+		for each (boost::property_tree::ptree::value_type groupTree in groupData)
+		{
+			EnemyGroup group;
+			group.weight = groupTree.second.get<int>("weight");
+
+			std::vector<EnemyGroup>& groups = pool.getGroups();
+			boost::property_tree::ptree& enemyData = groupTree.second.get_child("enemies");
+
+			for each (boost::property_tree::ptree::value_type enemyTree in enemyData)
+			{
+				group.enemyNames.push_back(enemyTree.second.get_value<std::string>());
+			}
+
+			groups.push_back(group);
+		}
+
+		boost::property_tree::ptree& roomData = poolData.get_child("rooms");
+
+		for each (boost::property_tree::ptree::value_type roomTree in roomData)
+		{
+			std::string roomName = roomTree.second.get_value<std::string>();
+
+			int roomId = rm.idLookup[roomName];
+
+			rm.enemyPools.insert(std::make_pair(roomId, pool));
+		}
+	}
+}
+
+void loadMaps(boost::property_tree::ptree& tree, ResourceManager& rm)
+{
+	for each (boost::property_tree::ptree::value_type pair in tree)
+	{
+		MegaMap map;
+		boost::property_tree::ptree& mapData = pair.second;
+
+		map.name = mapData.get<std::string>("name");
+		map.setDimensions(mapData.get<int>("rows"), mapData.get<int>("cols"), mapData.get<int>("floors", 1));
+		map.setGroundFloor(mapData.get<int>("ground floor"));
+
+		Image* image = new Image[map.getDepth()];
+
+		//swap real map ids for crossreferenced ones
+		boost::property_tree::ptree& crossRefs = mapData.get_child("crossRef");
+		std::map<int, int> idCrossRef;
+		for (auto it = crossRefs.begin(); it != crossRefs.end(); it++)
+		{
+			boost::property_tree::ptree& crossRefNode = (*it).second;
+			std::string name = crossRefNode.get<std::string>("name");
+			int index = crossRefNode.get<int>("index");
+
+			int roomId = rm.idLookup[name];
+			idCrossRef.insert(std::make_pair(index, roomId));
+		}
+
+
+		boost::property_tree::ptree& roomIds = mapData.get_child("data");
+		boost::property_tree::ptree::iterator it = roomIds.begin();
+		for (int floor = map.getDepth() - 1; floor >= 0; floor--)
+		{
+			image[floor].setDimensions(map.getUnitRows(), map.getUnitCols());
+			image[floor].getTileMap().fill(nullId);
+
+			for (int row = 0; row < map.getUnitRows(); row++)
+			{
+				for (int col = 0; col < map.getUnitCols(); col++)
+				{
+					int c = (*it).second.get_value<int>();
+					int actualId = c < 0 ? c : idCrossRef[c];
+					image[floor].setTile(row, col, actualId);
+					it++;
+				}
+			}
+
+			map.setLayerImage(map.getFloorFromIndex(floor), image[floor]);
+		}
+
+		
+
+		map.id = rm.getNextId();
+		rm.gameMaps.insert(std::make_pair(map.id, map));
+		rm.idLookup.insert(std::make_pair(map.name, map.id));
+
+		delete[] image;
+	}
+}
+
+void loadEverything(boost::property_tree::ptree& jsonFile, ResourceManager& rm)
+{
+	loadItems(jsonFile.get_child("items"), rm);
+	loadActors(jsonFile.get_child("actors"), rm);
+	loadRooms(jsonFile.get_child("rooms"), rm);
+	loadMaps(jsonFile.get_child("maps"), rm);
+	loadEnemyPools(jsonFile.get_child("enemy pools"), rm); //must be loaded after the rooms
+}
 
 void loadDataFile(const std::string& jsonFile, ResourceManager& rm)
 {
@@ -388,10 +304,7 @@ void loadDataFile(const std::string& jsonFile, ResourceManager& rm)
 	pt::ptree root;
 	pt::read_json(jsonFile, root); //reading in the file also validates it
 
-	loadItems(root.get_child("items"), rm);
-	loadActors(root.get_child("actors"), rm);
-	loadEnemyPools(root.get_child("enemy pools"), rm);
-	
-	
+	loadEverything(root, rm);
 }
+
 

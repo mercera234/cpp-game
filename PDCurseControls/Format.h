@@ -2,50 +2,17 @@
 #include "Style.h"
 #include "curses.h"
 #include "Direction.h"
+#include <iterator>
+#include <sstream>
 
+/*A format for drawing text in a window*/
 struct Format
 {
 	virtual void draw(WINDOW* win, const std::string& text) = 0;
 };
 
-struct LineFormat : public Format
-{
-	int line = 0;
-	Justf justf = Justf::LEFT;
-	LineFormat() {};
-	LineFormat(int line, Justf justf)
-	{
-		this->line = line;
-		this->justf = justf;
-	}
-	 
-	void draw(WINDOW* win, const std::string& text)
-	{
-		int x = getPosition(justf, getmaxx(win), text.length());
-		mvwaddstr(win, line, x, text.c_str());
-	}
-};
 
-/*For a vertical line format, justification left and right equate to top and bottom*/
-struct VerticalLineFormat : public LineFormat
-{
-	VerticalLineFormat() {};
-	VerticalLineFormat(int column, Justf justf) : LineFormat(column, justf)
-	{
-	}
-
-	void draw(WINDOW* win, const std::string& text)
-	{
-		int y = getPosition(justf, getmaxy(win), text.length());
-
-		//add characters one at a time
-		for each (char c in text)
-		{
-			mvwaddch(win, y++, line, c);
-		}
-	}
-};
-
+/*A formatted line of text at a y,x position*/
 struct PosFormat : public Format
 {
 	Pos pos;
@@ -58,6 +25,7 @@ struct PosFormat : public Format
 	}
 };
 
+/*A positional format drawn vertically from y and x*/
 struct VerticalPosFormat : public PosFormat
 {
 	Pos pos;
@@ -74,3 +42,4 @@ struct VerticalPosFormat : public PosFormat
 		}
 	}
 };
+

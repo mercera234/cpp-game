@@ -42,7 +42,7 @@ namespace PDCurseControlsTester
 			std::string path = "C:\\This is a fake path";
 			FileDirectory dir(path);
 
-			dir.addDirToPath("subfolder");
+			dir.addToPath("subfolder");
 			
 			Assert::AreEqual(0, dir.getPath().compare("C:\\This is a fake path\\subfolder"));
 		}
@@ -52,7 +52,7 @@ namespace PDCurseControlsTester
 			std::string path = "C:\\This-is_a-fake~path\\subfolder";
 			FileDirectory dir(path);
 
-			dir.removeDirFromPath();
+			dir.removeLastFromPath();
 
 			Assert::AreEqual(0, dir.getPath().compare("C:\\This-is_a-fake~path"));
 		}

@@ -198,10 +198,12 @@ void ControlManager::moveControlToTop(Controllable* c)
 
 void ControlManager::setFocusedControl(Controllable* c)
 { 
-	unsetFocus();
-
 	auto it = quickRef.find(c);
+	if (it == quickRef.end())
+		return;
 
+	unsetFocus();
+	
 	Registration* r = it->second;
 	focusedReg = r;
 	r->c->setFocus(true);
@@ -307,13 +309,13 @@ Registration* ControlManager::findMouseInputRecipient()
 		//control contains the mouse click, and can respond to mouse events
 		if (wenclose(c->getWindow(), event->y, event->x) && (r->listen_map & MOUSE_LISTENER))
 		{
-			if (dynamic_cast<ControlManager*>(c)) //if control is a manager, then check all controls and back out if none found
-			{
-				ControlManager* cm = (ControlManager*)c;
-				r = cm->findMouseInputRecipient();
-			}
-			else
-				return r;
+			//if (dynamic_cast<ControlManager*>(c)) //if control is a manager, then check all controls and back out if none found
+			//{
+			//	ControlManager* cm = (ControlManager*)c;
+			//	cm->handleInput(input);
+			//}
+			
+			return r;
 		}
 			
 	}
@@ -352,6 +354,21 @@ void ControlManager::handleMouseInput(Registration* r)
 	}
 	else
 		setExitCode(ExitCode::NOT_HANDLED);
+}
+
+
+void ControlManager::passControl(Controllable* c, ControlManager& recipient, Command* cmd)
+{
+	auto it = quickRef.find(c);
+	if (it == quickRef.end()) //control is not registered
+		return;
+
+	Registration* r = it->second;
+	char listenMap = r->listen_map;
+
+	unRegisterControl(c); //if not registered, then nothing happens
+	
+	recipient.registerControl(c, listenMap, cmd);
 }
 
 

@@ -29,17 +29,26 @@ void BattleState::initDefaults()
 
 void BattleState::loadState()
 {
-	std::list<Actor*> players = { resourceManager->playerParty.begin(), resourceManager->playerParty.end() };
+	std::list<Actor*> players;
+	for(auto it = resourceManager->playerParty.begin() ; it != resourceManager->playerParty.end(); it++)
+	{
+		Actor* a = &(*it);
+		players.push_back(a);
+	}
+
+
+	//std::list<Actor> players = { resourceManager->playerParty.begin(), resourceManager->playerParty.end() };
 	
-	std::string currMap = resourceManager->currMap->name;
-	EnemyPool& pool = resourceManager->enemyPools[currMap];
+	
+	int currMapId = resourceManager->currMap->getCurrMapRoomId();
+	EnemyPool& pool = resourceManager->getData().getEnemyPool(currMapId);
 
 	EnemyGroup randomGroup = pool.getRandomGroup();
 
 	std::list<Actor*> enemyPtrs;
 	for each (std::string name in randomGroup.enemyNames)
 	{
-		Actor e = resourceManager->actors.find(name)->second; //get copy of repository enemy
+		Actor e = resourceManager->getData().getActor(name);// actors.find(name)->second; //get copy of repository enemy
 		e.type = ActorType::CPU;
 		enemies.push_back(e);
 		enemyPtrs.push_back(&enemies.back());

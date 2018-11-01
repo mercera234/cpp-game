@@ -61,7 +61,7 @@ namespace RPGLibTester
 			Image img;
 			map.setDimensions(1, 1);
 			img.setDimensions(1, 1);
-			int mapId = 57;
+			int mapId = -1;
 			img.setTile(0, 0, mapId);
 			map.setUnitWidth(20);
 			map.setUnitHeight(12);

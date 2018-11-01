@@ -43,8 +43,3 @@ void Frame::setText(const std::string& text, int y, int x)
 	textY = y;
 	textX = x;
 }
-
-Frame::~Frame()
-{
-	delwin(win);
-}

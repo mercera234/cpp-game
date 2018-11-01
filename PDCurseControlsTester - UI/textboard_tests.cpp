@@ -1,6 +1,10 @@
 #include "textboard_tests.h"
 #include "TextPiece.h"
 #include "TextBoard.h"
+#include "TextLabel.h"
+#include "CenteredFormat.h"
+#include "LineFormat.h"
+#include "BookLineFormat.h"
 #include <sstream>
 #include <iomanip>
 
@@ -353,6 +357,26 @@ void dialogueTest()
 
 	wbkgd(win, COLOR_RED << BKGDCOLOR_OFFSET);
 	piece.draw(win);
+
+	wnoutrefresh(win);
+	doupdate();
+	getch();
+
+}
+
+void centeredTextTest()
+{
+	WINDOW* win = newwin(3, 13, 1, 1);
+	wbkgd(win, COLOR_RED << BKGDCOLOR_OFFSET);
+
+	TextLabel cen;
+
+	cen.setWindow(win);
+
+	cen.setText("Here are some words for you.");
+	cen.setFormat(new CenteredFormat);
+	
+	cen.draw();
 
 	wnoutrefresh(win);
 	doupdate();

@@ -27,7 +27,7 @@ void BlitAnimation::draw()
 
 void BlitAnimation::drawBlitMap()
 {
-	for (unsigned int i = 0; i < blitMap->getSize(); i++)
+	for (int i = 0; i < blitMap->getSize(); i++)
 	{
 		if (blitMap->getDatum(i) == NO_BLIT) //nothing to draw if false (no blit)
 			continue;

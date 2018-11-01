@@ -69,6 +69,8 @@ public:
 	void setCaller(void* caller);
 	
 	void registerControl(Controllable* c, char listeners, Command* cmd);
+
+	/*Removes control from ControlManager, but does not delete the control*/
 	void unRegisterControl(Controllable* c);
 	
 	/*Shortcuts can only be called by the client object.*/
@@ -128,6 +130,9 @@ public:
 	*/
 	void setFocusedControl(Controllable* c);
 	
+	/*Unregister c and register with recipient using cmd.*/
+	void passControl(Controllable* c, ControlManager& recipient, Command* cmd);
+
 	//setters/getters
 
 	int getControlCount() { return controls.size(); }

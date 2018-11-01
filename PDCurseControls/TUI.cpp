@@ -72,27 +72,7 @@ TUI::TUI()
 CursorType TUI::cursorType = CursorType::INVISIBLE;
 bool TUI::simulateMouse = false;
 MEVENT TUI::mouseEvent;
-
-//void TUI::init()
-//{
-//	//initscr();                    /* Start curses mode */
-//	//nonl();         /* tell curses not to do NL->CR/NL on output */
-//
-//	//				//by enabling raw, Ctrl-C doesn't kill the program anymore!
-//	//raw(); //enables the use of all ctrl codes
-//	//noecho();         //turn echo off
-//
-//	//keypad(stdscr, true);//set stdscr as default for keypad (also allows use of arrow keys)
-//	//initColors();
-//
-//	//setCursorType(cursorType);
-//
-//	//mousemask(ALL_MOUSE_EVENTS, NULL); //allow mouse usage
-//	//simulateMouseOn(false);//this should be false by default
-//
-//	//refresh();//do this once so that first call to getch doesn't do this
-//}
-
+WindowManager TUI::winMgr;
 
 void setCursorType(CursorType typeIn)
 {

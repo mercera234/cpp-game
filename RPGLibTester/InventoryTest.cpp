@@ -2,7 +2,7 @@
 #include "Inventory.h"
 #include "GridMenu.h"
 #include "LineItem.h"
-#include "GameItemMenuRecord.h"
+#include "OwnedItemRecord.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 

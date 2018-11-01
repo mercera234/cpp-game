@@ -1,46 +1,35 @@
 #pragma once
 #include "curses.h"
+#include "Input.h"
 #include <assert.h>
 #include <map>
 
-const int MAX_KEY_CODES = (KEY_MAX + 1);
-
-template <typename T>
 class InputManager
 {
 private:
 
-	std::map<int, T> inputs;
+	std::map<int, Input> inputs;
 
-	//T inputs[MAX_KEY_CODES];
+	/*True if input provided matches the actual key pressed.
+	False if input is to be abstracted behind a layer of user specific inputs as in a game.*/
+	bool useRawInput = false;
+	
 public:
-	InputManager() {}
-	void fill(T input);
-	bool setInput(int key, T input);
-	T& getInput(int key); //get action for key supplied
+	InputManager() {}	
+	int loadConfigurationFile(std::ifstream& textFile);
+
+	/*Get input provided by user using pdcurses getch method.*/
+	int getInput(); 
+
+	/*Get input provided by key.*/
+	int getInput(int key);
+	
+	//setters/getters
+	
+	auto& getInputs() { return inputs; }
+	void setUseRawInput(bool useRealInputIn) { useRawInput = useRealInputIn; }
+	bool getUseRawInput() { return useRawInput; }
 };
 
-template <typename T>
-void InputManager<T>::fill(T input)
-{
-	std::fill(std::begin(inputs), std::end(inputs), input);
-}
-
-template <typename T>
-T& InputManager<T>::getInput(int key)
-{
-	assert(key >= 0 && key < MAX_KEY_CODES);
-	
-	return inputs[key];
-}
-
-template <typename T>
-bool InputManager<T>::setInput(int key, T input)
-{
-	assert(key >= 0 && key < MAX_KEY_CODES);
-
-	inputs[key] = input;
-	return true;
-}
 
 

@@ -3,7 +3,8 @@
 
 void ControlHandle::draw()
 {
-	assert(control);
+	if (control == nullptr)
+		return;
 
 	control->draw();
 }

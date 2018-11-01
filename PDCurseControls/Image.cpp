@@ -111,60 +111,26 @@ chtype Image::getOutOfBoundsTile(int mapY, int mapX)
 }
 
 
-int Image::save(std::ofstream& saveFile)
+void Image::save(std::ofstream& saveFile)
 {
-	if (saveFile.is_open() == false)
-		return false;
-
-	std::streampos startPos = saveFile.tellp();
-
-	saveFile.write((char*)&totalRows, sizeof(int));
-	saveFile.write((char*)&totalCols, sizeof(int));
-	
-	chtype c;
-	for (int i = 0; i < totalTiles; i++)
-	{
-		c = tileMap.getDatum(i);
-		saveFile.write((char*)&c, sizeof(chtype));
-	}
-	
-	std::streampos endPos = saveFile.tellp();
-
-	return (int)(endPos - startPos);
+	tileMap.save(saveFile);
 }
 
-
-int Image::load(std::ifstream& loadFile)
+void Image::load(std::ifstream& loadFile)
 {
-	if (loadFile.is_open() == false)
-		return false;
-
-	std::streampos startPos = loadFile.tellg();
-
-	unsigned int rows = 0;
-	unsigned int cols = 0;
-
-	loadFile.read((char*)&rows, sizeof(int));
-	loadFile.read((char*)&cols, sizeof(int));
-	
-	setDimensions(rows, cols);
-
-	chtype c;
-	for (int i = 0; i < totalTiles; i++)
-	{
-		loadFile.read((char*)&c, sizeof(chtype));
-		tileMap.setDatum(i, c);
-	}
-
-	std::streampos endPos = loadFile.tellg();
-
-	return (int)(endPos - startPos);
+	tileMap.load(loadFile);
+	Controllable::setDimensions(tileMap.getRows(), tileMap.getCols());
 }
-
 
 void Image::setDimensions(int rows, int cols)
 {
-	tileMap.setDimensions(rows, cols, ' ');
+	tileMap.setDimensions(rows, cols);
+	Controllable::setDimensions(rows, cols);
+}
+
+void Image::setDimensions(int rows, int cols, chtype fillChar)
+{
+	tileMap.setDimensions(rows, cols, fillChar);
 	Controllable::setDimensions(rows, cols);
 }
 
@@ -205,13 +171,13 @@ void getScreenShot(Image& snapShot, int y, int x, int height, int width) //stati
 	snapShot.setDimensions(height, width);
 	snapShot.setWindow(stdscr);
 
-	TwoDStorage<chtype>* tileMap = snapShot.getTileMap();
+	ITwoDStorage<chtype>& tileMap = snapShot.getTileMap();
 
 	for (int i = 0; i < snapShot.getTotalTiles(); i++)
 	{
 		int row = i / width;
 		int col = i % width;
 		chtype c = mvwinch(stdscr, row + y, col + x);
-		tileMap->setDatum(row, col, c);
+		tileMap.setDatum(row, col, c);
 	}
 }

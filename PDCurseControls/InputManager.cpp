@@ -1,25 +1,48 @@
-#include <algorithm>
-#include <iterator>
+#include <string>
+#include <fstream>
 #include "InputManager.h"
+#include "key_strings.h"
 
-//InputManager::InputManager() 
-//{
-//	std::fill(std::begin(inputs), std::end(inputs), NO_INPUT);
-//}
-//
-//int InputManager::getInput(int key)
-//{
-//	if (key < 0 || key >= MAX_KEY_CODES)
-//		return NO_INPUT;
-//
-//	return inputs[key];
-//}
-//
-//bool InputManager::setInput(int key, int input)
-//{
-//	if (key < 0 || key >= MAX_KEY_CODES)
-//		return false;
-//
-//	inputs[key] = input;
-//	return true;
-//}
+const char commentRecordId = '#';
+const int unknownInput = -1;
+
+int InputManager::loadConfigurationFile(std::ifstream& textFile)
+{
+	char lineFirstChar;
+	while ((lineFirstChar = (char)textFile.peek()) != EOF)
+	{
+		if (lineFirstChar == commentRecordId) //skip to next line
+		{
+			//see max conflict with windef.h, hence the extra ()s
+			textFile.ignore((std::numeric_limits<int>::max)(), '\n');
+			continue;
+		}
+
+		std::string textInput;
+		std::string textKey;
+
+		textFile >> textInput >> textKey;
+		int key = getKeyFromString(textKey);
+
+		//inputs are setup with unknown input codes to be set by client app
+		inputs.insert(std::make_pair(key, Input(textInput, unknownInput)));
+	}
+
+	return inputs.size();
+}
+
+int InputManager::getInput()
+{
+	int key = getch();
+	return getInput(key);
+}
+
+int InputManager::getInput(int key)
+{
+	if (getUseRawInput())
+		return key;
+
+	auto it = inputs.find(key);
+
+	return (it != inputs.end()) ? it->second.code : unknownInput;
+}

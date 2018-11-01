@@ -2,35 +2,52 @@
 #include <algorithm>
 #include "GameInput.h"
 #include "TUI.h"
-#include "data_loaders.h"
+//#include "data_loaders.h"
+
+
+void fixSpriteSymbols(std::list<Sprite*>& sprites)
+{
+	for (Sprite* sprite : sprites)
+	{
+		//setup sprites properly based on type
+		if (GameItem* item = dynamic_cast<GameItem*>(sprite->thing))
+		{
+			switch (item->type)
+			{
+			case GameItemType::MONEY: sprite->symbol = moneySymbol;  break;
+			default: sprite->symbol = itemSymbol; break;
+			}
+			sprite->impassible = false;
+		}
+	}
+}
 
 void loadDataFiles(ResourceManager& rm)
 {
 	//configuration file
 	std::ifstream configStream(configFile);
-	loadConfigurationFile(configStream, rm);
-
-	defaultGameInputs(rm.inputs);
+	
+	InputManager& inputMgr = rm.getInputManager();
+	
+	inputMgr.loadConfigurationFile(configStream);
+	setupDefaultGameInputs(inputMgr.getInputs());
 
 	setupDefaultDataKeys(rm);
 
-	//actors
-	/*std::ifstream actorStream(actorFile);
-	loadActorsFromTextFile(actorStream, rm);*/
-	loadDataFile("data\\jsontest.txt", rm);
+	GameData& data = rm.getData();
+	data.loadDataFile("data\\jsontest.txt"); //loads all the game data from json file
 
-	//map rooms
-	FileDirectory dataDir(dataDirName);
-	rm.loadGameMapsFromDir(dataDir);
-
-	//megamaps
-	std::ifstream mapStream(mapFile);
-	loadMapsFromTextFile(mapStream, rm);
+	//fix up sprites in each room TODO not sure if this is the best way to do this
+	for (auto it = data.getRooms().begin(); it != data.getRooms().end(); it++)
+	{
+		MapRoom& room = it->second;
+		fixSpriteSymbols(room.sprites);
+	}
 }
 
 
 
-void defaultGameInputs(std::map<int, Input>& inputs)
+void setupDefaultGameInputs(std::map<int, Input>& inputs)
 {
 	for each (std::pair<int,Input> p in inputs)
 	{
@@ -70,31 +87,32 @@ void defaultGameInputs(std::map<int, Input>& inputs)
 	
 }
 
-int getInput(ResourceManager& resourceManager)
-{
-	int input = getch();
-	if (resourceManager.getUseRawInput())
-		return input;
-
-	auto inputs = &resourceManager.inputs;
-	auto it = inputs->find(input);
-
-	return (it != inputs->end()) ? it->second.code : GameInput::UNKNOWN;
-}
+//int getInput(ResourceManager& resourceManager)
+//{
+//	int input = getch();
+//	if (resourceManager.getUseRawInput())
+//		return input;
+//
+//	auto inputs = &resourceManager.getData().getInputs();
+//	auto it = inputs->find(input);
+//
+//	return (it != inputs->end()) ? it->second.code : GameInput::UNKNOWN;
+//}
 
 void setupDefaultDataKeys(ResourceManager& rm)
 {
-	rm.theData.clearData();
+	GameData& data = rm.getData();
+	data.clearData();
 
 	BoundInt gold$(0, 9999999, 0);
-	rm.theData.storeIntData(GOLD$, gold$);
+	data.storeIntData(GOLD$, gold$);
 	
 	BoundInt enemiesKilled(0, 9999999);
-	rm.theData.storeIntData(ENEMIES_KILLED, enemiesKilled);
+	data.storeIntData(ENEMIES_KILLED, enemiesKilled);
 	
 	BoundInt battlesWon(0, 9999999);
-	rm.theData.storeIntData(BATTLES_WON, battlesWon);
+	data.storeIntData(BATTLES_WON, battlesWon);
 	
 	BoundInt stepsTaken(0, 9999999);
-	rm.theData.storeIntData(STEPS, stepsTaken);
+	data.storeIntData(STEPS, stepsTaken);
 }

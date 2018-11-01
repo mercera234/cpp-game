@@ -17,6 +17,10 @@ public:
 	TextPiece(Format* fmtIn, const std::string& textIn);
 	~TextPiece();
 	virtual void draw(WINDOW* win);
+
+	
+	//setters/getters
+
 	void setText(const std::string& textIn) { text = textIn; }
 	std::string getText() { return text; }
 	void setFormat(Format* fmtIn) { fmt = fmtIn; }

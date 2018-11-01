@@ -91,13 +91,13 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(VCInstallDir)UnitTest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>F:\Program Files\boost\boost_1_65_1;$(VCInstallDir)UnitTest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <UseFullPaths>true</UseFullPaths>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalLibraryDirectories>$(VCInstallDir)UnitTest\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>F:\Program Files\boost\boost_1_65_1\stage\lib;$(VCInstallDir)UnitTest\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>F:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\PDCurseControls\lib\pdcurses.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -152,6 +152,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="json_tree_creators.h" />
     <ClInclude Include="MockControl.h" />
     <ClInclude Include="MockMovementProcessor.h" />
     <ClInclude Include="MockMusicPlayer.h" />
@@ -168,7 +169,7 @@
     <ClCompile Include="FreeMovementProcessorTest.cpp" />
     <ClCompile Include="GameDataTest.cpp" />
     <ClCompile Include="GameStateManagerTest.cpp" />
-    <ClCompile Include="InventoryTest.cpp" />
+    <ClCompile Include="json_tree_creators.cpp" />
     <ClCompile Include="MapRoomTest.cpp" />
     <ClCompile Include="MegaMapTest.cpp" />
     <ClCompile Include="MockMovementProcessor.cpp" />
@@ -177,6 +178,7 @@
     <ClCompile Include="MockState2.cpp" />
     <ClCompile Include="MovementProcessorTest.cpp" />
     <ClCompile Include="MusicPlayerTest.cpp" />
+    <ClCompile Include="OwnedItemRecordTest.cpp" />
     <ClCompile Include="PickupTest.cpp" />
     <ClCompile Include="PlayerActorTest.cpp" />
     <ClCompile Include="ResourceManagerTest.cpp" />

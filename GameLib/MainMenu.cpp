@@ -8,6 +8,7 @@
 #include "defaults.h"
 #include "DialogWindow.h"
 #include "ConfigMenu.h"
+#include "LineFormat.h"
 
 MainMenu::MainMenu()
 {
@@ -29,6 +30,9 @@ MainMenu::MainMenu()
 	configMenuCmd.setReceiver(this);
 	configMenuCmd.setAction(&MainMenu::processConfigMenuInput);
 
+	browserCmd.setReceiver(this);
+	browserCmd.setAction(&MainMenu::processBrowserInput);
+	
 	setupDescFields();
 	setupBodyFields();
 	setupStatusFields();
@@ -40,6 +44,7 @@ MainMenu::MainMenu()
 	cm.registerControl(&playerFrame, KEY_LISTENER, &playerMenuCmd);
 	cm.registerControl(&descFrame, 0, nullptr);
 	cm.registerControl(&bodyFrame, 0, nullptr);
+	cm.registerControl(&currBrowser, KEY_LISTENER, &browserCmd);
 	cm.setFocusedControl(&mainFrame);
 }
 
@@ -116,17 +121,16 @@ void MainMenu::setWindow(WINDOW* win)
 }
 
 
-void MainMenu::addPlayerParty(std::vector<Actor*>& allies)
+void MainMenu::addPlayerParty(std::vector<Actor>& allies)
 {
 	assert(allies.size() <= playerCapacity);
-	this->allies = allies;
 
 	int row = 0;
-	for each (Actor* actor in allies)
+	for each (Actor actor in allies)
 	{
 		LineItem* item = (LineItem*)playerMenu.getItem(row++, 0);
 
-		item->name = actor->name;
+		item->name = actor.name;
 	}
 }
 
@@ -206,6 +210,16 @@ void MainMenu::processMainMenuInput()
 	{
 		switch (((LineItem*)item)->getCrossRef())
 		{
+		case MainMenuOption::INVENTORY:
+		{
+			/*currBrowser.control = &itemBrowser;
+			itemBrowser.setWindow(bodyFrame.getWindow());
+
+			itemBrowser.setItems(resourceManager->inventory);
+
+			cm.setFocusedControl(&currBrowser);*/
+		}
+			break;
 		case MainMenuOption::STATUS:
 			cm.setFocusedControl(&playerFrame);
 			playerMenu.setCurrentItem(0);
@@ -248,10 +262,10 @@ void MainMenu::setResourceManager(ResourceManager* resourceManagerIn)
 
 void MainMenu::setupHubContent()
 {
-	gold->setValue(&resourceManager->theData.retrieveIntData(GOLD$));
-	steps->setValue(&resourceManager->theData.retrieveIntData(STEPS));
-	enemiesKilled->setValue(&resourceManager->theData.retrieveIntData(ENEMIES_KILLED));
-	battlesWon->setValue(&resourceManager->theData.retrieveIntData(BATTLES_WON));
+	gold->setValue(&resourceManager->getData().retrieveIntData(GOLD$));
+	steps->setValue(&resourceManager->getData().retrieveIntData(STEPS));
+	enemiesKilled->setValue(&resourceManager->getData().retrieveIntData(ENEMIES_KILLED));
+	battlesWon->setValue(&resourceManager->getData().retrieveIntData(BATTLES_WON));
 }
 
 void MainMenu::setupDescContent()
@@ -259,12 +273,26 @@ void MainMenu::setupDescContent()
 	MegaMap* currMap = resourceManager->currMap;
 	mapText->setText(currMap->name);
 	int id = currMap->getCurrMapRoomId();
-	MapRoom& room = resourceManager->mapRooms[id];
+
+	MapRoom& room = resourceManager->getData().getRoom(id);
 
 	roomText->setText(room.name);
 
-	//floorLabel = currMap->getFloorLabel();
 	floor->setValue(&currMap->getFloorLabel());
+}
+
+void MainMenu::processBrowserInput()
+{
+	int input = cm.getInput();
+	Browser* b = (Browser*)currBrowser.control;
+	b->setInput(input);
+	b->processInput();
+
+	if (b->getExitCode() == ExitCode::GO_BACK)
+	{
+		cm.setFocusedControl(&mainFrame);
+		cm.unRegisterControl(&currBrowser);
+	}
 }
 
 void MainMenu::processPlayerMenuInput()
@@ -309,15 +337,17 @@ void MainMenu::setupStatusContent()
 
 	if (item && ((LineItem*)item)->name.compare("") != 0)
 	{
-		Actor* ally = allies[item->index];
-		hpRow->setValue(&ally->getStat(StatType::HP));
-		mpRow->setValue(&ally->getStat(StatType::MP));
-		strengthRow->setValue(&ally->getStat(StatType::STRENGTH));
-		defenseRow->setValue(&ally->getStat(StatType::DEFENSE));
-		intelRow->setValue(&ally->getStat(StatType::INTELLIGENCE));
-		willRow->setValue(&ally->getStat(StatType::WILL));
-		agilityRow->setValue(&ally->getStat(StatType::AGILITY));
-		expRow->setValue(&ally->getStat(StatType::EXP));
+		Actor& ally = resourceManager->playerParty[item->index];
+
+		//Actor* ally = allies[item->index];
+		hpRow->setValue(&ally.getStat(StatType::HP));
+		mpRow->setValue(&ally.getStat(StatType::MP));
+		strengthRow->setValue(&ally.getStat(StatType::STRENGTH));
+		defenseRow->setValue(&ally.getStat(StatType::DEFENSE));
+		intelRow->setValue(&ally.getStat(StatType::INTELLIGENCE));
+		willRow->setValue(&ally.getStat(StatType::WILL));
+		agilityRow->setValue(&ally.getStat(StatType::AGILITY));
+		expRow->setValue(&ally.getStat(StatType::EXP));
 	}
 }
 

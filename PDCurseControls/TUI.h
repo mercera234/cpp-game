@@ -3,6 +3,7 @@
 #include "curses.h"
 #include "panel.h"
 #include <iostream>
+#include "WindowManager.h"
 
 //ctrl codes(not all of these have been tested!)
 #define CTRL_AT 0x0 //couldn't use the symbol @
@@ -149,6 +150,8 @@ public:
 	static CursorType cursorType;// = CursorType::INVISIBLE;
 	TUI();
 	~TUI();
+
+	static WindowManager winMgr;
 
 	WINDOW* win;
 	//void init();

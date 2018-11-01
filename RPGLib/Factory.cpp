@@ -6,18 +6,18 @@ MapRoom* Factory::createMap(unsigned short id, unsigned short height, unsigned s
 	//create map
 	std::string name = "Map " + id;
 	MapRoom* newMap = new MapRoom(name, height, width, win);
-	newMap->id = id;
+	//newMap->id = id;
 
-	//populate the map with patternChar
-	Image* display = newMap->getDisplay();
+	////populate the map with patternChar
+	//Image* display = newMap->getDisplay();
 
-	TwoDStorage<chtype>* tileMap = display->getTileMap();
+	//ITwoDStorage<chtype>* tileMap = display->getTileMap();
 
-	for (unsigned int i = 0; i < tileMap->getSize(); i++)//set every tenth character to the pattern, leave rest blank
-	{
-		chtype tile = i % 10 == 0 ? patternChar : ' ';
-		tileMap->setDatum(i, tile);
-	}
+	//for (int i = 0; i < tileMap->getSize(); i++)//set every tenth character to the pattern, leave rest blank
+	//{
+	//	chtype tile = i % 10 == 0 ? patternChar : ' ';
+	//	tileMap->setDatum(i, tile);
+	//}
 
 
 	return newMap;
@@ -30,16 +30,16 @@ MapRoom* Factory::createMap(WINDOW* win, unsigned short id, unsigned short heigh
 	MapRoom* newMap = new MapRoom(name, height, width, win);
 	newMap->id = id;
 
-	//populate the map with patternChar
-	Image* display = newMap->getDisplay();
+	////populate the map with patternChar
+	//Image* display = newMap->getDisplay();
 
-	TwoDStorage<chtype>* tileMap = display->getTileMap();
+	//ITwoDStorage<chtype>* tileMap = display->getTileMap();
 
-	for (unsigned int i = 0; i < tileMap->getSize(); i++)//set every tenth character to the pattern, leave rest blank
-	{
-		chtype tile = i % 10 == 0 ? patternChar : ' ';
-		tileMap->setDatum(i, tile);
-	}
+	//for (int i = 0; i < tileMap->getSize(); i++)//set every tenth character to the pattern, leave rest blank
+	//{
+	//	chtype tile = i % 10 == 0 ? patternChar : ' ';
+	//	tileMap->setDatum(i, tile);
+	//}
 
 //	newMap->setHighLevelPosition(hlY, hlX);
 

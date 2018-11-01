@@ -6,11 +6,11 @@ AutoMap::AutoMap(WINDOW* win, int height, int width)
 {
 	display = new Image(height, width, win);
 	display->setBordered(false);
-	TwoDStorage<chtype>* tileMap = display->getTileMap();
+	ITwoDStorage<chtype>& tileMap = display->getTileMap();
 	
 	for (int i = 0; i < display->getTotalTiles(); i++)
 	{
-		tileMap->setDatum(i, ' ');
+		tileMap.setDatum(i, ' ');
 	}
 
 	minX = minY = INT32_MAX;

@@ -7,6 +7,7 @@
 #include <assert.h>
 #include "GameInput.h"
 #include "defaults.h"
+#include "LineFormat.h"
 
 BattleProcessor::BattleProcessor()
 {
@@ -349,8 +350,8 @@ void BattleProcessor::setupVictory()
 	//add messages
 	messages.push_back("You killed the enemies.");
 
-	resourceManager->theData.alterIntData(BATTLES_WON, 1);
-	resourceManager->theData.alterIntData(ENEMIES_KILLED, cpuActors.size());
+	resourceManager->getData().alterIntData(BATTLES_WON, 1);
+	resourceManager->getData().alterIntData(ENEMIES_KILLED, cpuActors.size());
 
 	//calculate experience and money earned
 	int totalExp, totalMoney;
@@ -381,7 +382,7 @@ void BattleProcessor::calcRewards(int& totalExp, int &totalMoney)
 void BattleProcessor::transferRewards(int totalExp, int totalMoney)
 {
 	//transfer gold
-	resourceManager->theData.alterIntData(GOLD$, totalMoney);
+	resourceManager->getData().alterIntData(GOLD$, totalMoney);
 	
 	//divided total gained by number of players
 	int expPerPlayer = totalExp / humanActors.size();

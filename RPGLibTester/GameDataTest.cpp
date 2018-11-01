@@ -1,5 +1,6 @@
 #include "CppUnitTest.h"
 #include "GameData.h"
+#include "json_tree_creators.h"
 #include <limits>
 #include <exception>
 
@@ -9,7 +10,38 @@ namespace GameLibTester
 {
 	TEST_CLASS(GameDataTest)
 	{
+		TUI tui;
 		GameData data;
+
+		TEST_METHOD(getNullResourcesTest)
+		{
+			Assert::AreEqual(1, (int)data.getActors().size());
+			Assert::AreEqual(1, (int)data.getRooms().size());
+			Assert::AreEqual(1, (int)data.getMaps().size());
+		}
+
+		TEST_METHOD(getNullResourcesActorContentTest)
+		{
+			Actor& a = data.getActor(nullName);
+
+			Assert::AreEqual((char)nullSymbol, (char)a.symbol);
+		}
+
+		TEST_METHOD(getNullResourcesMapContentTest)
+		{
+			MapRoom& m = data.getRoom(nullId);
+			ITwoDStorage<chtype>& tileMap = m.getDisplay().getTileMap();
+			chtype c = tileMap.getDatum(4, 8);
+
+			Assert::AreEqual('!', (char)c);
+		}
+
+		TEST_METHOD(getNextIdTest)
+		{
+			data.resetNextId();
+			Assert::AreEqual(0, data.getNextId()); //without being called before, next id will be 0
+		}
+
 		TEST_METHOD(storeIntTest)
 		{
 			BoundInt someInt(0, 100, 36);
@@ -39,18 +71,6 @@ namespace GameLibTester
 			BoundInt& getVal = data.retrieveIntData(key);
 			
 			Assert::AreEqual(value.getCurr(), getVal.getCurr());
-		}
-
-		TEST_METHOD(cantStoreDuplicateKeysTest)
-		{
-			BoundInt someInt(0, 100, 36);
-			std::string key = "Value";
-			data.storeIntData(key, someInt);
-
-			BoundInt anotherInt(3, 36, 20);
-			data.storeIntData(key, anotherInt); //repeat the same store
-
-			Assert::AreEqual(1, (int)data.bIntData.size());
 		}
 
 		TEST_METHOD(overwriteDataCheckTest)
@@ -86,5 +106,64 @@ namespace GameLibTester
 
 			Assert::AreEqual(secondVal, retInt.getCurr()); //the first value was never overwritten
 		}
+
+		TEST_METHOD(loadActorsTest)
+		{
+			boost::property_tree::ptree actorsNode;
+			createActorJSONtree(actorsNode);
+
+			data.loadActors(actorsNode);
+			Assert::AreEqual(3, (int)data.getActors().size()); //3 = 2 actors + 1 null actor
+		}
+
+		TEST_METHOD(loadItemsTest)
+		{
+			boost::property_tree::ptree itemsNode;
+			createItemJSONtree(itemsNode);
+
+			data.loadItems(itemsNode);
+			Assert::AreEqual(3, (int)data.getItems().size()); //3 = 2 items + 1 null item //TODO test fails because the null item is not being loaded yet
+		}
+
+		TEST_METHOD(loadRoomsTest)
+		{
+			boost::property_tree::ptree roomsNode;
+			createMapRoomJSONtree(roomsNode);
+
+			data.loadRooms(roomsNode);
+			Assert::AreEqual(4, (int)data.getRooms().size()); //= 3 rooms + 1 null room
+		}
+
+		TEST_METHOD(loadEnemyPoolsTest)
+		{
+			boost::property_tree::ptree poolsNode;
+			createEnemyPoolJSONtree(poolsNode);
+
+			data.loadEnemyPools(poolsNode);
+			Assert::AreEqual(4, (int)data.getEnemyPools().size());//= 3 pools + 1 null pool
+		}
+
+		TEST_METHOD(loadMapsTest)
+		{
+			boost::property_tree::ptree mapsNode;
+			createMapJSONtree(mapsNode);
+
+			data.loadMaps(mapsNode);
+			Assert::AreEqual(2, (int)data.getMaps().size()); //1 map loaded, 1 null map
+		}
+
+		TEST_METHOD(loadNullMapsTest)
+		{
+			boost::property_tree::ptree mapsNode;
+			createMapJSONtree(mapsNode);
+
+			data.loadMaps(mapsNode);
+			MegaMap& map = data.getMap("TestRegion");
+			Image& img = map.getMapRoomLayout()[0];
+
+			Assert::AreEqual(-1, (int)img.getTile(0, 2)); //1 map loaded, 1 null map
+		}
+
+
 	};
 }

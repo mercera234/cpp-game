@@ -7,3 +7,4 @@ void statusBoard();
 void statusBoardWithStrings();
 void statusBoardWithTextPieces();
 void dialogueTest();
+void centeredTextTest();

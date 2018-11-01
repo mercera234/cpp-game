@@ -17,8 +17,8 @@ void mapEffectFilterTest()
 
 	MapRoom map("test", 10, 30, viewport);
 
-	TwoDStorage<chtype>* dLayer = map.getDisplay()->getTileMap();
-	TwoDStorage<EffectType>& eLayer = map.getEffectsLayer();
+	ITwoDStorage<chtype>& dLayer = map.getDisplay().getTileMap();
+	ITwoDStorage<EffectType>& eLayer = map.getEffectsLayer();
 
 	short centerY = getmaxy(viewport) / 2;
 	short centerX = getmaxx(viewport) / 2;
@@ -69,7 +69,7 @@ void mapEffectFilterTest()
 		}
 			
 
-		dLayer->setDatum(i, tile | color);
+		dLayer.setDatum(i, tile | color);
 
 		
 	}
@@ -148,9 +148,9 @@ void mapHighlighterTest()
 {
 	WINDOW* viewport = dupwin(stdscr);
 	MapRoom* map = new MapRoom("test", 10, 30, viewport);
-	Image* img = map->getDisplay();
+	Image& img = map->getDisplay();
 
-	TwoDStorage<chtype>* tileMap = img->getTileMap();
+	ITwoDStorage<chtype>& tileMap = img.getTileMap();
 	
 	short centerY = getmaxy(viewport) / 2;
 	short centerX = getmaxx(viewport) / 2;
@@ -167,14 +167,14 @@ void mapHighlighterTest()
 	int totalTiles = 10 * 30;
 	for (int i = 0; i < totalTiles; i++)
 	{
-		tileMap->setDatum(i, (chtype)asciiPtr++);
+		tileMap.setDatum(i, (chtype)asciiPtr++);
 
 		if (asciiPtr >= asciiEnd)
 			asciiPtr = asciiStart;
 	}
 
 
-	Highlighter* hl = new Highlighter(img, &curY, &curX);
+	Highlighter* hl = new Highlighter(&img, &curY, &curX);
 
 
 	bool playing = true;
@@ -225,7 +225,7 @@ void mapHighlighterTest()
 			break;
 		}
 
-		img->setPosition(y, x);
+		img.setPosition(y, x);
 	}
 
 
@@ -567,8 +567,8 @@ void megaMapTest()
 	mm.setFloor(0);
 
 	Image img[6];
-	TwoDStorage<chtype>* tileMap = img[0].getTileMap();
-	tileMap->fill(INT_MAX);
+	ITwoDStorage<chtype>& tileMap = img[0].getTileMap();
+	tileMap.fill(INT_MAX);
 
 	img[0].setDimensions(6, 6);
 	img[1].setDimensions(6, 6);
@@ -589,11 +589,11 @@ void megaMapTest()
 	img[0].setTile(3, 1, 2);
 	img[0].setTile(4, 1, 2);
 	
-	img[1].getTileMap()->fill(INT_MAX);
-	img[2].getTileMap()->fill(INT_MAX);
-	img[3].getTileMap()->fill(INT_MAX);
-	img[4].getTileMap()->fill(INT_MAX);
-	img[5].getTileMap()->fill(INT_MAX);
+	img[1].getTileMap().fill(INT_MAX);
+	img[2].getTileMap().fill(INT_MAX);
+	img[3].getTileMap().fill(INT_MAX);
+	img[4].getTileMap().fill(INT_MAX);
+	img[5].getTileMap().fill(INT_MAX);
 
 	mm.setLayerImage(0, img[0]);
 	mm.setLayerImage(1, img[1]);
@@ -661,16 +661,21 @@ void animationTest()
 {
 	resize_term(23, 51);
 
-	MapRoom map0(stdscr, "data\\water_templ.map");
-	Image* img = map0.getDisplay();
-	img->draw(); //load drawing into window (wouldn't normally draw outside of input process update loop
+	
+	MapRoom map0;// , "data\\water_templ.map");
+	map0.setWindow(stdscr);
+	FilePath path("data", &map0);
+	path.load("water_templ.map");
+
+	Image& img = map0.getDisplay();
+	img.draw(); //load drawing into window (wouldn't normally draw outside of input process update loop
 	doupdate();
 
 	getch();
 
 	//copy image on screen to new image
 	//RandomBlitAnimation anim(img);
-	SpiralBlitAnimation anim(img);
+	SpiralBlitAnimation anim(&img);
 	anim.setSpeed(4); //4 is optimum speed for spiral
 
 	

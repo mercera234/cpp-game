@@ -1,4 +1,5 @@
 #include "Palette.h"
+#include "LineFormat.h"
 
 Palette::Palette(unsigned short y, unsigned short x, const std::string& titleText, unsigned short menuRows, unsigned short menuCols)
 {

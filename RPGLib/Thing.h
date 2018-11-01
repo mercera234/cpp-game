@@ -11,7 +11,7 @@ struct Thing
 	int id = -1;
 	std::string name;
 	std::string description = "";
-	//int y, x; //location in map
+	
 	virtual void dummy() {} //virtual method is needed to make this a polymorphic class
 };
 

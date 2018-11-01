@@ -30,7 +30,7 @@ bool GameApp::run()
 	/*resize the terminal once before first draw. 
 	Having it resize in the loop below before every draw causes issues.
 	Lots of black gets drawn where there shouldn't be any*/
-	resize_term(gameScreenHeight, gameScreenWidth);
+	TUI::centerConsoleWindow(gameScreenHeight, gameScreenWidth);
 
 	while (playing)
 	{
@@ -39,7 +39,7 @@ bool GameApp::run()
 		doupdate();
 
 		//input/process
-		int input = getInput(resourceManager);
+		int input = resourceManager.getInputManager().getInput();
 		playing = stateMngr.processInput(input);
 			
 	}

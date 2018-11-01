@@ -77,7 +77,11 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>F:\Program Files\boost\boost_1_65_1;</AdditionalIncludeDirectories>
     </ClCompile>
+    <Lib>
+      <AdditionalLibraryDirectories>F:\Program Files\boost\boost_1_65_1\stage\lib</AdditionalLibraryDirectories>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -115,12 +119,15 @@
   <ItemGroup>
     <ClCompile Include="BattleProcessor.cpp" />
     <ClCompile Include="BattleState.cpp" />
+    <ClCompile Include="Browser.cpp" />
     <ClCompile Include="ConfigMenu.cpp" />
     <ClCompile Include="ConfigMenuItem.cpp" />
     <ClCompile Include="defaults.cpp" />
     <ClCompile Include="ExplorationProcessor.cpp" />
     <ClCompile Include="ExploreState.cpp" />
     <ClCompile Include="GameApp.cpp" />
+    <ClCompile Include="InputProcessor.cpp" />
+    <ClCompile Include="ItemBrowser.cpp" />
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="MainMenuState.cpp" />
     <ClCompile Include="menu_drivers.cpp" />
@@ -130,6 +137,7 @@
   <ItemGroup>
     <ClInclude Include="BattleProcessor.h" />
     <ClInclude Include="BattleState.h" />
+    <ClInclude Include="Browser.h" />
     <ClInclude Include="ConfigMenu.h" />
     <ClInclude Include="ConfigMenuItem.h" />
     <ClInclude Include="defaults.h" />
@@ -137,6 +145,8 @@
     <ClInclude Include="ExploreState.h" />
     <ClInclude Include="GameApp.h" />
     <ClInclude Include="GameInput.h" />
+    <ClInclude Include="InputProcessor.h" />
+    <ClInclude Include="ItemBrowser.h" />
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="MainMenuState.h" />
     <ClInclude Include="menu_drivers.h" />

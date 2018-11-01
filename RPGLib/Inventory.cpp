@@ -19,7 +19,7 @@ Inventory::Inventory(unsigned int rows, unsigned int cols)
 	//point all items in menu to point to the same blank item
 	for (unsigned int i = 0; i < items.getMaxCapacity(); i++)
 	{
-		GameItemMenuRecord* gimr = new GameItemMenuRecord();
+		OwnedItemRecord* gimr = new OwnedItemRecord();
 		gimr->index = i;
 		gimr->setItem(blankItem);
 		items.setItem(gimr);
@@ -40,7 +40,7 @@ bool Inventory::addItem(GameItem* newItem)
 	//search through inventory from beginning 0,0 and search from left right, top to bottom for next blank item
 	for (unsigned int i = 0; i < items.getMaxCapacity(); i++)
 	{
-		GameItemMenuRecord* gimr = (GameItemMenuRecord*)items.AbstractMenu::getItem(i);
+		OwnedItemRecord* gimr = (OwnedItemRecord*)items.AbstractMenu::getItem(i);
 		GameItem* item = gimr->getItem();
 		if (item == blankItem)
 		{
@@ -58,20 +58,20 @@ bool Inventory::addItem(GameItem* newItem)
 
 GameItem* Inventory::getItemAtIndex(unsigned int index)
 {
-	GameItemMenuRecord* gimr = (GameItemMenuRecord*)items.AbstractMenu::getItem(index);
+	OwnedItemRecord* gimr = (OwnedItemRecord*)items.AbstractMenu::getItem(index);
 	return gimr->getItem();
 }
 
 GameItem* Inventory::getItem(unsigned int row, unsigned int col)
 {
-	GameItemMenuRecord* gimr = (GameItemMenuRecord*)items.getItem(row, col);
+	OwnedItemRecord* gimr = (OwnedItemRecord*)items.getItem(row, col);
 	return gimr->getItem();
 }
 
 GameItem* Inventory::discardItem(unsigned int index)
 {
 	//save off the item for returning
-	GameItemMenuRecord* gimr = (GameItemMenuRecord*)items.AbstractMenu::getItem(index);
+	OwnedItemRecord* gimr = (OwnedItemRecord*)items.AbstractMenu::getItem(index);
 
 	GameItem* item = gimr->getItem();
 

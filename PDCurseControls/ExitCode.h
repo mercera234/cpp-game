@@ -21,5 +21,8 @@ enum ExitCode
 	START_NEW,
 
 	//input was handled and current application should open a previously saved instance
-	OPEN
+	OPEN,
+
+	//input was handled and current application should process something else before returning to this point
+	SUSPEND
 };

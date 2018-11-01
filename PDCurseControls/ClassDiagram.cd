@@ -1,259 +1,259 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="TwoDStorage&lt;T&gt;" Collapsed="true">
-    <Position X="43.25" Y="2.5" Width="1.5" />
+    <Position X="56.25" Y="4.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAQIABAIIAIgAAAAABAAAAAIACAAAAAAQgQAAAIAAA=</HashCode>
+      <HashCode>AAAQIABAAICIgAAAAABAAAAAIACAAAAAAQgQAACIAAA=</HashCode>
       <FileName>TwoDStorage.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="AbstractMenu" Collapsed="true">
-    <Position X="15" Y="3.25" Width="1.5" />
+    <Position X="23.5" Y="3.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AEEBgGgGQgQAAAEECAgAgACEAAAAgMAAAAAAAQgBkgA=</HashCode>
       <FileName>AbstractMenu.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Animation" Collapsed="true">
-    <Position X="26.25" Y="3.25" Width="1.5" />
+    <Position X="37" Y="3.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAABAAAAAAAAAAAggAAAAAACQAQAEAAAAAQAAoAA=</HashCode>
       <FileName>Animation.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="BlitAnimation" Collapsed="true">
-    <Position X="26.25" Y="4.75" Width="1.5" />
+    <Position X="37" Y="4.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAABAAAAAAAAAAAJAAAAAAAAAAAIAAEAAAQEggAA=</HashCode>
       <FileName>BlitAnimation.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Button" Collapsed="true">
-    <Position X="31.75" Y="3.25" Width="1.5" />
+    <Position X="42.5" Y="3.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AEAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAgAAAA=</HashCode>
       <FileName>Button.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="BWFilter" Collapsed="true">
-    <Position X="9.25" Y="6.25" Width="1.5" />
+    <Position X="17.75" Y="6.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAEAAAAAAAAAA=</HashCode>
       <FileName>BWFilter.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="ChtypeFilter" Collapsed="true">
-    <Position X="43.25" Y="0.5" Width="1.5" />
+    <Position X="58.75" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAACAAAAAAAAAAAAAIAAAAAAAAACAAAAAAAAAAAAAA=</HashCode>
       <FileName>ChtypeFilter.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="ControlDecorator" Collapsed="true">
-    <Position X="7" Y="3.25" Width="1.5" />
+    <Position X="15.5" Y="3.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAEAAAAAAAAAAAAAAAACAAAAAAAQAAAA=</HashCode>
       <FileName>ControlDecorator.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Controllable" Collapsed="true">
-    <Position X="20.5" Y="1.75" Width="1.5" />
+    <Position X="29" Y="1.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>CICgAAAKDAASQAaEIQIAAAACAJgAgACACKAIAIipEAQ=</HashCode>
+      <HashCode>CICgAAACDAASQAKEIQIBAAACABgAgACASKAIAKipEAQ=</HashCode>
       <FileName>Controllable.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="ControlManager" Collapsed="true">
-    <Position X="38.5" Y="1.75" Width="1.5" />
+    <Position X="49.25" Y="3.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>gIAyVAAQAAKABDCBgAoAARAQAAkAACQAGCAKIEiABIA=</HashCode>
+      <HashCode>AIAyVCEQAAKAJDCAgAoAQQASAAkIADQiGCCKAECABIA=</HashCode>
       <FileName>ControlManager.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="CursesAttributeController" Collapsed="true">
-    <Position X="45" Y="0.5" Width="1.5" />
+    <Position X="60.5" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAACAAAAAACAAAEAAAAACAGAAIAAAAAAAAAQgAABQAA=</HashCode>
       <FileName>CursesAttributeController.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="CursesPanel" Collapsed="true">
-    <Position X="46.75" Y="0.5" Width="1.5" />
+    <Position X="62.25" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAIAABAAAAQBAAAAIAABgAAAAAAABABAAQAAgIAAQ=</HashCode>
       <FileName>CursesPanel.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Drawable" Collapsed="true">
-    <Position X="21.75" Y="0.5" Width="1.5" />
+    <Position X="27.75" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Drawable.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="FileChooser" Collapsed="true">
-    <Position X="29.5" Y="3.25" Width="1.5" />
+    <Position X="40.25" Y="3.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAgAAAAARBQAAAAgAIQEAGAARABAAMAAAAAAAKAAgY=</HashCode>
       <FileName>FileChooser.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="FileDirectory" Collapsed="true">
-    <Position X="43.25" Y="1.5" Width="1.5" />
+    <Position X="58.75" Y="1.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>CAAAAAAAALAAABAAAAACAAIgAAAAAAAAABAAAAAAAAA=</HashCode>
+      <HashCode>CAQAAAAAALAAAAAAAAACAAIgAAAAIAAAAAAAAAAAAAA=</HashCode>
       <FileName>FileDirectory.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="FilterPattern" Collapsed="true">
-    <Position X="9.25" Y="4.75" Width="1.5" />
+    <Position X="17.75" Y="4.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAQAAAAKAAAAAAAAAAAAAFAAAgAQAAAA=</HashCode>
       <FileName>FilterPattern.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Form" Collapsed="true">
-    <Position X="38.5" Y="3.25" Width="1.5" />
+    <Position X="51.5" Y="3.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AACAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAEAAAA=</HashCode>
       <FileName>Form.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="FormControl" Collapsed="true">
-    <Position X="11.5" Y="3.25" Width="1.5" />
+    <Position X="20" Y="3.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AEAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAgAAAAAAAA=</HashCode>
+      <HashCode>AEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>FormControl.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="FormField" Collapsed="true">
-    <Position X="18.25" Y="3.25" Width="1.5" />
+    <Position X="26.75" Y="3.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AECQAAAAAAAAADAAAAIAAAAAAQABAAAAAAAQAACgAAA=</HashCode>
+      <HashCode>AECAAAgAAAAAADACAAIACACAAAAAEAAAAAAAAACAAAA=</HashCode>
       <FileName>FormField.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Frame" Collapsed="true">
-    <Position X="7" Y="4.75" Width="1.5" />
+    <Position X="15.5" Y="4.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAQAAAAAAAAAAAAAIAAA3AAAAAAAAIAAAAAACAAAE=</HashCode>
       <FileName>Frame.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="GraphMenu" Collapsed="true">
-    <Position X="13.75" Y="4.75" Width="1.5" />
+    <Position X="22.25" Y="4.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAEAAIAAACAEAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>GraphMenu.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="GridMenu" Collapsed="true">
-    <Position X="16" Y="4.75" Width="1.5" />
+    <Position X="24.5" Y="4.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>EgEgSAAEQoABBCEUSCIQAACAAAAAwgoUBBkCQAAAJIA=</HashCode>
       <FileName>GridMenu.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Highlighter" Collapsed="true">
-    <Position X="40.75" Y="1.75" Width="1.5" />
+    <Position X="51.5" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAGAgACAAAAUAAAARIIAAADgASAKALABQoAAAAAAAQ=</HashCode>
       <FileName>Highlighter.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Image" Collapsed="true">
-    <Position X="20.5" Y="3.25" Width="1.5" />
+    <Position X="29" Y="3.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAgEAoCAACAAAAIBAAAAAAIAAJIACAIAACEYAAA=</HashCode>
+      <HashCode>AAAAAAgEAICAACAAAAIAAAAAAAAAAJAAAAIAAAEYAAA=</HashCode>
       <FileName>Image.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Palette" Collapsed="true">
-    <Position X="34" Y="3.25" Width="1.5" />
+    <Position X="44.75" Y="3.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAEAUQAQABEAAAAIAACiAAAAAAAgAAABAAAAAAAA=</HashCode>
+      <HashCode>AAAAAEAUQAQABEAAAAIAACiAAAAAAAgAAABAAACAAAA=</HashCode>
       <FileName>Palette.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="RandomBlitAnimation" Collapsed="true">
-    <Position X="27.25" Y="6.25" Width="1.5" />
+    <Position X="38" Y="6.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAIABAAAAAAAAAAAAAAAUAAAAAAAAAAAAAAQAAAAA=</HashCode>
       <FileName>RandomBlitAnimation.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="RGBControl" Collapsed="true">
-    <Position X="45" Y="1.5" Width="1.5" />
+    <Position X="58.75" Y="2.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAABAAEAAIAAAAAAAAAAAAAAAAAAAAAAAgAgAAAAQA=</HashCode>
       <FileName>RGBControl.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="ScrollBar" Collapsed="true">
-    <Position X="4.75" Y="4.75" Width="1.5" />
+    <Position X="13.25" Y="4.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>IAAAAAAAAAAAAAAAAAIACAAAAEAAQAAAAAAAAACCAAA=</HashCode>
       <FileName>ScrollBar.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="SpiralBlitAnimation" Collapsed="true">
-    <Position X="25" Y="6.25" Width="1.5" />
+    <Position X="35.75" Y="6.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AgAGAABAAAAAECABAAAABAACAAAAIAQBAAAAAQAAAAA=</HashCode>
+      <HashCode>AgAGAABAAAAAEAABAAAABAACAAAAIAQBAAAAAQAAAAA=</HashCode>
       <FileName>SpiralBlitAnimation.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Storable" Collapsed="true">
-    <Position X="23.5" Y="1.75" Width="1.5" />
+    <Position X="32" Y="2" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAICAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Storable.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Table" Collapsed="true">
-    <Position X="36.25" Y="3.25" Width="1.5" />
+    <Position X="47" Y="3.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>EAAABIAABAAAAACRAAIAQIACAAAAAAAAAABkAAAAIAA=</HashCode>
       <FileName>Table.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="TextField" Collapsed="true">
-    <Position X="11.5" Y="4.75" Width="1.5" />
+    <Position X="20" Y="4.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AECYAAAAAAAAQAAAAAIgCACAAAACAAIKAAAAAAAgAAA=</HashCode>
+      <HashCode>AECYAAAAAAAAQAAAAAIgCACAAAACAAAKAAAAAACAAAA=</HashCode>
       <FileName>TextField.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="TextLabel" Collapsed="true">
-    <Position X="22.75" Y="3.25" Width="1.5" />
+    <Position X="33.5" Y="3.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAQAAAAAgAAAAIACACAAAAAAgIIAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAQAAAAAAAgAAICCACAAAAAAAAIAAAAAACAAAA=</HashCode>
       <FileName>TextLabel.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="TUI" Collapsed="true">
-    <Position X="46.75" Y="1.5" Width="1.5" />
+    <Position X="62.25" Y="2.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAQAABAAAAAAAAQAACAAIAAAAgAAAAAAA=</HashCode>
+      <HashCode>AAAIAAAAAAAAQAAAAAAAAgAAQAACAABAgAAgAAAAMAA=</HashCode>
       <FileName>TUI.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="MenuItem" Collapsed="true">
-    <Position X="5" Y="1.75" Width="1.5" />
+    <Position X="5.25" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AEAAAAAAAAAAQBEQgAIIADgCCAKAAQLAAE3Aw0ABFEA=</HashCode>
       <FileName>MenuItem.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="LineItem" Collapsed="true">
-    <Position X="5" Y="3.25" Width="1.5" />
+    <Position X="6.5" Y="3.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>CECAAAAAAAAAAAAAIAICAAAAAABEAAAEAQAAAAEQAAA=</HashCode>
       <FileName>LineItem.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="ObjectLinkedItem&lt;T&gt;" Collapsed="true">
-    <Position X="2.75" Y="3.25" Width="1.75" />
+    <Position X="4" Y="3.25" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAEAAAAAAAAAAAAAAABAAAAEAAAAAAAAAAA=</HashCode>
       <FileName>ObjectLinkedItem.h</FileName>
@@ -267,83 +267,188 @@
     </TypeIdentifier>
   </Class>
   <Class Name="TextBoard" Collapsed="true">
-    <Position X="21.5" Y="5" Width="1.5" />
+    <Position X="31.25" Y="3.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAkAIAAAABAAAAAAAgAAAQAAAAAAA=</HashCode>
       <FileName>TextBoard.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="TextPiece" Collapsed="true">
-    <Position X="19" Y="5.25" Width="1.5" />
+    <Position X="60.5" Y="2.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAACAgAAIACACAAAAAAAAIAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAIAAgCAgAAIACACAAAAAAAAIAAAAAAAAAAA=</HashCode>
       <FileName>TextPiece.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="MacroTextPiece" Collapsed="true">
-    <Position X="17.75" Y="6.5" Width="1.5" />
+    <Position X="14.25" Y="7.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAIBCAAAAAAAAAAgAAAAAIAAAAg=</HashCode>
       <FileName>TextPiece.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="SimpleCommand&lt;Receiver&gt;" Collapsed="true">
-    <Position X="2.75" Y="7.5" Width="2.25" />
+    <Position X="0.5" Y="1.75" Width="2.25" />
     <Compartments>
       <Compartment Name="Nested Types" Collapsed="false" />
     </Compartments>
-    <NestedTypes>
-      <Typedef Name="SimpleCommand&lt;Receiver&gt;::Action" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>SimpleCommand.h</NewMemberFileName>
-        </TypeIdentifier>
-      </Typedef>
-    </NestedTypes>
     <TypeIdentifier>
       <HashCode>AAAABAAABAAAABAAAAAEBAAAAAAAAAAEBAAAAAAAAAA=</HashCode>
       <FileName>SimpleCommand.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Command" Collapsed="true">
-    <Position X="3" Y="6.25" Width="1.5" />
+    <Position X="0.75" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Command.h</FileName>
     </TypeIdentifier>
   </Class>
-  <Struct Name="Registration" Collapsed="true">
-    <Position X="45" Y="3.75" Width="1.5" />
+  <Class Name="ControlHandle" Collapsed="true">
+    <Position X="8.75" Y="3.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AABAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAEAAQ=</HashCode>
+      <HashCode>AAAAAAAAAAAABAAAAAIAAAAAAACAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ControlHandle.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DialogWindow" Collapsed="true">
+    <Position X="11" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CAAAAAAAiBAABEAAAgIAAAAAAABAAAAAAAAAAQSAAAA=</HashCode>
+      <FileName>DialogWindow.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FileDialog" Collapsed="true">
+    <Position X="11" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CAAAAAAAAAAAAAAAAAAQACAgAQAAgAAAAAAAAAAAACA=</HashCode>
+      <FileName>FileDialog.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FilePath" Collapsed="true">
+    <Position X="60.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BIAAAAACAKCAIAAAACBAAAIgAAAAAAAAAEBAAgAAAAA=</HashCode>
+      <FileName>FilePath.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="InputManager" Collapsed="true">
+    <Position X="62.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAMAAAAAAAAAAAAgAAIAAAAAABAAAAAAIAIAAAA=</HashCode>
+      <FileName>InputManager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TwoDStorageProxy&lt;T&gt;" Collapsed="true">
+    <Position X="54" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAIABEAYCIgAAAIAAIAAAAQQgAAEAAAggAAAAIAAA=</HashCode>
+      <FileName>TwoDStorageProxy.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="Registration" Collapsed="true">
+    <Position X="62.25" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAAAAAAACAAAAAAAAEAAQ=</HashCode>
       <FileName>ControlManager.h</FileName>
     </TypeIdentifier>
   </Struct>
   <Struct Name="Rectangle" Collapsed="true">
-    <Position X="43.5" Y="4" Width="1.5" />
+    <Position X="60.5" Y="3.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAQAQAAAAAAAAAAgAAAAAABgAAAAAAA=</HashCode>
       <FileName>Rectangle.h</FileName>
     </TypeIdentifier>
   </Struct>
+  <Struct Name="Format" Collapsed="true">
+    <Position X="3" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Format.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="LineFormat" Collapsed="true">
+    <Position X="1.75" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAAAAAAAAAAAAIAAAAgAAAAAgAAAAAAAAAAAAA=</HashCode>
+      <FileName>Format.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="BookLineFormat" Collapsed="true">
+    <Position X="3" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Format.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="VerticalLineFormat" Collapsed="true">
+    <Position X="0.75" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAIAAAAAA=</HashCode>
+      <FileName>Format.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="PosFormat" Collapsed="true">
+    <Position X="5.25" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAIAAIAAAAAAAAAAAAAEAAAAAAA=</HashCode>
+      <FileName>Format.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="VerticalPosFormat" Collapsed="true">
+    <Position X="5.25" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAIAAIAAAAAAAAAAAACAAAAAAAA=</HashCode>
+      <FileName>Format.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="Input" Collapsed="true">
+    <Position X="58.75" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAMAAEAAAAAAAAAAAAACA=</HashCode>
+      <FileName>Input.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="ITwoDStorage&lt;T&gt;" Collapsed="true">
+    <Position X="55" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAIABAAIAIgAAAAAAAAAAAAAAAAAAAAAgAAAAIAAA=</HashCode>
+      <FileName>ITwoDStorage.h</FileName>
+    </TypeIdentifier>
+  </Struct>
   <Typedef Name="Dir" Collapsed="true">
-    <Position X="0.5" Y="6.5" Width="1.5" />
+    <Position X="9.5" Y="7.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Direction.h</FileName>
     </TypeIdentifier>
   </Typedef>
   <Enum Name="Direction" Collapsed="true">
-    <Position X="0.5" Y="8.5" Width="1.5" />
+    <Position X="9.5" Y="9.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAABAAAgAAAAAAAAAAAAICAAAgAAAAAAAAAAA=</HashCode>
       <FileName>Direction.h</FileName>
     </TypeIdentifier>
   </Enum>
   <Enum Name="Fielddraw" Collapsed="true">
-    <Position X="43.25" Y="5" Width="1.5" />
+    <Position X="60.5" Y="5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAABAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>LineItem.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="FileDialogType" Collapsed="true">
+    <Position X="62.25" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAQAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>FileChooser.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="ExitCode" Collapsed="true">
+    <Position X="58.75" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAAAAAAAAAADAAABAIEAAAKAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ExitCode.h</FileName>
     </TypeIdentifier>
   </Enum>
   <Font Name="Segoe UI" Size="9" />

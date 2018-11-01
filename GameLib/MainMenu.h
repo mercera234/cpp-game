@@ -9,6 +9,8 @@
 #include "ResourceManager.h"
 #include "TextParamValue.h"
 #include "DialogWindow.h"
+#include "ItemBrowser.h"
+#include "ControlHandle.h"
 
 //Main Menu options
 enum MainMenuOption
@@ -31,33 +33,54 @@ class MainMenu : public Controllable
 {
 private:
 	ControlManager cm;
-	SimpleCommand<MainMenu> mainMenuCmd;
-	SimpleCommand<MainMenu> playerMenuCmd;
-	SimpleCommand<MainMenu> configMenuCmd;
-
 	ResourceManager* resourceManager;
-
 	int leftFrameWidth;
 	int rightFrameWidth;
 	int topFrameHeight;
 	int bottomFrameHeight;
 
+	ControlHandle currBrowser;
+	SimpleCommand<MainMenu> browserCmd;
+
+	ItemBrowser itemBrowser;
+	
+	/*
+	MainMenuBrowser mainBrowser;
+	
+	EquipBrowser equipBrowser;
+	StatusBrowser statusBrowser;
+	MapBrowser mapBrowser;
+	ConfigBrowser configBrowser;
+	SkillBrowser skillBrowser;
+	
+	
+	*/
+
+	//TODO just organizing things here to see patterns
+	//SimpleCommand<ItemBrowser> itemCmd;
+	
+	
+	SimpleCommand<MainMenu> mainMenuCmd;
+	void setupMainMenu();
+	void processMainMenuInput();
 	Frame mainFrame;
 	GridMenu mainMenu;
 	
+
+	SimpleCommand<MainMenu> playerMenuCmd;
+	void setupPlayerMenu();
+	void processPlayerMenuInput();
 	Frame playerFrame;
 	GridMenu playerMenu;
+	
 
 	Frame bodyFrame;
+	void setupBodyFields();
 	TextBoard bodyContent;
-
-	TextBoard statusContent;
-	TextParamCurrMaxValue* hpRow, *mpRow;
-	TextParamValue<BoundInt>* strengthRow, *defenseRow, *intelRow, *willRow, *agilityRow, *expRow;
-
 	TextParamValue<BoundInt>* gold, *steps, *enemiesKilled, *battlesWon;
 
 	
+	void setupDescFields();
 	Frame descFrame;
 	TextBoard descContent;
 	TextPiece* mapText;
@@ -65,29 +88,24 @@ private:
 	TextParamValue<std::string>* floor;
 
 	
-
-
-	void processMainMenuInput();
-	void processPlayerMenuInput();
-	void processConfigMenuInput();
-
-	void setupMainMenu();
-	void setupPlayerMenu();
-
-	void setupDescFields();
-
-	void setupBodyFields();
-	void setupHubContent();
-	void setupDescContent();
 	void setupStatusFields();
 	void setupStatusContent();
-	
+	TextBoard statusContent;
+	TextParamCurrMaxValue* hpRow, *mpRow;
+	TextParamValue<BoundInt>* strengthRow, *defenseRow, *intelRow, *willRow, *agilityRow, *expRow;
 
-	std::vector<Actor*> allies;
+	SimpleCommand<MainMenu> configMenuCmd;
+	void processConfigMenuInput();
+	void processBrowserInput();
+
+	//requires resource manager to be set
+	void setupHubContent();
+	void setupDescContent();
+
 	int selectedAlly = -1;
 public:
 	MainMenu();
-	void addPlayerParty(std::vector<Actor*>& allies);
+	void addPlayerParty(std::vector<Actor>& allies);
 	void draw();
 	int processInput(int input);
 	void setWindow(WINDOW* win);

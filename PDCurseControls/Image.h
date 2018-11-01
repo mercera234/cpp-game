@@ -3,6 +3,7 @@
 #include "curses.h"
 #include "Controllable.h"
 #include "TwoDStorage.h"
+#include "TwoDStorageProxy.h"
 #include "Storable.h"
 
 class Image : public Controllable, public Storable
@@ -24,18 +25,21 @@ public:
 	
 	void reset(); //wipe all data out of the map
 	void setDimensions(int rows, int cols);
+	void setDimensions(int rows, int cols, chtype fillChar);
 
 	void draw();
-
-	//Storable override
-	int save(std::ofstream& saveFile);
-	int load(std::ifstream& loadFile);
-
 	void setTile(unsigned int row, unsigned int col, const chtype &datum);
 	chtype getTile(unsigned int row, unsigned int col);
 
+	//storable override
+	void save(std::ofstream& saveFile);
+	void load(std::ifstream& loadFile);
+
 	//getters/setters
-	TwoDStorage<chtype>* getTileMap() { return &tileMap; }
+	ITwoDStorage<chtype>& getTileMap() { return tileMap; }
+
+	/*void setFilePath(FilePath* filePathIn) { tileMap.setFilePath(filePathIn); }
+	FilePath* getFilePath() { return tileMap.getFilePath(); }*/
 };
 
 void getScreenShot(Image& image, int y, int x, int height, int width);

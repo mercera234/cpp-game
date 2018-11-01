@@ -117,6 +117,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="BookLineFormat.h" />
+    <ClInclude Include="CenteredFormat.h" />
     <ClInclude Include="Command.h" />
     <ClInclude Include="compare_functions.h" />
     <ClInclude Include="ConfirmDialog.h" />
@@ -125,9 +127,13 @@
     <ClInclude Include="DialogWindow.h" />
     <ClInclude Include="FileDialog.h" />
     <ClInclude Include="Format.h" />
+    <ClInclude Include="FilePath.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="ExitCode.h" />
+    <ClInclude Include="InputManager.h" />
+    <ClInclude Include="ITwoDStorage.h" />
     <ClInclude Include="key_strings.h" />
+    <ClInclude Include="LineFormat.h" />
     <ClInclude Include="SimpleControlCommand.h" />
     <ClInclude Include="ObjectLinkedItem.h" />
     <ClInclude Include="SimpleCommand.h" />
@@ -173,8 +179,11 @@
     <ClInclude Include="TextLabel.h" />
     <ClInclude Include="TUI.h" />
     <ClInclude Include="TwoDStorageProxy.h" />
+    <ClInclude Include="VerticalLineFormat.h" />
+    <ClInclude Include="WindowManager.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CenteredFormat.cpp" />
     <ClCompile Include="ConfirmDialog.cpp" />
     <ClCompile Include="ControlHandle.cpp" />
     <ClCompile Include="DialogWindow.cpp" />
@@ -198,8 +207,10 @@
     <ClCompile Include="Frame.cpp" />
     <ClCompile Include="GraphMenu.cpp" />
     <ClCompile Include="GridMenu.cpp" />
+    <ClCompile Include="FilePath.cpp" />
     <ClCompile Include="Highlighter.cpp" />
     <ClCompile Include="Image.cpp" />
+    <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="key_strings.cpp" />
     <ClCompile Include="LineItem.cpp" />
     <ClCompile Include="MenuItem.cpp" />
@@ -215,6 +226,7 @@
     <ClCompile Include="TextLabel.cpp" />
     <ClCompile Include="TextPiece.cpp" />
     <ClCompile Include="TUI.cpp" />
+    <ClCompile Include="WindowManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />

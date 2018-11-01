@@ -7,15 +7,15 @@
 #include "misc_tests.h"
 #include "mapRoom_tests.h"
 #include "resource_manager_tests.h"
-#include "data_loader_tests.h"
+#include "game_data_tests.h"
+#include "input_manager_tests.h"
 
 //RPG LIB UI TESTER
 int main()
 {
 	TUI tui;
 	
-
-	jsonTest();
+	loadConfigurationTextFile();
 	
 		
 	return 0;

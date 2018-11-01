@@ -1,5 +1,6 @@
 #include "CppUnitTest.h"
 #include "TextBoard.h"
+#include "CenteredText.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -7,6 +8,9 @@ namespace PDCurseControlsTester
 {
 	TEST_CLASS(TextBoardTest)
 	{
+		TUI tui;
+		
+
 	/*	TEST_METHOD(expandIntTest)
 		{
 			VarTextPiece<int> piece;

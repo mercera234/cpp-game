@@ -1,7 +1,5 @@
 #include "CppUnitTest.h"
-#include <algorithm>
 #include "InputManager.h"
-#include "Input.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -9,69 +7,28 @@ namespace PDCurseControlsTester
 {
 	TEST_CLASS(InputManagerTest)
 	{
-		TEST_METHOD(fill)
+		InputManager mgr;
+		TEST_METHOD_INITIALIZE(start)
 		{
-			InputManager<int> mgr;
-			mgr.fill(-1);
-
-			int& firstKey = mgr.getInput(0);
-			int& lastKey = mgr.getInput(MAX_KEY_CODES - 1);
-
-			Assert::AreEqual(firstKey, lastKey);
+			auto& inputs = mgr.getInputs();
+			inputs.insert(std::make_pair(3, Input("Test", 6)));
 		}
 
-		TEST_METHOD(fill2)
+		TEST_METHOD(getInputTest)
 		{
-			InputManager<int> mgr;
-
-			mgr.fill(-1);
-
-			int& key = mgr.getInput(45); //could use any number between 0 and max_key_codes
-
-			Assert::AreEqual(-1, key);
+			Assert::AreEqual(6, mgr.getInput(3));
 		}
 
-		TEST_METHOD(setIntInputTest)
+		TEST_METHOD(getUnknownInputTest)
 		{
-			InputManager<int> mgr;
-
-			int input = 6;
-			int key = 'y';
-			mgr.setInput(key, input);
-
-			Assert::AreEqual(input, mgr.getInput(key));
+			Assert::AreEqual(-1, mgr.getInput(9));
 		}
 
-		TEST_METHOD(fillInputTest)
+		TEST_METHOD(useRawTest)
 		{
-			InputManager<Input> mgr;
-
-			int nullAction = -1;
-			mgr.fill(Input("", nullAction, false));
-			Input& i = mgr.getInput(MAX_KEY_CODES - 5);
-
-			Assert::AreEqual(nullAction, i.code);
-		}
-
-		TEST_METHOD(setInputTest)
-		{
-			InputManager<Input> mgr;
-
-			int gameInput = 1;
-			mgr.setInput('c', Input("OK", gameInput));
-			Input& i = mgr.getInput('c');
-
-			Assert::AreEqual(gameInput, i.code);
-		}
-
-		TEST_METHOD(fillInputPtrTest)
-		{
-			InputManager<Input*> mgr;
-
-			mgr.fill(nullptr);
-			Input* i = mgr.getInput(MAX_KEY_CODES - 5);
-
-			Assert::AreEqual((int)nullptr, (int)i);
+			mgr.setUseRawInput(true);
+			int key = 167;
+			Assert::AreEqual(key, mgr.getInput(key));
 		}
 	};
 }

@@ -1,6 +1,6 @@
 #pragma once
 #include "GridMenu.h"
-#include "GameItemMenuRecord.h"
+#include "OwnedItemRecord.h"
 #include "GameItem.h"
 
 //this class may be useless in favor of the GridMenu

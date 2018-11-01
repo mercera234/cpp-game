@@ -9,7 +9,6 @@ FileDirectory::FileDirectory()
 FileDirectory::FileDirectory(const std::string& path)
 {
 	setPath(path);
-	//this->path = path;
 }
 
 std::list<dirent> FileDirectory::getFiles(bool includeDirectories, const std::string& filter)
@@ -52,18 +51,65 @@ bool FileDirectory::checkFilterMatch(const std::string& fileName, const std::str
 	return true;
 }
 
-void FileDirectory::addDirToPath(const std::string& newDir)
+void FileDirectory::addToPath(const std::string& newDir)
 {
 	path.append('\\' + newDir);
 }
 
-void FileDirectory::removeDirFromPath()
+void FileDirectory::removeLastFromPath()
 {
-	//int pos = path.find_last_of('\\');
-	path.erase(path.find_last_of('\\'));
-	//directory.setPath(directory.getPath().substr(0, pos));
+	path.erase(path.find_last_of('\\'));	
 }
 
+void addToFilePath(std::string& filePath, const std::string& pathElement)
+{
+	filePath.append('\\' + pathElement);
+}
+
+void removeFromFilePath(std::string& filePath, int levels)
+{
+	for (int i = 0; i < levels; i++)
+	{
+		filePath.erase(filePath.find_last_of('\\'));
+	}
+}
+
+bool validatePath(const std::string& filePath)
+{
+	std::ifstream is(filePath);
+	if (is.is_open() == false)
+	{
+		return false;
+	}
+
+	is.close();
+	return true;
+}
+
+bool validateDir(const std::string& dirPath)
+{
+	DIR* dir = opendir(dirPath.c_str());
+	if (dir == nullptr)
+	{
+		return false;
+	}
+	closedir(dir);
+	return true;
+}
+
+void decomposePath(const std::string& filePath, std::string& dirPath, std::string& fileName)
+{
+	//break up path into working dir and file name
+	dirPath = filePath;
+	removeFromFilePath(dirPath);
+
+	fileName = getFileFromPath(filePath);
+}
+
+std::string getFileFromPath(const std::string& filePath)
+{
+	return filePath.substr(filePath.find_last_of('\\'));
+}
 
 
 /*

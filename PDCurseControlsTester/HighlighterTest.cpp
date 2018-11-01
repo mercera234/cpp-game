@@ -8,17 +8,17 @@ namespace PDCurseControlsTester
 	TEST_CLASS(HighlighterTest)
 	{
 		Image img;
-		TwoDStorage<chtype>* tileMap;
+		ITwoDStorage<chtype>* tileMap;
 		int rows = 2;
 		int cols = 3;
 
 		TEST_METHOD_INITIALIZE(startTUI)
 		{
 			img.setDimensions(rows, cols);
-			tileMap = img.getTileMap();
+			tileMap = &img.getTileMap();
 
 			chtype c = 'A';
-			for (unsigned int i = 0; i < tileMap->getSize(); i++)
+			for (int i = 0; i < tileMap->getSize(); i++)
 			{
 				tileMap->setDatum(i, c++);
 			}

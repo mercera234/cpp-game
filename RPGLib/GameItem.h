@@ -22,3 +22,11 @@ struct GameItem : public Thing
 	int cost;
 	int value; 
 };
+
+#include "BoundInt.h"
+
+struct OwnedItem
+{
+	GameItem* item;
+	int quantity;
+};

@@ -60,12 +60,6 @@
     <ClCompile Include="BoundInt.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Inventory.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GameItemMenuRecord.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="KeyComparators.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -99,10 +93,7 @@
     <ClCompile Include="Sprite.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Barrier.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="data_loaders.cpp">
+    <ClCompile Include="OwnedItemRecord.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -179,13 +170,7 @@
     <ClInclude Include="BoundInt.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Inventory.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="GameItem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GameItemMenuRecord.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="KeyComparators.h">
@@ -230,10 +215,7 @@
     <ClInclude Include="Reactor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Barrier.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="data_loaders.h">
+    <ClInclude Include="OwnedItemRecord.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

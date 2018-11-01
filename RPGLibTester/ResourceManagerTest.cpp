@@ -1,5 +1,7 @@
 #include "CppUnitTest.h"
 #include "ResourceManager.h"
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -7,40 +9,25 @@ namespace RPGLibTester
 {
 	TEST_CLASS(ResourceManagerTest)
 	{
-		TUI tui;
 		ResourceManager rm;
-
-		TEST_METHOD(getNullResourcesTest)
+		
+		TEST_METHOD(getPlayer1NoActorTest)
 		{
-			rm.loadNullResources();
+			Actor* a = rm.getPlayer1();
 
-			Assert::AreEqual(1, (int)rm.actors.size()); 
-			Assert::AreEqual(1, (int)rm.mapRooms.size()); 
-			Assert::AreEqual(1, (int)rm.gameMaps.size());
+			Assert::AreEqual((int)nullptr, (int)a);
+		}
+		
+		TEST_METHOD(getPlayer1Test)
+		{
+			Actor a;
+			a.name = "Test";
+			rm.playerParty.push_back(a);
+			Actor* ptr = rm.getPlayer1();
+
+			Assert::IsTrue(ptr->name.compare(a.name) == 0);
 		}
 
-		TEST_METHOD(getNullResourcesActorContentTest)
-		{
-			rm.loadNullResources();
-			Actor a = rm.actors.find(nullName)->second;
-
-			Assert::AreEqual((char)nullSymbol, (char)a.symbol); 
-		}
-
-		TEST_METHOD(getNullResourcesMapContentTest)
-		{
-			rm.loadNullResources();
-			MapRoom m = rm.mapRooms.find(nullId)->second;
-			TwoDStorage<chtype>* tileMap = m.getDisplay()->getTileMap();
-			chtype c = tileMap->getDatum(4, 8);
-
-			Assert::AreEqual('!', (char)c); 
-		}
-
-		TEST_METHOD(getNextIdTest)
-		{
-			rm.resetNextId();
-			Assert::AreEqual(0, rm.getNextId()); //without being called before, next id will be 0
-		}
+		
 	};
 }

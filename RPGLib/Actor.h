@@ -36,7 +36,7 @@ enum class Ailment
 /*
 An actor represents individual user controlled players, enemies, and NPCs
 */
-struct Actor : public Thing, public Storable
+struct Actor : public Thing//, public Storable
 {
 	ActorType type;
 	
@@ -51,8 +51,8 @@ struct Actor : public Thing, public Storable
 	//item
 	
 	//int ailments; //not sure if this should be with Actor or ActorDef
-	int save(std::ofstream& saveFile);
-	int load(std::ifstream& loadFile);
+	/*void save(std::ofstream& saveFile);
+	void load(std::ifstream& loadFile);*/
 
 
 	void alterStat(StatType statType, int amount);

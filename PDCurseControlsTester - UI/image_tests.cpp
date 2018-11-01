@@ -13,8 +13,8 @@ void drawPlainImage()
 	int y = -1;
 	int x = -1;
 	img.setPosition(y, x);
-	TwoDStorage<chtype>* tileMap = img.getTileMap();
-	tileMap->fill('!' | COLOR_BLUE << BKGDCOLOR_OFFSET);
+	ITwoDStorage<chtype>& tileMap = img.getTileMap();
+	tileMap.fill('!' | COLOR_BLUE << BKGDCOLOR_OFFSET);
 
 	bool playing = true;
 	while (playing)
@@ -40,21 +40,15 @@ void drawPlainImage()
 }
 
 
-
-
-
 void imageLoadUnloadTest()
 {
 	Image img;
 	img.setWindow(stdscr);
 	img.setDimensions(23, 51);
 
-	std::ifstream is;
-	is.open("data\\itest.img", std::ios::binary);
-
-	img.load(is);
-	is.close();
-
+	FilePath path("data", &img);
+	path.load("itest.img");
+	
 	img.draw();
 
 	doupdate();
@@ -62,10 +56,7 @@ void imageLoadUnloadTest()
 
 	if (c == 's')
 	{
-		std::ofstream os;
-		os.open("data\\itest.img", std::ios::trunc | std::ios::binary);
-		img.save(os);
-		os.close();
+		path.save("itestsave.img");
 	}
 }
 
@@ -121,14 +112,14 @@ void highlighterTest()
 
 	Image image(height, width, stdscr);
 
-	TwoDStorage<chtype>* tileMap = image.getTileMap();
+	ITwoDStorage<chtype>& tileMap = image.getTileMap();
 	//chtype* tileMap = new chtype[totalTiles];
 	char asciiStart = ' ';
 	char asciiEnd = '~';
 	char asciiPtr = asciiStart;
 	for (int i = 0; i < totalTiles; i++)
 	{
-		tileMap->setDatum(i, (chtype)asciiPtr++);
+		tileMap.setDatum(i, (chtype)asciiPtr++);
 
 		if (asciiPtr >= asciiEnd)
 			asciiPtr = asciiStart;
@@ -146,7 +137,7 @@ void highlighterTest()
 		{
 			int tileY = i / width;
 			int tileX = i % width;
-			chtype c = tileMap->getDatum(i);
+			chtype c = tileMap.getDatum(i);
 			
 			mvaddch(tileY, tileX, c);
 		

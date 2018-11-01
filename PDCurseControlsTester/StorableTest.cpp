@@ -13,8 +13,9 @@ namespace PDCurseControlsTester
 			MockStorable ms;
 
 			std::ifstream ifs;
-			
-			Assert::AreEqual(600, ms.load(ifs));
+			ms.load(ifs);
+
+			Assert::IsTrue(ms.loadOccurred);
 		}
 
 		TEST_METHOD(saveTest)
@@ -22,8 +23,9 @@ namespace PDCurseControlsTester
 			MockStorable ms;
 
 			std::ofstream ofs;
+			ms.save(ofs);
 
-			Assert::AreEqual(600, ms.save(ofs));
+			Assert::IsTrue(ms.saveOccurred);
 		}
 	};
 }

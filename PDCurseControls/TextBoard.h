@@ -5,6 +5,7 @@
 #include <list>
 #include "TextPiece.h"
 
+/*A control for displaying pieces of text in a space.*/
 class TextBoard : public Controllable
 {
 private:

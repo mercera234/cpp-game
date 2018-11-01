@@ -20,7 +20,7 @@ void ConfigMenu::setResourceManager(ResourceManager* resourceManagerIn)
 	resourceManager = resourceManagerIn;
 
 	//this assumes that the inputs have already been setup prior to calling this method
-	auto inputs = &resourceManager->inputs;
+	auto inputs = &resourceManager->getInputManager().getInputs();
 
 	int nonSecretInputCount = std::count_if(inputs->begin(), inputs->end(),
 		[](std::pair<int, Input> p)
@@ -93,13 +93,14 @@ bool ConfigMenu::validateKey(int input)
 
 ExitCode ConfigMenu::processInput(int input)
 {
+	InputManager& inputMgr = resourceManager->getInputManager();
 	if (editState)
 	{
-		assert(resourceManager->getUseRawInput());
+		assert(inputMgr.getUseRawInput());
 
-		auto inputs = &resourceManager->inputs;
+		auto inputs = inputMgr.getInputs();
 
-		if (inputs->count(input) == 1) //can't use a key that is already in use
+		if (inputs.count(input) == 1) //can't use a key that is already in use
 			return HANDLED;
 
 		if(validateKey(input) == false)
@@ -109,16 +110,16 @@ ExitCode ConfigMenu::processInput(int input)
 		
 		//change input code in inputs
 		int oldKey = item->getKey();
-		Input& theInput = (*inputs)[oldKey];
-		inputs->insert(std::make_pair(input, theInput) );
+		Input& theInput = inputs[oldKey];
+		inputs.insert(std::make_pair(input, theInput) );
 
-		inputs->erase(oldKey);
+		inputs.erase(oldKey);
 
 		item->setKey(input); //should be validated input
 
 		item->setEditing(false);
 		editState = false;
-		resourceManager->setUseRawInput(false);
+		inputMgr.setUseRawInput(false);
 	}
 	else
 	{
@@ -128,7 +129,7 @@ ExitCode ConfigMenu::processInput(int input)
 		{
 			editState = true;
 			((ConfigMenuItem*)item)->setEditing(true);
-			resourceManager->setUseRawInput(true);
+			inputMgr.setUseRawInput(true);
 		}
 	}
 

@@ -324,11 +324,22 @@ namespace PDCurseControlsTester
 			Assert::AreEqual(input, m1.getX());
 		}
 
+		TEST_METHOD(passControlTest)
+		{
+			MockControl mc;
+			cm.registerControl(&mc, KEY_LISTENER, nullptr);
 
+			ControlManager cm2;
+
+			cm.passControl(&mc, cm2, nullptr);
+			Assert::AreEqual(1, cm2.getControlCount());
+			Assert::AreEqual(0, cm.getControlCount());
+		}
 		
 
 
 		//TODO
+		//write test for new method to swap controls between two managers. Controls should generally not be managed by multiple managers at once or else they will be drawn twice, and input may not be routed to them correctly
 		//add test to verify that registered controls that turn on the cursor also have them turned off once unregistered
 		//since mouse control can be accepted by any component, verify that focus goes back to previously registered component( or never appears to change)
 	};
