@@ -1,12 +1,12 @@
 #include "MockStorable.h"
 
-int MockStorable::save(std::ofstream& saveFile)
+void MockStorable::save(std::ofstream& saveFile)
 {
-	return 600; //random amount of bytes to return
+	saveOccurred = true;
 }
 
 
-int MockStorable::load(std::ifstream& loadFile)
+void MockStorable::load(std::ifstream& loadFile)
 {
-	return 600; //random amount of bytes to return
+	loadOccurred = true;
 }
