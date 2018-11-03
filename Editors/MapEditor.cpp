@@ -58,11 +58,7 @@ MapEditor::MapEditor()
 	modeLbl.setFocusable(false);
 
 	//setup default file path for opening/saving files
-	char buf[256];
-	GetFullPathName(".", 256, buf, NULL);
-	std::string workingDir = buf;
-	workingDir.append("\\data");
-	(*mode)->setDefaultFilePath(workingDir);
+	setupDefaultDataPath();
 
 	/*when constructing the frame we add 2 extra rows and columns for the box border*/
 	mapFrame.setWindow(newwin(screenHeight + 2, screenWidth + 2, topRulerRow + 1, sideRulerCol + 1));
@@ -119,6 +115,21 @@ MapEditor::MapEditor()
 	//set commands
 	setupCommands();
 	setupControlManager();
+}
+
+void MapEditor::setupDefaultDataPath()
+{
+	char buf[256];
+	GetFullPathName(".", 256, buf, nullptr);
+	std::string workingDir = buf;
+	std::string dataDir = "data";
+	workingDir.append("\\" + dataDir);
+	if (validateDir(workingDir) == false)
+	{
+		//data folder is not created
+		CreateDirectory(dataDir.c_str(), nullptr);
+	}
+	(*mode)->setDefaultFilePath(workingDir);
 }
 
 void MapEditor::setupCommands()

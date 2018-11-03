@@ -251,8 +251,10 @@ ModelManifest.xml
 /PDCurseControls/include/LineItem2.h
 /PDCurseControls/include/MenuItem2.h
 /RPGLib/ActorRepository.*
+/RPGLib/AutoMap.*
 /RPGLib/Overlay.*
 /RPGLib/Barrier.*
+/RPGLib/MapRepository.*
 /RPGLib/Repository.*
 /RPGLib/Repository2.*
 /PDCurseControlsTester - UI/2dtest.2ds

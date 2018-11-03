@@ -124,7 +124,6 @@
   <ItemGroup>
     <ClInclude Include="actor_helper.h" />
     <ClInclude Include="Actor.h" />
-    <ClInclude Include="AutoMap.h" />
     <ClInclude Include="BoundInt.h" />
     <ClInclude Include="DataPkg.h" />
     <ClInclude Include="EncounterTracker.h" />
@@ -151,7 +150,6 @@
     <ClInclude Include="Money.h" />
     <ClInclude Include="MovementProcessor.h" />
     <ClInclude Include="MusicPlayer.h" />
-    <ClInclude Include="Overlay.h" />
     <ClInclude Include="Pickup.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerActor.h" />
@@ -167,7 +165,6 @@
     <ClCompile Include="Actor.cpp" />
     <ClCompile Include="ActorCard.cpp" />
     <ClCompile Include="actor_helper.cpp" />
-    <ClCompile Include="AutoMap.cpp" />
     <ClCompile Include="BattleAlgorithm.cpp" />
     <ClCompile Include="BoundInt.cpp" />
     <ClCompile Include="DataPkg.cpp" />
@@ -186,7 +183,6 @@
     <ClCompile Include="MegaMap.cpp" />
     <ClCompile Include="MovementProcessor.cpp" />
     <ClCompile Include="MusicPlayer.cpp" />
-    <ClCompile Include="Overlay.cpp" />
     <ClCompile Include="PlayerActor.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="TextParamValue.cpp" />

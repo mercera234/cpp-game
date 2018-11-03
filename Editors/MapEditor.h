@@ -87,6 +87,7 @@ private:
 	void setupPalettes();
 	void setupRulers();
 	void setupCommands();
+	void setupDefaultDataPath();
 	
 	void processMapInput();
 	void processMouseInput(int input);

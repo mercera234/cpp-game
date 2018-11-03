@@ -5,7 +5,6 @@
 #include "defaults.h"
 #include "Reactor.h"
 #include "actor_helper.h"
-#include "Barrier.h"
 #include "DialogWindow.h"
 #include "TextBoard.h"
 #include "LineFormat.h"
