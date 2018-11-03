@@ -10,10 +10,10 @@
 #include "MapEffectFilterPattern.h"
 #include "FreeMovementProcessor.h"
 #include "Editor.h"
-#include "SimpleControlCommand.h"
+#include "SimpleCommand.h"
 #include "TextBoard.h"
 #include "EditMode.h"
-
+#include "FormField.h"
 
 
 class MapEditor : Editor<MapEditor>
@@ -46,24 +46,24 @@ private:
 	
 	TextBoard coordDisplay;
 	
-	TextLabel hLbl;
-	TextLabel wLbl;
+	FormField rowField;
+	FormField colField;
+
 	TextLabel resizeBtn;
 
-	//Canvas dimension fields
-	TextField mapRowsInput;
-	TextField mapColsInput;
 
 	//what is this for?
-	short layer;
+//	short layer;
 
 	/*Palette*/
 	Palette textPalette;
 	Palette bkgdPalette;
 	Palette toolPalette;
-	Palette filterPalette;
+	Palette filterPalette; //map room mode only
+	Palette layerPalette; //megamap mode only
 	
 	int paletteLeftEdge; //
+	int column2Edge; //left edge of second column past color palettes
 	int textColor;
 	int bkgdColor;
 	short tool;
@@ -72,41 +72,44 @@ private:
 	MapEffectFilterPattern mapEffectFilterPattern;
 	Highlighter highlighter;
 
-	SimpleControlCommand<MapEditor> paletteCmd;
-	SimpleControlCommand<MapEditor> mapCmd;
-	SimpleControlCommand<MapEditor> canvasInputCmd;
-	SimpleControlCommand<MapEditor> controlCmd;
-	SimpleControlCommand<MapEditor> globalCmd;
-
+	SimpleCommand<MapEditor> paletteCmd;
+	SimpleCommand<MapEditor> mapCmd;
+	SimpleCommand<MapEditor> canvasInputCmd;
+	SimpleCommand<MapEditor> controlCmd;
+	SimpleCommand<MapEditor> globalCmd;
 	
+
 	MapRoomEditMode mapRoomEditMode;
 	ImageEditMode imageEditMode;
-	
+	//MegaMapEditMode megaMapEditMode;
+
+
 	void setupPalettes();
 	void setupRulers();
 	void setupCommands();
 	
-	int processMapInput(Controllable* c, int input);
+	void processMapInput();
 	void processMouseInput(int input);
 
 	void processShiftDirectionalInput(int input);
 
-	int processPaletteInput(Controllable* c, int input);
-	int processFilterPaletteInput(chtype icon);
+	void processPaletteInput();
+	void processFilterPaletteInput(chtype icon);
 	void resizeButtonDriver();
 	
-	int canvasInputDriver(Controllable* c, int input);
+	void canvasInputDriver();
 	void setupControlManager();
+
+	void modeDriver();
 
 	void applyTool(int y, int x);
 	void createNew();
 	void load(const std::string& fileName);
 	void save(const std::string& fileName);
-	void cycleMode();
 	
 	void fill(int sourceRow, int sourceCol);
 
-	int driver(Controllable* control, int input);
+	void driver();
 public:
 
 	MapEditor();

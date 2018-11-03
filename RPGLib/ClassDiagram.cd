@@ -1,0 +1,305 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="AutoMap" Collapsed="true">
+    <Position X="16.25" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ADAAAAAAAQBQAAAAQAMEAAAAACEAAAAQAAAgADAAIgA=</HashCode>
+      <FileName>AutoMap.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DataPkg" Collapsed="true">
+    <Position X="25.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAghgAEAAICAIAAgAAAAACQoAAAAAAEAAEAAAACABAQ=</HashCode>
+      <FileName>DataPkg.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FreeMovementProcessor" Collapsed="true">
+    <Position X="4.25" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgAAAAAAAABAAAAAAAAAAAAAACQAAAAAAAAAA=</HashCode>
+      <FileName>FreeMovementProcessor.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GameState" Collapsed="true">
+    <Position X="19" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CAAAABAAAAAAQAAAQgAAADAECBgAAAAAABAAIAAAAAQ=</HashCode>
+      <FileName>GameState.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GameStateManager" Collapsed="true">
+    <Position X="18.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAAAAAAAAAAAAIAACAAAAAAAAAEAAAAAAAAAAQ=</HashCode>
+      <FileName>GameStateManager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ActorCard" Collapsed="true">
+    <Position X="21" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAAAAAAAAAAAAIIAQAAAAIMAAAgAAAAIAAAAAAA=</HashCode>
+      <FileName>ActorCard.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MapEffectFilterPattern" Collapsed="true">
+    <Position X="14" Y="8.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAEAAAgAgAAAA=</HashCode>
+      <FileName>MapEffectFilterPattern.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MovementProcessor" Collapsed="true">
+    <Position X="4.25" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQGAACAAAAaAJAAAgAwACAASAAAoAADQAEhAwSBCBA=</HashCode>
+      <FileName>MovementProcessor.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Player" Collapsed="true">
+    <Position X="9.25" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IgAAAAAAAgAAAAAAAAAAAAAAAAAgAIAAAAAAAAAACAA=</HashCode>
+      <FileName>Player.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PlayerActor" Collapsed="true">
+    <Position X="9.25" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAACIAAAIgAAAAAAAAAAAA=</HashCode>
+      <FileName>PlayerActor.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TileEffect" Collapsed="true">
+    <Position X="6.25" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAABAAAAAAAAAAQABAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>TileEffect.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ComplexTileEffect" Collapsed="true">
+    <Position X="6.25" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>TileEffect.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HPAlterTileEffect" Collapsed="true">
+    <Position X="6.25" Y="8.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAEAAAAAAAAAAAAAIAAAAAgAAAAgAAAAAAAAA=</HashCode>
+      <FileName>TileEffect.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TurnTracker" Collapsed="true">
+    <Position X="27" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAAgAAgAQAAAAAQQAAABIkAAAACABAIAACIAAICAA=</HashCode>
+      <FileName>TurnTracker.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MenuItem" Collapsed="true">
+    <Position X="21" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAAAAAAAQBEQgAIIADgCCAKAAQLAAE3Aw0ABFEA=</HashCode>
+      <FileName>f:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\PDCurseControls\MenuItem.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Drawable" Collapsed="true">
+    <Position X="16.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>f:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\PDCurseControls\Drawable.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Controllable" Collapsed="true">
+    <Position X="16.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CICgAAACDAASQAKEIQIAAAACABgAgACASKAIAIipEAQ=</HashCode>
+      <FileName>f:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\PDCurseControls\Controllable.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FilterPattern" Collapsed="true">
+    <Position X="14" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAQAAAAKAAAAAAAAAAAAAFAAAgAQAAAA=</HashCode>
+      <FileName>f:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\PDCurseControls\FilterPattern.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ControlDecorator" Collapsed="true">
+    <Position X="14" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAEAAAAAAAAAAAAAAAACAAAAAAAQAAAA=</HashCode>
+      <FileName>f:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\PDCurseControls\ControlDecorator.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MapRoom" Collapsed="true">
+    <Position X="9" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>GAAAoAQEAICAAIAAAAMAEABCAAGACIAAAQCAAACIAAA=</HashCode>
+      <FileName>MapRoom.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MegaMap" Collapsed="true">
+    <Position X="7.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAGAQAACEhAQAAIAAAAQcYAAKUADIoAAABgAAQZIAA=</HashCode>
+      <FileName>MegaMap.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MusicPlayer" Collapsed="true">
+    <Position X="2" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAECgAAQABEAAAAAAIAA=</HashCode>
+      <FileName>MusicPlayer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TextParamValue&lt;T&gt;" Collapsed="true">
+    <Position X="3.75" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAABAAAAAAIAAAIAABAQACAAACAAARAAAAAAAAA=</HashCode>
+      <FileName>TextParamValue.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TextParamValue&lt;BoundInt&gt;" Collapsed="true">
+    <Position X="1.5" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAABAAAAAAIAAAIAABAQACAAACAAARAAAAAAAAA=</HashCode>
+      <FileName>TextParamValue.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TextParamCurrMaxValue" Collapsed="true">
+    <Position X="1.5" Y="8.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAABABAAA=</HashCode>
+      <FileName>TextParamValue.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ResourceManager" Collapsed="true">
+    <Position X="25.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAQAAIAAELAAAAAAJAyEAIAAAQAAFBAAAAAwAYQIQI=</HashCode>
+      <FileName>ResourceManager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EnemyPool" Collapsed="true">
+    <Position X="23.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAAAAAEAAAAAAAAAAAAEAAAAAAAAEAABAAgAAA=</HashCode>
+      <FileName>EnemyPool.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EncounterTracker" Collapsed="true">
+    <Position X="27" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAQAAAAVAIAAABACAAFhAAAAEAABIAAQACEACQ=</HashCode>
+      <FileName>EncounterTracker.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BoundInt" Collapsed="true">
+    <Position X="23.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAIAEAAQAAASAAAAAEIBMUAAAAABAAAAAACAEAACBDA=</HashCode>
+      <FileName>BoundInt.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TextPiece" Collapsed="true">
+    <Position X="2.5" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAIAAgCAgAAIACACAAAAAAAAIAAAAAAAAAAA=</HashCode>
+      <FileName>f:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\PDCurseControls\TextPiece.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="Actor" Collapsed="true">
+    <Position X="14.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAQAICAgAAAAAAAAAAAAAABAAAAAAAAAAAAkAA=</HashCode>
+      <FileName>Actor.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="MapExit" Collapsed="true">
+    <Position X="25.25" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAAAgAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAA=</HashCode>
+      <FileName>MapExit.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="MapOpening" Collapsed="true">
+    <Position X="27" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>MapExit.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="TargetScheme" Collapsed="true">
+    <Position X="27" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAIQAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Spell.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="Spell" Collapsed="true">
+    <Position X="23.5" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAAAAAAAAAAAAAAAAAUCCBAQAAAAAAAAAA=</HashCode>
+      <FileName>Spell.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="GameItem" Collapsed="true">
+    <Position X="3" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAARACAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameItem.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="Pickup" Collapsed="true">
+    <Position X="9.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Pickup.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="Thing" Collapsed="true">
+    <Position X="7.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAIAAAAAAIAAAAAIAAAAAAAAAAEAAAAAAAAAAAAAgA=</HashCode>
+      <FileName>Thing.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="Money" Collapsed="true">
+    <Position X="12" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Money.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="Sprite" Collapsed="true">
+    <Position X="25.25" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAAIAAAAAAAAAAQAQIAAAIAAAAAAAACQAAAAAAAAAAI=</HashCode>
+      <FileName>Sprite.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="IMusicPlayer" Collapsed="true">
+    <Position X="2" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAACgAAAAAEAAAAAAIAA=</HashCode>
+      <FileName>IMusicPlayer.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="EnemyGroup" Collapsed="true">
+    <Position X="23.5" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAABAAAAAAAAAAgAAAAAAAAAAA=</HashCode>
+      <FileName>EnemyPool.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Enum Name="EffectType" Collapsed="true">
+    <Position X="23.5" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAAAgAAADCAAAAAAQAAAAABgAAAAAAAAAAAAAQAAAA=</HashCode>
+      <FileName>TileEffect.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

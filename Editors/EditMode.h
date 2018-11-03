@@ -1,21 +1,25 @@
 #pragma once
 #include <iostream>
 #include "MapRoom.h"
+#include "ControlManager.h"
 
+const std::string DEF_FILENAME = "<Untitled>";
 const std::string DEF_MAP_EXTENSION = ".map";
 const std::string DEF_IMAGE_EXTENSION = ".img";
-const std::string DEF_FILENAME = "<Untitled>";
+const std::string DEF_MEGAMAP_EXTENSION = ".mmap";
 
 class EditMode
 {
 protected:
+	
 	static std::string dialogDefPath;
 	static std::string loadedFileName;
 	static bool modified;
 public:
 	std::string extensionFilter;
 	std::string modeName;
-	
+	ControlManager cm;
+
 	EditMode();
 	~EditMode();
 	
@@ -25,7 +29,7 @@ public:
 
 	virtual void save(const std::string& fileName) = 0;
 	virtual void load(const std::string& fileName) = 0;
-	virtual void createNew() = 0;
+	virtual void createNew();
 
 	void resetFileName();
 	void setModified(bool modified); //all routines to perform when current mode has been modified from original state
@@ -69,6 +73,25 @@ public:
 	{
 		modeName = "IMAGE";
 		extensionFilter = DEF_IMAGE_EXTENSION;
+	}
+
+	void save(const std::string& fileName);
+	void load(const std::string& fileName);
+	void createNew();
+};
+
+#include "MegaMap.h"
+
+class MegaMapEditMode : public EditMode
+{
+private:
+public:
+	MegaMap megaMap;
+	Image* image; //the image being edited
+	MegaMapEditMode()
+	{
+		modeName = "MEGAMAP";
+		extensionFilter = DEF_MEGAMAP_EXTENSION;
 	}
 
 	void save(const std::string& fileName);

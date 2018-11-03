@@ -4,7 +4,7 @@
 #include "Frame.h"
 #include "TextLabel.h"
 #include "FileChooser.h"
-#include "SimpleControlCommand.h"
+#include "SimpleCommand.h"
 #include "EditMode.h"
 #include "TUI.h"
 #include "LineItem.h"
@@ -16,12 +16,14 @@ template <typename Receiver>
 class Editor : public Controllable
 {
 protected:
-	ControlManager* cm;
+	ControlManager globalCm;
 
-	SimpleControlCommand<Receiver> fileDialogCmd;
-	SimpleControlCommand<Receiver> confirmCmd;
+	SimpleCommand<Receiver> cmCmd;
+	SimpleCommand<Receiver> fileDialogCmd;
+	SimpleCommand<Receiver> confirmCmd;
 
 	TextLabel fileNameLbl;
+	TextLabel modeLbl;
 
 	/*The different modes the editor can have.*/
 	std::list<EditMode*> modes;
@@ -31,7 +33,7 @@ protected:
 
 	void updateFileNameLabel();
 	
-	void setupConfirmDialog(ControlCommand* cmd, ConfirmMethod method);
+	void setupConfirmDialog(SimpleCommand<Receiver>* cmd, ConfirmMethod method);
 	void setupFileDialog(FileDialogType dialogType);
 
 	/*switches to the next mode in a circular fashion*/
@@ -46,9 +48,9 @@ public:
 	virtual void draw() = 0;
 	virtual int processInput(int input) = 0;
 	
-	int processGlobalInput(Controllable* c, int input);
-	int confirmDialogDriver(Controllable* c, int input);
-	int fileDialogDriver(Controllable* c, int input);
+	void processGlobalInput();
+	void confirmDialogDriver();
+	void fileDialogDriver();
 };
 
 
@@ -56,10 +58,10 @@ public:
 
 
 template <typename Receiver>
-int Editor<Receiver>::processGlobalInput(Controllable* c, int input)
+void Editor<Receiver>::processGlobalInput()
 {
-	int exitCode = HANDLED;
 	bool modified = (*mode)->isModified();
+	int input = globalCm.getInput();
 	//handle preliminary input
 	switch (input)
 	{
@@ -70,7 +72,7 @@ int Editor<Receiver>::processGlobalInput(Controllable* c, int input)
 		}
 		else
 		{
-			exitCode = ExitCode::TERMINATE;
+			globalCm.setExitCode(ExitCode::TERMINATE);
 		}
 		break;
 	case CTRL_N:
@@ -113,12 +115,10 @@ int Editor<Receiver>::processGlobalInput(Controllable* c, int input)
 		cycleMode();
 		break;
 	}
-
-	return exitCode;
 }
 
 template <typename Receiver>
-void Editor<Receiver>::setupConfirmDialog(ControlCommand* cmd, ConfirmMethod method)
+void Editor<Receiver>::setupConfirmDialog(SimpleCommand<Receiver>* cmd, ConfirmMethod method)
 {
 	std::string confirmMsg = "Are you sure? You have unsaved changes.";
 	ConfirmDialog* dialog = new ConfirmDialog(confirmMsg, method);
@@ -128,26 +128,25 @@ void Editor<Receiver>::setupConfirmDialog(ControlCommand* cmd, ConfirmMethod met
 	int x = getPosition(Justf::CENTER, width, confirmMsg.length() + 2);
 	dialog->setWindow(newwin(3, confirmMsg.length() + 2, y, x));
 		
-	cm->registerControl(dialog, KEY_LISTENER, cmd);
-	cm->setFocus(dialog);
+	globalCm.registerControl(dialog, KEY_LISTENER, cmd);
+	globalCm.setFocusedControl(dialog);
 }
 
 
 template <typename Receiver>
-int Editor<Receiver>::confirmDialogDriver(Controllable* c, int input)
+void Editor<Receiver>::confirmDialogDriver()
 {
-	ConfirmDialog* dialog = (ConfirmDialog*)c;
-	int retCode = dialog->processInput(input);
+	ConfirmDialog* dialog = (ConfirmDialog*)globalCm.getFocusedControl();
+	int retCode = dialog->processInput(globalCm.getInput());
 
-	int exitCode = HANDLED;
 	switch (retCode)
 	{
 	case noOption: 
-		cm->popControl();
+		globalCm.popControl();
 		delete dialog;
 		break;
 	case yesOption: 
-		cm->popControl();
+		globalCm.popControl();
 		switch (dialog->getMethod())
 		{
 		case ConfirmMethod::NEW: 
@@ -157,14 +156,12 @@ int Editor<Receiver>::confirmDialogDriver(Controllable* c, int input)
 			setupFileDialog(FileDialogType::OPEN_DIALOG);
 			break;
 		case ConfirmMethod::QUIT: 
-			exitCode = ExitCode::TERMINATE;
+			globalCm.setExitCode(ExitCode::TERMINATE);
 			break;
 		}
 		delete dialog;
 		break;
 	}
-	
-	return exitCode;
 }
 
 
@@ -181,29 +178,22 @@ void Editor<Receiver>::setupFileDialog(FileDialogType dialogType)
 	int x = getPosition(Justf::CENTER, getmaxx(win), width);  
 	dialog->setWindow(newwin(height, width, y, x));
 
-	/*WINDOW* main = newwin(height, width, (getmaxy(stdscr) - height) / 2, (getmaxx(stdscr) - width) / 2);
-	WINDOW* w = derwin(main, height - 2, width - 2, 1, 1);
-
-	FileChooser* fd = new FileChooser(w, (*mode)->getDefaultFilePath(), dialogType, (*mode)->extensionFilter);*/
-
-	/*Frame* f = new Frame(main, fd);
-	f->setModal(true);*/
-
-	cm->registerControl(dialog, KEY_LISTENER, &fileDialogCmd);
-	cm->setFocus(dialog);
+	globalCm.registerControl(dialog, KEY_LISTENER, &fileDialogCmd);
+	globalCm.setFocusedControl(dialog);
 }
 
 template <typename Receiver>
-int Editor<Receiver>::fileDialogDriver(Controllable* c, int input)
+void Editor<Receiver>::fileDialogDriver()
 {
-	FileDialog* dialog = (FileDialog*)c;
+	FileDialog* dialog = (FileDialog*)globalCm.getFocusedControl();
 	
-	int exitCode = dialog->processInput(input);
+	ExitCode exitCode = dialog->processInput(globalCm.getInput());
 	if (exitCode == ExitCode::GO_BACK)
 	{
-		cm->popControl();
+		globalCm.setExitCode(exitCode);
+		globalCm.popControl();
 		delete dialog;
-		return ExitCode::HANDLED;
+		return;
 	}
 
 	std::string fileChosen = dialog->getFileChosen();
@@ -218,18 +208,24 @@ int Editor<Receiver>::fileDialogDriver(Controllable* c, int input)
 		
 		(*mode)->storeLastOpened(fileChosen);
 
-		cm->popControl();
+		globalCm.popControl();
 		delete dialog;
 	}
-	return HANDLED;
 }
 
 template <typename Receiver>
 void Editor<Receiver>::cycleMode()
 {
+	globalCm.unRegisterControl(&(*mode)->cm);
+
 	mode++;
 	if (mode == modes.end())
 		mode = modes.begin();
+
+	globalCm.registerControl(&(*mode)->cm, KEY_LISTENER | MOUSE_LISTENER, &cmCmd);
+	globalCm.setFocusedControl(&(*mode)->cm);
+	//globalCm.moveControlToTop(&(*mode)->cm);
+	modeLbl.setText("MODE: " + (*mode)->modeName);
 }
 
 template <typename Receiver>

@@ -1,5 +1,5 @@
 #include "FileChooser.h"
-#include <dirent.h>
+//#include <dirent.h>
 #include <sstream>
 #include <list>
 #include "LineItem.h"

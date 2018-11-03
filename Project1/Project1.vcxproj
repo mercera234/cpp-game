@@ -82,7 +82,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>Winmm.lib;$(SolutionDir)PDCurseControls\lib\pdcurses.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>F:\Program Files\boost\boost_1_65_1\stage\lib;F:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\GameLib\Debug;F:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\RPGLib\Debug;F:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\PDCurseControls\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>F:\Program Files\boost\boost_1_65_1\stage\lib;$(SolutionDir)GameLib\Debug;$(SolutionDir)RPGLib\Debug;$(SolutionDir)PDCurseControls\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">

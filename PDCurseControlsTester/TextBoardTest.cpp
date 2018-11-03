@@ -1,6 +1,5 @@
 #include "CppUnitTest.h"
 #include "TextBoard.h"
-#include "CenteredText.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 

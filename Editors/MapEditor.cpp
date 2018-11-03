@@ -6,6 +6,9 @@
 #include "TwoDStorage.h"
 #include "LineItem.h"
 #include "TextParamValue.h"
+#include "LineFormat.h"
+#include "VerticalLineFormat.h"
+#include <Windows.h>
 
 const int DOT = 0;
 const int FILL = 1;
@@ -21,6 +24,7 @@ const int F_EXIT_U = '^';
 const int F_EXIT_D = 'v';
 const int F_SAVEABLE = 'S';
 
+
 MapEditor::MapEditor()
 {
 	topRulerRow = 2;
@@ -28,18 +32,30 @@ MapEditor::MapEditor()
 
 	int editorRows = 30;
 	int editorCols = 100;
-	resize_term(editorRows, editorCols);
+
+	int screenHeight = 23;
+	int screenWidth = 51;
+	
+	TUI::centerConsoleWindow(editorRows, editorCols);
+	
+	
 	setWindow(newwin(editorRows, editorCols, 0, 0));
 
 	//set modes
 	modes.push_back(&mapRoomEditMode);
 	modes.push_back(&imageEditMode);
+	//modes.push_back(&megaMapEditMode);
 	mode = modes.begin();
 
 	fileNameLbl.setWindow(newwin(1, 15, 0, 1));
 	fileNameLbl.setText((*mode)->getFileName());
 	fileNameLbl.setFormat(new LineFormat());
 	fileNameLbl.setFocusable(false);
+
+	modeLbl.setWindow(newwin(1, 16, 0, 30));
+	modeLbl.setText("MODE: " + (*mode)->modeName);
+	modeLbl.setFormat(new LineFormat);
+	modeLbl.setFocusable(false);
 
 	//setup default file path for opening/saving files
 	char buf[256];
@@ -57,8 +73,9 @@ MapEditor::MapEditor()
 	room->setWindow(newwin(screenHeight, screenWidth, topRulerRow + 2, sideRulerCol + 2));
 	room->setDimensions(screenHeight, screenWidth);
 
-	imageEditMode.image = room->getDisplay();
+	imageEditMode.image = &room->getDisplay();
 	image = imageEditMode.image;
+	image->reset();
 	
 	//setup map labels
 	setupRulers();
@@ -81,23 +98,14 @@ MapEditor::MapEditor()
 	coordDisplay.setWindow(newwin(1, 16, bottomRow, sideRulerCol + 1));
 	coordDisplay.addPiece(new TextParamValue<int>(new LineFormat(0, Justf::LEFT), "y:", &curY, 3));
 	coordDisplay.addPiece(new TextParamValue<int>(new PosFormat(0, 7), "x:", &curX, 3));
+	coordDisplay.setFocusable(false);
 
 	int hLeftEdge = sideRulerCol + 1 + 25;
-	hLbl.setWindow(newwin(1, 2, bottomRow, hLeftEdge));
-	hLbl.setText("H:");
-	hLbl.setFormat(new LineFormat());
-	hLbl.setFocusable(false);
-
-	mapRowsInput.setupField(3, bottomRow, hLeftEdge + 3);
-	mapRowsInput.setText(screenHeight);
+	rowField.setContent(newwin(1, 2, bottomRow, hLeftEdge), "H:", 3, bottomRow, hLeftEdge + 3);
+	rowField.setText(std::to_string(screenHeight));
 	
-	wLbl.setWindow(newwin(1, 2, bottomRow, hLeftEdge + 10));
-	wLbl.setText("W:");
-	wLbl.setFormat(new LineFormat());
-	wLbl.setFocusable(false);
-
-	mapColsInput.setupField(3, bottomRow, hLeftEdge + 13);
-	mapColsInput.setText(screenWidth);
+	colField.setContent(newwin(1, 2, bottomRow, hLeftEdge + 10), "W:", 3, bottomRow, hLeftEdge + 13);
+	colField.setText(std::to_string(screenWidth));
 
 	resizeBtn.setWindow(newwin(1, 6, bottomRow, hLeftEdge + 18));
 	resizeBtn.setText("RESIZE");
@@ -135,41 +143,63 @@ void MapEditor::setupCommands()
 
 	fileDialogCmd.setReceiver(this);
 	fileDialogCmd.setAction(&MapEditor::fileDialogDriver);
+
+	cmCmd.setReceiver(this);
+	cmCmd.setAction(&MapEditor::modeDriver);
 }
 
 
 void MapEditor::setupControlManager()
 {
-	cm = new ControlManager(this);
-	cm->registerControl(&textPalette, MOUSE_LISTENER, &paletteCmd);
-	cm->registerControl(&bkgdPalette, MOUSE_LISTENER, &paletteCmd);
-	cm->registerControl(&toolPalette, MOUSE_LISTENER, &paletteCmd);
-	cm->registerControl(&filterPalette, MOUSE_LISTENER, &paletteCmd);
-	cm->registerControl(&mapRowsInput, KEY_LISTENER | MOUSE_LISTENER, &canvasInputCmd);
-	cm->registerControl(&mapColsInput, KEY_LISTENER | MOUSE_LISTENER, &canvasInputCmd);
-	cm->registerControl(&fileNameLbl, 0, 0);
-	cm->registerControl(&topRuler, 0, 0);
-	cm->registerControl(&sideRuler, 0, 0);
-	cm->registerControl(&coordDisplay, 0, 0);
-	cm->registerControl(&hLbl, 0, 0);
-	cm->registerControl(&wLbl, 0, 0);
-	cm->registerControl(&resizeBtn, MOUSE_LISTENER, &controlCmd);
-	cm->registerControl(&mapFrame, KEY_LISTENER | MOUSE_LISTENER, &mapCmd);
-	cm->setFocus(&mapFrame);
+	mapRoomEditMode.cm.registerControl(&textPalette, MOUSE_LISTENER, &paletteCmd);
+	mapRoomEditMode.cm.registerControl(&bkgdPalette, MOUSE_LISTENER, &paletteCmd);
+	mapRoomEditMode.cm.registerControl(&toolPalette, MOUSE_LISTENER, &paletteCmd);
+	mapRoomEditMode.cm.registerControl(&filterPalette, MOUSE_LISTENER, &paletteCmd);
+	mapRoomEditMode.cm.registerControl(&mapFrame, KEY_LISTENER | MOUSE_LISTENER, &mapCmd);
+	mapRoomEditMode.cm.setFocusedControl(&mapFrame);
 	
-	cm->registerShortcutKey(KEY_ESC, &globalCmd);
-	cm->registerShortcutKey(CTRL_N, &globalCmd);
-	cm->registerShortcutKey(CTRL_S, &globalCmd);
-	cm->registerShortcutKey(CTRL_A, &globalCmd);
-	cm->registerShortcutKey(CTRL_O, &globalCmd);
-	cm->registerShortcutKey(CTRL_M, &globalCmd);
+	imageEditMode.cm.registerControl(&textPalette, MOUSE_LISTENER, &paletteCmd);
+	imageEditMode.cm.registerControl(&bkgdPalette, MOUSE_LISTENER, &paletteCmd);
+	imageEditMode.cm.registerControl(&toolPalette, MOUSE_LISTENER, &paletteCmd);
+	imageEditMode.cm.registerControl(&mapFrame, KEY_LISTENER | MOUSE_LISTENER, &mapCmd);
+	imageEditMode.cm.setFocusedControl(&mapFrame);
 
+
+	/*megaMapEditMode.cm.registerControl(&layerPalette, MOUSE_LISTENER, &paletteCmd);
+	megaMapEditMode.cm.registerControl(&mapFrame, KEY_LISTENER | MOUSE_LISTENER, &mapCmd);
+	megaMapEditMode.cm.setFocusedControl(&mapFrame);*/
+
+	mapRoomEditMode.cm.setWindow(stdscr);
+	imageEditMode.cm.setWindow(stdscr);
+//	megaMapEditMode.cm.setWindow(stdscr);
+
+
+	globalCm.registerControl(&rowField, KEY_LISTENER | MOUSE_LISTENER, &canvasInputCmd);
+	globalCm.registerControl(&colField, KEY_LISTENER | MOUSE_LISTENER, &canvasInputCmd);
+	globalCm.registerControl(&fileNameLbl, 0, 0);
+	globalCm.registerControl(&modeLbl, 0, 0);
+	globalCm.registerControl(&topRuler, 0, 0);
+	globalCm.registerControl(&sideRuler, 0, 0);
+	globalCm.registerControl(&coordDisplay, 0, 0);
+	globalCm.registerControl(&resizeBtn, MOUSE_LISTENER, &controlCmd);
+	globalCm.registerControl(&mapRoomEditMode.cm, KEY_LISTENER | MOUSE_LISTENER, &cmCmd);
+	
+	
+	globalCm.registerShortcutKey(KEY_ESC, &globalCmd);
+	globalCm.registerShortcutKey(CTRL_N, &globalCmd);
+	globalCm.registerShortcutKey(CTRL_S, &globalCmd);
+	globalCm.registerShortcutKey(CTRL_A, &globalCmd);
+	globalCm.registerShortcutKey(CTRL_O, &globalCmd);
+	globalCm.registerShortcutKey(CTRL_M, &globalCmd);
+
+	globalCm.setFocusedControl(&mapRoomEditMode.cm);
 }
 
 void MapEditor::setupPalettes()
 {
 	//setup palette labels
 	paletteLeftEdge = sideRulerCol + 1 + image->getVisibleCols() + 5;
+	column2Edge = paletteLeftEdge + 15;
 
 	int rows = 4;
 	int cols = 4;
@@ -189,6 +219,10 @@ void MapEditor::setupPalettes()
 	filterPalette.setTitle("FILTER");
 	filterPalette.setWindows(topRulerRow + 18, paletteLeftEdge, 2, cols);
 	filterPalette.setFocusable(false);
+
+	layerPalette.setTitle("LAYER");
+	layerPalette.setWindows(topRulerRow, paletteLeftEdge, 2, 3);
+	layerPalette.setFocusable(false);
 
 	//setup color palettes
 	for (int i = 0; i < TOTAL_COLORS; i++)
@@ -229,6 +263,17 @@ void MapEditor::setupPalettes()
 
 	filterPalette.setCurrentItem(0);
 	filterPalette.post(true);
+
+	//setup layer palette
+	layerPalette.setItem("Go Up ^", '^' | COLOR_GREEN_BOLD << TEXTCOLOR_OFFSET, 0);
+	layerPalette.setItem("Add Above", '^' | COLOR_BLUE_BOLD << TEXTCOLOR_OFFSET, 1);
+	layerPalette.setItem("Del Above", '^' | COLOR_RED_BOLD << TEXTCOLOR_OFFSET, 2);
+	layerPalette.setItem("Go Down v", 'v' | COLOR_GREEN_BOLD << TEXTCOLOR_OFFSET, 3);
+	layerPalette.setItem("Add Below", 'v' | COLOR_BLUE_BOLD << TEXTCOLOR_OFFSET, 4);
+	layerPalette.setItem("Del Below", 'v' | COLOR_RED_BOLD << TEXTCOLOR_OFFSET, 5);
+
+	layerPalette.setCurrentItem(0);
+	layerPalette.post(true);
 }
 
 
@@ -271,52 +316,56 @@ void MapEditor::setupRulers()
 	sideRuler.setFocusable(false);
 }
 
+void MapEditor::modeDriver()
+{
+	ControlManager* manager = (ControlManager*)globalCm.getFocusedControl();
+	manager->handleInput(globalCm.getInput());
+	globalCm.setExitCode(manager->getExitCode());
+}
+
 
 int MapEditor::processInput(int input)
 {
-	return cm->handleInput(input);
+	globalCm.handleInput(input);
+	return globalCm.getExitCode();
 }
 
 
 void MapEditor::createNew()
 {
 	(*mode)->createNew();
-	cm->setFocus(&mapFrame);
+	(*mode)->cm.setFocusedControl(&mapFrame);
 }
 
 
-int MapEditor::driver(Controllable* control, int input)
+void MapEditor::driver()
 {
-	if (control == &resizeBtn)
+	if (globalCm.getFocusedControl() == &resizeBtn)
 		resizeButtonDriver(); //input is discarded, it is just the value of the mouse key
-
-	return HANDLED;
 }
 
 
-int MapEditor::canvasInputDriver(Controllable* c, int input)
+void MapEditor::canvasInputDriver()
 {
-	TextField* field = (TextField*)c;
+	FormField* field = (FormField*)globalCm.getFocusedControl();
+	int input = globalCm.getInput();
 	switch (input)
 	{
 	case KEY_MOUSE: 
 		break;
 	default: 
-		if (isalpha(input)) break; //do not accept alphabetic characters
+		if (input >= ':' && input <= '~') break; //do not accept non-numeric characters
 
-		field->inputChar(input);
+		field->getField().inputChar(input);
 		break;
 	}
-
-
-	return HANDLED;
 }
 
 void MapEditor::resizeButtonDriver()
 {
 	(*mode)->setModified(true);
-	int rows = stoi(mapRowsInput.getText());
-	int cols = stoi(mapColsInput.getText());
+	int rows = stoi(rowField.getText());
+	int cols = stoi(colField.getText());
 	room->resize(rows, cols);
 
 	//make sure cursor is still in bounds
@@ -325,7 +374,7 @@ void MapEditor::resizeButtonDriver()
 
 	mp.setViewMode(ViewMode::CENTER); //reset the view to center
 	
-	cm->setFocus(&mapFrame); //switch focus back to map
+	(*mode)->cm.setFocusedControl(&mapFrame); //switch focus back to map
 }
 
 
@@ -337,10 +386,10 @@ void MapEditor::load(const std::string& fileName)
 	room->setDimensions(image->getTotalRows(), image->getTotalCols());
 
 	//resize canvas to loaded image
-	mapRowsInput.setText(image->getTotalRows());
-	mapColsInput.setText(image->getTotalCols());
+	rowField.setText(std::to_string(image->getTotalRows()));
+	colField.setText(std::to_string(image->getTotalCols()));
 
-	cm->setFocus(&mapFrame);
+	(*mode)->cm.setFocusedControl(&mapFrame);
 }
 
 
@@ -352,18 +401,18 @@ void MapEditor::save(const std::string& fileName)
 
 
 
-int MapEditor::processPaletteInput(Controllable* c, int input)
+void MapEditor::processPaletteInput()
 {
 	MEVENT event;
 	nc_getmouse(&event);
 
-	Palette* p = (Palette*)c;
+	Palette* p = (Palette*)(*mode)->cm.getFocusedControl();
 
 	int pY = event.y;
 	int	pX = event.x;
 	wmouse_trafo(p->getWindow(), &pY, &pX, false);
 
-	p->driver(input);
+	p->driver((*mode)->cm.getInput());
 	LineItem* item = (LineItem*)p->getCurrentItem();
 
 	int exitCode = HANDLED;
@@ -381,19 +430,18 @@ int MapEditor::processPaletteInput(Controllable* c, int input)
 	}
 	else if (p == &filterPalette)
 	{
-		exitCode = processFilterPaletteInput(item->getIcon());
+		processFilterPaletteInput(item->getIcon());
 	}
-	return exitCode;
 }
 
 
-int MapEditor::processFilterPaletteInput(chtype icon)
+void MapEditor::processFilterPaletteInput(chtype icon)
 {
 	filter = EffectType::NONE;
 	int symbol = (icon & 0x0000ffff);
 	switch (symbol)
 	{
-	case F_NO_FILTER: mapEffectFilterPattern.setEnabled(false); return HANDLED; break;
+	case F_NO_FILTER: mapEffectFilterPattern.setEnabled(false); return; break;
 	case F_OBSTR: filter = EffectType::OBSTR; break;
 	case F_JUMPABLE: filter = EffectType::JUMPABLE; break;
 	case F_HP_DEC: filter = EffectType::HP_DECREASE; break;
@@ -405,8 +453,6 @@ int MapEditor::processFilterPaletteInput(chtype icon)
 	
 	}
 	mapEffectFilterPattern.setEnabled(true);
-
-	return HANDLED;
 }
 
 
@@ -434,7 +480,7 @@ void MapEditor::applyTool(int y, int x)
 	{
 		if (mapEffectFilterPattern.isEnabled())
 		{
-			TwoDStorage<EffectType>& el = room->getEffectsLayer();
+			ITwoDStorage<EffectType>& el = room->getEffectsLayer();
 			el.setDatum(y, x, filter);
 		}
 		else
@@ -472,8 +518,10 @@ void MapEditor::processShiftDirectionalInput(int input)
 }
 
 
-int MapEditor::processMapInput(Controllable* c, int input)
+void MapEditor::processMapInput()
 {
+	int input = (*mode)->cm.getInput();
+
 	switch (input)
 	{
 	case KEY_UP:
@@ -557,7 +605,6 @@ int MapEditor::processMapInput(Controllable* c, int input)
 		
 		break;
 	}
-	return HANDLED;
 }
 
 
@@ -640,21 +687,12 @@ void MapEditor::draw()
 	wnoutrefresh(win);
 
 	updateFileNameLabel();
-
-	if (*mode == &imageEditMode)
-	{
-		filterPalette.setShowing(false);
-	}
-	else if (*mode == &mapRoomEditMode)
-	{
-		filterPalette.setShowing(true);
-	}
-
-	cm->draw();
+	
+	globalCm.draw();
 	highlighter.draw();
 
 
-	if (cm->getTopControl() == &mapFrame) //only draw cursor on top of map if no dialog boxes are displayed
+	if (globalCm.getTopControl()->isModal() == false) //only draw cursor on top of map if no dialog boxes are displayed
 	{
 		WINDOW* mapWin = image->getWindow();
 		chtype cursorChar = mvwinch(mapWin, curY - image->getUlY(), curX - image->getUlX());
