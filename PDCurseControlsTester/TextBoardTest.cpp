@@ -62,13 +62,7 @@ namespace PDCurseControlsTester
 			Assert::AreEqual(1, board.getPieceCount());
 		}
 
-		TEST_METHOD(addFormatToPieceTest)
-		{
-			std::string text = "text";
-			TextPiece piece(new PosFormat(0, 0), "text");
-
-			Assert::IsTrue(text.compare(piece.getText()) == 0);
-		}
+		
 
 		
 	};

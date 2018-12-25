@@ -113,13 +113,6 @@ void direntTest()
 	}
 }
 
-
-void createDirectoryTest()
-{
-	CreateDirectory("testdir", nullptr);
-}
-
-
 void wdirectoryTest()
 {
 	DIR* dir = opendir(".");

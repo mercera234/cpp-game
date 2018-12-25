@@ -2,12 +2,7 @@
 #include <algorithm>
 #include "ConfigMenu.h"
 #include "GameInput.h"
-#include "ConfigMenuItem.h"
 #include "menu_drivers.h"
-
-ConfigMenu::ConfigMenu()
-{
-}
 
 
 ConfigMenu::ConfigMenu(ResourceManager* resourceManagerIn)
@@ -20,9 +15,9 @@ void ConfigMenu::setResourceManager(ResourceManager* resourceManagerIn)
 	resourceManager = resourceManagerIn;
 
 	//this assumes that the inputs have already been setup prior to calling this method
-	auto inputs = &resourceManager->getInputManager().getInputs();
+	auto inputs = resourceManager->getInputManager().getInputs();
 
-	int nonSecretInputCount = std::count_if(inputs->begin(), inputs->end(),
+	int nonSecretInputCount = std::count_if(inputs.begin(), inputs.end(),
 		[](std::pair<int, Input> p)
 		{
 			return p.second.secret == false; //count all non-secret configurations
@@ -31,8 +26,16 @@ void ConfigMenu::setResourceManager(ResourceManager* resourceManagerIn)
 
 	menu.resetItems(nonSecretInputCount, 1); 
 
+	setMenuItems(inputs);
+
+	menu.setCurrentItem(0);
+	menu.post(true);
+}
+
+void ConfigMenu::setMenuItems(std::map<int, Input>& inputs)
+{
 	int menuRow = 0;
-	for (auto it = inputs->begin(); it != inputs->end(); it++)
+	for (auto it = inputs.begin(); it != inputs.end(); it++)
 	{
 		int key = it->first;
 		Input& input = it->second;
@@ -40,19 +43,28 @@ void ConfigMenu::setResourceManager(ResourceManager* resourceManagerIn)
 		if (input.secret)
 			continue;
 
-		
-		menu.setItem(new ConfigMenuItem(key, input), menuRow++, 0);
-	}
+		//set inputs in pre-determined order
+		switch (input.code)
+		{
+		case GameInput::OK_INPUT: menuRow = 0; break;
+		case GameInput::CANCEL_INPUT: menuRow = 1; break;
+		case GameInput::OPEN_MENU_INPUT: menuRow = 2; break;
+		case GameInput::CYCLE_LEFT_INPUT: menuRow = 3; break;
+		case GameInput::CYCLE_RIGHT_INPUT: menuRow = 4; break;
+		case GameInput::UP_INPUT: menuRow = 5; break;
+		case GameInput::DOWN_INPUT: menuRow = 6; break;
+		case GameInput::LEFT_INPUT: menuRow = 7; break;
+		case GameInput::RIGHT_INPUT: menuRow = 8; break;
+		}
 
-	menu.setCurrentItem(0);
-	menu.post(true);
+		menu.setItem(new ConfigMenuItem(key, input), menuRow, 0);
+	}
 }
 
 void ConfigMenu::setWindow(WINDOW* win)
 {
 	Controllable::setWindow(win);
-	menuWin = newwin(getmaxy(win), getmaxx(win), getbegy(win), getbegx(win));
-	menu.setWindow(menuWin);
+	menu.setWindow(win);
 }
 
 bool ConfigMenu::validateKey(int input)
@@ -93,16 +105,22 @@ bool ConfigMenu::validateKey(int input)
 
 ExitCode ConfigMenu::processInput(int input)
 {
-	InputManager& inputMgr = resourceManager->getInputManager();
 	if (editState)
 	{
-		assert(inputMgr.getUseRawInput());
+		assert(resourceManager->getInputManager().getUseRawInput());
 
-		auto inputs = inputMgr.getInputs();
+		auto& inputs = resourceManager->getInputManager().getInputs();
 
 		if (inputs.count(input) == 1) //can't use a key that is already in use
+		{
+			//check if cancel key was pressed
+			if (inputs[input].code == GameInput::CANCEL_INPUT)
+			{
+				toggleEditState();
+			}
 			return HANDLED;
-
+		}
+			
 		if(validateKey(input) == false)
 			return HANDLED;
 		
@@ -117,23 +135,27 @@ ExitCode ConfigMenu::processInput(int input)
 
 		item->setKey(input); //should be validated input
 
-		item->setEditing(false);
-		editState = false;
-		inputMgr.setUseRawInput(false);
+		toggleEditState();
 	}
 	else
 	{
-		MenuItem* item = menuDriver(input, &menu);
+		ConfigMenuItem* item = (ConfigMenuItem*)menuDriver(input, &menu);
 
 		if (item)
 		{
-			editState = true;
-			((ConfigMenuItem*)item)->setEditing(true);
-			inputMgr.setUseRawInput(true);
+			toggleEditState();
 		}
 	}
 
 	return HANDLED;
+}
+
+void ConfigMenu::toggleEditState()
+{
+	editState = !editState;
+	ConfigMenuItem* item = (ConfigMenuItem*)menu.getCurrentItem();
+	item->setEditing(editState);
+	resourceManager->getInputManager().setUseRawInput(editState);
 }
 
 

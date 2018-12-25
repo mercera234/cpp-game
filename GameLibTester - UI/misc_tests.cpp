@@ -11,7 +11,7 @@
 #include "GameItem.h"
 #include "TitleScreen.h"
 #include "ConfigMenu.h"
-#include "Reactor.h"
+#include "Barrier.h"
 #include "ItemBrowser.h"
 #include "CenteredFormat.h"
 
@@ -50,18 +50,7 @@ void titleScreenTest()
 	}
 }
 
-void mockLoadInputs(std::map<int, Input>& inputs)
-{
-	inputs.insert(std::make_pair('c', Input("ok", GameInput::OK_INPUT)));
-	inputs.insert(std::make_pair('x', Input("cancel", GameInput::CANCEL_INPUT)));
-	inputs.insert(std::make_pair(KEY_UP, Input("up", GameInput::UP_INPUT)));
-	inputs.insert(std::make_pair(KEY_DOWN, Input("down", GameInput::DOWN_INPUT)));
-	inputs.insert(std::make_pair(KEY_LEFT, Input("left", GameInput::LEFT_INPUT)));
-	inputs.insert(std::make_pair(KEY_RIGHT, Input("right", GameInput::RIGHT_INPUT)));
-	inputs.insert(std::make_pair('v', Input("openmenu", GameInput::OPEN_MENU_INPUT)));
-	inputs.insert(std::make_pair('s', Input("cycleleft", GameInput::CYCLE_LEFT_INPUT)));
-	inputs.insert(std::make_pair('d', Input("cycleright", GameInput::CYCLE_RIGHT_INPUT)));
-}
+
 
 
 void inventoryTest()
@@ -115,7 +104,7 @@ void inventoryTest()
 	inventory.registerControls();
 
 	InputManager mgr;
-	mockLoadInputs(mgr.getInputs());
+	loadHardCodedInputs(mgr.getInputs());
 	
 	bool playing = true;
 	while (playing)
@@ -160,8 +149,7 @@ void mainMenuTest()
 	Pos pos(32, 54);
 	rm.currMap->setCursor(&pos.y, &pos.x);
 
-	MainMenu mm;
-	mm.setResourceManager(&rm);
+	MainMenu mm(&rm);
 	mm.setWindow(newwin(gameScreenHeight, gameScreenWidth, 0, 0));
 
 	mm.addPlayerParty(rm.playerParty);
@@ -458,8 +446,8 @@ void configMenuTest()
 	loadDataFiles(rm);
 
 	ConfigMenu menu;
-	WINDOW* win = newwin(10, 20, 1, 1);
-	
+	WINDOW* win = TUI::winMgr.newWin(10, 20, 1, 1);
+	wbkgd(win, COLOR_RED << BKGDCOLOR_OFFSET);
 	menu.setWindow(win);
 	menu.setResourceManager(&rm);
 	

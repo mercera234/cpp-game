@@ -153,11 +153,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BattleProcessorTest.cpp" />
+    <ClCompile Include="ConfigMenuTest.cpp" />
     <ClCompile Include="defaultsTest.cpp" />
+    <ClCompile Include="DialogBuilderTest.cpp" />
     <ClCompile Include="ExplorationProcessorTest.cpp" />
     <ClCompile Include="ExploreStateTest.cpp" />
     <ClCompile Include="ItemBrowserTest.cpp" />
     <ClCompile Include="MainMenuTest.cpp" />
+    <ClCompile Include="TitleScreenTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GameLib\GameLib.vcxproj">

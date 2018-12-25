@@ -1,5 +1,6 @@
 #include "CppUnitTest.h"
 #include "CenteredFormat.h"
+#include "TUI.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 

@@ -446,8 +446,6 @@ MenuItem* GridMenu::getItem(int menuRow, int menuCol)
 GridMenu::~GridMenu()
 {
 	clearItems();
-	if(win != nullptr)
-		delwin(win);
 }
 
 void GridMenu::saveLinkIndices(MenuItem* item, std::vector<short>& indices)

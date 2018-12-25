@@ -10,5 +10,3 @@ void openDialogTest();
 void fileDirectoryTest();
 
 void direntTest();
-
-void createDirectoryTest();

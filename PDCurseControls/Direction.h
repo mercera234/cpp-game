@@ -1,6 +1,5 @@
 #pragma once
 #include <vector>
-#include "Controllable.h"
 
 
 struct Position
@@ -41,9 +40,8 @@ const std::vector<Dir> allDirs({ Dir::UP, Dir::DOWN, Dir::LEFT, Dir::RIGHT });
 Dir getOppositeDir(Dir dir);
 Axis getAxis(Dir dir);
 Axis getPerpAxis(Axis axis);
-Direction getDirectionFromKey(int key);
-Axis getAxisFromKey(int key);
-int getMagnitudeFromKey(int key, Controllable* c = nullptr);
+
+
 
 
 struct Movement

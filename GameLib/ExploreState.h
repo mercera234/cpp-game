@@ -1,6 +1,7 @@
 #pragma once
 #include "GameState.h"
 #include "ExplorationProcessor.h"
+#include "MapRepository.h"
 #include "EncounterTracker.h"
 
 

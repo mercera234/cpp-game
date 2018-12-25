@@ -22,3 +22,19 @@ public:
 
 };
 
+template <class Receiver>
+class Browser2 : public InputProcessor
+{
+protected:
+	//ControlManager cm;
+	SimpleCommand<Receiver> cmd;
+	DialogWindow dialogWindow;
+public:
+	Browser2() {}
+	
+	void processInput();
+	//setters/getters
+
+	//ControlManager& getControlManager() { return cm; }
+
+};

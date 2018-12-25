@@ -3,7 +3,7 @@
 #include "MegaMap.h"
 #include "MapMetadata.h"
 #include "Factory.h"
-//#include "AutoMap.h"
+#include "AutoMap.h"
 #include "FreeMovementProcessor.h"
 #include "SpiralBlitAnimation.h"
 #include "Actor.h"
