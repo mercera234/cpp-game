@@ -90,6 +90,7 @@ public:
 	Controllable* getTopControl() { return controls.back()->c; }
 
 	/*
+	TODO have class inherit from Input Processor
 	Handles input routed to control manager via key or mouse. 
 	Returns true if successfully handled, false it nothing could handle it.
 	*/

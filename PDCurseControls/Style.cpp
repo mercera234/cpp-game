@@ -2,7 +2,7 @@
 
 int getPosition(Justf justf, int displayLength, int itemLength)
 {
-	int pos;
+	int pos = 0;
 	switch (justf)
 	{
 	case Justf::LEFT: pos = 0; break;

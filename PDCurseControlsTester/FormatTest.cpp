@@ -1,5 +1,6 @@
 #include "CppUnitTest.h"
 #include "LineFormat.h"
+#include "TUI.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 

@@ -79,6 +79,7 @@ public:
 	/* Delete all MenuItems pointed to. Does not alter size or capacity.*/
 	void clearItems();
 	
+	//TODO replace this by having this class inherit InputProcessor interface
 	/* Handle menu input from user*/
 	virtual int driver(int input) = 0;
 

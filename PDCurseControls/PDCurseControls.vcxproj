@@ -131,7 +131,9 @@
     <ClInclude Include="Input.h" />
     <ClInclude Include="ExitCode.h" />
     <ClInclude Include="InputManager.h" />
+    <ClInclude Include="InputProcessor.h" />
     <ClInclude Include="ITwoDStorage.h" />
+    <ClInclude Include="KeyDirection.h" />
     <ClInclude Include="key_strings.h" />
     <ClInclude Include="LineFormat.h" />
     <ClInclude Include="SimpleControlCommand.h" />
@@ -211,6 +213,8 @@
     <ClCompile Include="Highlighter.cpp" />
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="InputManager.cpp" />
+    <ClCompile Include="InputProcessor.cpp" />
+    <ClCompile Include="KeyDirection.cpp" />
     <ClCompile Include="key_strings.cpp" />
     <ClCompile Include="LineItem.cpp" />
     <ClCompile Include="MenuItem.cpp" />

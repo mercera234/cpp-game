@@ -5,6 +5,7 @@
 #include "Input.h"
 #include <map>
 #include "ExitCode.h"
+#include "ConfigMenuItem.h"
 /*
 Config item is selected using key mapped to OK
 configuration of item is canceled by pressing Cancel
@@ -13,23 +14,16 @@ Any other key selected changes the key if it is valid
 class ConfigMenu : public Controllable
 {
 private:
-	bool validateKey(int input);
 	ResourceManager* resourceManager;
 	GridMenu menu;
-public:
 	bool editState = false;
-	
-	ConfigMenu();
-	ConfigMenu(ResourceManager* resourceManagerIn);
-	
-	WINDOW* menuWin = nullptr;
-	WINDOW* sideWin = nullptr;
 
-	~ConfigMenu()
-	{
-		if(sideWin != nullptr)
-			delwin(sideWin);
-	}
+	bool validateKey(int input);
+	void setMenuItems(std::map<int, Input>& inputs);
+	void toggleEditState();
+public:
+	ConfigMenu() {}
+	ConfigMenu(ResourceManager* resourceManagerIn);
 
 	void setWindow(WINDOW* win);
 
@@ -41,11 +35,10 @@ public:
 	void draw();
 	
 
-
 	//setters/getters
 
 	ResourceManager* getResourceManager() { return resourceManager; }
 
-
+	bool getEditState() { return editState; }
 };
 

@@ -1,6 +1,6 @@
 #pragma once
 #include "Controllable.h"
-#include "Direction.h"
+#include "KeyDirection.h"
 
 enum class ViewMode
 {

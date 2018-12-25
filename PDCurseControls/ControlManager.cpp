@@ -92,6 +92,10 @@ void ControlManager::unRegisterControl(Controllable* c)
 		return;
 
 	Registration* r = it->second;
+
+	if(r == focusedReg)
+		unsetFocus();
+
 	auto it2 = std::find(controls.begin(), controls.end(), r);
 
 	controls.erase(it2);

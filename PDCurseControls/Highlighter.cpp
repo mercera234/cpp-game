@@ -46,18 +46,18 @@ void Highlighter::fill(chtype fillChar)
 
 	Rect* r = getHighlitRegion();
 
-	int maxY = r->y + r->height;
-	int maxX = r->x + r->width;
+	int maxY = r->origin.y + r->height;
+	int maxX = r->origin.x + r->width;
 
 	int containerWidth = tileMap->getCols();
 	int containerHeight = tileMap->getRows();
 
-	maxX = r->width > containerWidth - r->x ? containerWidth : maxX;
-	maxY = r->height > containerHeight - r->y ? containerHeight : maxY;
+	maxX = (int)r->width > containerWidth - r->origin.x ? containerWidth : maxX;
+	maxY = (int)r->height > containerHeight - r->origin.y ? containerHeight : maxY;
 
-	for (int i = 0, row = r->y; row < maxY; row++, i++)
+	for (int i = 0, row = r->origin.y; row < maxY; row++, i++)
 	{
-		for (int j = 0, col = r->x; col < maxX; col++, j++)
+		for (int j = 0, col = r->origin.x; col < maxX; col++, j++)
 		{
 			tileMap->setDatum(row, col, fillChar);
 		}
@@ -74,12 +74,12 @@ void Highlighter::copy()
 	Rect* r = getHighlitRegion();
 	clipBoard.setDimensions(r->height, r->width);
 	
-	int maxY = r->y + r->height;
-	int maxX = r->x + r->width;
+	int maxY = r->origin.y + r->height;
+	int maxX = r->origin.x + r->width;
 
-	for (int i = 0, row = r->y; row < maxY; row++, i++)
+	for (int i = 0, row = r->origin.y; row < maxY; row++, i++)
 	{
-		for (int j = 0, col = r->x; col < maxX; col++, j++)
+		for (int j = 0, col = r->origin.x; col < maxX; col++, j++)
 		{
 			chtype tile = tileMap->getDatum(row, col);
 			clipBoard.setDatum(i, j, tile);
@@ -129,8 +129,8 @@ Rect* Highlighter::getHighlitRegion()
 	int minY = *curY < piny ? *curY : piny;
 	int minX = *curX < pinx ? *curX : pinx;
 
-	r->y = minY;
-	r->x = minX;
+	r->origin.y = minY;
+	r->origin.x = minX;
 
 	r->height = abs(*curY - piny) + 1;
 	r->width = abs(*curX - pinx) + 1;
@@ -186,36 +186,36 @@ void Highlighter::flip(bool axys)
 	if (highlighting == false)
 	{
 		paste();//paste buffer contents first (and turn highlighting back on)
-		r = new Rect(clipBoard.getRows(), clipBoard.getCols(), *curY, *curX);
+		r = new Rect(clipBoard.getRows(), clipBoard.getCols(), Pos(*curY, *curX));
 	}
 	else
 	{
 		r = getHighlitRegion();
 	}
 	
-	int maxY = r->y + r->height;
-	int maxX = r->x + r->width;
+	int maxY = r->origin.y + r->height;
+	int maxX = r->origin.x + r->width;
 
 	//setup axys dependent variables
-	int swapCount;
-	int outerMin;
-	int innerMin;
-	int outerMax;
-	int innerMax;
+	int swapCount = 0;
+	int outerMin = 0;
+	int innerMin = 0;
+	int outerMax = 0;
+	int innerMax = 0;
 
 	switch (axys)
 	{
 	case AXIS_HOR:
 		swapCount = r->width / 2;
-		outerMin = r->y;
-		innerMin = r->x;
+		outerMin = r->origin.y;
+		innerMin = r->origin.x;
 		outerMax = maxY;
 		innerMax = maxX;
 		break;
 	case AXIS_VER:
 		swapCount = r->height / 2;
-		outerMin = r->x;
-		innerMin = r->y;
+		outerMin = r->origin.x;
+		innerMin = r->origin.y;
 		outerMax = maxX;
 		innerMax = maxY;
 		break;

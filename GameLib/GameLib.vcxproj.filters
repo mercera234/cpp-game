@@ -60,7 +60,7 @@
     <ClCompile Include="Browser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="InputProcessor.cpp">
+    <ClCompile Include="DialogBuilder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -113,7 +113,10 @@
     <ClInclude Include="Browser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="InputProcessor.h">
+    <ClInclude Include="MainMenuOption.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DialogBuilder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
