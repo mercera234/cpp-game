@@ -45,6 +45,9 @@
     <ClInclude Include="MockFilePath.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MockInputProcessor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TextLabelTest.cpp">
@@ -150,6 +153,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="WindowManagerTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="InputProcessorTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MockInputProcessor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TextPieceTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="KeyDirectionTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

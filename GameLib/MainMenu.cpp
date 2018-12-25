@@ -10,15 +10,22 @@
 #include "ConfigMenu.h"
 #include "LineFormat.h"
 
+/*TODO simplify this class before adding item, equip, etc...*/
 MainMenu::MainMenu()
 {
-	cm.setCaller(this);
+	init();
+}
 
-	//link frames to controls
-	mainFrame.setControl(&mainMenu);
-	playerFrame.setControl(&playerMenu);
-	bodyFrame.setControl(&bodyContent);
-	descFrame.setControl(&descContent);
+//TODO doesn't work yet
+MainMenu::MainMenu(ResourceManager* resourceManagerIn)
+{
+	init();
+	setResourceManager(resourceManagerIn);
+}
+
+void MainMenu::init()
+{
+	cm.setCaller(this); //pretty sure I don't need this <-
 
 	//setup cmds
 	mainMenuCmd.setReceiver(this);
@@ -30,22 +37,21 @@ MainMenu::MainMenu()
 	configMenuCmd.setReceiver(this);
 	configMenuCmd.setAction(&MainMenu::processConfigMenuInput);
 
-	browserCmd.setReceiver(this);
-	browserCmd.setAction(&MainMenu::processBrowserInput);
-	
-	setupDescFields();
-	setupBodyFields();
+	/*browserCmd.setReceiver(this);
+	browserCmd.setAction(&MainMenu::processBrowserInput);*/
+
 	setupStatusFields();
 
 
 
 	//register controls
-	cm.registerControl(&mainFrame, KEY_LISTENER, &mainMenuCmd);
-	cm.registerControl(&playerFrame, KEY_LISTENER, &playerMenuCmd);
-	cm.registerControl(&descFrame, 0, nullptr);
-	cm.registerControl(&bodyFrame, 0, nullptr);
-	cm.registerControl(&currBrowser, KEY_LISTENER, &browserCmd);
-	cm.setFocusedControl(&mainFrame);
+	cm.registerControl(&mainMenuDialog, KEY_LISTENER, &mainMenuCmd);
+	cm.registerControl(&playerMenuDialog, KEY_LISTENER, &playerMenuCmd);
+	cm.registerControl(&descDialog, 0, nullptr);
+	cm.registerControl(&bodyDialog, 0, nullptr);
+	//cm.registerControl(&currBrowser, KEY_LISTENER, &browserCmd);
+
+	cm.setFocusedControl(&mainMenuDialog);
 }
 
 void MainMenu::setupStatusFields()
@@ -70,29 +76,6 @@ void MainMenu::setupStatusFields()
 	statusContent.addPiece(expRow);
 }
 
-void MainMenu::setupDescFields()
-{
-	mapText = new TextPiece(new LineFormat(0, Justf::LEFT), "");
-	roomText = new TextPiece(new LineFormat(1, Justf::LEFT), "");
-	floor = new TextParamValue<std::string>(new LineFormat(2, Justf::LEFT), S_LEVEL, nullptr, 2);
-
-	descContent.addPiece(mapText);
-	descContent.addPiece(roomText);
-	descContent.addPiece(floor);
-}
-
-void MainMenu::setupBodyFields()
-{
-	gold = new TextParamValue<BoundInt>(new LineFormat(0, Justf::LEFT), GOLD$, nullptr);
-	steps = new TextParamValue<BoundInt>(new LineFormat(1, Justf::LEFT), STEPS, nullptr);
-	enemiesKilled = new TextParamValue<BoundInt>(new LineFormat(2, Justf::LEFT), ENEMIES_KILLED, nullptr);
-	battlesWon = new TextParamValue<BoundInt>(new LineFormat(3, Justf::LEFT), BATTLES_WON, nullptr);
-	bodyContent.addPiece(gold);
-	bodyContent.addPiece(steps);
-	bodyContent.addPiece(enemiesKilled);
-	bodyContent.addPiece(battlesWon);
-}
-
 
 void MainMenu::setWindow(WINDOW* win)
 {
@@ -106,17 +89,16 @@ void MainMenu::setWindow(WINDOW* win)
 	leftFrameWidth = 20;
 	rightFrameWidth = controlWidth - leftFrameWidth;
 
-	setupMainMenu();
-	setupPlayerMenu();
-
+	Rect mainMenuRect(topFrameHeight, leftFrameWidth, Pos(0, 0));
+	Rect playerMenuRect(bottomFrameHeight, leftFrameWidth, Pos(topFrameHeight - 1, 0));
+	Rect descRect(topFrameHeight, rightFrameWidth, Pos(0, leftFrameWidth));
+	Rect mainMenuBodyRect(bottomFrameHeight, rightFrameWidth, Pos(topFrameHeight - 1, leftFrameWidth));
 	
-	descContent.setWindow(newwin(topFrameHeight - 2, rightFrameWidth - 2, 1, leftFrameWidth + 1));
-	descFrame.setWindow(newwin(topFrameHeight, rightFrameWidth, 0, leftFrameWidth));
-
-	bodyContent.setWindow(newwin(bottomFrameHeight - 2, rightFrameWidth - 2, 6, leftFrameWidth + 1));
-	bodyFrame.setWindow(newwin(bottomFrameHeight, rightFrameWidth, 5, leftFrameWidth));
+	dialogBuilder.buildMainMenu(mainMenuDialog, mainMenuRect);
+	dialogBuilder.buildPlayerMenu(playerMenuDialog, playerMenuRect);
+	dialogBuilder.buildDesc(descDialog, descRect, *resourceManager);
+	dialogBuilder.buildMainMenuBody(bodyDialog, mainMenuBodyRect, *resourceManager);
 	
-
 	statusContent.setWindow(newwin(bottomFrameHeight - 2, rightFrameWidth - 2, 6, leftFrameWidth + 1));
 }
 
@@ -125,64 +107,14 @@ void MainMenu::addPlayerParty(std::vector<Actor>& allies)
 {
 	assert(allies.size() <= playerCapacity);
 
+	GridMenu* playerMenu = (GridMenu*)playerMenuDialog.getControl();
 	int row = 0;
 	for each (Actor actor in allies)
 	{
-		LineItem* item = (LineItem*)playerMenu.getItem(row++, 0);
+		LineItem* item = (LineItem*)playerMenu->getItem(row++, 0);
 
 		item->name = actor.name;
 	}
-}
-
-
-void MainMenu::setupMainMenu()
-{
-	mainMenu.resetItems(4, 2);
-
-
-	mainMenu.setWindow(newwin(topFrameHeight - 2, leftFrameWidth - 2, 1, 1)); //more windows to be deleted later
-
-	mainMenu.setItemWidth(6);
-	mainMenu.setColSepLength(0);
-
-	mainMenu.setItem(new LineItem(S_ITEM, 0, MainMenuOption::INVENTORY), 0, 0);
-	mainMenu.setItem(new LineItem(S_EQUIP, 1, MainMenuOption::EQUIP), 1, 0);
-	mainMenu.setItem(new LineItem(S_STATUS, 2, MainMenuOption::STATUS), 2, 0);
-	mainMenu.setItem(new LineItem(S_SKILL, 3, MainMenuOption::SKILL), 3, 0);
-	mainMenu.setItem(new LineItem(S_CONFIG, 4, MainMenuOption::CONFIG), 0, 1);
-	mainMenu.setItem(new LineItem(S_MAP, 5, MainMenuOption::MAP), 1, 1);
-	mainMenu.setItem(new LineItem(S_SAVE, 6, MainMenuOption::SAVE), 2, 1);
-	mainMenu.setItem(new LineItem(S_QUIT, 7, MainMenuOption::MAIN_QUIT), 3, 1);
-
-	mainMenu.setWrapAround(false);
-	mainMenu.setFocus(true);
-	mainMenu.post(true);
-
-	mainMenu.setCurrentItem(0);
-
-	mainFrame.setWindow(newwin(topFrameHeight, leftFrameWidth, 0, 0));
-	
-}
-
-
-void MainMenu::setupPlayerMenu()
-{
-	playerMenu.resetItems(playerCapacity, 1);
-	playerMenu.setWindow(newwin(bottomFrameHeight - 2, leftFrameWidth - 2, 6, 1));
-	playerMenu.setItemHeight(4);
-	
-	for (int i = 0; i < playerCapacity; i++)
-	{
-		playerMenu.setItem(new LineItem("", i, -1), i, 0); //temporary
-	}
-	
-
-	playerMenu.setWrapAround(false);
-	playerMenu.setFocus(false);
-	playerMenu.post(true);
-
-	playerFrame.setWindow(newwin(bottomFrameHeight, leftFrameWidth, 5, 0));
-	
 }
 
 
@@ -204,7 +136,8 @@ void MainMenu::processMainMenuInput()
 	}
 
 
-	MenuItem* item = menuDriver(input, &mainMenu);
+	MenuItem* item = menuDriver(input, (AbstractMenu*)mainMenuDialog.getControl()); //TODO class is broken
+	
 
 	if (item)
 	{
@@ -221,10 +154,14 @@ void MainMenu::processMainMenuInput()
 		}
 			break;
 		case MainMenuOption::STATUS:
-			cm.setFocusedControl(&playerFrame);
-			playerMenu.setCurrentItem(0);
-			bodyFrame.setControl(&statusContent);
+		{
+			cm.setFocusedControl(&playerMenuDialog);
+			GridMenu* playerMenu = (GridMenu*)playerMenuDialog.getControl();
+
+			playerMenu->setCurrentItem(0);
+			//TODO bodyFrame.setControl(&statusContent);
 			setupStatusContent();
+		}			
 			break;
 		case MainMenuOption::CONFIG:
 		{
@@ -248,67 +185,45 @@ void MainMenu::processMainMenuInput()
 	}
 	else //no item selected, render default data
 	{
-		setupDescContent();
-		setupHubContent();
+		
 	}
 }
 
 void MainMenu::setResourceManager(ResourceManager* resourceManagerIn)
 {
 	resourceManager = resourceManagerIn;
-	setupDescContent();
-	setupHubContent();
 }
 
-void MainMenu::setupHubContent()
-{
-	gold->setValue(&resourceManager->getData().retrieveIntData(GOLD$));
-	steps->setValue(&resourceManager->getData().retrieveIntData(STEPS));
-	enemiesKilled->setValue(&resourceManager->getData().retrieveIntData(ENEMIES_KILLED));
-	battlesWon->setValue(&resourceManager->getData().retrieveIntData(BATTLES_WON));
-}
-
-void MainMenu::setupDescContent()
-{
-	MegaMap* currMap = resourceManager->currMap;
-	mapText->setText(currMap->name);
-	int id = currMap->getCurrMapRoomId();
-
-	MapRoom& room = resourceManager->getData().getRoom(id);
-
-	roomText->setText(room.name);
-
-	floor->setValue(&currMap->getFloorLabel());
-}
-
-void MainMenu::processBrowserInput()
-{
-	int input = cm.getInput();
-	Browser* b = (Browser*)currBrowser.control;
-	b->setInput(input);
-	b->processInput();
-
-	if (b->getExitCode() == ExitCode::GO_BACK)
-	{
-		cm.setFocusedControl(&mainFrame);
-		cm.unRegisterControl(&currBrowser);
-	}
-}
+//void MainMenu::processBrowserInput()
+//{
+//	int input = cm.getInput();
+//	Browser* b = (Browser*)currBrowser.control;
+//	b->setInput(input);
+//	b->processInput();
+//
+//	if (b->getExitCode() == ExitCode::GO_BACK)
+//	{
+//		cm.setFocusedControl(&mainFrame);
+//		cm.unRegisterControl(&currBrowser);
+//	}
+//}
 
 void MainMenu::processPlayerMenuInput()
 {
 	//right now this only handles the status menu!!!
 	int input = cm.getInput();
+
+	GridMenu* playerMenu = (GridMenu*)playerMenuDialog.getControl();
 	if (input == GameInput::CANCEL_INPUT)
 	{
-		playerMenu.setCurrentItem(NO_CUR_ITEM);
-		cm.setFocusedControl(&mainFrame);
-		bodyFrame.setControl(&bodyContent);
+		playerMenu->setCurrentItem(NO_CUR_ITEM);
+		cm.setFocusedControl(&mainMenuDialog);
+		//TODO bodyFrame.setControl(&bodyContent);
 		return;
 	}
 
 
-	MenuItem* item = menuDriver(input, &playerMenu);
+	MenuItem* item = menuDriver(input, playerMenu);
 
 	setupStatusContent();
 }
@@ -320,10 +235,10 @@ void MainMenu::processConfigMenuInput()
 	DialogWindow* configDialog = (DialogWindow*)cm.getFocusedControl();
 	ConfigMenu* menu = (ConfigMenu*)configDialog->getControl();
 
-	if (input == GameInput::CANCEL_INPUT && menu->editState == false) //don't accept cancel if we're editing a configuration item
+	if (input == GameInput::CANCEL_INPUT && menu->getEditState() == false) //don't accept cancel if we're editing a configuration item
 	{
 		cm.popControl();
-		cm.setFocusedControl(&mainFrame);
+		cm.setFocusedControl(&mainMenuDialog);
 		return;
 	}
 
@@ -333,7 +248,8 @@ void MainMenu::processConfigMenuInput()
 
 void MainMenu::setupStatusContent()
 {
-	MenuItem* item = playerMenu.getCurrentItem();
+	GridMenu* playerMenu = (GridMenu*)playerMenuDialog.getControl();
+	MenuItem* item = playerMenu->getCurrentItem();
 
 	if (item && ((LineItem*)item)->name.compare("") != 0)
 	{

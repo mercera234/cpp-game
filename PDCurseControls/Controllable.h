@@ -1,6 +1,5 @@
 #pragma once
 #include "curses.h"
-#include "Rectangle.h"
 #include "Drawable.h"
 #include "TUI.h"
 

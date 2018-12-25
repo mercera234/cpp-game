@@ -161,6 +161,19 @@ namespace PDCurseControlsTester
 			Assert::IsFalse(m.isFocused());
 		}
 
+		
+		TEST_METHOD(focusOffTest)
+		{
+			MockControl m;
+			cm.registerControl(&m, 0, nullptr);
+			cm.setFocusedControl(&m);
+
+			TUI::cursorType = CursorType::NORMAL; //set it manually to guarantee it is changed back
+			cm.unRegisterControl(&m);
+
+			Assert::AreEqual((int)CursorType::INVISIBLE, (int)TUI::cursorType);
+		}
+
 		TEST_METHOD(handleGlobalInputTest)
 		{
 			int value = 679;
@@ -337,10 +350,5 @@ namespace PDCurseControlsTester
 		}
 		
 
-
-		//TODO
-		//write test for new method to swap controls between two managers. Controls should generally not be managed by multiple managers at once or else they will be drawn twice, and input may not be routed to them correctly
-		//add test to verify that registered controls that turn on the cursor also have them turned off once unregistered
-		//since mouse control can be accepted by any component, verify that focus goes back to previously registered component( or never appears to change)
 	};
 }

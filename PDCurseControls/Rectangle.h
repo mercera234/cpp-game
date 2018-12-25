@@ -1,18 +1,16 @@
 #pragma once
-
+#include "Direction.h"
 
 struct Rectangle
 {
-	short y;
-	short x;
-	unsigned short height;
-	unsigned short width;
+	Pos origin; //upper left hand corner of rectangle
+	unsigned int height; 
+	unsigned int width;
 
 	Rectangle() {};
-	Rectangle(short height, short width, short y, short x)
+	Rectangle(unsigned int height, unsigned int width, Pos pos)
 	{
-		this->y = y;
-		this->x = x;
+		origin = pos;
 		this->height = height;
 		this->width = width;
 	}

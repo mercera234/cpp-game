@@ -2,7 +2,6 @@
 #include <algorithm>
 #include "GameInput.h"
 #include "TUI.h"
-//#include "data_loaders.h"
 
 
 void fixSpriteSymbols(std::list<Sprite*>& sprites)
@@ -29,7 +28,11 @@ void loadDataFiles(ResourceManager& rm)
 	
 	InputManager& inputMgr = rm.getInputManager();
 	
-	inputMgr.loadConfigurationFile(configStream);
+	if (configStream.is_open())
+		inputMgr.loadConfigurationFile(configStream);
+	else
+		loadHardCodedInputs(inputMgr.getInputs());
+
 	setupDefaultGameInputs(inputMgr.getInputs());
 
 	setupDefaultDataKeys(rm);
@@ -45,6 +48,19 @@ void loadDataFiles(ResourceManager& rm)
 	}
 }
 
+
+void loadHardCodedInputs(std::map<int, Input>& inputs)
+{
+	inputs.insert(std::make_pair('c', Input("ok", GameInput::UNKNOWN)));
+	inputs.insert(std::make_pair('x', Input("cancel", GameInput::UNKNOWN)));
+	inputs.insert(std::make_pair(KEY_UP, Input("up", GameInput::UNKNOWN)));
+	inputs.insert(std::make_pair(KEY_DOWN, Input("down", GameInput::UNKNOWN)));
+	inputs.insert(std::make_pair(KEY_LEFT, Input("left", GameInput::UNKNOWN)));
+	inputs.insert(std::make_pair(KEY_RIGHT, Input("right", GameInput::UNKNOWN)));
+	inputs.insert(std::make_pair('v', Input("openmenu", GameInput::UNKNOWN)));
+	inputs.insert(std::make_pair('s', Input("cycleleft", GameInput::UNKNOWN)));
+	inputs.insert(std::make_pair('d', Input("cycleright", GameInput::UNKNOWN)));
+}
 
 
 void setupDefaultGameInputs(std::map<int, Input>& inputs)
@@ -86,18 +102,6 @@ void setupDefaultGameInputs(std::map<int, Input>& inputs)
 	inputs.insert(std::make_pair(CTRL_E, Input("", GameInput::TOGGLE_ENCOUNTERS, true)));
 	
 }
-
-//int getInput(ResourceManager& resourceManager)
-//{
-//	int input = getch();
-//	if (resourceManager.getUseRawInput())
-//		return input;
-//
-//	auto inputs = &resourceManager.getData().getInputs();
-//	auto it = inputs->find(input);
-//
-//	return (it != inputs->end()) ? it->second.code : GameInput::UNKNOWN;
-//}
 
 void setupDefaultDataKeys(ResourceManager& rm)
 {

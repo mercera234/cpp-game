@@ -19,17 +19,19 @@ GameState* MainMenuState::getInstance()
 	return instance;
 }
 
-MainMenuState::MainMenuState()
+MainMenuState::MainMenuState() 
 {
-	mm.setWindow(newwin(gameScreenHeight, gameScreenWidth, 0, 0));
+	
 }
 
 
 void MainMenuState::loadState()
 {
-	mm.setResourceManager(resourceManager);
+	mm.setResourceManager(resourceManager); //TODO, this doesn't hurt, but it shouldn't need to be reset every time state loads
+	if(mm.getWindow() == nullptr)
+		mm.setWindow(newwin(gameScreenHeight, gameScreenWidth, 0, 0));
+
 	mm.addPlayerParty(resourceManager->playerParty);
-	
 }
 
 

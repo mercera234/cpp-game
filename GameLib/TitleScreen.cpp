@@ -3,19 +3,21 @@
 #include "defaults.h"
 #include "menu_drivers.h"
 #include "ExitCode.h"
+#include "Style.h"
 
+//TODO come up with ScreenBuilder interface to handled highest level screen building like what is down below
 TitleScreen::TitleScreen()
 {
-	win = newwin(gameScreenHeight, gameScreenWidth, 0, 0);
+	win = TUI::winMgr.newWin(gameScreenHeight, gameScreenWidth, 0, 0);
+	
+	//setup menu
 	titleMenu.resetItems(3, 1);
-
-
 	int menuHeight = 4;
 	int menuWidth = 12;
-	int yPos = (((getmaxy(win) - titleSpace) - menuHeight) / 2) + titleSpace; //centered under title image
-	int xPos = (getmaxx(win) - menuWidth) / 2; //centered horizontally
+	int yPos = getPosition(Justf::CENTER, getmaxy(win) - titleSpace, menuHeight) + titleSpace; //centered under title image
+	int xPos = getPosition(Justf::CENTER, getmaxx(win), menuWidth);
 	
-	titleMenu.setWindow(newwin(menuHeight, menuWidth, yPos, xPos));
+	titleMenu.setWindow(TUI::winMgr.newWin(menuHeight, menuWidth, yPos, xPos));
 
 	titleMenu.setItem(new LineItem(S_NEW_GAME, 0, TitleMenuOptions::NEW_GAME));
 	titleMenu.setItem(new LineItem(S_LOAD_GAME, 1, TitleMenuOptions::LOAD_GAME));
@@ -42,8 +44,6 @@ int TitleScreen::processInput(int input)
 		case TitleMenuOptions::LOAD_GAME:
 
 			break;
-		case TitleMenuOptions::EDIT_GAME:
-			break;
 		case TitleMenuOptions::QUIT_GAME:
 			return ExitCode::TERMINATE;
 			break;
@@ -57,13 +57,13 @@ void TitleScreen::draw()
 {
 	werase(win);
 
-	int yPos = (titleSpace - 1) / 2;
-	int xPos = (getmaxx(win) - GAME_TITLE.length()) / 2;
+	//int yPos = (titleSpace - 1) / 2;
+	int yPos = getPosition(Justf::CENTER, titleSpace, 1);
+	//int xPos = (getmaxx(win) - GAME_TITLE.length()) / 2;
+	int xPos = getPosition(Justf::CENTER, getmaxx(win), GAME_TITLE.length());
 	mvwprintw(win, yPos, xPos, GAME_TITLE.c_str());
 	wnoutrefresh(win);
 	titleMenu.draw();
 }
 
-TitleScreen::~TitleScreen()
-{
-}
+

@@ -8,7 +8,7 @@
 class TitleScreenState : public GameState
 {
 private:
-	TitleScreenState(); //private so class is Singleton
+	TitleScreenState() {} //private so class is Singleton
 	
 	static GameState* instance;
 
@@ -20,7 +20,7 @@ private:
 public:
 	static GameState* getInstance(); //since static, cannot be virtual in super class
 	void processInput(GameStateManager& manager, int input);
-	void loadState();
-	void unloadState();
+	void loadState() {}
+	void unloadState() {}
 	void draw();
 };

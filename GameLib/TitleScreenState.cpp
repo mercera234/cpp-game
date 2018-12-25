@@ -22,22 +22,6 @@ GameState* TitleScreenState::getInstance()
 }
 
 
-TitleScreenState::TitleScreenState() 
-{
-}
-
-
-void TitleScreenState::loadState()
-{
-	
-}
-
-void TitleScreenState::unloadState()
-{
-
-}
-
-
 void TitleScreenState::beginNewGame()
 {
 	//clear any previously loaded resources

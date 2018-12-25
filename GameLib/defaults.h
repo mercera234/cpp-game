@@ -4,8 +4,9 @@
 #include "ResourceManager.h"
 
 void loadDataFiles(ResourceManager& rm);
+void loadHardCodedInputs(std::map<int, Input>& inputs);
 void setupDefaultDataKeys(ResourceManager& rm);
-void setupDefaultGameInputs(std::map<int, Input>& inputManager);
+void setupDefaultGameInputs(std::map<int, Input>& inputs);
 //int getInput(ResourceManager& resourceManager);
 
 
@@ -30,6 +31,7 @@ const std::string configFile = "data\\configuration.ini";
 const chtype moneySymbol = '$' | COLOR_YELLOW_BOLD << TEXTCOLOR_OFFSET;
 const chtype itemSymbol = '*' | COLOR_MAGENTA_BOLD << TEXTCOLOR_OFFSET;
 
+const int playerCapacity = 4;
 //////strings
 
 //title menu items
