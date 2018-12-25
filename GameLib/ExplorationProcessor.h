@@ -4,6 +4,7 @@
 #include <functional>
 #include "MapExit.h"
 #include "MapRoom.h"
+#include "MapRepository.h"
 #include "MegaMap.h"
 #include "ResourceManager.h"
 #include "Sprite.h"

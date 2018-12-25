@@ -11,7 +11,7 @@
 #include "GameItem.h"
 #include "TitleScreen.h"
 #include "ConfigMenu.h"
-#include "Reactor.h"
+#include "Barrier.h"
 #include "ItemBrowser.h"
 #include "CenteredFormat.h"
 
