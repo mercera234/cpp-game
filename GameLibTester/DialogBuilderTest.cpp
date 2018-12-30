@@ -2,6 +2,7 @@
 #include "DialogBuilder.h"
 #include "GridMenu.h"
 #include "LineItem.h"
+#include "TextBoard.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -36,15 +37,26 @@ namespace GameLibTester
 			Assert::AreEqual(itemsCreated, 4);
 		}
 
-		//TEST_METHOD(buildBodyTest)
-		//{
-		//	/*DialogWindow win;
-		//	ResourceManager rm;
-		//	builder.buildMainMenuBody(win, Rect(0, 0, Pos(10, 10)), rm);
+		TEST_METHOD(buildMainMenuBodyTest)
+		{
+			DialogWindow win;
+			ResourceManager rm;
+			builder.buildMainMenuBody(win, Rect(0, 0, Pos(10, 10)), rm);
 
+			TextBoard* board = dynamic_cast<TextBoard*>(win.getControl());
+			
+			Assert::AreEqual(4, board->getPieceCount());
+		}
 
-		//	Assert::IsTrue(true);*/
-		//	//Assert::AreEqual(itemsCreated, 4);
-		//}
+		TEST_METHOD(buildDescTest)
+		{
+			DialogWindow win;
+			ResourceManager rm;
+			builder.buildDesc(win, Rect(0, 0, Pos(10, 10)), rm);
+
+			TextBoard* board = dynamic_cast<TextBoard*>(win.getControl());
+
+			Assert::AreEqual(3, board->getPieceCount());
+		}
 	};
 }

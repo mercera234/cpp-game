@@ -50,16 +50,8 @@ namespace GameLibTester
 
 		TEST_METHOD(retrieveUnstoredInt)
 		{
-			bool exceptionCaught = false;
-			try
-			{
-				BoundInt& x = data.retrieveIntData("anything");
-			}
-			catch (std::exception e)
-			{
-				exceptionCaught = true;
-			}
-			Assert::IsTrue(exceptionCaught);
+			BoundInt& x = data.retrieveIntData("anything");	
+			Assert::AreEqual(0, x.getCurr());
 		}
 
 		TEST_METHOD(storeRetrieveIntTest)
@@ -122,7 +114,7 @@ namespace GameLibTester
 			createItemJSONtree(itemsNode);
 
 			data.loadItems(itemsNode);
-			Assert::AreEqual(3, (int)data.getItems().size()); //3 = 2 items + 1 null item //TODO test fails because the null item is not being loaded yet
+			Assert::AreEqual(3, (int)data.getItems().size()); //3 = 2 items + 1 null item 
 		}
 
 		TEST_METHOD(loadRoomsTest)

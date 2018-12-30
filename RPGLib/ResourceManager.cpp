@@ -8,6 +8,9 @@ ResourceManager::ResourceManager()
 	blankItem->quantity = 0;
 
 	inventory.push_back(blankItem);
+
+	//setup map with null value to start
+	currMap = &theData.getMap(nullName);
 }
 
 Actor* ResourceManager::getPlayer1()

@@ -35,7 +35,12 @@ bool GameData::storeIntData(const std::string& key, BoundInt value)
 
 BoundInt& GameData::retrieveIntData(const std::string& key)
 {
-	return bIntData.at(key);
+	if (bIntData.count(key) > 0)
+	{
+		return bIntData[key];
+	}
+
+	return bIntData[nullName];
 }
 
 
@@ -349,6 +354,10 @@ void GameData::loadDataFile(const std::string& jsonFile)
 
 void GameData::loadNullResources()
 {
+	//load null bound int
+	BoundInt nullBoundInt(0,0);
+	storeIntData(nullName, nullBoundInt);
+
 	//load null item
 	GameItem nullItem;
 	nullItem.id = nullId;

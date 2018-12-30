@@ -21,19 +21,19 @@ private:
 	int unitCols = 0;
 	
 	//the height/width of a unit map. All maps loaded should have dimensions that are a multiple of the unit map size
-	int unitHeight;
-	int unitWidth;
+	int unitHeight = 1;
+	int unitWidth = 1;
 
 	//cursor being tracked (real map coordinates)
-	int* curY;
-	int* curX;
+	int* curY = nullptr;
+	int* curX = nullptr;
 
 	/*The current layer being occupied by a player, or being displayed.
 	The index representing the players point of view of what floor they are on*/
 	int floorIndex = 0;
 	std::string floorLabel;
 public:
-	MegaMap() {}; //set unit height and width, then cursor
+	MegaMap(); //set unit height and width, then cursor
 
 	/*the coordinates of the current map room*/
 	Pos getMapRoomPos();

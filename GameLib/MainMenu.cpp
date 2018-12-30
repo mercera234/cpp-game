@@ -16,7 +16,6 @@ MainMenu::MainMenu()
 	init();
 }
 
-//TODO doesn't work yet
 MainMenu::MainMenu(ResourceManager* resourceManagerIn)
 {
 	init();
@@ -40,7 +39,7 @@ void MainMenu::init()
 	/*browserCmd.setReceiver(this);
 	browserCmd.setAction(&MainMenu::processBrowserInput);*/
 
-	setupStatusFields();
+	//setupStatusFields();
 
 
 
@@ -54,27 +53,27 @@ void MainMenu::init()
 	cm.setFocusedControl(&mainMenuDialog);
 }
 
-void MainMenu::setupStatusFields()
-{
-	//values are null, but will be setup later
-	hpRow = new TextParamCurrMaxValue(new LineFormat(0, Justf::LEFT), HP, nullptr);
-	mpRow = new TextParamCurrMaxValue(new LineFormat(1, Justf::LEFT), MP, nullptr, 4);
-	strengthRow = new TextParamValue<BoundInt>(new LineFormat(2, Justf::LEFT), STRENGTH, nullptr);
-	defenseRow = new TextParamValue<BoundInt>(new LineFormat(3, Justf::LEFT), DEFENSE, nullptr);
-	intelRow = new TextParamValue<BoundInt>(new LineFormat(4, Justf::LEFT), INTELLIGENCE, nullptr);
-	willRow = new TextParamValue<BoundInt>(new LineFormat(5, Justf::LEFT), WILL, nullptr);
-	agilityRow = new TextParamValue<BoundInt>(new LineFormat(6, Justf::LEFT), AGILITY, nullptr);
-	expRow = new TextParamValue<BoundInt>(new LineFormat(7, Justf::LEFT), EXP, nullptr);
-
-	statusContent.addPiece(hpRow); //the bound int values will need to be setup later
-	statusContent.addPiece(mpRow);
-	statusContent.addPiece(strengthRow);
-	statusContent.addPiece(defenseRow);
-	statusContent.addPiece(intelRow);
-	statusContent.addPiece(willRow);
-	statusContent.addPiece(agilityRow);
-	statusContent.addPiece(expRow);
-}
+//void MainMenu::setupStatusFields()
+//{
+//	//values are null, but will be setup later
+//	hpRow = new TextParamCurrMaxValue(new LineFormat(0, Justf::LEFT), HP, nullptr);
+//	mpRow = new TextParamCurrMaxValue(new LineFormat(1, Justf::LEFT), MP, nullptr, 4);
+//	strengthRow = new TextParamValue<BoundInt>(new LineFormat(2, Justf::LEFT), STRENGTH, nullptr);
+//	defenseRow = new TextParamValue<BoundInt>(new LineFormat(3, Justf::LEFT), DEFENSE, nullptr);
+//	intelRow = new TextParamValue<BoundInt>(new LineFormat(4, Justf::LEFT), INTELLIGENCE, nullptr);
+//	willRow = new TextParamValue<BoundInt>(new LineFormat(5, Justf::LEFT), WILL, nullptr);
+//	agilityRow = new TextParamValue<BoundInt>(new LineFormat(6, Justf::LEFT), AGILITY, nullptr);
+//	expRow = new TextParamValue<BoundInt>(new LineFormat(7, Justf::LEFT), EXP, nullptr);
+//
+//	statusContent.addPiece(hpRow); //the bound int values will need to be setup later
+//	statusContent.addPiece(mpRow);
+//	statusContent.addPiece(strengthRow);
+//	statusContent.addPiece(defenseRow);
+//	statusContent.addPiece(intelRow);
+//	statusContent.addPiece(willRow);
+//	statusContent.addPiece(agilityRow);
+//	statusContent.addPiece(expRow);
+//}
 
 
 void MainMenu::setWindow(WINDOW* win)
@@ -94,12 +93,15 @@ void MainMenu::setWindow(WINDOW* win)
 	Rect descRect(topFrameHeight, rightFrameWidth, Pos(0, leftFrameWidth));
 	Rect mainMenuBodyRect(bottomFrameHeight, rightFrameWidth, Pos(topFrameHeight - 1, leftFrameWidth));
 	
+	
 	dialogBuilder.buildMainMenu(mainMenuDialog, mainMenuRect);
 	dialogBuilder.buildPlayerMenu(playerMenuDialog, playerMenuRect);
-	dialogBuilder.buildDesc(descDialog, descRect, *resourceManager);
-	dialogBuilder.buildMainMenuBody(bodyDialog, mainMenuBodyRect, *resourceManager);
-	
-	statusContent.setWindow(newwin(bottomFrameHeight - 2, rightFrameWidth - 2, 6, leftFrameWidth + 1));
+	dialogBuilder.buildDesc(descDialog, descRect);
+	dialogBuilder.buildMainMenuBody(bodyDialog, mainMenuBodyRect);
+
+	//unseen dialog windows
+	Rect mainMenuStatusRect(bottomFrameHeight, rightFrameWidth, Pos(topFrameHeight - 1, leftFrameWidth));
+//	dialogBuilder.buildMainMenuStatus(statusDialog, mainMenuStatusRect);
 }
 
 
@@ -136,7 +138,7 @@ void MainMenu::processMainMenuInput()
 	}
 
 
-	MenuItem* item = menuDriver(input, (AbstractMenu*)mainMenuDialog.getControl()); //TODO class is broken
+	MenuItem* item = menuDriver(input, (AbstractMenu*)mainMenuDialog.getControl()); 
 	
 
 	if (item)
@@ -159,8 +161,11 @@ void MainMenu::processMainMenuInput()
 			GridMenu* playerMenu = (GridMenu*)playerMenuDialog.getControl();
 
 			playerMenu->setCurrentItem(0);
-			//TODO bodyFrame.setControl(&statusContent);
-			setupStatusContent();
+
+		//	cm.registerControl(&statusDialog, 0, nullptr);
+	//		cm.unRegisterControl(&bodyDialog);
+
+		//	setupStatusContent();
 		}			
 			break;
 		case MainMenuOption::CONFIG:
@@ -192,6 +197,7 @@ void MainMenu::processMainMenuInput()
 void MainMenu::setResourceManager(ResourceManager* resourceManagerIn)
 {
 	resourceManager = resourceManagerIn;
+	dialogBuilder.setRm(resourceManager);
 }
 
 //void MainMenu::processBrowserInput()
@@ -218,6 +224,7 @@ void MainMenu::processPlayerMenuInput()
 	{
 		playerMenu->setCurrentItem(NO_CUR_ITEM);
 		cm.setFocusedControl(&mainMenuDialog);
+
 		//TODO bodyFrame.setControl(&bodyContent);
 		return;
 	}
@@ -225,7 +232,7 @@ void MainMenu::processPlayerMenuInput()
 
 	MenuItem* item = menuDriver(input, playerMenu);
 
-	setupStatusContent();
+//	setupStatusContent();
 }
 
 void MainMenu::processConfigMenuInput()

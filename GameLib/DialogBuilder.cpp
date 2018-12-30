@@ -46,9 +46,16 @@ void DialogBuilder::buildPlayerMenu(DialogWindow& dWin, Rect r)
 	playerMenu->setWindow(TUI::winMgr.newWin(r.height - 2, r.width - 2, r.origin.y + 1, r.origin.x + 1));
 	playerMenu->setItemHeight(4);
 
+	//std::vector<Actor>* allies = &rm->playerParty;
+	//auto it = rm->playerParty.begin();
+
 	for (int i = 0; i < playerCapacity; i++)
 	{
-		playerMenu->setItem(new LineItem("", i, -1), i, 0); //sets blank items to start
+		std::string name = "";
+		if (i < rm->playerParty.size())
+			name = rm->playerParty[i].name;
+
+		playerMenu->setItem(new LineItem(name, i, -1), i, 0); //sets blank items to start
 	}
 
 	playerMenu->setWrapAround(false);
@@ -57,10 +64,11 @@ void DialogBuilder::buildPlayerMenu(DialogWindow& dWin, Rect r)
 
 	dWin.setControl(playerMenu);
 	dWin.setWindow(TUI::winMgr.newWin(r.height, r.width, r.origin.y, r.origin.x));
+
 }
 
 
-void DialogBuilder::buildDesc(DialogWindow& dWin, Rect r, ResourceManager& rm)
+void DialogBuilder::buildDesc(DialogWindow& dWin, Rect r)
 {
 	TextBoard* descContent = new TextBoard();
 
@@ -70,9 +78,9 @@ void DialogBuilder::buildDesc(DialogWindow& dWin, Rect r, ResourceManager& rm)
 	dWin.setWindow(TUI::winMgr.newWin(r.height, r.width, r.origin.y, r.origin.x));
 
 
-	MegaMap* currMap = rm.currMap;
+	MegaMap* currMap = rm->currMap;
 	int id = currMap->getCurrMapRoomId();
-	MapRoom& room = rm.getData().getRoom(id);
+	MapRoom& room = rm->getData().getRoom(id);
 
 	TextPiece* mapText = new TextPiece(new LineFormat(0, Justf::LEFT), currMap->name);
 	TextPiece* roomText = new TextPiece(new LineFormat(1, Justf::LEFT), room.name);
@@ -85,7 +93,7 @@ void DialogBuilder::buildDesc(DialogWindow& dWin, Rect r, ResourceManager& rm)
 }
 
 
-void DialogBuilder::buildMainMenuBody(DialogWindow& dWin, Rect r, ResourceManager& rm)
+void DialogBuilder::buildMainMenuBody(DialogWindow& dWin, Rect r)
 {
 	TextBoard* bodyContent = new TextBoard();
 
@@ -96,19 +104,55 @@ void DialogBuilder::buildMainMenuBody(DialogWindow& dWin, Rect r, ResourceManage
 	TextParamValue<BoundInt>* gold, *steps, *enemiesKilled, *battlesWon;
 
 	gold = new TextParamValue<BoundInt>(
-		new LineFormat(0, Justf::LEFT), GOLD$, &rm.getData().retrieveIntData(GOLD$));
+		new LineFormat(0, Justf::LEFT), GOLD$, &rm->getData().retrieveIntData(GOLD$));
 
 	steps = new TextParamValue<BoundInt>(
-		new LineFormat(1, Justf::LEFT), STEPS, &rm.getData().retrieveIntData(STEPS));
+		new LineFormat(1, Justf::LEFT), STEPS, &rm->getData().retrieveIntData(STEPS));
 
 	enemiesKilled = new TextParamValue<BoundInt>(
-		new LineFormat(2, Justf::LEFT), ENEMIES_KILLED, &rm.getData().retrieveIntData(ENEMIES_KILLED));
+		new LineFormat(2, Justf::LEFT), ENEMIES_KILLED, &rm->getData().retrieveIntData(ENEMIES_KILLED));
 
 	battlesWon = new TextParamValue<BoundInt>(
-		new LineFormat(3, Justf::LEFT), BATTLES_WON, &rm.getData().retrieveIntData(BATTLES_WON));
+		new LineFormat(3, Justf::LEFT), BATTLES_WON, &rm->getData().retrieveIntData(BATTLES_WON));
 	
 	bodyContent->addPiece(gold);
 	bodyContent->addPiece(steps);
 	bodyContent->addPiece(enemiesKilled);
 	bodyContent->addPiece(battlesWon);
+
+	controlCache.insert(std::make_pair("DEFAULT BODY", bodyContent));
 }
+
+//TODO status window needs some rethinking, like adding a map to identify text pieces, and adding an Actor
+//void DialogBuilder::buildMainMenuStatus(DialogWindow& dWin, Rect r)
+//{
+//	TextBoard* statusContent = new TextBoard();
+//
+//	statusContent->setWindow(TUI::winMgr.newWin(r.height - 2, r.width - 2, r.origin.y + 1, r.origin.x + 1));
+//	dWin.setControl(statusContent);
+//	dWin.setWindow(TUI::winMgr.newWin(r.height, r.width, r.origin.y, r.origin.x));
+//
+//	TextParamCurrMaxValue* hpRow, *mpRow;
+//	TextParamValue<BoundInt>* strengthRow, *defenseRow, *intelRow, *willRow, *agilityRow, *expRow;
+//
+//	//values are null, but will be setup later
+//	hpRow = new TextParamCurrMaxValue(new LineFormat(0, Justf::LEFT), HP, nullptr);
+//	mpRow = new TextParamCurrMaxValue(new LineFormat(1, Justf::LEFT), MP, nullptr, 4);
+//	strengthRow = new TextParamValue<BoundInt>(new LineFormat(2, Justf::LEFT), STRENGTH, nullptr);
+//	defenseRow = new TextParamValue<BoundInt>(new LineFormat(3, Justf::LEFT), DEFENSE, nullptr);
+//	intelRow = new TextParamValue<BoundInt>(new LineFormat(4, Justf::LEFT), INTELLIGENCE, nullptr);
+//	willRow = new TextParamValue<BoundInt>(new LineFormat(5, Justf::LEFT), WILL, nullptr);
+//	agilityRow = new TextParamValue<BoundInt>(new LineFormat(6, Justf::LEFT), AGILITY, nullptr);
+//	expRow = new TextParamValue<BoundInt>(new LineFormat(7, Justf::LEFT), EXP, nullptr);
+//
+//	statusContent->addPiece(hpRow); //the bound int values will need to be setup later
+//	statusContent->addPiece(mpRow);
+//	statusContent->addPiece(strengthRow);
+//	statusContent->addPiece(defenseRow);
+//	statusContent->addPiece(intelRow);
+//	statusContent->addPiece(willRow);
+//	statusContent->addPiece(agilityRow);
+//	statusContent->addPiece(expRow);
+//
+//	controlCache.insert(std::make_pair("MM_STATUS", statusContent));
+//}

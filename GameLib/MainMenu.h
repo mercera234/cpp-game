@@ -16,7 +16,6 @@
 
 
 
-
 /*The main menu to be used in game for checking player status, using inventory items, etc...
 Designed for a 23 x 51 window. */
 class MainMenu : public Controllable
@@ -34,8 +33,9 @@ private:
 	DialogWindow playerMenuDialog;
 	DialogWindow descDialog;
 	DialogWindow bodyDialog;
-	
 
+	//dynamically created dialogs
+	DialogWindow statusDialog; //same as body, but for status only
 	
 	//ControlHandle currBrowser;
 	//SimpleCommand<MainMenu> browserCmd;
@@ -66,6 +66,8 @@ private:
 	
 	void setupStatusFields();
 	void setupStatusContent();
+
+
 	TextBoard statusContent;
 	TextParamCurrMaxValue* hpRow, *mpRow;
 	TextParamValue<BoundInt>* strengthRow, *defenseRow, *intelRow, *willRow, *agilityRow, *expRow;

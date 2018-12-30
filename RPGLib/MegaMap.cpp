@@ -37,6 +37,16 @@
 //	}
 //}
 
+//a null cursor position
+Pos nullPos(0, 0);
+
+MegaMap::MegaMap()
+{
+	//so cursor is always attached to something
+	curY = &nullPos.y;
+	curX = &nullPos.x;
+}
+
 Pos MegaMap::getMapRoomPos()
 {
 	Pos map = getUnitPos();

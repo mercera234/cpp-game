@@ -152,7 +152,7 @@ void mainMenuTest()
 	MainMenu mm(&rm);
 	mm.setWindow(newwin(gameScreenHeight, gameScreenWidth, 0, 0));
 
-	mm.addPlayerParty(rm.playerParty);
+	//mm.addPlayerParty(rm.playerParty);
 	
 	//setup some items
 	/*OwnedItem item1;

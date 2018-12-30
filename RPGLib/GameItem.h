@@ -9,9 +9,6 @@ enum class GameItemType
 	BLANK, //not an item, just a place holder
 	CONSUMABLE,
 	EQUIPPABLE,
-	//WEAPON, //TODO weapon,armor, and accessory could be combined into EQUIPPABLE
-	//ARMOR,
-	//ACCESSORY,
 	KEY,
 	MONEY
 };

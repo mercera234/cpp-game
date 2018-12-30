@@ -9,6 +9,13 @@ namespace RPGLibTester
 	{
 		MegaMap map;
 
+		//test map functions without initialization
+		TEST_METHOD(nullMapTest)
+		{
+			Assert::AreEqual(0, map.getUnitPos().y);
+			Assert::AreEqual(0, map.getUnitPos().x);
+		}
+
 		TEST_METHOD(getRealHeightTest)
 		{
 			int rows = 3;
