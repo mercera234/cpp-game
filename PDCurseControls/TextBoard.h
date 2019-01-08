@@ -9,10 +9,10 @@
 class TextBoard : public Controllable
 {
 private:
-	std::list<TextPiece*> pieces;
-
+	std::list<TextPiece*> pieces; //TODO swap this out for a map so the pieces can be updated
+	
 public:
-	TextBoard();
+	TextBoard() {}
 	~TextBoard();
 
 	void addPiece(TextPiece* piece);

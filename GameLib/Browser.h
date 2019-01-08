@@ -7,7 +7,7 @@
 #include "ExitCode.h"
 #include "ControlManager.h"
 
-class Browser : public DialogWindow, public InputProcessor
+class Browser : public InputProcessor
 {
 protected:
 	ControlManager cm;

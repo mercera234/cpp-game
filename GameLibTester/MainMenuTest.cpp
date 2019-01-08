@@ -16,15 +16,6 @@ namespace GameLibTester
 			//loadDataFiles(rm); TODO can game data be loaded in memory for testing?
 		}
 
-
-		TEST_METHOD(addPlayerPartyTest)
-		{
-			std::vector<Actor> players;
-			mm.addPlayerParty(players);
-
-			Assert::IsTrue(true); //TODO no means to check if successful yet
-		}
-
 		TEST_METHOD(setResourceManagerTest)
 		{
 			//added the bare minimum to get this to work

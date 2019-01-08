@@ -36,23 +36,9 @@ private:
 
 	//dynamically created dialogs
 	DialogWindow statusDialog; //same as body, but for status only
-	
-	//ControlHandle currBrowser;
-	//SimpleCommand<MainMenu> browserCmd;
+	Actor currPlayer; //a copy of the current player used for displaying info
 
-	//ItemBrowser itemBrowser;
-	
-	/*
-	MainMenuBrowser mainBrowser;
-	
-	EquipBrowser equipBrowser;
-	StatusBrowser statusBrowser;
-	MapBrowser mapBrowser;
-	ConfigBrowser configBrowser;
-	SkillBrowser skillBrowser;
-	
-	
-	*/
+	DialogWindow invDialog;
 
 	//TODO just organizing things here to see patterns
 	//SimpleCommand<ItemBrowser> itemCmd;
@@ -64,24 +50,16 @@ private:
 	SimpleCommand<MainMenu> playerMenuCmd;
 	void processPlayerMenuInput();
 	
-	void setupStatusFields();
-	void setupStatusContent();
-
-
-	TextBoard statusContent;
-	TextParamCurrMaxValue* hpRow, *mpRow;
-	TextParamValue<BoundInt>* strengthRow, *defenseRow, *intelRow, *willRow, *agilityRow, *expRow;
-
 	SimpleCommand<MainMenu> configMenuCmd;
 	void processConfigMenuInput();
-	//void processBrowserInput();
 
-	//requires resource manager to be set
-	int selectedAlly = -1;
+	SimpleCommand<MainMenu> itemCmd;
+	void processItemInput();
+	
 public:
 	MainMenu();
 	MainMenu(ResourceManager* resourceManagerIn);
-	void addPlayerParty(std::vector<Actor>& allies);
+	
 	void draw();
 	int processInput(int input);
 	void setWindow(WINDOW* win);

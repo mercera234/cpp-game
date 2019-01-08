@@ -5,7 +5,7 @@
 #include "TextBoard.h"
 #include "TextParamValue.h"
 #include "LineFormat.h"
-
+#include "ItemBrowser.h"
 
 
 void DialogBuilder::buildMainMenu(DialogWindow& dWin, Rect r)
@@ -52,7 +52,7 @@ void DialogBuilder::buildPlayerMenu(DialogWindow& dWin, Rect r)
 	for (int i = 0; i < playerCapacity; i++)
 	{
 		std::string name = "";
-		if (i < rm->playerParty.size())
+		if (i < (int)rm->playerParty.size())
 			name = rm->playerParty[i].name;
 
 		playerMenu->setItem(new LineItem(name, i, -1), i, 0); //sets blank items to start
@@ -123,36 +123,49 @@ void DialogBuilder::buildMainMenuBody(DialogWindow& dWin, Rect r)
 	controlCache.insert(std::make_pair("DEFAULT BODY", bodyContent));
 }
 
-//TODO status window needs some rethinking, like adding a map to identify text pieces, and adding an Actor
-//void DialogBuilder::buildMainMenuStatus(DialogWindow& dWin, Rect r)
-//{
-//	TextBoard* statusContent = new TextBoard();
-//
-//	statusContent->setWindow(TUI::winMgr.newWin(r.height - 2, r.width - 2, r.origin.y + 1, r.origin.x + 1));
-//	dWin.setControl(statusContent);
-//	dWin.setWindow(TUI::winMgr.newWin(r.height, r.width, r.origin.y, r.origin.x));
-//
-//	TextParamCurrMaxValue* hpRow, *mpRow;
-//	TextParamValue<BoundInt>* strengthRow, *defenseRow, *intelRow, *willRow, *agilityRow, *expRow;
-//
-//	//values are null, but will be setup later
-//	hpRow = new TextParamCurrMaxValue(new LineFormat(0, Justf::LEFT), HP, nullptr);
-//	mpRow = new TextParamCurrMaxValue(new LineFormat(1, Justf::LEFT), MP, nullptr, 4);
-//	strengthRow = new TextParamValue<BoundInt>(new LineFormat(2, Justf::LEFT), STRENGTH, nullptr);
-//	defenseRow = new TextParamValue<BoundInt>(new LineFormat(3, Justf::LEFT), DEFENSE, nullptr);
-//	intelRow = new TextParamValue<BoundInt>(new LineFormat(4, Justf::LEFT), INTELLIGENCE, nullptr);
-//	willRow = new TextParamValue<BoundInt>(new LineFormat(5, Justf::LEFT), WILL, nullptr);
-//	agilityRow = new TextParamValue<BoundInt>(new LineFormat(6, Justf::LEFT), AGILITY, nullptr);
-//	expRow = new TextParamValue<BoundInt>(new LineFormat(7, Justf::LEFT), EXP, nullptr);
-//
-//	statusContent->addPiece(hpRow); //the bound int values will need to be setup later
-//	statusContent->addPiece(mpRow);
-//	statusContent->addPiece(strengthRow);
-//	statusContent->addPiece(defenseRow);
-//	statusContent->addPiece(intelRow);
-//	statusContent->addPiece(willRow);
-//	statusContent->addPiece(agilityRow);
-//	statusContent->addPiece(expRow);
-//
-//	controlCache.insert(std::make_pair("MM_STATUS", statusContent));
-//}
+
+void DialogBuilder::buildMainMenuStatus(DialogWindow& dWin, Rect r, Actor& actor)
+{
+	TextBoard* statusContent = new TextBoard();
+
+	statusContent->setWindow(TUI::winMgr.newWin(r.height - 2, r.width - 2, r.origin.y + 1, r.origin.x + 1));
+	dWin.setControl(statusContent);
+	dWin.setWindow(TUI::winMgr.newWin(r.height, r.width, r.origin.y, r.origin.x));
+
+	TextParamCurrMaxValue* hpRow, *mpRow;
+	TextParamValue<BoundInt>* strengthRow, *defenseRow, *intelRow, *willRow, *agilityRow, *expRow;
+
+	
+	//values are null, but will be setup later
+	hpRow = new TextParamCurrMaxValue(new LineFormat(0, Justf::LEFT), HP, &actor.getStat(StatType::HP));
+	mpRow = new TextParamCurrMaxValue(new LineFormat(1, Justf::LEFT), MP, &actor.getStat(StatType::MP), 4);
+	strengthRow = new TextParamValue<BoundInt>(new LineFormat(2, Justf::LEFT), STRENGTH, &actor.getStat(StatType::STRENGTH));
+	defenseRow = new TextParamValue<BoundInt>(new LineFormat(3, Justf::LEFT), DEFENSE, &actor.getStat(StatType::DEFENSE));
+	intelRow = new TextParamValue<BoundInt>(new LineFormat(4, Justf::LEFT), INTELLIGENCE, &actor.getStat(StatType::INTELLIGENCE));
+	willRow = new TextParamValue<BoundInt>(new LineFormat(5, Justf::LEFT), WILL, &actor.getStat(StatType::WILL));
+	agilityRow = new TextParamValue<BoundInt>(new LineFormat(6, Justf::LEFT), AGILITY, &actor.getStat(StatType::AGILITY));
+	expRow = new TextParamValue<BoundInt>(new LineFormat(7, Justf::LEFT), EXP, &actor.getStat(StatType::EXP));
+
+	statusContent->addPiece(hpRow); //the bound int values will need to be setup later
+	statusContent->addPiece(mpRow);
+	statusContent->addPiece(strengthRow);
+	statusContent->addPiece(defenseRow);
+	statusContent->addPiece(intelRow);
+	statusContent->addPiece(willRow);
+	statusContent->addPiece(agilityRow);
+	statusContent->addPiece(expRow);
+
+	controlCache.insert(std::make_pair("MM_STATUS", statusContent));
+}
+
+void DialogBuilder::buildInventory(DialogWindow& dWin, Rect r)
+{
+	ItemBrowser* inventory = new ItemBrowser;
+
+	inventory->setWindow(TUI::winMgr.newWin(r.height - 2, r.width - 2, r.origin.y + 1, r.origin.x + 1));
+	
+	inventory->setItems(rm->inventory);
+
+	dWin.setControl(inventory);
+	dWin.setWindow(TUI::winMgr.newWin(r.height, r.width, r.origin.y, r.origin.x));
+}

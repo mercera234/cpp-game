@@ -10,7 +10,6 @@
 #include "ConfigMenu.h"
 #include "LineFormat.h"
 
-/*TODO simplify this class before adding item, equip, etc...*/
 MainMenu::MainMenu()
 {
 	init();
@@ -24,8 +23,6 @@ MainMenu::MainMenu(ResourceManager* resourceManagerIn)
 
 void MainMenu::init()
 {
-	cm.setCaller(this); //pretty sure I don't need this <-
-
 	//setup cmds
 	mainMenuCmd.setReceiver(this);
 	mainMenuCmd.setAction(&MainMenu::processMainMenuInput);
@@ -36,44 +33,17 @@ void MainMenu::init()
 	configMenuCmd.setReceiver(this);
 	configMenuCmd.setAction(&MainMenu::processConfigMenuInput);
 
-	/*browserCmd.setReceiver(this);
-	browserCmd.setAction(&MainMenu::processBrowserInput);*/
-
-	//setupStatusFields();
-
-
+	itemCmd.setReceiver(this);
+	itemCmd.setAction(&MainMenu::processItemInput);
 
 	//register controls
 	cm.registerControl(&mainMenuDialog, KEY_LISTENER, &mainMenuCmd);
 	cm.registerControl(&playerMenuDialog, KEY_LISTENER, &playerMenuCmd);
 	cm.registerControl(&descDialog, 0, nullptr);
 	cm.registerControl(&bodyDialog, 0, nullptr);
-	//cm.registerControl(&currBrowser, KEY_LISTENER, &browserCmd);
-
+	
 	cm.setFocusedControl(&mainMenuDialog);
 }
-
-//void MainMenu::setupStatusFields()
-//{
-//	//values are null, but will be setup later
-//	hpRow = new TextParamCurrMaxValue(new LineFormat(0, Justf::LEFT), HP, nullptr);
-//	mpRow = new TextParamCurrMaxValue(new LineFormat(1, Justf::LEFT), MP, nullptr, 4);
-//	strengthRow = new TextParamValue<BoundInt>(new LineFormat(2, Justf::LEFT), STRENGTH, nullptr);
-//	defenseRow = new TextParamValue<BoundInt>(new LineFormat(3, Justf::LEFT), DEFENSE, nullptr);
-//	intelRow = new TextParamValue<BoundInt>(new LineFormat(4, Justf::LEFT), INTELLIGENCE, nullptr);
-//	willRow = new TextParamValue<BoundInt>(new LineFormat(5, Justf::LEFT), WILL, nullptr);
-//	agilityRow = new TextParamValue<BoundInt>(new LineFormat(6, Justf::LEFT), AGILITY, nullptr);
-//	expRow = new TextParamValue<BoundInt>(new LineFormat(7, Justf::LEFT), EXP, nullptr);
-//
-//	statusContent.addPiece(hpRow); //the bound int values will need to be setup later
-//	statusContent.addPiece(mpRow);
-//	statusContent.addPiece(strengthRow);
-//	statusContent.addPiece(defenseRow);
-//	statusContent.addPiece(intelRow);
-//	statusContent.addPiece(willRow);
-//	statusContent.addPiece(agilityRow);
-//	statusContent.addPiece(expRow);
-//}
 
 
 void MainMenu::setWindow(WINDOW* win)
@@ -93,30 +63,13 @@ void MainMenu::setWindow(WINDOW* win)
 	Rect descRect(topFrameHeight, rightFrameWidth, Pos(0, leftFrameWidth));
 	Rect mainMenuBodyRect(bottomFrameHeight, rightFrameWidth, Pos(topFrameHeight - 1, leftFrameWidth));
 	
-	
 	dialogBuilder.buildMainMenu(mainMenuDialog, mainMenuRect);
 	dialogBuilder.buildPlayerMenu(playerMenuDialog, playerMenuRect);
 	dialogBuilder.buildDesc(descDialog, descRect);
 	dialogBuilder.buildMainMenuBody(bodyDialog, mainMenuBodyRect);
 
 	//unseen dialog windows
-	Rect mainMenuStatusRect(bottomFrameHeight, rightFrameWidth, Pos(topFrameHeight - 1, leftFrameWidth));
-//	dialogBuilder.buildMainMenuStatus(statusDialog, mainMenuStatusRect);
-}
-
-
-void MainMenu::addPlayerParty(std::vector<Actor>& allies)
-{
-	assert(allies.size() <= playerCapacity);
-
-	GridMenu* playerMenu = (GridMenu*)playerMenuDialog.getControl();
-	int row = 0;
-	for each (Actor actor in allies)
-	{
-		LineItem* item = (LineItem*)playerMenu->getItem(row++, 0);
-
-		item->name = actor.name;
-	}
+	dialogBuilder.buildMainMenuStatus(statusDialog, mainMenuBodyRect, currPlayer);
 }
 
 
@@ -147,25 +100,26 @@ void MainMenu::processMainMenuInput()
 		{
 		case MainMenuOption::INVENTORY:
 		{
-			/*currBrowser.control = &itemBrowser;
-			itemBrowser.setWindow(bodyFrame.getWindow());
+			Rect itemRect(bottomFrameHeight, rightFrameWidth, Pos(topFrameHeight - 1, leftFrameWidth));
+			dialogBuilder.buildInventory(invDialog, itemRect);
 
-			itemBrowser.setItems(resourceManager->inventory);
-
-			cm.setFocusedControl(&currBrowser);*/
+			cm.unRegisterControl(&bodyDialog);
+			cm.registerControl(&invDialog, KEY_LISTENER, &itemCmd);
+			cm.setFocusedControl(&invDialog);
 		}
 			break;
 		case MainMenuOption::STATUS:
 		{
 			cm.setFocusedControl(&playerMenuDialog);
+			
 			GridMenu* playerMenu = (GridMenu*)playerMenuDialog.getControl();
-
 			playerMenu->setCurrentItem(0);
+			
+			MenuItem* item = playerMenu->getCurrentItem();
+			currPlayer = resourceManager->playerParty[item->index];
 
-		//	cm.registerControl(&statusDialog, 0, nullptr);
-	//		cm.unRegisterControl(&bodyDialog);
-
-		//	setupStatusContent();
+			cm.registerControl(&statusDialog, 0, nullptr);
+			cm.unRegisterControl(&bodyDialog);
 		}			
 			break;
 		case MainMenuOption::CONFIG:
@@ -200,23 +154,8 @@ void MainMenu::setResourceManager(ResourceManager* resourceManagerIn)
 	dialogBuilder.setRm(resourceManager);
 }
 
-//void MainMenu::processBrowserInput()
-//{
-//	int input = cm.getInput();
-//	Browser* b = (Browser*)currBrowser.control;
-//	b->setInput(input);
-//	b->processInput();
-//
-//	if (b->getExitCode() == ExitCode::GO_BACK)
-//	{
-//		cm.setFocusedControl(&mainFrame);
-//		cm.unRegisterControl(&currBrowser);
-//	}
-//}
-
 void MainMenu::processPlayerMenuInput()
 {
-	//right now this only handles the status menu!!!
 	int input = cm.getInput();
 
 	GridMenu* playerMenu = (GridMenu*)playerMenuDialog.getControl();
@@ -224,15 +163,19 @@ void MainMenu::processPlayerMenuInput()
 	{
 		playerMenu->setCurrentItem(NO_CUR_ITEM);
 		cm.setFocusedControl(&mainMenuDialog);
-
-		//TODO bodyFrame.setControl(&bodyContent);
+		cm.unRegisterControl(&statusDialog);
+		cm.registerControl(&bodyDialog, 0, nullptr);
 		return;
 	}
 
 
-	MenuItem* item = menuDriver(input, playerMenu);
+	menuDriver(input, playerMenu);
+	MenuItem* item = playerMenu->getCurrentItem();
 
-//	setupStatusContent();
+	if (item->index >= (int)resourceManager->playerParty.size()) //a little sloppy here, but it works
+		playerMenu->setCurrentItem(item->index - 1);
+	else
+		currPlayer = resourceManager->playerParty[item->index];
 }
 
 void MainMenu::processConfigMenuInput()
@@ -253,27 +196,26 @@ void MainMenu::processConfigMenuInput()
 	menu->processInput(input);
 }
 
-void MainMenu::setupStatusContent()
+void MainMenu::processItemInput()
 {
-	GridMenu* playerMenu = (GridMenu*)playerMenuDialog.getControl();
-	MenuItem* item = playerMenu->getCurrentItem();
+	int input = cm.getInput();
 
-	if (item && ((LineItem*)item)->name.compare("") != 0)
+	if (input == GameInput::CANCEL_INPUT) 
 	{
-		Actor& ally = resourceManager->playerParty[item->index];
-
-		//Actor* ally = allies[item->index];
-		hpRow->setValue(&ally.getStat(StatType::HP));
-		mpRow->setValue(&ally.getStat(StatType::MP));
-		strengthRow->setValue(&ally.getStat(StatType::STRENGTH));
-		defenseRow->setValue(&ally.getStat(StatType::DEFENSE));
-		intelRow->setValue(&ally.getStat(StatType::INTELLIGENCE));
-		willRow->setValue(&ally.getStat(StatType::WILL));
-		agilityRow->setValue(&ally.getStat(StatType::AGILITY));
-		expRow->setValue(&ally.getStat(StatType::EXP));
+		cm.unRegisterControl(&invDialog);
+		cm.registerControl(&bodyDialog, 0, nullptr);
+		cm.setFocusedControl(&mainMenuDialog);
+		return;
 	}
-}
 
+	ItemBrowser* browser = (ItemBrowser*)invDialog.getControl();
+
+	browser->processInput(input);
+
+	OwnedItemRecord* record = browser->getCurrentItem();
+
+	std::string desc = record->getPossession()->item->description;
+}
 
 void MainMenu::draw()
 {

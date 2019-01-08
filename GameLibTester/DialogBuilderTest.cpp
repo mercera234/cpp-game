@@ -12,6 +12,13 @@ namespace GameLibTester
 	{
 		TUI tui;
 		DialogBuilder builder;
+		ResourceManager rm;
+
+		TEST_METHOD_INITIALIZE(start)
+		{
+			builder.setRm(&rm);
+		}
+
 
 		TEST_METHOD(buildMainMenuTest)
 		{
@@ -40,8 +47,7 @@ namespace GameLibTester
 		TEST_METHOD(buildMainMenuBodyTest)
 		{
 			DialogWindow win;
-			ResourceManager rm;
-			builder.buildMainMenuBody(win, Rect(0, 0, Pos(10, 10)), rm);
+			builder.buildMainMenuBody(win, Rect(0, 0, Pos(10, 10)));
 
 			TextBoard* board = dynamic_cast<TextBoard*>(win.getControl());
 			
@@ -51,8 +57,7 @@ namespace GameLibTester
 		TEST_METHOD(buildDescTest)
 		{
 			DialogWindow win;
-			ResourceManager rm;
-			builder.buildDesc(win, Rect(0, 0, Pos(10, 10)), rm);
+			builder.buildDesc(win, Rect(0, 0, Pos(10, 10)));
 
 			TextBoard* board = dynamic_cast<TextBoard*>(win.getControl());
 

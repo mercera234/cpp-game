@@ -31,7 +31,7 @@ void MainMenuState::loadState()
 	if(mm.getWindow() == nullptr)
 		mm.setWindow(newwin(gameScreenHeight, gameScreenWidth, 0, 0));
 
-	mm.addPlayerParty(resourceManager->playerParty);
+	//mm.addPlayerParty(resourceManager->playerParty);
 }
 
 

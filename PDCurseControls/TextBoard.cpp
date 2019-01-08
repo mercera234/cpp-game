@@ -1,9 +1,5 @@
 #include "TextBoard.h"
 
-TextBoard::TextBoard()
-{
-}
-
 TextBoard::~TextBoard()
 {
 	for each (TextPiece* piece in pieces)

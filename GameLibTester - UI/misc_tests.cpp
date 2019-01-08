@@ -58,16 +58,14 @@ void inventoryTest()
 	ItemBrowser inventory;
 	inventory.setWindow(newwin(10, 20, 1, 1));
 
-
-
 	std::vector<OwnedItem*> items;
 	
-	OwnedItem blankItem;
+	/*OwnedItem blankItem;
 	blankItem.item = nullptr;
 	blankItem.quantity = 0;
-	items.push_back(&blankItem);
+	items.push_back(&blankItem);*/
 
-	/*GameItem potion;
+	GameItem potion;
 	potion.name = "Potion";
 	potion.description = "Restores 50 hp";
 
@@ -84,27 +82,27 @@ void inventoryTest()
 	item2.quantity = 1;
 
 	items.push_back(&item);
-	items.push_back(&item2);*/
-	
-	
+	items.push_back(&item2);
 	
 	inventory.setItems(items);
 
+
+
 	Frame playerFrame;
+
+	DialogBuilder builder;
+	
 	Frame descFrame;
 	TextLabel descLbl;
 	descLbl.setFormat(new CenteredFormat);
 	descLbl.setWindow(newwin(4, 18, 12, 2));
-	descFrame.setControl(&descLbl);
-
-	inventory.setPlayerFrame(&playerFrame); //TODO will need to use a real player menu at some point
-	inventory.setDescFrame(&descFrame);
+	descFrame.setControl(&descLbl);	
 	descFrame.setWindow(newwin(6, 20, 11, 1));
 
-	inventory.registerControls();
 
 	InputManager mgr;
 	loadHardCodedInputs(mgr.getInputs());
+	setupDefaultGameInputs(mgr.getInputs());
 	
 	bool playing = true;
 	while (playing)
@@ -113,8 +111,11 @@ void inventoryTest()
 		inventory.draw();
 		doupdate();
 
-		inventory.setInput(mgr.getInput());
-		inventory.processInput();	
+		inventory.processInput(mgr.getInput());
+
+		auto* item = inventory.getCurrentItem();
+
+		descLbl.setText(item->getPossession()->item->description);
 	}
 
 }
@@ -149,13 +150,8 @@ void mainMenuTest()
 	Pos pos(32, 54);
 	rm.currMap->setCursor(&pos.y, &pos.x);
 
-	MainMenu mm(&rm);
-	mm.setWindow(newwin(gameScreenHeight, gameScreenWidth, 0, 0));
-
-	//mm.addPlayerParty(rm.playerParty);
-	
 	//setup some items
-	/*OwnedItem item1;
+	OwnedItem item1;
 	item1.item = &data.getItem("Potion");
 	item1.quantity = 1;
 
@@ -164,7 +160,13 @@ void mainMenuTest()
 	item2.quantity = 1;
 
 	rm.inventory.push_back(&item1);
-	rm.inventory.push_back(&item2);*/
+	rm.inventory.push_back(&item2);
+
+	MainMenu mm(&rm);
+	mm.setWindow(newwin(gameScreenHeight, gameScreenWidth, 0, 0));
+
+	
+	
 
 	
 	bool playing = true;

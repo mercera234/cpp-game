@@ -2,6 +2,7 @@
 #include "DialogWindow.h"
 #include "Rectangle.h"
 #include "ResourceManager.h"
+#include "Actor.h"
 
 class DialogBuilder
 {
@@ -17,7 +18,8 @@ public:
 	void buildDesc(DialogWindow& dWin, Rect r);
 	void buildMainMenuBody(DialogWindow& dWin, Rect r);
 	
-	//void buildMainMenuStatus(DialogWindow& dWin, Rect r);
+	void buildMainMenuStatus(DialogWindow& dWin, Rect r, Actor& actor);
+	void buildInventory(DialogWindow& dWin, Rect r);
 
 	//setters/getters
 

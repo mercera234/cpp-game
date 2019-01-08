@@ -54,13 +54,13 @@
     <ClCompile Include="ConfigMenuItem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ItemBrowser.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Browser.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="DialogBuilder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MenuBuilder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemBrowser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -107,16 +107,19 @@
     <ClInclude Include="ConfigMenuItem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ItemBrowser.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Browser.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="MainMenuOption.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DialogBuilder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MenuBuilder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TitleMenuOptions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemBrowser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -119,7 +119,6 @@
   <ItemGroup>
     <ClCompile Include="BattleProcessor.cpp" />
     <ClCompile Include="BattleState.cpp" />
-    <ClCompile Include="Browser.cpp" />
     <ClCompile Include="ConfigMenu.cpp" />
     <ClCompile Include="ConfigMenuItem.cpp" />
     <ClCompile Include="defaults.cpp" />
@@ -130,6 +129,7 @@
     <ClCompile Include="ItemBrowser.cpp" />
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="MainMenuState.cpp" />
+    <ClCompile Include="MenuBuilder.cpp" />
     <ClCompile Include="menu_drivers.cpp" />
     <ClCompile Include="TitleScreen.cpp" />
     <ClCompile Include="TitleScreenState.cpp" />
@@ -137,7 +137,6 @@
   <ItemGroup>
     <ClInclude Include="BattleProcessor.h" />
     <ClInclude Include="BattleState.h" />
-    <ClInclude Include="Browser.h" />
     <ClInclude Include="ConfigMenu.h" />
     <ClInclude Include="ConfigMenuItem.h" />
     <ClInclude Include="defaults.h" />
@@ -150,7 +149,9 @@
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="MainMenuOption.h" />
     <ClInclude Include="MainMenuState.h" />
+    <ClInclude Include="MenuBuilder.h" />
     <ClInclude Include="menu_drivers.h" />
+    <ClInclude Include="TitleMenuOptions.h" />
     <ClInclude Include="TitleScreen.h" />
     <ClInclude Include="TitleScreenState.h" />
   </ItemGroup>
