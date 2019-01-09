@@ -9,6 +9,10 @@
 #include "DialogWindow.h"
 #include "ConfigMenu.h"
 #include "LineFormat.h"
+#include "TextLabel.h"
+
+const std::string itemDescName = "Item desc";
+const std::string invDialogName = "Inv Dlg";
 
 MainMenu::MainMenu()
 {
@@ -58,18 +62,15 @@ void MainMenu::setWindow(WINDOW* win)
 	leftFrameWidth = 20;
 	rightFrameWidth = controlWidth - leftFrameWidth;
 
-	Rect mainMenuRect(topFrameHeight, leftFrameWidth, Pos(0, 0));
-	Rect playerMenuRect(bottomFrameHeight, leftFrameWidth, Pos(topFrameHeight - 1, 0));
-	Rect descRect(topFrameHeight, rightFrameWidth, Pos(0, leftFrameWidth));
-	Rect mainMenuBodyRect(bottomFrameHeight, rightFrameWidth, Pos(topFrameHeight - 1, leftFrameWidth));
+	mainMenuRect.setDimensions(topFrameHeight, leftFrameWidth, Pos(0, 0));
+	playerRect.setDimensions(bottomFrameHeight, leftFrameWidth, Pos(topFrameHeight - 1, 0));
+	descRect.setDimensions(topFrameHeight, rightFrameWidth, Pos(0, leftFrameWidth));
+	largeRect.setDimensions(bottomFrameHeight, rightFrameWidth, Pos(topFrameHeight - 1, leftFrameWidth));
 	
 	dialogBuilder.buildMainMenu(mainMenuDialog, mainMenuRect);
-	dialogBuilder.buildPlayerMenu(playerMenuDialog, playerMenuRect);
+	dialogBuilder.buildPlayerMenu(playerMenuDialog, playerRect);
 	dialogBuilder.buildDesc(descDialog, descRect);
-	dialogBuilder.buildMainMenuBody(bodyDialog, mainMenuBodyRect);
-
-	//unseen dialog windows
-	dialogBuilder.buildMainMenuStatus(statusDialog, mainMenuBodyRect, currPlayer);
+	dialogBuilder.buildMainMenuBody(bodyDialog, largeRect);
 }
 
 
@@ -93,58 +94,70 @@ void MainMenu::processMainMenuInput()
 
 	MenuItem* item = menuDriver(input, (AbstractMenu*)mainMenuDialog.getControl()); 
 	
-
 	if (item)
 	{
-		switch (((LineItem*)item)->getCrossRef())
-		{
-		case MainMenuOption::INVENTORY:
-		{
-			Rect itemRect(bottomFrameHeight, rightFrameWidth, Pos(topFrameHeight - 1, leftFrameWidth));
-			dialogBuilder.buildInventory(invDialog, itemRect);
-
-			cm.unRegisterControl(&bodyDialog);
-			cm.registerControl(&invDialog, KEY_LISTENER, &itemCmd);
-			cm.setFocusedControl(&invDialog);
-		}
-			break;
-		case MainMenuOption::STATUS:
-		{
-			cm.setFocusedControl(&playerMenuDialog);
-			
-			GridMenu* playerMenu = (GridMenu*)playerMenuDialog.getControl();
-			playerMenu->setCurrentItem(0);
-			
-			MenuItem* item = playerMenu->getCurrentItem();
-			currPlayer = resourceManager->playerParty[item->index];
-
-			cm.registerControl(&statusDialog, 0, nullptr);
-			cm.unRegisterControl(&bodyDialog);
-		}			
-			break;
-		case MainMenuOption::CONFIG:
-		{
-			ConfigMenu* configMenu = new ConfigMenu(resourceManager);
-			DialogWindow* configWindow = new DialogWindow();
-
-			int controlWidth = getmaxx(win);
-
-			configWindow->setWindow(newwin(bottomFrameHeight, controlWidth, topFrameHeight - 1, 0));
-			configWindow->setControl(configMenu);
-
-			cm.registerControl(configWindow, KEY_LISTENER, &configMenuCmd);
-			cm.setFocusedControl(configWindow);
-		}
-			
-			break;
-		case MainMenuOption::MAIN_QUIT: 
-			cm.setExitCode(ExitCode::QUIT_TO_TITLE);
-			return;
-		}
+		processMainMenuSelection((LineItem*)item);
 	}
-	else //no item selected, render default data
+}
+
+void MainMenu::processMainMenuSelection(LineItem* selection)
+{
+	switch (selection->getCrossRef())
 	{
-		
+	case MainMenuOption::INVENTORY:
+	{
+		state = new InventoryState;
+		DialogWindow* invDialog = new DialogWindow();
+		dialogBuilder.buildInventory(*invDialog, largeRect);
+
+		DialogWindow* itemDescDialog = new DialogWindow();
+		dialogBuilder.buildCenteredTextWin(*itemDescDialog, descRect);
+
+		cm.registerControl(itemDescDialog, 0, nullptr);
+		cm.addTag(itemDescName, itemDescDialog);
+
+		cm.registerControl(invDialog, KEY_LISTENER, &itemCmd);
+		cm.addTag(invDialogName, invDialog);
+		cm.setFocusedControl(invDialog);
+	}
+	break;
+	case MainMenuOption::STATUS:
+	{
+		state = new StatusState;
+		cm.setFocusedControl(&playerMenuDialog);
+		DialogWindow* statusDialog = new DialogWindow();
+		dialogBuilder.buildMainMenuStatus(*statusDialog, largeRect, currPlayer);
+
+		GridMenu* playerMenu = (GridMenu*)playerMenuDialog.getControl();
+		playerMenu->setCurrentItem(0);
+
+		MenuItem* item = playerMenu->getCurrentItem();
+		currPlayer = resourceManager->playerParty[item->index];
+
+		cm.registerControl(statusDialog, 0, nullptr);
+	}
+	break;
+	case MainMenuOption::CONFIG:
+	{
+		ConfigMenu* configMenu = new ConfigMenu(resourceManager);
+
+		//TODO this window should be built by DialogBuilder
+		DialogWindow* configWindow = new DialogWindow();
+
+
+		int controlWidth = getmaxx(win);
+
+		configWindow->setWindow(newwin(bottomFrameHeight, controlWidth, topFrameHeight - 1, 0));
+		configWindow->setControl(configMenu);
+
+		cm.registerControl(configWindow, KEY_LISTENER, &configMenuCmd);
+		cm.setFocusedControl(configWindow);
+	}
+
+	break;
+	case MainMenuOption::MAIN_QUIT:
+		cm.setExitCode(ExitCode::QUIT_TO_TITLE);
+		return;
 	}
 }
 
@@ -156,26 +169,62 @@ void MainMenu::setResourceManager(ResourceManager* resourceManagerIn)
 
 void MainMenu::processPlayerMenuInput()
 {
-	int input = cm.getInput();
+	state->processPlayerMenuInput(this);
+}
 
-	GridMenu* playerMenu = (GridMenu*)playerMenuDialog.getControl();
+void MainMenu::InventoryState::processPlayerMenuInput(MainMenu* mm)
+{
+	int input = mm->cm.getInput();
+
+	GridMenu* playerMenu = (GridMenu*)mm->playerMenuDialog.getControl();
+
+	switch (input)
+	{
+	case GameInput::CANCEL_INPUT:
+	{
+		playerMenu->setCurrentItem(NO_CUR_ITEM);
+		mm->cm.setFocusedControl(mm->cm.getTaggedControl(invDialogName));
+		return;
+	}
+		break;
+
+	}
+
+	MenuItem* item = menuDriver(input, playerMenu);
+	
+	if (item)
+	{
+		Actor& a = mm->resourceManager->playerParty[item->index];
+		a.alterStat(StatType::HP, mm->selectedItem->value);
+
+		//will need more item processing logic here(decrement item, go back to item browser if ran out)
+
+	}
+}
+
+void MainMenu::StatusState::processPlayerMenuInput(MainMenu* mm)
+{
+	int input = mm->cm.getInput();
+
+	GridMenu* playerMenu = (GridMenu*)mm->playerMenuDialog.getControl();
 	if (input == GameInput::CANCEL_INPUT)
 	{
 		playerMenu->setCurrentItem(NO_CUR_ITEM);
-		cm.setFocusedControl(&mainMenuDialog);
-		cm.unRegisterControl(&statusDialog);
-		cm.registerControl(&bodyDialog, 0, nullptr);
+		mm->cm.popControl();
+		mm->cm.setFocusedControl(&mm->mainMenuDialog);
 		return;
 	}
-
 
 	menuDriver(input, playerMenu);
 	MenuItem* item = playerMenu->getCurrentItem();
 
-	if (item->index >= (int)resourceManager->playerParty.size()) //a little sloppy here, but it works
+	if (item->index >= (int)mm->resourceManager->playerParty.size()) //a little sloppy here, but it works
+	{
 		playerMenu->setCurrentItem(item->index - 1);
+		return;
+	}
 	else
-		currPlayer = resourceManager->playerParty[item->index];
+		mm->currPlayer = mm->resourceManager->playerParty[item->index];
 }
 
 void MainMenu::processConfigMenuInput()
@@ -200,21 +249,45 @@ void MainMenu::processItemInput()
 {
 	int input = cm.getInput();
 
-	if (input == GameInput::CANCEL_INPUT) 
+	switch (input)
 	{
-		cm.unRegisterControl(&invDialog);
-		cm.registerControl(&bodyDialog, 0, nullptr);
+	case GameInput::CANCEL_INPUT:
+	{
+		Controllable* itemBrowser = cm.popControl();
+
+		cm.removeTag(itemDescName);
+		Controllable* itemDescDialog = cm.popControl();
+
+		delete itemBrowser;
+		delete itemDescDialog;
 		cm.setFocusedControl(&mainMenuDialog);
 		return;
 	}
+		break;
+	case GameInput::OK_INPUT:
+	{
+		GridMenu* menu = (GridMenu*)playerMenuDialog.getControl();
+		menu->setCurrentItem(0);
+		cm.setFocusedControl(&playerMenuDialog);
+		return;
+	} break;
+	}
 
-	ItemBrowser* browser = (ItemBrowser*)invDialog.getControl();
+	
+
+	DialogWindow* dWin = (DialogWindow*)cm.getFocusedControl();
+	ItemBrowser* browser = (ItemBrowser*)dWin->getControl();
 
 	browser->processInput(input);
 
 	OwnedItemRecord* record = browser->getCurrentItem();
+	selectedItem = record->getPossession()->item;
+	std::string desc = selectedItem->description;
 
-	std::string desc = record->getPossession()->item->description;
+	DialogWindow* itemDescDialog = (DialogWindow*)cm.getTaggedControl(itemDescName);
+	TextLabel* lbl = (TextLabel*)itemDescDialog->getControl();
+
+	lbl->setText(desc);
 }
 
 void MainMenu::draw()

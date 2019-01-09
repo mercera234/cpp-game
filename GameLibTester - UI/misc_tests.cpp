@@ -154,10 +154,12 @@ void mainMenuTest()
 	OwnedItem item1;
 	item1.item = &data.getItem("Potion");
 	item1.quantity = 1;
+	item1.item->description = "Restores 50 HP."; //TODO this should be added to the json file
 
 	OwnedItem item2;
 	item2.item = &data.getItem("Knife");
 	item2.quantity = 1;
+	item2.item->description = "A sharp knife for attacking.";
 
 	rm.inventory.push_back(&item1);
 	rm.inventory.push_back(&item2);

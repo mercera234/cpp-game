@@ -10,8 +10,14 @@ struct Rectangle
 	Rectangle() {};
 	Rectangle(unsigned int height, unsigned int width, Pos pos)
 	{
+		setDimensions(height, width, pos);
+	}
+
+	void setDimensions(unsigned int height, unsigned int width, Pos pos)
+	{
 		origin = pos;
 		this->height = height;
 		this->width = width;
 	}
+
 } typedef Rect;

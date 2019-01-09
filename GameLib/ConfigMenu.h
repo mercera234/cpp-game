@@ -32,6 +32,8 @@ public:
 	//sets the resource manager and creates the menu using the non-secret game inputs
 	void setResourceManager(ResourceManager* resourceManagerIn);
 
+	//override
+	void setFocus(bool focusIn);
 	void draw();
 	
 

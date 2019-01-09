@@ -52,3 +52,9 @@ OwnedItemRecord* ItemBrowser::getCurrentItem()
 {
 	return (OwnedItemRecord*)menu.getCurrentItem();
 }
+
+void ItemBrowser::setFocus(bool focusIn)
+{
+	Controllable::setFocus(focusIn);
+	menu.setFocus(focusIn);
+}

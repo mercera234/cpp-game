@@ -6,6 +6,8 @@
 #include "TextParamValue.h"
 #include "LineFormat.h"
 #include "ItemBrowser.h"
+#include "TextLabel.h"
+#include "CenteredFormat.h"
 
 
 void DialogBuilder::buildMainMenu(DialogWindow& dWin, Rect r)
@@ -167,5 +169,15 @@ void DialogBuilder::buildInventory(DialogWindow& dWin, Rect r)
 	inventory->setItems(rm->inventory);
 
 	dWin.setControl(inventory);
+	dWin.setWindow(TUI::winMgr.newWin(r.height, r.width, r.origin.y, r.origin.x));
+}
+
+void DialogBuilder::buildCenteredTextWin(DialogWindow& dWin, Rect r)
+{
+	TextLabel* descLbl = new TextLabel;
+	descLbl->setFormat(new CenteredFormat);
+	descLbl->setWindow(TUI::winMgr.newWin(r.height - 2, r.width - 2, r.origin.y + 1, r.origin.x + 1));
+
+	dWin.setControl(descLbl);
 	dWin.setWindow(TUI::winMgr.newWin(r.height, r.width, r.origin.y, r.origin.x));
 }

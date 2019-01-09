@@ -158,6 +158,12 @@ void ConfigMenu::toggleEditState()
 	resourceManager->getInputManager().setUseRawInput(editState);
 }
 
+void ConfigMenu::setFocus(bool focusIn)
+{
+	Controllable::setFocus(focusIn);
+	menu.setFocus(focusIn);
+}
+
 
 void ConfigMenu::draw()
 {

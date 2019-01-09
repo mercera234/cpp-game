@@ -96,13 +96,10 @@ void ControlManager::unRegisterControl(Controllable* c)
 	if(r == focusedReg)
 		unsetFocus();
 
+	//remove control
 	auto it2 = std::find(controls.begin(), controls.end(), r);
 
 	controls.erase(it2);
-
-	//remove doesn't work for some reason!
-	//auto it2 = std::remove(controls.begin(), controls.end(), r);
-
 	quickRef.erase(c);
 
 	assert(quickRef.size() == controls.size());
@@ -119,7 +116,6 @@ Controllable* ControlManager::popControl()
 {
 	if(controls.back() == focusedReg) //if the control being popped is focused
 	{
-		//focusedReg = nullptr;
 		//if object was focused then set focus to next 
 		for (auto it = ++controls.rbegin(); it != controls.rend(); it++)//we start from the end, so top most window is processed first
 		{
@@ -373,6 +369,29 @@ void ControlManager::passControl(Controllable* c, ControlManager& recipient, Com
 	unRegisterControl(c); //if not registered, then nothing happens
 	
 	recipient.registerControl(c, listenMap, cmd);
+}
+
+bool ControlManager::addTag(const std::string& name, Controllable* c)
+{
+	if (tags.count(name) > 0)
+		return false;
+
+	tags.insert(std::make_pair(name, c));
+	return true;
+}
+
+bool ControlManager::removeTag(const std::string& name)
+{
+	return tags.erase(name) > 0;
+}
+
+/*Get the control previously tagged with tagName*/
+Controllable* ControlManager::getTaggedControl(const std::string& tagName)
+{
+	if (tags.count(tagName) < 1)
+		return nullptr;
+
+	return tags[tagName];
 }
 
 

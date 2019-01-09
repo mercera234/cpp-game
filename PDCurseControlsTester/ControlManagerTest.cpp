@@ -349,6 +349,35 @@ namespace PDCurseControlsTester
 			Assert::AreEqual(0, cm.getControlCount());
 		}
 		
+		TEST_METHOD(addTagTest)
+		{
+			MockControl mc;
+			mc.setX(1);
+			MockControl mc2;
+			mc2.setX(2);
+
+			cm.registerControl(&mc, KEY_LISTENER, nullptr);
+			cm.registerControl(&mc2, KEY_LISTENER, nullptr); //once registered we can't retrieve either by name without tag method
+
+			std::string name = "First mc";
+			cm.addTag(name, &mc);
+
+			MockControl* c = (MockControl*)cm.getTaggedControl(name);
+
+			Assert::AreEqual(1, c->getX());
+		}
+
+		TEST_METHOD(removeTagTest)
+		{
+			MockControl mc;
+			mc.setX(1);
+			cm.registerControl(&mc, KEY_LISTENER, nullptr);
+
+			std::string name = "First mc";
+			cm.addTag(name, &mc);
+
+			Assert::IsTrue(cm.removeTag(name));
+		}
 
 	};
 }

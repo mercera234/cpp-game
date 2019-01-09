@@ -34,6 +34,7 @@ protected:
 	//a quick reference map used to quickly find the registration associated with a controllable
 	std::map<Controllable*, Registration*, std::function<bool(Controllable*, Controllable*)> > quickRef;
 	std::map<int, Command*> globalShortcuts; //shortcuts are global input
+	std::map<std::string, Controllable*> tags; //a mapping of string names to controls 
 	
 	//holds the status of the last executed input
 	ExitCode exitCode = ExitCode::HANDLED;
@@ -88,6 +89,13 @@ public:
 	void moveControlToTop(Controllable* c);
 
 	Controllable* getTopControl() { return controls.back()->c; }
+
+	/*Add tag to control in manager. Return value if if tag was successful*/
+	bool addTag(const std::string& name, Controllable* c);
+	bool removeTag(const std::string& name); //remove tag from control manager
+
+	/*Get the control previously tagged with tagName*/
+	Controllable* getTaggedControl(const std::string& tagName);
 
 	/*
 	TODO have class inherit from Input Processor
