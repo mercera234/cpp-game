@@ -322,7 +322,7 @@ void GameData::loadActors(boost::property_tree::ptree& tree)
 		actor.symbol = symbol | colorValue << TEXTCOLOR_OFFSET;
 		actor.getStat(StatType::LEVEL).setCurr(actorData.get<int>("level"));
 		actor.getStat(StatType::EXP).setCurr(actorData.get<int>("exp"));
-		actor.money.setCurr(actorData.get<int>("money"));
+		actor.getMoney().setCurr(actorData.get<int>("money"));
 
 		actor.getStat(StatType::HP).setCurrMax(actorData.get<int>("hp"));
 		actor.getStat(StatType::HP).maxOut();

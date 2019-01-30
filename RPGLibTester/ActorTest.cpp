@@ -27,19 +27,19 @@ namespace RPGLibTester
 		
 		TEST_METHOD(gainMoney)
 		{
-			player.money.setCurr(0); //should be 0 by default, but this is more explicit
+			player.getMoney().setCurr(0); //should be 0 by default, but this is more explicit
 
 			int moneyGain = 100;
-			alterStatValue(player.money, moneyGain);
+			alterStatValue(player.getMoney(), moneyGain);
 			
-			Assert::AreEqual(moneyGain, player.money.getCurr());
+			Assert::AreEqual(moneyGain, player.getMoney().getCurr());
 		}
 
 		TEST_METHOD(maxOutHP) //like if using a restorative item or sleeping at an inn
 		{
 			int maxHP = 50;
 
-			BoundInt* hp = &(player.stats.hp);
+			BoundInt* hp = &(player.getStat(StatType::HP));
 
 			hp->setCurrMax(maxHP);
 			hp->setCurr(10);
@@ -51,11 +51,11 @@ namespace RPGLibTester
 
 		TEST_METHOD(gainExperience) //no level up
 		{
-			player.stats.exp.setCurr(100);
+			player.getStat(StatType::EXP).setCurr(100);
 			
 			player.alterStat(StatType::EXP, 10);
 			
-			Assert::AreEqual(110, player.stats.exp.getCurr());
+			Assert::AreEqual(110, player.getStat(StatType::EXP).getCurr());
 		}
 
 		TEST_METHOD(alterStatSimpleTest)
@@ -94,22 +94,22 @@ namespace RPGLibTester
 
 		TEST_METHOD(damageActor)
 		{
-			player.stats.hp.setCurr(25);
+			player.getStat(StatType::HP).setCurr(25);
 
 			player.alterStat(StatType::HP, -10);
 
-			Assert::AreEqual(15, player.stats.hp.getCurr());
+			Assert::AreEqual(15, player.getStat(StatType::HP).getCurr());
 		}
 
 		TEST_METHOD(healActor)
 		{
 			int maxHP = 25;
-			player.stats.hp.setCurrMax(maxHP);
-			player.stats.hp.setCurr(1);
+			player.getStat(StatType::HP).setCurrMax(maxHP);
+			player.getStat(StatType::HP).setCurr(1);
 
 			player.alterStat(StatType::HP, 30); //player is healed beyond max
 
-			Assert::AreEqual(maxHP, player.stats.hp.getCurr()); 
+			Assert::AreEqual(maxHP, player.getStat(StatType::HP).getCurr()); 
 		}
 
 		TEST_METHOD(isActorAlive)
@@ -202,7 +202,7 @@ namespace RPGLibTester
 			player.equip(possession);
 			
 			Assert::AreEqual(45, player.getStat(StatType::STRENGTH).getCurr());
-			Assert::AreEqual((int)item, (int)player.weapon);
+			Assert::AreEqual((int)item, (int)player.getEquipPart(EquipPart::WEAPON));
 		}
 
 		TEST_METHOD(unEquipNothingTest)
@@ -236,7 +236,7 @@ namespace RPGLibTester
 
 			Assert::AreEqual(startStrength, player.getStat(StatType::STRENGTH).getCurr());
 			Assert::AreEqual((int)item, (int)removedItem);
-			Assert::IsNull(player.weapon);
+			Assert::IsNull(player.getEquipPart(EquipPart::WEAPON));
 		}
 
 

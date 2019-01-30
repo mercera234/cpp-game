@@ -49,7 +49,7 @@ void BattleState::loadState()
 	for each (std::string name in randomGroup.enemyNames)
 	{
 		Actor e = resourceManager->getData().getActor(name);// actors.find(name)->second; //get copy of repository enemy
-		e.type = ActorType::CPU;
+		e.setType(ActorType::CPU);
 		enemies.push_back(e);
 		enemyPtrs.push_back(&enemies.back());
 	}

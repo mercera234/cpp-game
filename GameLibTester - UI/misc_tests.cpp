@@ -120,14 +120,14 @@ void mainMenuTest()
 	Actor player1;
 	initDefaultActor(player1);
 	player1.name = "Test guy9012345";
-	player1.stats.hp.setCurrMax(100);
-	player1.stats.hp.setCurr(97);
+	player1.getStat(StatType::HP).setCurrMax(100);
+	player1.getStat(StatType::HP).setCurr(97);
 
 	Actor player2;
 	initDefaultActor(player2);
 	player2.name = "2nd test guy   ";
-	player2.stats.hp.setCurrMax(68);
-	player2.stats.hp.setCurr(62);
+	player2.getStat(StatType::HP).setCurrMax(68);
+	player2.getStat(StatType::HP).setCurr(62);
 
 	ResourceManager rm;
 	GameData& data = rm.getData();
@@ -149,7 +149,7 @@ void mainMenuTest()
 	Possession item1;
 	item1.item = &data.getItem("Potion");
 	item1.quantity.setCurr(1);
-	item1.item->description = "Restores 50 HP."; //TODO this should be added to the json file
+	item1.item->description = "Restores 50 HP."; 
 
 	Possession item2;
 	item2.item = &data.getItem("Knife");
@@ -228,10 +228,10 @@ void battleProcessorTest()
 		p3 = data.getActor("Navigator");
 		p4 = data.getActor("Mechanic");
 
-		p1.type = ActorType::HUMAN;
-		p2.type = ActorType::HUMAN;
-		p3.type = ActorType::HUMAN;
-		p4.type = ActorType::HUMAN;
+		p1.setType(ActorType::HUMAN);
+		p2.setType(ActorType::HUMAN);
+		p3.setType(ActorType::HUMAN);
+		p4.setType(ActorType::HUMAN);
 
 		std::list<Actor*> players;
 
@@ -248,10 +248,10 @@ void battleProcessorTest()
 		e3 = data.getActor("Skittler");
 		e4 = data.getActor("Wispwing");
 		
-		e1.type = ActorType::CPU;
-		e2.type = ActorType::CPU;
-		e3.type = ActorType::CPU;
-		e4.type = ActorType::CPU;
+		e1.setType(ActorType::CPU);
+		e2.setType(ActorType::CPU);
+		e3.setType(ActorType::CPU);
+		e4.setType(ActorType::CPU);
 
 		enemies.push_back(&e1);
 		enemies.push_back(&e2);
@@ -333,7 +333,7 @@ void exploreOneMapTest()
 
 	//setup main character
 	Actor& player1 = data.getActor(player1Name);
-	player1.type = ActorType::HUMAN;
+	player1.setType(ActorType::HUMAN);
 
 	rm.playerParty.push_back(player1);
 

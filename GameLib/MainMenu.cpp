@@ -76,7 +76,8 @@ void MainMenu::setWindow(WINDOW* win)
 
 void MainMenu::processInput()
 {
-	cm.setExitCode(HANDLED);
+	exitCode = ExitCode::HANDLED;
+	cm.setExitCode(exitCode);
 	cm.handleInput(input);
 }
 
@@ -142,7 +143,6 @@ void MainMenu::processMainMenuSelection(LineItem* selection)
 	{
 		ConfigMenu* configMenu = new ConfigMenu(resourceManager);
 
-		//TODO this window should be built by DialogBuilder
 		DialogWindow* configWindow = new DialogWindow();
 
 
@@ -249,6 +249,7 @@ void MainMenu::setItemDescription(DialogWindow* invDialog, DialogWindow* itemDes
 	ItemBrowser* browser = (ItemBrowser*)invDialog->getControl();
 
 	OwnedItemRecord* record = browser->getCurrentItem();
+
 	selectedItem = record->getPossession();
 
 	TextLabel* lbl = (TextLabel*)itemDescDialog->getControl();

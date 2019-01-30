@@ -6,20 +6,20 @@ Actor::Actor()
 {
 	money.setCurrMax(9999999);
 
-	////set default stat limits
-	stats.hp.setMax(MAX_ENEMY_HP);
-	stats.hp.setCurrMax(MAX_PLAYER_HP);
+	//set default stat limits
+	getStat(StatType::HP).setMax(MAX_ENEMY_HP);
+	getStat(StatType::HP).setCurrMax(MAX_PLAYER_HP);
 
-	stats.mp.setMax(999);
-	stats.mp.setCurrMax(999);
+	getStat(StatType::MP).setMax(999);
+	getStat(StatType::MP).setCurrMax(999);
 
-	stats.level.setMax(MAX_LEVELS);
-	stats.exp.setMax(MAX_EXP);
-	stats.strength.setMax(255);
-	stats.defense.setMax(255);
-	stats.intelligence.setMax(255);
-	stats.will.setMax(255);
-	stats.agility.setMax(255);
+	getStat(StatType::LEVEL).setMax(MAX_LEVELS);
+	getStat(StatType::EXP).setMax(MAX_EXP);
+	getStat(StatType::STRENGTH).setMax(255);
+	getStat(StatType::DEFENSE).setMax(255);
+	getStat(StatType::INTELLIGENCE).setMax(255);
+	getStat(StatType::WILL).setMax(255);
+	getStat(StatType::AGILITY).setMax(255);
 
 }
 
@@ -43,16 +43,30 @@ BoundInt& Actor::getStat(StatType statType)
 	case StatType::MP: stat = &stats.mp; break;
 	case StatType::EXP: stat = &stats.exp; break;
 	case StatType::LEVEL: stat = &stats.level; break;
-	//case StatType::MONEY: stat = &money; break;
 	case StatType::STRENGTH: stat = &stats.strength; break;
 	case StatType::DEFENSE: stat = &stats.defense; break;
 	case StatType::INTELLIGENCE: stat = &stats.intelligence; break;
 	case StatType::WILL: stat = &stats.will; break;
-	case StatType::AGILITY: stat = &stats.agility; break;
-			
+	case StatType::AGILITY: stat = &stats.agility; break;	
 	}
 
 	return *stat;
+}
+
+GameItem* Actor::getEquipPart(EquipPart part) const
+{
+	GameItem* item = nullptr;
+	switch (part)
+	{
+	case EquipPart::WEAPON: item = weapon; break;
+	case EquipPart::HEAD: item = helmet; break;
+	case EquipPart::HANDS: item = gloves; break;
+	case EquipPart::ACCESSORY: item = accessory; break;
+	case EquipPart::TORSO: item = armor; break;
+	case EquipPart::FEET: item = boots; break;
+	}
+
+	return item;
 }
 
 
@@ -98,15 +112,15 @@ bool Actor::equip(Possession& posn)
 	if (item->type != GameItemType::EQUIPPABLE)
 		return false;
 
-	/*if ((item = dynamic_cast<EquippableItem*>(posn.item)) == nullptr)
-		return false;*/
-
 	bool anyChange = true;
 	switch (item->part)
 	{
 	case EquipPart::WEAPON: weapon = item; break;
 	case EquipPart::HEAD: helmet = item; break;
-		//TODO more to do here
+	case EquipPart::TORSO: armor = item; break;
+	case EquipPart::HANDS: gloves = item; break;
+	case EquipPart::FEET: boots = item; break;
+	case EquipPart::ACCESSORY: accessory = item; break;
 	default:
 		anyChange = false; //item not equipped
 		break;
@@ -133,6 +147,10 @@ GameItem* Actor::unEquip(EquipPart part)
 	{
 	case EquipPart::WEAPON: removedItem = weapon; weapon = nullptr; break;
 	case EquipPart::HEAD: removedItem = helmet; helmet = nullptr; break;
+	case EquipPart::HANDS: removedItem = gloves; gloves = nullptr; break;
+	case EquipPart::FEET: removedItem = boots; boots = nullptr; break;
+	case EquipPart::ACCESSORY: removedItem = accessory; accessory = nullptr; break;
+	case EquipPart::TORSO: removedItem = armor; armor = nullptr; break;
 	}
 
 	if (removedItem == nullptr) //nothing was unequipped

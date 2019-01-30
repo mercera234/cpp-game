@@ -251,7 +251,7 @@ void spriteOnMapTest()
 	//
 	//Actor actor;
 	//initDefaultActor(actor);
-	//actor.stats.hp.setCurr(5);
+	//actor.getStat(StatType::HP).setCurr(5);
 
 
 	////actor.symbol = 
@@ -265,12 +265,12 @@ void spriteOnMapTest()
 	//GameItem item;
 	//item.name = "Potion";
 	//item.cost = 3;
-	//item.type = GameItemType::CONSUMABLE;
+	//item.setType(GameItemType::CONSUMABLE;
 	//
 	//GameItem money;
 	//money.name = "Gold$";
 	//money.cost = 50;
-	//money.type = GameItemType::MONEY;
+	//money.setType(GameItemType::MONEY);
 	//
 	//Actor npc;
 	//npc.name = "Alex";
@@ -309,7 +309,7 @@ void spriteOnMapTest()
 
 	//	mvwaddch(screen, control.pos.y, control.pos.x, control.symbol);
 	//	mvwprintw(screen, screenHeight - 2, screenWidth - 10, "$:%-10u", totalGold);
-	//	mvwprintw(screen, screenHeight - 3, screenWidth - 10, "HP:%+4u", actor.stats.hp.getCurr());
+	//	mvwprintw(screen, screenHeight - 3, screenWidth - 10, "HP:%+4u", actor.getStat(StatType::HP).getCurr());
 
 	//	wnoutrefresh(screen);
 

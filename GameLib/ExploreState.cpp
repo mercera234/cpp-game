@@ -56,7 +56,7 @@ void ExploreState::loadResourceManagerData()
 
 	//load default main character
 	Actor player1 = resourceManager->getData().getActor(player1Name);
-	player1.type = ActorType::HUMAN;
+	player1.setType(ActorType::HUMAN);
 
 	resourceManager->playerParty.clear(); //clear out old data first
 	resourceManager->playerParty.push_back(player1);

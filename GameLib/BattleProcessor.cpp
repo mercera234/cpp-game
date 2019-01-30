@@ -118,9 +118,9 @@ void BattleProcessor::addCardsToTargetMenu(std::list<MenuItem*>& cards)
 
 int BattleProcessor::attack(Actor * attacker, Actor * target)
 {
-	int attackerStrength = attacker->stats.strength.getCurr();
+	int attackerStrength = attacker->getStat(StatType::STRENGTH).getCurr();
 
-	int damage = calcAttackDamage(attackerStrength, target->stats.defense.getCurr());
+	int damage = calcAttackDamage(attackerStrength, target->getStat(StatType::DEFENSE).getCurr());
 
 	int agilityAdvantage = calcAgilityAdvantage(attacker->getStat(StatType::AGILITY).getCurr(),
 		attackerStrength,
@@ -194,7 +194,7 @@ bool BattleProcessor::advanceTurn()
 
 	Actor* next = turnHolder->getActor();
 
-	switch (next->type)
+	switch (next->getType())
 	{
 	case ActorType::HUMAN:
 		skillMenuFrame->setText(next->name, 0, 4);
@@ -202,9 +202,6 @@ bool BattleProcessor::advanceTurn()
 		break;
 	case ActorType::CPU:
 		processCPUTurn();
-		break;
-	default:
-		assert(next->type == ActorType::HUMAN || next->type == ActorType::CPU);
 		break;
 	}
 
@@ -371,7 +368,7 @@ void BattleProcessor::calcRewards(int& totalExp, int &totalMoney)
 		Actor* enemy = card->getActor();
 
 		totalExp += enemy->getStat(StatType::EXP).getCurr();
-		totalMoney += enemy->money.getCurr();
+		totalMoney += enemy->getMoney().getCurr();
 	}
 
 	std::ostringstream rewardMsg;
@@ -395,7 +392,7 @@ void BattleProcessor::transferRewards(int totalExp, int totalMoney)
 		ActorCard* card = (ActorCard*)item;
 		Actor* player = card->getActor();
 
-		player->stats.exp.alterCurr(expPerPlayer);
+		player->getStat(StatType::EXP).alterCurr(expPerPlayer);
 
 		//check for level up here as well (not fully implemented yet)
 		int levelsGained = 0;

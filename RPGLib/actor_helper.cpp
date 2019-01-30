@@ -16,19 +16,20 @@ void initDefaultActor(Actor& player)
 	player.name = "Unnamed";
 
 	//set actor properties
-	
-	player.type = ActorType::HUMAN;
+	player.setType(ActorType::HUMAN);
 
-	setBoundedStat(player.money, 0, 9999999, 9999999, 0);
-	setBoundedStat(player.stats.level, 1, MAX_LEVELS, MAX_LEVELS, 1);
-	setBoundedStat(player.stats.exp, 0, 9999999, 9999999, 0);
-	setBoundedStat(player.stats.hp, 0, 25, MAX_PLAYER_HP, 25);
-	setBoundedStat(player.stats.mp, 0, 10, 999, 0);
-	setBoundedStat(player.stats.strength, 0, 255, 255, 0);
-	setBoundedStat(player.stats.defense, 0, 255, 255, 0);
-	setBoundedStat(player.stats.intelligence, 0, 255, 255, 0);
-	setBoundedStat(player.stats.will, 0, 255, 255, 0);
-	setBoundedStat(player.stats.agility, 0, 255, 255, 0);
+	setBoundedStat(player.getMoney(), 0, 9999999, 9999999, 0);
+
+	
+	setBoundedStat(player.getStat(StatType::LEVEL), 1, MAX_LEVELS, MAX_LEVELS, 1);
+	setBoundedStat(player.getStat(StatType::EXP), 0, 9999999, 9999999, 0);
+	setBoundedStat(player.getStat(StatType::HP), 0, 25, MAX_PLAYER_HP, 25);
+	setBoundedStat(player.getStat(StatType::MP), 0, 10, 999, 0);
+	setBoundedStat(player.getStat(StatType::STRENGTH), 0, 255, 255, 0);
+	setBoundedStat(player.getStat(StatType::DEFENSE), 0, 255, 255, 0);
+	setBoundedStat(player.getStat(StatType::INTELLIGENCE), 0, 255, 255, 0);
+	setBoundedStat(player.getStat(StatType::WILL), 0, 255, 255, 0);
+	setBoundedStat(player.getStat(StatType::AGILITY), 0, 255, 255, 0);
 }
 
 
@@ -58,7 +59,7 @@ void alterStatValue(BoundInt& stat, int amount)
 
 bool isAlive(Actor& actor)
 {
-	return actor.stats.hp.getCurr() > 0;
+	return actor.getStat(StatType::HP).getCurr() > 0;
 }
 
 //

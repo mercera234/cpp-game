@@ -37,12 +37,16 @@ enum class Ailment
 /*
 An actor represents individual user controlled players, enemies, and NPCs
 */
-struct Actor : public Thing//, public Storable
+class Actor : public Thing//, public Storable
 {
+private:
 	ActorType type;
-	
+
+	/*the money that this actor possesses.
+	This may or may not be used, could be deferred to a global stat for playable characters for example.
+	*/
 	BoundInt money;
-	
+
 	//int ailments; //not sure if this should be with Actor or ActorDef
 	/*void save(std::ofstream& saveFile);
 	void load(std::ifstream& loadFile);*/
@@ -53,17 +57,6 @@ struct Actor : public Thing//, public Storable
 	GameItem* weapon = nullptr;
 	GameItem* accessory = nullptr;
 
-	bool alterStat(StatType statType, int amount);
-	BoundInt& getStat(StatType statType);
-
-	bool ingestConsumable(Possession& posn);
-
-	/*Equip a possession on the actor. When equipped, item is removed from inventory and pointer to item is maintained in Actor object.
-	Once equipped, the actor stats are temporarily altered until item is unequipped or switched to a different item.
-	For example a sword with +5 strength increases Actor strength by 5 until it is removed.*/
-	bool equip(Possession& posn);
-	GameItem* unEquip(EquipPart part);
-
 	/*
 	The numeric values of an Actor that represent internal non-tangible qualities that determine effectiveness in battle and longterm qualities.
 	Numeric values to define an actor stats.
@@ -73,9 +66,9 @@ struct Actor : public Thing//, public Storable
 		BoundInt level; //likely bound is 1-99
 		BoundInt exp; //likely bound is 0-9999999
 
-		/*Hit points for actor. Bounds will be 0 to whatever is the max hp for the actor's level. 
-		the highest it can ever grow will be 9999 for HUMANS and 999999 for CPU*/
-		BoundInt hp; 
+					  /*Hit points for actor. Bounds will be 0 to whatever is the max hp for the actor's level.
+					  the highest it can ever grow will be 9999 for HUMANS and 999999 for CPU*/
+		BoundInt hp;
 
 		/*Magic points for actor. Bounds will be 0 to whatever is the max mp for the actor's level.
 		the highest it can ever grow will be 999 for HUMANS and 9999 for CPU*/
@@ -85,7 +78,7 @@ struct Actor : public Thing//, public Storable
 		applies to strength of physical attacks
 		likely bound is 0-255
 		*/
-		BoundInt strength; 
+		BoundInt strength;
 
 		/*a percentage(based on 255) of how much physical damage is absorbed
 		Example:
@@ -116,7 +109,7 @@ struct Actor : public Thing//, public Storable
 		255 evade all hits entirely, take no damage
 		Agility may not factor into all types of attacks
 		*/
-		BoundInt agility; 
+		BoundInt agility;
 
 		//not sure if we'll use these
 		float accuracy; //this may be better applied to weapons instead of actors
@@ -125,7 +118,32 @@ struct Actor : public Thing//, public Storable
 	};
 	BaseStats stats;
 
+public:
 	Actor();
+
+	bool alterStat(StatType statType, int amount);
+	BoundInt& getStat(StatType statType);
+
+	bool ingestConsumable(Possession& posn);
+
+	/*Equip a possession on the actor. When equipped, item is removed from inventory and pointer to item is maintained in Actor object.
+	Once equipped, the actor stats are temporarily altered until item is unequipped or switched to a different item.
+	For example a sword with +5 strength increases Actor strength by 5 until it is removed.*/
+	bool equip(Possession& posn);
+	GameItem* unEquip(EquipPart part);
+
+	//setters/getters
+
+	void setType(ActorType typeIn) { type = typeIn; }
+	ActorType getType() const { return type; }
+
+
+	BoundInt& getMoney() { return money; }
+
+
+	GameItem* getEquipPart(EquipPart part) const;
+
+	
 };
 
 
