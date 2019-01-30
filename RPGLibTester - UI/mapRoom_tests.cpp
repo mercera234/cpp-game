@@ -265,7 +265,7 @@ void spriteOnMapTest()
 	//GameItem item;
 	//item.name = "Potion";
 	//item.cost = 3;
-	//item.setType(GameItemType::CONSUMABLE;
+	//item.setType(GameItemType::CONSUMABLE);
 	//
 	//GameItem money;
 	//money.name = "Gold$";
