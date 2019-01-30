@@ -5,12 +5,13 @@
 #include "GridMenu.h"
 #include "TextLabel.h"
 #include "LineItem.h"
+#include "InputProcessor.h"
 
 
 /*
 A palette is a special menu that allows the user to select particular icons usually as tools
 */
-class Palette : public Controllable
+class Palette : public Controllable, public InputProcessor
 {
 private:
 	TextLabel title;
@@ -28,7 +29,8 @@ public:
 	void setItem(const std::string& name, chtype icon, unsigned short index);
 
 	void draw(); //override
-	void driver(int input);
+	void processInput();
+	
 	bool post(bool post);
 	void setFocus(bool focusIn);
 	

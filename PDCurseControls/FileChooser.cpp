@@ -203,7 +203,7 @@ void FileChooser::processInput()
 {
 	if (input >= MIN_MENU_COMMAND && input <= MAX_MENU_COMMAND) //route input to menu
 	{
-		fileMenu.driver(input);
+		::processInput(fileMenu, input);
 		LineItem* choice = (LineItem*)fileMenu.getCurrentItem();
 
 		if (choice == nullptr)

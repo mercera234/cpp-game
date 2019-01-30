@@ -83,10 +83,6 @@ public:
 
 	//overridden
 	//handle key input
-	int driver(int input); 
-
-	//overridden
-	//handle key input
 	void processInput();
 
 	/*Exchange two items in the same menu*/

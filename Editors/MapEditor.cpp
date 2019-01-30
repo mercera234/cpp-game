@@ -412,7 +412,8 @@ void MapEditor::processPaletteInput()
 	int	pX = event.x;
 	wmouse_trafo(p->getWindow(), &pY, &pX, false);
 
-	p->driver((*mode)->cm.getInput());
+	::processInput(*p, (*mode)->cm.getInput());
+	
 	LineItem* item = (LineItem*)p->getCurrentItem();
 
 	int exitCode = HANDLED;

@@ -20,7 +20,7 @@ void FileDialog::processInput()
 
 	switch (input)
 	{
-	case KEY_DOWN: ::processInput(*chooser, REQ_DOWN_ITEM);
+	case KEY_DOWN: ::processInput(*chooser, REQ_DOWN_ITEM); break;
 	case KEY_UP: ::processInput(*chooser, REQ_UP_ITEM); break;
 	case KEY_PGDN: ::processInput(*chooser, REQ_SCR_DPAGE); break;
 	case KEY_PGUP: ::processInput(*chooser, REQ_SCR_UPAGE); break;

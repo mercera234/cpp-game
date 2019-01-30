@@ -288,7 +288,7 @@ void paletteTest()
 		case '\n':
 		case KEY_ENTER:
 		{
-			palette.driver(input);
+			::processInput(palette, input);
 			
 			LineItem* item = palette.getCurrentItem();
 			
@@ -302,11 +302,11 @@ void paletteTest()
 		break;
 		case KEY_MOUSE:
 		{
-			palette.driver(input);
+			::processInput(palette, input);
 		}
 		break;
 		default:
-			palette.driver(input);
+			::processInput(palette, input);
 			break;
 		}
 	}
@@ -485,12 +485,12 @@ void menuTest2()
 
 		if (activeMenu == m1) //this section should be the callback! We call a specific routine based on what the Controllable object is
 		{
-			switch (c)
+			/*switch (c)
 			{
 			case KEY_LEFT: activeMenu->driver(REQ_LEFT_ITEM); break;
 			case KEY_RIGHT: activeMenu->driver(REQ_RIGHT_ITEM); break;
 			case '\r': activeMenu->driver(REQ_TOGGLE_ITEM); break;
-			}
+			}*/
 
 			MenuItem* mi = activeMenu->getCurrentItem();
 			if (mi != NULL)
@@ -510,12 +510,12 @@ void menuTest2()
 		}
 		else //callback for second method
 		{
-			switch (c)
+			/*switch (c)
 			{
 			case KEY_LEFT: activeMenu->driver(REQ_LEFT_ITEM); break;
 			case KEY_RIGHT: activeMenu->driver(REQ_RIGHT_ITEM); break;
 			case '\r': activeMenu->driver(REQ_TOGGLE_ITEM); break;
-			}
+			}*/
 
 			MenuItem* mi = activeMenu->getCurrentItem();
 			if (mi != NULL)
@@ -543,8 +543,9 @@ void RGBMenuDriver(AbstractMenu* menu, int input)
 	{
 	case KEY_LEFT: break;
 	case KEY_RIGHT:  break;
-	case KEY_UP: menu->driver(REQ_UP_ITEM); break;
-	case KEY_DOWN: menu->driver(REQ_DOWN_ITEM); break;
+		//broken
+	/*case KEY_UP: menu->driver(REQ_UP_ITEM); break;
+	case KEY_DOWN: menu->driver(REQ_DOWN_ITEM); break;*/
 	default: break;
 	}
 
@@ -880,30 +881,6 @@ void AttrControllerTest()
 		}
 
 	}
-}
-
-
-MenuItem* absMenuDriver(int input, AbstractMenu* m)
-{
-	MenuItem* item = NULL;
-	int retval = -1;
-	switch (input)
-	{
-	case KEY_DOWN: retval = m->driver(REQ_DOWN_ITEM); break;
-	case KEY_UP: retval = m->driver(REQ_UP_ITEM); break;
-	case KEY_LEFT: retval = m->driver(REQ_LEFT_ITEM); break;
-	case KEY_RIGHT: retval = m->driver(REQ_RIGHT_ITEM); break;
-	case KEY_PGDN: m->driver(REQ_SCR_DPAGE); break;
-	case KEY_PGUP: m->driver(REQ_SCR_UPAGE); break;
-	case '\n':
-	case '\r':
-	case KEY_ENTER:
-		item = m->getCurrentItem();
-		break;
-	default: break;
-	}
-
-	return item;
 }
 
 

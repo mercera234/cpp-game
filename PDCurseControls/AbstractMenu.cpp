@@ -151,14 +151,24 @@ void AbstractMenu::clearItems()
 MenuItem* AbstractMenu::basicMenuDriver(int input, AbstractMenu* m) //static 
 {
 	MenuItem* item = nullptr;
-	int retval = -1;
+	
 	switch (input)
 	{
-	case KEY_DOWN: retval = m->driver(REQ_DOWN_ITEM); break;
-	case KEY_UP: retval = m->driver(REQ_UP_ITEM); break;
-	case KEY_LEFT: retval = m->driver(REQ_LEFT_ITEM); break;
-	case KEY_RIGHT: retval = m->driver(REQ_RIGHT_ITEM); break;
-	case KEY_MOUSE: m->driver(input); 
+	case KEY_DOWN: 
+		m->setInput(REQ_DOWN_ITEM);
+		m->processInput(); break;
+	case KEY_UP: 
+		m->setInput(REQ_UP_ITEM);
+		m->processInput(); break;
+	case KEY_LEFT: 
+		m->setInput(REQ_LEFT_ITEM);
+		m->processInput(); break;
+	case KEY_RIGHT: 
+		m->setInput(REQ_RIGHT_ITEM);
+		m->processInput(); break;
+	case KEY_MOUSE: 
+		m->setInput(input);
+		m->processInput();
 		item = m->getCurrentItem();
 		break;
 	

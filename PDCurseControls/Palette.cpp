@@ -74,9 +74,9 @@ LineItem* Palette::getCurrentItem()
 	return (LineItem*)menu.getCurrentItem();
 }
 
-void Palette::driver(int input)
+void Palette::processInput()
 {
-	menu.driver(input);
+	::processInput(menu, input);
 	LineItem* item = (LineItem*)menu.getCurrentItem();
 	selection.setText(item->name);
 }

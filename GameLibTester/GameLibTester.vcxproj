@@ -75,7 +75,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)PDCurseControls\include\external;$(SolutionDir)PDCurseControls;$(SolutionDir)RPGLib;$(SolutionDir)GameLib;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)PDCurseControls\include\external;$(SolutionDir)PDCurseControls;$(SolutionDir)RPGLib;$(SolutionDir)GameLib;$(SolutionDir)PDCurseControlsTester;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -160,6 +160,7 @@
     <ClCompile Include="ExploreStateTest.cpp" />
     <ClCompile Include="ItemBrowserTest.cpp" />
     <ClCompile Include="MainMenuTest.cpp" />
+    <ClCompile Include="menu_driversTest.cpp" />
     <ClCompile Include="TitleScreenTest.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -172,6 +173,9 @@
     <ProjectReference Include="..\RPGLib\RPGLib.vcxproj">
       <Project>{c52c8a11-cbcc-444c-95e2-391f2288828a}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\PDCurseControlsTester\MockMenuItem.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

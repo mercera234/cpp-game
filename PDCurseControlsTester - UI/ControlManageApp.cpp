@@ -26,8 +26,9 @@ void ControlManageApp::modalCallback()
 	MenuItem* item = NULL;
 	switch (cm->getInput())
 	{
-	case KEY_LEFT: m->driver(REQ_LEFT_ITEM);  break;
-	case KEY_RIGHT: m->driver(REQ_RIGHT_ITEM);  break;
+		//broken
+	/*case KEY_LEFT: m->driver(REQ_LEFT_ITEM);  break;
+	case KEY_RIGHT: m->driver(REQ_RIGHT_ITEM);  break;*/
 		//case KEY_UP: m->driver(REQ_UP_ITEM);  break;
 		//case KEY_DOWN: m->driver(REQ_DOWN_ITEM);  break;
 	case '\r':
@@ -69,10 +70,10 @@ void ControlManageApp::callBackTest()
 
 	switch (cm->getInput())
 	{
-	case KEY_LEFT: m->driver(REQ_LEFT_ITEM);  break;
+	/*case KEY_LEFT: m->driver(REQ_LEFT_ITEM);  break;
 	case KEY_RIGHT: m->driver(REQ_RIGHT_ITEM);  break;
 	case KEY_UP: m->driver(REQ_UP_ITEM);  break;
-	case KEY_DOWN: m->driver(REQ_DOWN_ITEM);  break;
+	case KEY_DOWN: m->driver(REQ_DOWN_ITEM);  break;*/
 	case '\r':
 		item = m->getCurrentItem();
 		break;
@@ -116,7 +117,8 @@ void ControlManageApp::callBackTest()
 void ControlManageApp::callBackTest2()
 {
 	Palette* p = (Palette*)cm->getFocusedControl();
-	p->driver(cm->getInput());
+	//broken
+	//p->driver(cm->getInput());
 
 	cm->setExitCode(ExitCode::HANDLED);
 }

@@ -317,13 +317,15 @@ void GridMenu::dirDriver(int input)
 		case REQ_SCR_DPAGE: //not sure if this is the most efficient way to page up and down but it was quick to implement
 			for (int i = 0; i < visibleRows; i++)
 			{
-				driver(REQ_DOWN_ITEM);
+				setInput(REQ_DOWN_ITEM);
+				processInput();
 			}
 			break;
 		case REQ_SCR_UPAGE:
 			for (int i = 0; i < visibleRows; i++)
 			{
-				driver(REQ_UP_ITEM);
+				setInput(REQ_UP_ITEM);
+				processInput();
 			}
 			break;
 		case REQ_FIRST_ITEM:
@@ -396,35 +398,6 @@ void GridMenu::processInput()
 	}
 }
 
-int GridMenu::driver(int input)
-{
-	if (!posted) //only accept input to a posted menu
-		return -1;
-
-	switch (input)
-	{
-	case REQ_DOWN_ITEM:
-	case REQ_UP_ITEM:
-	case REQ_RIGHT_ITEM:
-	case REQ_LEFT_ITEM: 
-	case REQ_SCR_DPAGE:
-	case REQ_SCR_UPAGE:
-	case REQ_FIRST_ITEM:
-	case REQ_LAST_ITEM:
-		dirDriver(input);
-		break;
-	case KEY_MOUSE:
-		mouseDriver();
-		break;
-	//case REQ_TOGGLE_ITEM:
-	//	if (items[currentIndex]->selectable == false)
-	//		break;
-	
-	default: break;
-	}
-
-	return curItem->index;
-}
 
 void GridMenu::setItem(MenuItem* item)
 {

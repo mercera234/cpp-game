@@ -8,6 +8,7 @@
 #include "GameInput.h"
 #include "defaults.h"
 #include "LineFormat.h"
+#include "menu_drivers.h"
 
 BattleProcessor::BattleProcessor()
 {
@@ -246,19 +247,7 @@ void BattleProcessor::driver()
 void BattleProcessor::skillMenuDriver(int input)
 {
 	MenuItem* item = nullptr;
-
-	switch (input)
-	{
-	case GameInput::DOWN_INPUT: skillMenu->driver(REQ_DOWN_ITEM); break;
-	case GameInput::UP_INPUT: skillMenu->driver(REQ_UP_ITEM); break;
-	case GameInput::LEFT_INPUT: skillMenu->driver(REQ_LEFT_ITEM); break;
-	case GameInput::RIGHT_INPUT: skillMenu->driver(REQ_RIGHT_ITEM); break;
-	case GameInput::OK_INPUT:
-		item = skillMenu->getCurrentItem();
-		break;
-	default: break;
-	}
-
+	item = menuDriver(input, skillMenu);
 	
 	if (item != nullptr)
 	{
