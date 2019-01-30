@@ -11,13 +11,12 @@ void fixSpriteSymbols(std::list<Sprite*>& sprites)
 		//setup sprites properly based on type
 		if (GameItem* item = dynamic_cast<GameItem*>(sprite->thing))
 		{
-			//TODO broken
-		/*	switch (item->type)
+			switch (item->type)
 			{
 			case GameItemType::MONEY: sprite->symbol = moneySymbol;  break;
 			default: sprite->symbol = itemSymbol; break;
 			}
-			sprite->impassible = false;*/
+			sprite->impassible = false;
 		}
 	}
 }

@@ -253,19 +253,25 @@ bool ExplorationProcessor::processThingCollisions()
 	{
 		if (GameItem* item = dynamic_cast<GameItem*>(objectSprite->thing))
 		{
-			//TODO broken
-			//switch (item->type)
-			//{
-			//case GameItemType::MONEY:
-			//	resourceManager->getData().alterIntData(GOLD$, item->cost);
+			switch (item->type)
+			{
+			case GameItemType::MONEY:
+				resourceManager->getData().alterIntData(GOLD$, item->cost);
 
-			//	currRoom->sprites.remove(objectSprite);
-			//	break;
+				currRoom->sprites.remove(objectSprite);
+				break;
 
-			//default:
-			////TODO broken	resourceManager->inventory.push_back(item);
-			//	break;
-			//}
+			default:
+			{
+				//TODO needs to be a better way to do this
+				Possession* possession = new Possession;
+				possession->item = item;
+				possession->quantity.setCurr(1);
+				resourceManager->inventory.push_back(possession);
+			}
+				
+				break;
+			}
 			currRoom->sprites.remove(objectSprite);
 		}
 	}
