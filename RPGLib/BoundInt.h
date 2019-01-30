@@ -21,6 +21,10 @@ public:
 
 	void setValues(int minIn, int maxIn, int currIn = 0);
 	void maxOut();
+
+	bool isMaxedOut() { return curr == currMax; }
+	bool isDrained() { return curr == min; }
+
 	//getters/setters
 	
 	//Update the min bound. Will throw an assertion error if greater than the currMax.

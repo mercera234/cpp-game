@@ -183,6 +183,7 @@
     <ClCompile Include="PlayerActorTest.cpp" />
     <ClCompile Include="ResourceManagerTest.cpp" />
     <ClCompile Include="DataPkgTest.cpp" />
+    <ClCompile Include="TargetTest.cpp" />
     <ClCompile Include="TurnTrackerTest.cpp" />
   </ItemGroup>
   <ItemGroup>

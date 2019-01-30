@@ -9,7 +9,7 @@ void setBoundedStat(BoundInt& stat, int min, int currMax, int max, int value)
 }
 
 
-void initTestActor(Actor& player)
+void initDefaultActor(Actor& player)
 {
 	//set thing properties
 	player.symbol = '?';

@@ -180,6 +180,7 @@
     <ClCompile Include="FormFieldTest.cpp" />
     <ClCompile Include="GridMenuTest.cpp" />
     <ClCompile Include="FilePathTest.cpp" />
+    <ClCompile Include="GridMenu_inputTest.cpp" />
     <ClCompile Include="HighlighterTest.cpp" />
     <ClCompile Include="ImageTest.cpp" />
     <ClCompile Include="InputManagerTest.cpp" />

@@ -373,8 +373,7 @@ void ControlManager::passControl(Controllable* c, ControlManager& recipient, Com
 
 bool ControlManager::addTag(const std::string& name, Controllable* c)
 {
-	if (tags.count(name) > 0)
-		return false;
+	assert(tags.count(name) == 0); //why would we ever attempt to add two tags with the same name?
 
 	tags.insert(std::make_pair(name, c));
 	return true;

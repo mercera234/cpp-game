@@ -96,7 +96,7 @@
     <ClCompile Include="OwnedItemRecord.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ActorStatusBoard.cpp">
+    <ClCompile Include="GameItem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -221,7 +221,7 @@
     <ClInclude Include="OwnedItemRecord.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ActorStatusBoard.h">
+    <ClInclude Include="Target.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

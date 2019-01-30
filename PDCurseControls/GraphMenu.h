@@ -10,4 +10,5 @@ public:
 	GraphMenu(WINDOW* win, int capacity);
 	void draw();
 	int driver(int input);
+	void processInput() {}
 };

@@ -165,6 +165,11 @@ namespace PDCurseControlsTester
 			Assert::IsTrue(mi->selected);
 		}
 
-		
+		TEST_METHOD(processInputTest)
+		{
+			MockMenu menu;
+			Assert::AreEqual((int)ExitCode::HANDLED, (int)processInput(menu, 5));
+		}
+
 	};
 }

@@ -5,7 +5,7 @@
 void jsonTest()
 {
 	GameData data;
-	data.loadDataFile("data\\jsontest.txt");
+	data.loadDataFile("data\\json_test.txt");
 	system("pause");
 }
 

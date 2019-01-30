@@ -11,12 +11,13 @@ void fixSpriteSymbols(std::list<Sprite*>& sprites)
 		//setup sprites properly based on type
 		if (GameItem* item = dynamic_cast<GameItem*>(sprite->thing))
 		{
-			switch (item->type)
+			//TODO broken
+		/*	switch (item->type)
 			{
 			case GameItemType::MONEY: sprite->symbol = moneySymbol;  break;
 			default: sprite->symbol = itemSymbol; break;
 			}
-			sprite->impassible = false;
+			sprite->impassible = false;*/
 		}
 	}
 }
@@ -28,7 +29,7 @@ void loadDataFiles(ResourceManager& rm)
 	
 	InputManager& inputMgr = rm.getInputManager();
 	
-	if (configStream.is_open())
+	if (configStream.is_open()) //a failsafe in case the config file is missing
 		inputMgr.loadConfigurationFile(configStream);
 	else
 		loadHardCodedInputs(inputMgr.getInputs());
@@ -38,7 +39,7 @@ void loadDataFiles(ResourceManager& rm)
 	setupDefaultDataKeys(rm);
 
 	GameData& data = rm.getData();
-	data.loadDataFile("data\\jsontest.txt"); //loads all the game data from json file
+	data.loadDataFile("data\\json_test.txt"); //loads all the game data from json file
 
 	//fix up sprites in each room TODO not sure if this is the best way to do this
 	for (auto it = data.getRooms().begin(); it != data.getRooms().end(); it++)

@@ -3,7 +3,7 @@
 #include "FileChooser.h"
 #include "ExitCode.h"
 
-class FileDialog : public DialogWindow
+class FileDialog : public DialogWindow, public InputProcessor
 {
 private:
 	std::string fileChosen = "";
@@ -12,7 +12,7 @@ private:
 public:
 	FileDialog(const std::string& defaultFilePath, FileDialogType type, const std::string& extensionFilter);
 
-	ExitCode processInput(int input);
+	void processInput();
 
 	void setWindow(WINDOW* win);
 	std::string getFileChosen() { return fileChosen; }

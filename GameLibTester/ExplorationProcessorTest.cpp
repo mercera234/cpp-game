@@ -23,7 +23,7 @@ namespace GameLibTester
 		TEST_METHOD(setControlActorTest)
 		{
 			Actor player;
-			initTestActor(player);
+			initDefaultActor(player);
 
 			ep.setControlActor(&player);
 

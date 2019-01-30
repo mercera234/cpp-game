@@ -12,7 +12,7 @@ namespace RPGLibTester
 			GameItem item;
 			item.name = "Potion";
 
-			OwnedItem possession;
+			Possession possession;
 			possession.item = &item;
 
 			OwnedItemRecord record(&possession, 0);
@@ -25,7 +25,7 @@ namespace RPGLibTester
 			GameItem item;
 			item.name = "Potion";
 
-			OwnedItem possession;
+			Possession possession;
 			possession.item = &item;
 
 			OwnedItemRecord record;

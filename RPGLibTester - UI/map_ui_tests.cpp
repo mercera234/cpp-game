@@ -604,7 +604,7 @@ void megaMapTest()
 
 
 	Actor actor;
-	initTestActor(actor);
+	initDefaultActor(actor);
 	
 	Pos actorPos(30, 120);
 

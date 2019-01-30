@@ -7,7 +7,6 @@ void loadDataFiles(ResourceManager& rm);
 void loadHardCodedInputs(std::map<int, Input>& inputs);
 void setupDefaultDataKeys(ResourceManager& rm);
 void setupDefaultGameInputs(std::map<int, Input>& inputs);
-//int getInput(ResourceManager& resourceManager);
 
 
 //game defaults

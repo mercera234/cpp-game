@@ -28,8 +28,6 @@ void GridMenu::init()
 
 	rowSepLen = 0; //most menus will have no gap between rows
 	setItemHeight(1);
-
-	wrapAround = true; //allow by default
 }
 
 
@@ -193,27 +191,6 @@ void GridMenu::wrapLinks()
 			item->unlink(Dir::LEFT);
 	}
 }
-
-
-//this may be obsolete!!
-//void GridMenu::drawMenu()
-//{ 
-//	//clear the submenu
-//	wclear(win);
-//	wbkgd(win, ' ' | colorPair);
-//
-//	wattron(win, colorPair);
-//	//render each item
-//
-//	for (int i = 0; i < (int)items.size(); i++)
-//	{
-//		if (items[i] != NULL && items[i]->hidden) //hidden items are not drawn
-//			continue;
-//		
-//		items[i]->draw();
-//	}
-//
-//}
 
 
 /*Get element from row and col
@@ -385,6 +362,38 @@ void GridMenu::mouseDriver()
 	int col = pX / colWidth;
 
 	setCurrentItem(getElement(row, col));
+}
+
+void GridMenu::processInput()
+{
+	if (!posted) //only accept input to a posted menu
+	{
+		exitCode = ExitCode::NOT_HANDLED;
+		return;
+	}
+		
+
+	switch (input)
+	{
+	case REQ_DOWN_ITEM:
+	case REQ_UP_ITEM:
+	case REQ_RIGHT_ITEM:
+	case REQ_LEFT_ITEM:
+	case REQ_SCR_DPAGE:
+	case REQ_SCR_UPAGE:
+	case REQ_FIRST_ITEM:
+	case REQ_LAST_ITEM:
+		dirDriver(input);
+		break;
+	case KEY_MOUSE:
+		mouseDriver();
+		break;
+		//case REQ_TOGGLE_ITEM:
+		//	if (items[currentIndex]->selectable == false)
+		//		break;
+
+	default: break;
+	}
 }
 
 int GridMenu::driver(int input)

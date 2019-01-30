@@ -233,129 +233,129 @@ void loadMapRoomTest()
 
 void spriteOnMapTest()
 {
-	int screenHeight = 23;
-	int screenWidth = 51;
-	resize_term(screenHeight, screenWidth);
+	//int screenHeight = 23;
+	//int screenWidth = 51;
+	//resize_term(screenHeight, screenWidth);
 
-	WINDOW* screen = dupwin(stdscr);
+	//WINDOW* screen = dupwin(stdscr);
 
-	MapRoom room;
-	room.setWindow(screen);
-	room.setDimensions(screenHeight, screenWidth);
+	//MapRoom room;
+	//room.setWindow(screen);
+	//room.setDimensions(screenHeight, screenWidth);
 
-	Image& img = room.getDisplay();
-	
-	ITwoDStorage<chtype>& tileMap = img.getTileMap();
-	tileMap.fill('.');
+	//Image& img = room.getDisplay();
+	//
+	//ITwoDStorage<chtype>& tileMap = img.getTileMap();
+	//tileMap.fill('.');
 
-	
-	Actor actor;
-	initTestActor(actor);
-	actor.stats.hp.setCurr(5);
-
-
-	//actor.symbol = 
-
-	Pos cPos(screenHeight / 2, screenWidth / 2);
-	Sprite control;
-	control.pos = cPos;
-	control.thing = &actor;
-	control.symbol = '@' | COLOR_YELLOW_BOLD << TEXTCOLOR_OFFSET;
-
-	GameItem item;
-	item.name = "Potion";
-	item.cost = 3;
-	item.type = GameItemType::CONSUMABLE;
-	
-	GameItem money;
-	money.name = "Gold$";
-	money.cost = 50;
-	money.type = GameItemType::MONEY;
-	
-	Actor npc;
-	npc.name = "Alex";
-	
-	
-	Sprite thing1;
-	thing1.thing = &item;
-	thing1.pos.y = 3;
-	thing1.pos.x = 3;
-	thing1.symbol = defaultItemSymbol;
-
-	Sprite thing2;
-	thing2.thing = &money;
-	thing2.pos.y = 20;
-	thing2.pos.x = 20;
-	thing2.symbol = '$' | COLOR_YELLOW_BOLD << TEXTCOLOR_OFFSET;
-
-	Sprite thing3;
-	thing3.thing = &npc;
-	thing3.pos.y = 10;
-	thing3.pos.x = 20;
-	thing3.symbol = '@' | COLOR_CYAN << TEXTCOLOR_OFFSET;
-
-	room.sprites.push_back(&thing1);
-	room.sprites.push_back(&thing2);
-	room.sprites.push_back(&thing3);
-
-	int totalGold = 0;
-	
-	bool playing = true;
-	while (playing)
-	{
-		room.draw();
-
-		
-
-		mvwaddch(screen, control.pos.y, control.pos.x, control.symbol);
-		mvwprintw(screen, screenHeight - 2, screenWidth - 10, "$:%-10u", totalGold);
-		mvwprintw(screen, screenHeight - 3, screenWidth - 10, "HP:%+4u", actor.stats.hp.getCurr());
-
-		wnoutrefresh(screen);
+	//
+	//Actor actor;
+	//initDefaultActor(actor);
+	//actor.stats.hp.setCurr(5);
 
 
-		doupdate();
-		int c = getch();
+	////actor.symbol = 
 
-		switch (c)
-		{
-		case KEY_DOWN: control.pos.y++; break;
-		case KEY_UP: control.pos.y--; break;
-		case KEY_LEFT: control.pos.x--; break;
-		case KEY_RIGHT: control.pos.x++; break;
-		case KEY_ESC: playing = false; continue;
-		}
+	//Pos cPos(screenHeight / 2, screenWidth / 2);
+	//Sprite control;
+	//control.pos = cPos;
+	//control.thing = &actor;
+	//control.symbol = '@' | COLOR_YELLOW_BOLD << TEXTCOLOR_OFFSET;
 
-		//assuming directional button was pressed, collision detection routine runs here
-		
-		Sprite* s = room.checkCollisionDetection(control.pos);
-		if (s != nullptr)
-		{
-			if (GameItem* item = dynamic_cast<GameItem*>(s->thing))
-			{
+	//GameItem item;
+	//item.name = "Potion";
+	//item.cost = 3;
+	//item.type = GameItemType::CONSUMABLE;
+	//
+	//GameItem money;
+	//money.name = "Gold$";
+	//money.cost = 50;
+	//money.type = GameItemType::MONEY;
+	//
+	//Actor npc;
+	//npc.name = "Alex";
+	//
+	//
+	//Sprite thing1;
+	//thing1.thing = &item;
+	//thing1.pos.y = 3;
+	//thing1.pos.x = 3;
+	//thing1.symbol = defaultItemSymbol;
 
-				
-				switch (item->type)
-				{
-				case GameItemType::MONEY: 
-					totalGold += item->cost;
-					room.sprites.remove(s);
-					break;
-				case GameItemType::CONSUMABLE:
-					//
-					((Actor*)control.thing)->alterStat(StatType::HP, 50);
-					break;
-				}
-				room.sprites.remove(s);
-			}
-			else if (Actor* actor = dynamic_cast<Actor*>(s->thing))
-			{
-				control.pos.x++; //do not allow movement on top of npc
+	//Sprite thing2;
+	//thing2.thing = &money;
+	//thing2.pos.y = 20;
+	//thing2.pos.x = 20;
+	//thing2.symbol = '$' | COLOR_YELLOW_BOLD << TEXTCOLOR_OFFSET;
 
-			}
-		}
+	//Sprite thing3;
+	//thing3.thing = &npc;
+	//thing3.pos.y = 10;
+	//thing3.pos.x = 20;
+	//thing3.symbol = '@' | COLOR_CYAN << TEXTCOLOR_OFFSET;
 
-	}
+	//room.sprites.push_back(&thing1);
+	//room.sprites.push_back(&thing2);
+	//room.sprites.push_back(&thing3);
+
+	//int totalGold = 0;
+	//
+	//bool playing = true;
+	//while (playing)
+	//{
+	//	room.draw();
+
+	//	
+
+	//	mvwaddch(screen, control.pos.y, control.pos.x, control.symbol);
+	//	mvwprintw(screen, screenHeight - 2, screenWidth - 10, "$:%-10u", totalGold);
+	//	mvwprintw(screen, screenHeight - 3, screenWidth - 10, "HP:%+4u", actor.stats.hp.getCurr());
+
+	//	wnoutrefresh(screen);
+
+
+	//	doupdate();
+	//	int c = getch();
+
+	//	switch (c)
+	//	{
+	//	case KEY_DOWN: control.pos.y++; break;
+	//	case KEY_UP: control.pos.y--; break;
+	//	case KEY_LEFT: control.pos.x--; break;
+	//	case KEY_RIGHT: control.pos.x++; break;
+	//	case KEY_ESC: playing = false; continue;
+	//	}
+
+	//	//assuming directional button was pressed, collision detection routine runs here
+	//	
+	//	Sprite* s = room.checkCollisionDetection(control.pos);
+	//	if (s != nullptr)
+	//	{
+	//		if (GameItem* item = dynamic_cast<GameItem*>(s->thing))
+	//		{
+
+	//			
+	//			switch (item->type)
+	//			{
+	//			case GameItemType::MONEY: 
+	//				totalGold += item->cost;
+	//				room.sprites.remove(s);
+	//				break;
+	//			case GameItemType::CONSUMABLE:
+	//				//
+	//				((Actor*)control.thing)->alterStat(StatType::HP, 50);
+	//				break;
+	//			}
+	//			room.sprites.remove(s);
+	//		}
+	//		else if (Actor* actor = dynamic_cast<Actor*>(s->thing))
+	//		{
+	//			control.pos.x++; //do not allow movement on top of npc
+
+	//		}
+	//	}
+
+	//}
 
 
 }

@@ -13,8 +13,8 @@ namespace GameLibTester
 		ItemBrowser inventory;
 		GameItem potion;
 		GameItem knife;
-		OwnedItem item;
-		OwnedItem item2;
+		Possession item;
+		Possession item2;
 
 		TEST_METHOD_INITIALIZE(start)
 		{
@@ -26,10 +26,10 @@ namespace GameLibTester
 			knife.description = "A weapon for stabbing";
 
 			item.item = &potion;
-			item.quantity = 1;
+			item.quantity.setCurr(1);
 
 			item2.item = &knife;
-			item2.quantity = 1;
+			item2.quantity.setCurr(1);
 		}
 
 		TEST_METHOD(ctorTest)
@@ -39,7 +39,7 @@ namespace GameLibTester
 
 		TEST_METHOD(setItemsNoneTest)
 		{
-			std::vector<OwnedItem*> items;
+			std::vector<Possession*> items;
 			inventory.setItems(items);
 
 			Assert::AreEqual((int)nullptr, (int)inventory.getCurrentItem());
@@ -47,7 +47,7 @@ namespace GameLibTester
 
 		TEST_METHOD(setItemsTest)
 		{
-			std::vector<OwnedItem*> items;
+			std::vector<Possession*> items;
 			items.push_back(&item);
 			items.push_back(&item2);
 			inventory.setItems(items);
@@ -57,7 +57,7 @@ namespace GameLibTester
 
 		TEST_METHOD(inputTest)
 		{
-			std::vector<OwnedItem*> items;
+			std::vector<Possession*> items;
 			items.push_back(&item);
 			items.push_back(&item2);
 			inventory.setItems(items);
@@ -69,7 +69,7 @@ namespace GameLibTester
 
 		TEST_METHOD(drawTest)
 		{
-			std::vector<OwnedItem*> items;
+			std::vector<Possession*> items;
 			items.push_back(&item);
 			inventory.setItems(items);
 
@@ -82,5 +82,17 @@ namespace GameLibTester
 
 			Assert::AreEqual("->Po", text);
 		}
+
+		//TEST_METHOD(refreshTest)
+		//{
+		//	std::vector<Possession*> items;
+		//	item.quantity.setCurr(0);
+		//	items.push_back(&item);
+		//	items.push_back(&item2);
+		//	inventory.setItems(items);
+
+		//	inventory.draw(); //drawing should refresh the list and will delete the empty item
+		//	Assert::AreEqual(1, (int)items.size());
+		//}
 	};
 }

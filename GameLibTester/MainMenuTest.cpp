@@ -1,6 +1,7 @@
 #include "CppUnitTest.h"
 #include "MainMenu.h"
 #include "defaults.h"
+#include "GameInput.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -18,24 +19,17 @@ namespace GameLibTester
 
 		TEST_METHOD(setResourceManagerTest)
 		{
-			//added the bare minimum to get this to work
-			MegaMap map;
-			Pos pos(1, 1);
-			map.setCursor(&pos.y, &pos.x);
-			map.setDimensions(2, 2);
-
-			Image img;
-			img.setDimensions(2, 2);
-			img.reset();
-			map.setLayerImage(0, img);
-
-			rm.currMap = &map;
-
-			setupDefaultDataKeys(rm);
-
 			mm.setResourceManager(&rm);
 
-			Assert::IsTrue(true);
+			Assert::IsTrue(mm.getResourceManager() == &rm);
 		}
+
+		/*TEST_METHOD(cursorDefaultPositionTest)
+		{
+			mm.setResourceManager(&rm);
+			
+
+			Assert::IsTrue(mm.getResourceManager() == &rm);
+		}*/
 	};
 }

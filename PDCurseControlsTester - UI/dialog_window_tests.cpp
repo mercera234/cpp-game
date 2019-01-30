@@ -106,7 +106,7 @@ void fileDialogWindowTest()
 		doupdate();
 		int c = getch();
 
-		if (dialog.processInput(c) == ExitCode::GO_BACK)
+		if (processInput(dialog, c) == ExitCode::GO_BACK)
 			playing = false;
 	}
 

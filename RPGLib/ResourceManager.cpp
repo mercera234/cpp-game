@@ -3,11 +3,11 @@
 ResourceManager::ResourceManager()
 {
 	//TODO bad idea
-	OwnedItem* blankItem = new OwnedItem;
+	/*OwnedItem* blankItem = new OwnedItem;
 	blankItem->item = nullptr;
 	blankItem->quantity = 0;
 
-	inventory.push_back(blankItem);
+	inventory.push_back(blankItem);*/
 
 	//setup map with null value to start
 	currMap = &theData.getMap(nullName);

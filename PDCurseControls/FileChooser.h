@@ -16,7 +16,7 @@ enum class FileDialogType
 	SAVE_DIALOG
 };
 
-class FileChooser : public Controllable
+class FileChooser : public Controllable, public InputProcessor
 {
 protected:
 	FileDirectory directory;
@@ -44,7 +44,7 @@ public:
 	FileChooser(WINDOW* win, const std::string& workingDir, FileDialogType type, std::string filter = "");
 	void resetDirEntries();
 	
-	void driver(int input);
+	void processInput();
 	std::string filePathDriver();
 	void draw();
 

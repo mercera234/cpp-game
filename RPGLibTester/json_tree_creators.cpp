@@ -41,19 +41,55 @@ void createActorJSONtree(boost::property_tree::ptree& actorsNode)
 void createItemJSONtree(boost::property_tree::ptree& itemsNode)
 {
 	boost::property_tree::ptree itemNode;
-	itemNode.put("name", "Potion");
-	itemNode.put("type", "C");
-	itemNode.put("cost", 10);
-	itemNode.put("value", 25);
+	itemNode.put("name", "Megalixir");
+	itemNode.put("cost", 100000);
+	itemNode.put("targetset", "side single");
+	itemNode.put("targetside", "self");
+	itemNode.put("description", "Restores all HP and MP");
 
+	boost::property_tree::ptree statsNode;
+
+	boost::property_tree::ptree hpNode;
+	hpNode.put("stat", "hp");
+	hpNode.put("value", 9999);
+
+	boost::property_tree::ptree mpNode;
+	mpNode.put("stat", "mp");
+	mpNode.put("value", 999);
+
+	statsNode.push_back(std::make_pair("", hpNode));
+	statsNode.push_back(std::make_pair("", mpNode));
+
+	itemNode.add_child("stats", statsNode);
+	
 	boost::property_tree::ptree itemNode2;
-	itemNode2.put("name", "Gold$");
-	itemNode2.put("type", "M");
-	itemNode2.put("cost", 1);
-	itemNode2.put("value", 1);
+	itemNode2.put("name", "Potion");
+	itemNode2.put("cost", 10);
+	itemNode2.put("targetset", "single");
+	itemNode2.put("targetside", "any");
+	itemNode2.put("stat", "hp");
+	itemNode2.put("value", 25);
+	itemNode2.put("description", "Restores 25 HP");
 
-	itemsNode.push_back(std::make_pair("", itemNode));
-	itemsNode.push_back(std::make_pair("", itemNode2));
+	boost::property_tree::ptree usableNode;
+	usableNode.push_back(std::make_pair("", itemNode));
+	usableNode.push_back(std::make_pair("", itemNode2));
+
+	boost::property_tree::ptree equipNode;
+
+	equipNode.put("name", "Knife");
+	equipNode.put("cost", 20);
+	equipNode.put("part", "weapon");
+	equipNode.put("description", "for stabbing...");
+	equipNode.put("stat", "strength");
+	equipNode.put("value", 25);
+
+	boost::property_tree::ptree equipmentNode;
+	equipmentNode.push_back(std::make_pair("", equipNode));
+
+	itemsNode.push_back(std::make_pair("usable", usableNode));
+	itemsNode.push_back(std::make_pair("equipment", equipmentNode));
+	
 }
 
 void createMapRoomJSONtree(boost::property_tree::ptree& roomsNode)

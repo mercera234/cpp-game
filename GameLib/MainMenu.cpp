@@ -74,11 +74,10 @@ void MainMenu::setWindow(WINDOW* win)
 }
 
 
-int MainMenu::processInput(int input)
+void MainMenu::processInput()
 {
 	cm.setExitCode(HANDLED);
 	cm.handleInput(input);
-	return cm.getExitCode();
 }
 
 
@@ -87,7 +86,7 @@ void MainMenu::processMainMenuInput()
 	int input = cm.getInput();
 	if (input == GameInput::CANCEL_INPUT)
 	{		
-		cm.setExitCode(ExitCode::GO_BACK);
+		exitCode = ExitCode::GO_BACK;
 		return;
 	}
 
@@ -119,6 +118,8 @@ void MainMenu::processMainMenuSelection(LineItem* selection)
 		cm.registerControl(invDialog, KEY_LISTENER, &itemCmd);
 		cm.addTag(invDialogName, invDialog);
 		cm.setFocusedControl(invDialog);
+
+		setItemDescription(invDialog, itemDescDialog);
 	}
 	break;
 	case MainMenuOption::STATUS:
@@ -156,7 +157,7 @@ void MainMenu::processMainMenuSelection(LineItem* selection)
 
 	break;
 	case MainMenuOption::MAIN_QUIT:
-		cm.setExitCode(ExitCode::QUIT_TO_TITLE);
+		exitCode = ExitCode::QUIT_TO_TITLE;
 		return;
 	}
 }
@@ -183,22 +184,20 @@ void MainMenu::InventoryState::processPlayerMenuInput(MainMenu* mm)
 	case GameInput::CANCEL_INPUT:
 	{
 		playerMenu->setCurrentItem(NO_CUR_ITEM);
-		mm->cm.setFocusedControl(mm->cm.getTaggedControl(invDialogName));
+		Controllable* c = mm->cm.getTaggedControl(invDialogName);
+		mm->cm.setFocusedControl(c);
 		return;
 	}
 		break;
 
 	}
 
-	MenuItem* item = menuDriver(input, playerMenu);
+	MenuItem* selectedPlayer = menuDriver(input, playerMenu);
 	
-	if (item)
+	if (selectedPlayer)
 	{
-		Actor& a = mm->resourceManager->playerParty[item->index];
-		a.alterStat(StatType::HP, mm->selectedItem->value);
-
-		//will need more item processing logic here(decrement item, go back to item browser if ran out)
-
+		Actor& a = mm->resourceManager->playerParty[selectedPlayer->index];
+		a.ingestConsumable(*mm->selectedItem);
 	}
 }
 
@@ -245,6 +244,18 @@ void MainMenu::processConfigMenuInput()
 	menu->processInput(input);
 }
 
+void MainMenu::setItemDescription(DialogWindow* invDialog, DialogWindow* itemDescDialog)
+{
+	ItemBrowser* browser = (ItemBrowser*)invDialog->getControl();
+
+	OwnedItemRecord* record = browser->getCurrentItem();
+	selectedItem = record->getPossession();
+
+	TextLabel* lbl = (TextLabel*)itemDescDialog->getControl();
+	lbl->setText(selectedItem->item->description);
+}
+
+
 void MainMenu::processItemInput()
 {
 	int input = cm.getInput();
@@ -253,6 +264,7 @@ void MainMenu::processItemInput()
 	{
 	case GameInput::CANCEL_INPUT:
 	{
+		cm.removeTag(invDialogName);
 		Controllable* itemBrowser = cm.popControl();
 
 		cm.removeTag(itemDescName);
@@ -273,21 +285,13 @@ void MainMenu::processItemInput()
 	} break;
 	}
 
-	
+	DialogWindow* invDialog = (DialogWindow*)cm.getFocusedControl();
+	DialogWindow* itemDescDialog = (DialogWindow*)cm.getTaggedControl(itemDescName);
 
-	DialogWindow* dWin = (DialogWindow*)cm.getFocusedControl();
-	ItemBrowser* browser = (ItemBrowser*)dWin->getControl();
-
+	ItemBrowser* browser = (ItemBrowser*)invDialog->getControl();
 	browser->processInput(input);
 
-	OwnedItemRecord* record = browser->getCurrentItem();
-	selectedItem = record->getPossession()->item;
-	std::string desc = selectedItem->description;
-
-	DialogWindow* itemDescDialog = (DialogWindow*)cm.getTaggedControl(itemDescName);
-	TextLabel* lbl = (TextLabel*)itemDescDialog->getControl();
-
-	lbl->setText(desc);
+	setItemDescription(invDialog, itemDescDialog);
 }
 
 void MainMenu::draw()

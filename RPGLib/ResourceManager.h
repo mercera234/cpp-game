@@ -18,7 +18,7 @@ public:
 	MegaMap* currMap; //the current map that the player is in
 	Actor* getPlayer1();
 
-	std::vector<OwnedItem*> inventory;
+	std::vector<Possession*> inventory;
 	//TODO add setCurrMap(std::string)
 	
 

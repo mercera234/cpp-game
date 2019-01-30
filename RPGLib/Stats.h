@@ -15,10 +15,21 @@ enum class StatType
 	AGILITY
 };
 
+/*A combination of what is manipulated and to what degree*/
+struct StatManipulator
+{
+	StatType type;
+	int value;
+	//may need to include duration variable (temporary, permanent, until condition, etc...)
+};
+
+
+//a mechanism for containing a variety of stats and values
 struct StatDistribution
 {
 	std::map<StatType, int> stats;
-	StatDistribution()
+
+	/*StatDistribution()
 	{
 		stats[StatType::LEVEL] = 0;
 		stats[StatType::EXP] = 0;
@@ -29,5 +40,5 @@ struct StatDistribution
 		stats[StatType::INTELLIGENCE] = 0;
 		stats[StatType::WILL] = 0;
 		stats[StatType::AGILITY] = 0;
-	}
+	}*/
 };

@@ -10,9 +10,14 @@ namespace PDCurseControlsTester
 	{
 		TUI tui;
 		WINDOW* stdscrCpy = nullptr;
-		TEST_METHOD_INITIALIZE(startTUI)
+		TEST_METHOD_INITIALIZE(start)
 		{
 			stdscrCpy = dupwin(stdscr);
+		}
+
+		TEST_METHOD_CLEANUP(end)
+		{
+			delwin(stdscrCpy);
 		}
 
 		TEST_METHOD(constructorTest)
@@ -114,6 +119,11 @@ namespace PDCurseControlsTester
 			//wrap around links are correct
 			Assert::IsFalse(menu.isPosted());
 		}
+
+		
+
+		
+
 
 		/*TEST_METHOD(swapItemsTest)
 		{

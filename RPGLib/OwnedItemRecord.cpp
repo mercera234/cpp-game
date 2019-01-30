@@ -1,6 +1,6 @@
 #include "OwnedItemRecord.h"
 
-OwnedItemRecord::OwnedItemRecord(OwnedItem* possessionIn, int element)
+OwnedItemRecord::OwnedItemRecord(Possession* possessionIn, int element)
 {
 	possession = possessionIn;
 	index = element;

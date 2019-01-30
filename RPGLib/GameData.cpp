@@ -21,6 +21,51 @@ const std::map<std::string, int> colorNameCrossRef =
 	{ colorNames[15], 15 }
 };
 
+enum StringSwitchVal
+{
+	SV_UNKNOWN = -1,
+	SV_SINGLE,
+	SV_SELF,
+	SV_ALL,
+	SV_OPPOSITE,
+	SV_ANY,
+	SV_HP,
+	SV_MP,
+	SV_STRENGTH,
+	SV_DEFENSE,
+	SV_INTELLIGENCE,
+	SV_WILL,
+	SV_AGILITY,
+	SV_WEAPON,
+	SV_TORSO,
+	SV_HEAD,
+	SV_FEET,
+	SV_HANDS,
+	SV_ACCESSORY
+};
+
+
+static const std::map<std::string, StringSwitchVal> switches = {
+	{ "single", SV_SINGLE},
+	{ "self", SV_SELF },
+	{ "any", SV_ANY },
+	{ "all", SV_ALL},
+	{ "opposite", SV_OPPOSITE},
+	{ "hp", SV_HP },
+	{ "mp", SV_MP},
+	{ "strength", SV_STRENGTH},
+	{ "defense", SV_DEFENSE },
+	{ "intelligence", SV_INTELLIGENCE},
+	{ "agility", SV_AGILITY },
+	{ "will", SV_WILL },
+	{ "weapon", SV_WEAPON },
+	{ "torso", SV_TORSO},
+	{ "head", SV_HEAD },
+	{ "feet", SV_FEET},
+	{ "hands", SV_HANDS},
+	{ "accessory", SV_ACCESSORY}
+};
+
 GameData::GameData()
 {
 	loadNullResources();
@@ -130,31 +175,131 @@ GameItem& GameData::getItem(const std::string& name)
 }
 
 
+template<typename gameThing>
+void loadThingProperties(boost::property_tree::ptree& tree, gameThing& thing)
+{
+	thing.name = tree.get<std::string>("name");
+	thing.description = tree.get<std::string>("description");
+}
+
+template<typename gameThing, typename repo>
+void GameData::insertThing(gameThing& thing, repo& r)
+{
+	thing.id = getNextId();
+
+	r.insert(std::make_pair(thing.id, thing));
+	idLookup.insert(std::make_pair(thing.name, thing.id));
+}
+
+
+/*If you have trouble seeing if the property trees are being created properly
+try copy/pasting the data in the boost project to validate it*/
+
+void loadStatData(boost::property_tree::ptree& tree, GameItem& item)
+{
+	boost::optional<std::string> statName = tree.get_optional<std::string>("stat");
+
+	StatType stat;
+	if (statName)
+	{
+		switch (switches.at(*statName))
+		{
+		case SV_HP: stat = StatType::HP; break;
+		case SV_MP: stat = StatType::MP; break;
+		case SV_STRENGTH: stat = StatType::STRENGTH; break;
+		}
+
+		item.effects.statValues.insert(std::make_pair(stat, tree.get<int>("value")));
+	}
+}
+
+void loadTargetData(boost::property_tree::ptree& tree, GameItem& item)
+{
+	TargetScheme& scheme = item.effects.target;
+	std::string targetSide = tree.get<std::string>("targetside");
+
+	if (targetSide == "self") scheme.side = TargetSide::SELF;
+	else if (targetSide == "opposite") scheme.side = TargetSide::OPPOSITE;
+	else scheme.side = TargetSide::ANY_SIDE;
+
+	std::string targetSet = tree.get<std::string>("targetset");
+
+	std::istringstream iss(targetSet);
+	
+	while (!iss.eof())
+	{
+		std::string setParam;
+		iss >> setParam;
+		if (setParam == "single") scheme.set |= TargetSet::SINGLE;
+		else if (setParam == "side") scheme.set |= TargetSet::SIDE;
+		else scheme.set |= TargetSet::ALL;
+	}
+}
+
+
+void loadStats(boost::property_tree::ptree& tree, GameItem& item)
+{
+	boost::optional<boost::property_tree::ptree&> statsData = tree.get_child_optional("stats");
+	if (statsData) //read in all stats
+	{
+		for each (boost::property_tree::ptree::value_type pair in *statsData)
+		{
+			boost::property_tree::ptree& statData = pair.second;
+			loadStatData(statData, item);
+		}
+	}
+	else //read in one stat
+	{
+		loadStatData(tree, item);
+	}
+}
+
+
 void GameData::loadItems(boost::property_tree::ptree& tree)
 {
-	for each (boost::property_tree::ptree::value_type pair in tree)
+	boost::property_tree::ptree& usableData = tree.get_child("usable");
+
+	for each (boost::property_tree::ptree::value_type pair in usableData)
 	{
 		GameItem item;
-		char type;
+		item.type = GameItemType::USABLE;
 
 		boost::property_tree::ptree& itemData = pair.second;
-		item.name = itemData.get<std::string>("name");
-		item.value = itemData.get<int>("value");
+		loadThingProperties(itemData, item);
+		
 		item.cost = itemData.get<int>("cost");
 
-		type = itemData.get<char>("type");
-		switch (type)
-		{
-		case 'M': item.type = GameItemType::MONEY; break;
-		case 'C': item.type = GameItemType::CONSUMABLE; break;
-		case 'E': item.type = GameItemType::EQUIPPABLE; break;
-		case 'K': item.type = GameItemType::KEY; break;
-		}
-		item.id = getNextId();
+		loadTargetData(itemData, item);
+		loadStats(itemData, item);
 
-		gameItems.insert(std::make_pair(item.id, item));
-		idLookup.insert(std::make_pair(item.name, item.id));
+		insertThing(item, gameItems);
 	}
+
+	boost::property_tree::ptree& equipmentData = tree.get_child("equipment");
+	for each (boost::property_tree::ptree::value_type pair in equipmentData)
+	{
+		GameItem item;
+		item.type = GameItemType::EQUIPPABLE;
+
+		boost::property_tree::ptree& equipmentData = pair.second;
+		loadThingProperties(equipmentData, item);
+
+		item.cost = equipmentData.get<int>("cost");
+		
+		std::string equipPart = equipmentData.get<std::string>("part");
+		switch (switches.at(equipPart))
+		{
+		case SV_WEAPON: item.part = EquipPart::WEAPON; break;
+		case SV_HEAD: item.part = EquipPart::HEAD; break;
+		case SV_TORSO: item.part = EquipPart::TORSO; break;
+		default: item.part = EquipPart::BLANK; break;
+		}
+		
+		loadStats(equipmentData, item);
+
+		insertThing(item, gameItems);
+	}
+
 }
 
 void GameData::loadActors(boost::property_tree::ptree& tree)
@@ -189,10 +334,8 @@ void GameData::loadActors(boost::property_tree::ptree& tree)
 		actor.getStat(StatType::INTELLIGENCE).setCurr(actorData.get<int>("intelligence"));
 		actor.getStat(StatType::WILL).setCurr(actorData.get<int>("will"));
 		actor.getStat(StatType::AGILITY).setCurr(actorData.get<int>("agility"));
-		actor.id = getNextId();
-
-		actors.insert(std::make_pair(actor.id, actor));
-		idLookup.insert(std::make_pair(actor.name, actor.id));
+		
+		insertThing(actor, actors);
 	}
 
 }
@@ -230,10 +373,7 @@ void GameData::loadRooms(boost::property_tree::ptree& tree)
 			}
 		}
 
-		room.id = getNextId();
-
-		mapRooms.insert(std::make_pair(room.id, room));
-		idLookup.insert(std::make_pair(room.name, room.id));
+		insertThing(room, mapRooms);
 	}
 }
 
@@ -323,12 +463,7 @@ void GameData::loadMaps(boost::property_tree::ptree& tree)
 			map.setLayerImage(map.getFloorFromIndex(floor), image[floor]);
 		}
 
-
-
-		map.id = getNextId();
-		gameMaps.insert(std::make_pair(map.id, map));
-		idLookup.insert(std::make_pair(map.name, map.id));
-
+		insertThing(map, gameMaps);
 		delete[] image;
 	}
 }
@@ -346,7 +481,18 @@ void GameData::loadDataFile(const std::string& jsonFile)
 {
 	namespace pt = boost::property_tree;
 	pt::ptree root;
-	pt::read_json(jsonFile, root); //reading in the file also validates it
+
+	//verify file exists
+	std::ifstream jsonStream(jsonFile);
+	if (jsonStream.is_open())
+	{
+		jsonStream.close(); //close the input stream, so it can be read in by the boost method
+		pt::read_json(jsonFile, root); //reading in the file also validates it
+	}
+	else
+	{
+		//build demo data file and load in root
+	}
 
 	loadEverything(root);
 }

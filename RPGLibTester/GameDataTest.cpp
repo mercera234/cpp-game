@@ -114,8 +114,34 @@ namespace GameLibTester
 			createItemJSONtree(itemsNode);
 
 			data.loadItems(itemsNode);
-			Assert::AreEqual(3, (int)data.getItems().size()); //3 = 2 items + 1 null item 
+			Assert::AreEqual(4, (int)data.getItems().size()); //4 = 3 items + 1 null item 
 		}
+
+
+		//save this test elsewhere, for testing passing derived class into a map for a base class
+		//struct ATest
+		//{
+		//	int x;
+		//};
+
+		//struct BTest : public ATest
+		//{
+		//	double y;
+		//};
+
+		//TEST_METHOD(mapLoadTest)
+		//{
+		//	std::map<int, ATest> t;
+
+		//	BTest b;
+		//	b.x = 478;
+		//	b.y = 179.346;
+		//	t.insert(std::make_pair(1, b));
+
+		//	BTest& bref = (BTest&)t[1];
+
+		//	Assert::AreEqual(179, (int)bref.y);
+		//}
 
 		TEST_METHOD(loadRoomsTest)
 		{

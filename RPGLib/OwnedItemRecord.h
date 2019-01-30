@@ -5,17 +5,17 @@
 class OwnedItemRecord : public MenuItem
 {
 private:
-	OwnedItem* possession;
+	Possession* possession;
 public:
 	OwnedItemRecord() {}
-	OwnedItemRecord(OwnedItem* possessionIn, int element);
+	OwnedItemRecord(Possession* possessionIn, int element);
 
 	void draw();
 
 	//setters/getters
 
-	void setPossession(OwnedItem* possessionIn) { possession = possessionIn; }
-	OwnedItem* getPossession() { return possession; }
+	void setPossession(Possession* possessionIn) { possession = possessionIn; }
+	Possession* getPossession() { return possession; }
 
 
 };

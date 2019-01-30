@@ -8,5 +8,6 @@ private:
 public:
 	MockMenu();
 	int driver(int input) { return -1; }
+	void processInput() { }
 	void draw() {}
 };

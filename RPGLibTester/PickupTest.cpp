@@ -16,7 +16,7 @@ namespace RPGLibTester
 			item.description = "Soothes nerves";
 			item.symbol = defaultItemSymbol;
 			item.cost = 3;
-			item.type = GameItemType::CONSUMABLE;
+//			item.type = GameItemType::CONSUMABLE;
 
 			Assert::IsTrue(true);
 		}

@@ -23,7 +23,6 @@ private:
 	/*Used to assign a new id to a thing. Once assigned, nextId is incremented. */
 	int nextId = 0;
 
-//	std::map<std::string, int> integerData;
 	std::map<std::string, std::string> stringData;
 	//Contains all global BoundInts in the game. For some reason this doesn't provide useful data in debugger such as size() ... etc.
 	std::map<std::string, BoundInt> bIntData;
@@ -36,7 +35,8 @@ private:
 
 	std::map<std::string, int> idLookup; //a crossref map for names to ids
 
-	
+	template<typename gameThing, typename repo>
+	void insertThing(gameThing& thing, repo& r);
 
 public:
 	GameData();
@@ -72,6 +72,9 @@ public:
 	void loadEnemyPools(boost::property_tree::ptree& tree);
 	void loadMaps(boost::property_tree::ptree& tree);
 	void loadEverything(boost::property_tree::ptree& jsonFile);
+
+
+	
 
 	//id routines
 

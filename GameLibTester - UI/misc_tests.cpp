@@ -58,13 +58,8 @@ void inventoryTest()
 	ItemBrowser inventory;
 	inventory.setWindow(newwin(10, 20, 1, 1));
 
-	std::vector<OwnedItem*> items;
+	std::vector<Possession*> items;
 	
-	/*OwnedItem blankItem;
-	blankItem.item = nullptr;
-	blankItem.quantity = 0;
-	items.push_back(&blankItem);*/
-
 	GameItem potion;
 	potion.name = "Potion";
 	potion.description = "Restores 50 hp";
@@ -73,13 +68,13 @@ void inventoryTest()
 	knife.name = "Knife";
 	knife.description = "A weapon for stabbing";
 
-	OwnedItem item;
+	Possession item;
 	item.item = &potion;
-	item.quantity = 1;
+	item.quantity.setCurr(1);
 
-	OwnedItem item2;
+	Possession item2;
 	item2.item = &knife;
-	item2.quantity = 1;
+	item2.quantity.setCurr(1);
 
 	items.push_back(&item);
 	items.push_back(&item2);
@@ -123,13 +118,13 @@ void inventoryTest()
 void mainMenuTest()
 {
 	Actor player1;
-	initTestActor(player1);
+	initDefaultActor(player1);
 	player1.name = "Test guy9012345";
 	player1.stats.hp.setCurrMax(100);
 	player1.stats.hp.setCurr(97);
 
 	Actor player2;
-	initTestActor(player2);
+	initDefaultActor(player2);
 	player2.name = "2nd test guy   ";
 	player2.stats.hp.setCurrMax(68);
 	player2.stats.hp.setCurr(62);
@@ -151,18 +146,29 @@ void mainMenuTest()
 	rm.currMap->setCursor(&pos.y, &pos.x);
 
 	//setup some items
-	OwnedItem item1;
+	Possession item1;
 	item1.item = &data.getItem("Potion");
-	item1.quantity = 1;
+	item1.quantity.setCurr(1);
 	item1.item->description = "Restores 50 HP."; //TODO this should be added to the json file
 
-	OwnedItem item2;
+	Possession item2;
 	item2.item = &data.getItem("Knife");
-	item2.quantity = 1;
+	item2.quantity.setCurr(1);
 	item2.item->description = "A sharp knife for attacking.";
+
+	Possession item3;
+	GameItem megalixer;
+	megalixer.name = "Megalixer";
+	megalixer.effects.statValues.insert(std::make_pair(StatType::HP, 9999));
+	megalixer.effects.statValues.insert(std::make_pair(StatType::MP, 9999));
+	megalixer.description = "Heals all";
+
+	item3.item = &megalixer;
+	item3.quantity.setCurr(1);
 
 	rm.inventory.push_back(&item1);
 	rm.inventory.push_back(&item2);
+	rm.inventory.push_back(&item3);
 
 	MainMenu mm(&rm);
 	mm.setWindow(newwin(gameScreenHeight, gameScreenWidth, 0, 0));
@@ -189,8 +195,9 @@ void mainMenuTest()
 			break;
 		default:
 		{
-			playing = (mm.processInput(input) == HANDLED);
-			
+			ExitCode code = processInput(mm, input);
+			if (code != ExitCode::HANDLED)
+				playing = false;
 		}
 		break;
 		}

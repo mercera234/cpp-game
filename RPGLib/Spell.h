@@ -1,17 +1,7 @@
 #pragma once
 
 #include <iostream>
-using namespace std;
 
-
-//#define SetBit(v,c) (v |= (1 << c))
-//#define ClearBit(v,c) (v &= (~(1 << c)))
-//#define CheckBit(v,c) (v & (1 << c))
-//
-
-//
-
-//
 //enum //ability effects(type for Effect)
 //{
 //	ALTER_HP = 0,
@@ -45,28 +35,14 @@ using namespace std;
 //#define EARTH 4
 //#define LIGHTNING 5
 
+#include "Target.h"
 
-//targetSet types
-#define	TGT_SINGLE 0x1 // = 0x1, usable on any single target
-#define TGT_SIDE 0x2 //, // = 0x2 usable on either side
-#define TGT_ALL	0x4 //usable on every combatant
-
-//targetSide defines
-#define ANY_SIDE 0
-#define SELF_SIDE 1 //self and opp sides intentionally made opposite of each other
-#define OPP_SIDE -1
-
-struct TargetScheme
-{
-	unsigned char set;
-	char side;
-};
 
 struct Actor;
 struct Spell
 {
-	string name;
-	string desc; //short description of spell
+	//string name;
+	//string desc; //short description of spell
 	unsigned short cost; //mp cost of spell
 	int value;
 	int elemental; //identifies the affinity of the spell (fire, ice, water, earth, lightning)

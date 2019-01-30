@@ -8,6 +8,7 @@
 #include "GameItem.h"
 #include "OwnedItemRecord.h"
 #include "TextLabel.h"
+#include <algorithm>
 
 
 ItemBrowser::ItemBrowser()
@@ -27,14 +28,14 @@ void ItemBrowser::processInput(int input)
 }
 
 
-void ItemBrowser::setItems(std::vector<OwnedItem*>& items)
+void ItemBrowser::setItems(std::vector<Possession*>& items)
 {
 	inventoryPtr = &items; //save reference to items
 
 	menu.resetItems(items.size(), 1);
 
 	int element = 0;
-	for each (OwnedItem* item in items)
+	for each (Possession* item in items)
 	{
 		menu.setItem(new OwnedItemRecord(item, element++));
 	}
@@ -45,7 +46,26 @@ void ItemBrowser::setItems(std::vector<OwnedItem*>& items)
 
 void ItemBrowser::draw()
 {
+	refreshList();
+
 	menu.draw();
+}
+
+void ItemBrowser::refreshList()
+{
+	/*int removeCount = 0;
+	std::for_each(inventoryPtr->begin(), inventoryPtr->end(), 
+		[&removeCount](Possession* posn) {
+
+		if (posn->quantity.getCurr() <= 0)
+		{
+			posn->item = 
+		}
+		
+	});*/
+
+
+
 }
 
 OwnedItemRecord* ItemBrowser::getCurrentItem()

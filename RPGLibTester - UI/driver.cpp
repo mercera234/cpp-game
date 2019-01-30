@@ -15,7 +15,7 @@ int main()
 {
 	TUI tui;
 	
-	loadConfigurationTextFile();
+	jsonTest();
 	
 		
 	return 0;

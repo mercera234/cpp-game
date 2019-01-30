@@ -29,18 +29,18 @@ void fileChooserTest(FileDialogType dialogType)
 		//driver here
 		switch (c)
 		{
-		case KEY_DOWN: fd.driver(REQ_DOWN_ITEM); break;
-		case KEY_UP: fd.driver(REQ_UP_ITEM); break;
-		case KEY_PGDN: fd.driver(REQ_SCR_DPAGE); break;
-		case KEY_PGUP: fd.driver(REQ_SCR_UPAGE); break;
-		case KEY_HOME: fd.driver(REQ_FIRST_ITEM); break;
-		case KEY_END: fd.driver(REQ_LAST_ITEM); break;
+		case KEY_DOWN: ::processInput(fd, REQ_DOWN_ITEM); break;
+		case KEY_UP: ::processInput(fd, REQ_UP_ITEM); break;
+		case KEY_PGDN: ::processInput(fd, REQ_SCR_DPAGE); break;
+		case KEY_PGUP: ::processInput(fd, REQ_SCR_UPAGE); break;
+		case KEY_HOME: ::processInput(fd, REQ_FIRST_ITEM); break;
+		case KEY_END: ::processInput(fd, REQ_LAST_ITEM); break;
 		case KEY_ESC: playing = false; break;
 		case '\r':
 			fileChosen = fd.filePathDriver();
 			break;
 		default:
-			fd.driver(c);
+			::processInput(fd, c);
 			break;
 		}
 

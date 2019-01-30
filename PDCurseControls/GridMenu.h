@@ -41,9 +41,9 @@ private:
 	unsigned short ulMenuRow; //the top most visible row in the menu
 	unsigned short ulMenuCol; //the left most visible col in the menu
 
-	bool wrapAround; //true if a user can navigate off boundary of menu to go from one edge to its opposite.
+	bool wrapAround = true; //true if a user can navigate off boundary of menu to go from one edge to its opposite.
 
-	bool posted; //Grid Menus have to be posted. They should not be displayed without having their internal pointers hooked up
+	bool posted = false; //Grid Menus have to be posted. They should not be displayed without having their internal pointers hooked up
 
 	//private methods
 	void init();
@@ -84,7 +84,10 @@ public:
 	//overridden
 	//handle key input
 	int driver(int input); 
-	
+
+	//overridden
+	//handle key input
+	void processInput();
 
 	/*Exchange two items in the same menu*/
 	bool swapItems(int index1, int index2);

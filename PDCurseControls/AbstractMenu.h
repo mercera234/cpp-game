@@ -1,5 +1,6 @@
 #pragma once
 #include "Controllable.h"
+#include "InputProcessor.h"
 #include "MenuItem.h"
 #include "curses.h"
 #include <iostream>
@@ -31,7 +32,7 @@ const short NO_CUR_ITEM = -1;
 const std::string defaultCursor = "->";
 const std::string shortCursor = ">";
 
-class AbstractMenu : public Controllable
+class AbstractMenu : public Controllable, public InputProcessor
 {
 protected:
 	/* The container for the items.
@@ -82,6 +83,8 @@ public:
 	//TODO replace this by having this class inherit InputProcessor interface
 	/* Handle menu input from user*/
 	virtual int driver(int input) = 0;
+
+	virtual void processInput() = 0;
 
 	//convenience methods(we might not need these next two)
 	/* Set item at index with value of 'selected'. True on success. */

@@ -7,6 +7,7 @@
 #include "Storable.h"
 #include "GridMenu.h"
 #include "Stats.h"
+#include "GameItem.h"
 
 //character types
 enum class ActorType
@@ -41,22 +42,28 @@ struct Actor : public Thing//, public Storable
 	ActorType type;
 	
 	BoundInt money;
-
-	//GridMenu* inventory;
-	//do this differently!
-	//int skills; //each bit represents 1 ability so, there are a max of 32
-	
-	//int weapon; //number is a reference to weapon in MIL
-    //armor
-	//item
 	
 	//int ailments; //not sure if this should be with Actor or ActorDef
 	/*void save(std::ofstream& saveFile);
 	void load(std::ifstream& loadFile);*/
+	GameItem* helmet = nullptr;
+	GameItem* armor = nullptr;
+	GameItem* gloves = nullptr;
+	GameItem* boots = nullptr;
+	GameItem* weapon = nullptr;
+	GameItem* accessory = nullptr;
 
-
-	void alterStat(StatType statType, int amount);
+	bool alterStat(StatType statType, int amount);
 	BoundInt& getStat(StatType statType);
+
+	bool ingestConsumable(Possession& posn);
+
+	/*Equip a possession on the actor. When equipped, item is removed from inventory and pointer to item is maintained in Actor object.
+	Once equipped, the actor stats are temporarily altered until item is unequipped or switched to a different item.
+	For example a sword with +5 strength increases Actor strength by 5 until it is removed.*/
+	bool equip(Possession& posn);
+	GameItem* unEquip(EquipPart part);
+
 	/*
 	The numeric values of an Actor that represent internal non-tangible qualities that determine effectiveness in battle and longterm qualities.
 	Numeric values to define an actor stats.
@@ -121,23 +128,6 @@ struct Actor : public Thing//, public Storable
 	Actor();
 };
 
-/*
-Actor - An instantiation of a CharDef. A copy of a CharDef that can be manipulated until we are ready to dispose of it
-*/
-//struct Actor
-//{
-//	unsigned int defIndex; //index of chardefinition
-//	ActorDef* def; //actual definition
-//
-//	//CharICS* charICS; //handles inventory for character
-//    short type;
-//    int currHp;
-//	int currMp;
-//    int x, y;//relative to map window
-//	int prevX, prevY; //previous position
-//	/*bool save(ofstream* saveFile);
-//	bool load(ifstream* loadFile);*/
-//};
 
 
 

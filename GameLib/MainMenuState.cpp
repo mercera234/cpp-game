@@ -38,7 +38,7 @@ void MainMenuState::loadState()
 
 void MainMenuState::processInput(GameStateManager& manager, int input)
 {
-	int exitCode = mm.processInput(input);
+	ExitCode exitCode = ::processInput(mm, input);
 
 	switch (exitCode)
 	{

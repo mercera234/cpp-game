@@ -1,4 +1,6 @@
 #include "Actor.h"
+#include <assert.h>
+#include <algorithm>
 
 Actor::Actor()
 {
@@ -21,12 +23,14 @@ Actor::Actor()
 
 }
 
-void Actor::alterStat(StatType statType, int amount)
+bool Actor::alterStat(StatType statType, int amount)
 {
 	BoundInt& stat = getStat(statType);
 
-	int startValue = stat.getCurr();
-	stat.setCurr(startValue += amount);
+	const int startValue = stat.getCurr();
+	stat.setCurr(startValue + amount);
+
+	return stat.getCurr() != startValue; //true if current value changed
 }
 
 
@@ -52,10 +56,96 @@ BoundInt& Actor::getStat(StatType statType)
 }
 
 
+bool Actor::ingestConsumable(Possession& posn)
+{
+	if (posn.item == nullptr)
+		return false;
+
+	GameItem* item = posn.item;
+	if (item->type != GameItemType::USABLE)
+	{
+		return false;
+	}
+	/*if ((item = dynamic_cast<UsableItem*>(posn.item)) == nullptr)
+		return false;*/
+
+	TargetEffects& t = item->effects;
+	bool anyChange = false;
+
+	std::for_each(t.statValues.begin(), t.statValues.end(),
+		[this, &anyChange](std::pair<StatType, int> p) {
+		bool altered = alterStat(p.first, p.second);
+
+		if (anyChange == false && altered)
+			anyChange = true;
+	});
+
+	if (anyChange) //item was consumed
+	{
+		posn.quantity.alterCurr(-1);
+	}
+	
+	return true;
+}
 
 
+bool Actor::equip(Possession& posn)
+{
+	if (posn.item == nullptr)
+		return false;
 
+	GameItem* item = posn.item;
+	if (item->type != GameItemType::EQUIPPABLE)
+		return false;
 
+	/*if ((item = dynamic_cast<EquippableItem*>(posn.item)) == nullptr)
+		return false;*/
+
+	bool anyChange = true;
+	switch (item->part)
+	{
+	case EquipPart::WEAPON: weapon = item; break;
+	case EquipPart::HEAD: helmet = item; break;
+		//TODO more to do here
+	default:
+		anyChange = false; //item not equipped
+		break;
+	}
+
+	if (anyChange) //item should be removed from inventory since it is with actor
+	{
+		TargetEffects& t = item->effects;
+		std::for_each(t.statValues.begin(), t.statValues.end(),
+			[this, &anyChange](std::pair<StatType, int> p) {
+			alterStat(p.first, p.second);
+		});
+
+		posn.quantity.alterCurr(-1);
+	}
+
+	return true;
+}
+
+GameItem* Actor::unEquip(EquipPart part)
+{
+	GameItem* removedItem = nullptr;
+	switch (part)
+	{
+	case EquipPart::WEAPON: removedItem = weapon; weapon = nullptr; break;
+	case EquipPart::HEAD: removedItem = helmet; helmet = nullptr; break;
+	}
+
+	if (removedItem == nullptr) //nothing was unequipped
+		return nullptr;
+
+	TargetEffects& t = removedItem->effects;
+	std::for_each(t.statValues.begin(), t.statValues.end(),
+		[this](std::pair<StatType, int> p) {
+		alterStat(p.first, -p.second); //negate the amount since it is being removed
+	});
+
+	return removedItem; //once removed it can be returned to inventory or sold, etc...
+}
 
 //int Actor::save(std::ofstream& saveFile)
 //{

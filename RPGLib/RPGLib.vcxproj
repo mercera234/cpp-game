@@ -122,7 +122,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ActorStatusBoard.h" />
     <ClInclude Include="actor_helper.h" />
     <ClInclude Include="Actor.h" />
     <ClInclude Include="AutoMap.h" />
@@ -159,6 +158,7 @@
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Spell.h" />
     <ClInclude Include="Stats.h" />
+    <ClInclude Include="Target.h" />
     <ClInclude Include="TextParamValue.h" />
     <ClInclude Include="Thing.h" />
     <ClInclude Include="TileEffect.h" />
@@ -167,7 +167,6 @@
   <ItemGroup>
     <ClCompile Include="Actor.cpp" />
     <ClCompile Include="ActorCard.cpp" />
-    <ClCompile Include="ActorStatusBoard.cpp" />
     <ClCompile Include="actor_helper.cpp" />
     <ClCompile Include="AutoMap.cpp" />
     <ClCompile Include="BattleAlgorithm.cpp" />
@@ -178,6 +177,7 @@
     <ClCompile Include="Factory.cpp" />
     <ClCompile Include="FreeMovementProcessor.cpp" />
     <ClCompile Include="GameData.cpp" />
+    <ClCompile Include="GameItem.cpp" />
     <ClCompile Include="OwnedItemRecord.cpp" />
     <ClCompile Include="GameStateManager.cpp" />
     <ClCompile Include="KeyComparators.cpp" />

@@ -17,7 +17,7 @@
 
 /*The main menu to be used in game for checking player status, using inventory items, etc...
 Designed for a 23 x 51 window. */
-class MainMenu : public Controllable
+class MainMenu : public Controllable, public InputProcessor
 {
 private:
 	ControlManager cm;
@@ -42,7 +42,7 @@ private:
 
 	
 	Actor currPlayer; //a copy of the current player used for displaying info
-	GameItem* selectedItem;
+	Possession* selectedItem;
 
 	void init();
 	
@@ -58,6 +58,7 @@ private:
 
 	SimpleCommand<MainMenu> itemCmd;
 	void processItemInput();
+	void setItemDescription(DialogWindow* invDialog, DialogWindow* itemDescDialog);
 	
 	//inner classes for state
 	struct SelectionState
@@ -90,7 +91,7 @@ public:
 	MainMenu(ResourceManager* resourceManagerIn);
 	
 	void draw();
-	int processInput(int input);
+	void processInput();
 	void setWindow(WINDOW* win);
 
 	~MainMenu();
@@ -98,6 +99,9 @@ public:
 	void setResourceManager(ResourceManager* resourceManagerIn);
 
 	//setters/getters
-	
+
+	ResourceManager* getResourceManager() const { return resourceManager; }
+
+
 };
 

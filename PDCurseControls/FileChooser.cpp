@@ -143,7 +143,6 @@ void FileChooser::draw()
 	wclear(win);
 
 	//set up dividers
-	//char* divider = "----------------------------------------";
 	mvwaddstr(win, 1, 0, divider);
 	mvwaddstr(win, getmaxy(win) - 2, 0, divider);
 	wnoutrefresh(win);
@@ -165,7 +164,6 @@ std::string FileChooser::filePathDriver()
 		if (fileNameField.getText().compare("") != 0) //if hit enter and there is text in field, 
 		{
 			retPath.append(directory.getPath() + '\\' + fileNameField.getText());
-			//retPath.append(fileNameField.getText()); //retPath will be fullpath and selected file name
 		}
 		else //no text in field, which means, must be directory
 		{
@@ -201,7 +199,7 @@ bool FileChooser::navigateDownDirectory(const std::string& dirName)
 }
 
 
-void FileChooser::driver(int input)
+void FileChooser::processInput()
 {
 	if (input >= MIN_MENU_COMMAND && input <= MAX_MENU_COMMAND) //route input to menu
 	{

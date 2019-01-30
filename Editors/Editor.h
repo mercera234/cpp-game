@@ -187,7 +187,7 @@ void Editor<Receiver>::fileDialogDriver()
 {
 	FileDialog* dialog = (FileDialog*)globalCm.getFocusedControl();
 	
-	ExitCode exitCode = dialog->processInput(globalCm.getInput());
+	ExitCode exitCode = ::processInput(*dialog, globalCm.getInput());  //dialog->processInput(globalCm.getInput());
 	if (exitCode == ExitCode::GO_BACK)
 	{
 		globalCm.setExitCode(exitCode);

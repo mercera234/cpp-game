@@ -52,7 +52,7 @@
   <Class Name="MovementProcessor" Collapsed="true">
     <Position X="4.25" Y="9.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAQGAACAAAAaAJAAAgAwACAASAAAoAADQAEhAwSBCBA=</HashCode>
+      <HashCode>AAQGAACAAAAaAJAAAgAwACAAQIAAoAAHQAEhAwSBCAA=</HashCode>
       <FileName>MovementProcessor.h</FileName>
     </TypeIdentifier>
   </Class>
@@ -98,39 +98,11 @@
       <FileName>TurnTracker.h</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="MenuItem" Collapsed="true">
-    <Position X="21" Y="2" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AEAAAAAAAAAAQBEQgAIIADgCCAKAAQLAAE3Aw0ABFEA=</HashCode>
-      <FileName>f:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\PDCurseControls\MenuItem.h</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="Drawable" Collapsed="true">
-    <Position X="16.25" Y="0.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>f:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\PDCurseControls\Drawable.h</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="Controllable" Collapsed="true">
-    <Position X="16.25" Y="3.25" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>CICgAAACDAASQAKEIQIAAAACABgAgACASKAIAIipEAQ=</HashCode>
-      <FileName>f:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\PDCurseControls\Controllable.h</FileName>
-    </TypeIdentifier>
-  </Class>
   <Class Name="FilterPattern" Collapsed="true">
     <Position X="14" Y="7" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAQAAAAKAAAAAAAAAAAAAFAAAgAQAAAA=</HashCode>
       <FileName>f:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\PDCurseControls\FilterPattern.h</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="ControlDecorator" Collapsed="true">
-    <Position X="14" Y="5.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAEAAAAAAAAAAAAAAAACAAAAAAAQAAAA=</HashCode>
-      <FileName>f:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\PDCurseControls\ControlDecorator.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="MapRoom" Collapsed="true">
@@ -178,7 +150,7 @@
   <Class Name="ResourceManager" Collapsed="true">
     <Position X="25.25" Y="1.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAQAAIAAELAAAAAAJAyEAIAAAQAAFBAAAAAwAYQIQI=</HashCode>
+      <HashCode>AAEQAAAAAACAAAAAAAAAEAAAAAAAAAAiAAAIAAAQIQA=</HashCode>
       <FileName>ResourceManager.h</FileName>
     </TypeIdentifier>
   </Class>
@@ -199,8 +171,36 @@
   <Class Name="BoundInt" Collapsed="true">
     <Position X="23.5" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>EAIAEAAQAAASAAAAAEIBMUAAAAABAAAAAACAEAACBDA=</HashCode>
+      <HashCode>EAIAEAAQAAASAAAAAEIBMUQAAAABAAAAAASAEAACBDA=</HashCode>
       <FileName>BoundInt.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MenuItem" Collapsed="true">
+    <Position X="21" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAAAAAAAQBEQgAIIADgCCAKAAQLAAE3Aw0ABFEA=</HashCode>
+      <FileName>f:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\PDCurseControls\MenuItem.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Drawable" Collapsed="true">
+    <Position X="16.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>f:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\PDCurseControls\Drawable.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Controllable" Collapsed="true">
+    <Position X="16.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CICgAAACDAASQAKEIQIBAAACABgAgACASKAIAKipEAQ=</HashCode>
+      <FileName>f:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\PDCurseControls\Controllable.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ControlDecorator" Collapsed="true">
+    <Position X="14" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAEAAAAAAAAAAAAAAAACAAAAAAAQAAAA=</HashCode>
+      <FileName>f:\Users\Alex Mercer\Documents\Visual Studio 2015\Projects\Project1\PDCurseControls\ControlDecorator.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="TextPiece" Collapsed="true">
@@ -213,7 +213,7 @@
   <Struct Name="Actor" Collapsed="true">
     <Position X="14.25" Y="1.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAIAAAAQAICAgAAAAAAAAAAAAAABAAAAAAAAAAAAkAA=</HashCode>
+      <HashCode>AAIAIgAQAAAAgAEAAAABAAAACAABgAAAgAAAIBAAkAA=</HashCode>
       <FileName>Actor.h</FileName>
     </TypeIdentifier>
   </Struct>
@@ -235,20 +235,20 @@
     <Position X="27" Y="3.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAIQAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Spell.h</FileName>
+      <FileName>Target.h</FileName>
     </TypeIdentifier>
   </Struct>
   <Struct Name="Spell" Collapsed="true">
     <Position X="23.5" Y="3.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAIAAAAAAAAAAAAAAAAAAAAAAAAUCCBAQAAAAAAAAAA=</HashCode>
+      <HashCode>AAIAAAAAAAAAAAAAAAAAAAAAAAAQCCAAQAAAAAAAAAA=</HashCode>
       <FileName>Spell.h</FileName>
     </TypeIdentifier>
   </Struct>
   <Struct Name="GameItem" Collapsed="true">
     <Position X="3" Y="1.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAARACAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAA=</HashCode>
       <FileName>GameItem.h</FileName>
     </TypeIdentifier>
   </Struct>

@@ -8,6 +8,6 @@ void alterStatValue(BoundInt& stat, int amount); //use negative amount for decre
 bool isAlive(Actor& actor);
 
 
-void initTestActor(Actor& player);
+void initDefaultActor(Actor& player);
 
 //Actor* createNPCActor();
