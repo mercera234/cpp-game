@@ -10,6 +10,13 @@
 #include "CenteredFormat.h"
 
 
+void DialogBuilder::setDialogControl(Controllable* control, DialogWindow& dWin, Rect& r)
+{
+	dWin.setControl(control);
+	dWin.setWindow(TUI::winMgr.newWin(r.height, r.width, r.origin.y, r.origin.x));
+}
+
+
 void DialogBuilder::buildMainMenu(DialogWindow& dWin, Rect r)
 {
 	GridMenu* mainMenu = new GridMenu(); //the dialogWindow will delete
@@ -37,8 +44,7 @@ void DialogBuilder::buildMainMenu(DialogWindow& dWin, Rect r)
 
 	mainMenu->setCurrentItem(0);
 
-	dWin.setControl(mainMenu);
-	dWin.setWindow(TUI::winMgr.newWin(r.height, r.width, r.origin.y, r.origin.x));
+	setDialogControl(mainMenu, dWin, r);
 }
 
 void DialogBuilder::buildPlayerMenu(DialogWindow& dWin, Rect r)
@@ -64,9 +70,7 @@ void DialogBuilder::buildPlayerMenu(DialogWindow& dWin, Rect r)
 	playerMenu->setFocus(false);
 	playerMenu->post(true);
 
-	dWin.setControl(playerMenu);
-	dWin.setWindow(TUI::winMgr.newWin(r.height, r.width, r.origin.y, r.origin.x));
-
+	setDialogControl(playerMenu, dWin, r);
 }
 
 
@@ -75,10 +79,6 @@ void DialogBuilder::buildDesc(DialogWindow& dWin, Rect r)
 	TextBoard* descContent = new TextBoard();
 
 	descContent->setWindow(TUI::winMgr.newWin(r.height - 2, r.width - 2, r.origin.y + 1, r.origin.x + 1));
-
-	dWin.setControl(descContent);
-	dWin.setWindow(TUI::winMgr.newWin(r.height, r.width, r.origin.y, r.origin.x));
-
 
 	MegaMap* currMap = rm->currMap;
 	int id = currMap->getCurrMapRoomId();
@@ -92,6 +92,8 @@ void DialogBuilder::buildDesc(DialogWindow& dWin, Rect r)
 	descContent->addPiece(mapText);
 	descContent->addPiece(roomText);
 	descContent->addPiece(floor);
+
+	setDialogControl(descContent, dWin, r);
 }
 
 
@@ -100,8 +102,7 @@ void DialogBuilder::buildMainMenuBody(DialogWindow& dWin, Rect r)
 	TextBoard* bodyContent = new TextBoard();
 
 	bodyContent->setWindow(TUI::winMgr.newWin(r.height - 2, r.width - 2, r.origin.y + 1, r.origin.x + 1));
-	dWin.setControl(bodyContent);
-	dWin.setWindow(TUI::winMgr.newWin(r.height, r.width, r.origin.y, r.origin.x));
+	
 
 	TextParamValue<BoundInt>* gold, *steps, *enemiesKilled, *battlesWon;
 
@@ -122,7 +123,9 @@ void DialogBuilder::buildMainMenuBody(DialogWindow& dWin, Rect r)
 	bodyContent->addPiece(enemiesKilled);
 	bodyContent->addPiece(battlesWon);
 
-	controlCache.insert(std::make_pair("DEFAULT BODY", bodyContent));
+	
+	setDialogControl(bodyContent, dWin, r);
+//	controlCache.insert(std::make_pair("DEFAULT BODY", bodyContent));
 }
 
 
@@ -131,8 +134,7 @@ void DialogBuilder::buildMainMenuStatus(DialogWindow& dWin, Rect r, Actor& actor
 	TextBoard* statusContent = new TextBoard();
 
 	statusContent->setWindow(TUI::winMgr.newWin(r.height - 2, r.width - 2, r.origin.y + 1, r.origin.x + 1));
-	dWin.setControl(statusContent);
-	dWin.setWindow(TUI::winMgr.newWin(r.height, r.width, r.origin.y, r.origin.x));
+	
 
 	TextParamCurrMaxValue* hpRow, *mpRow;
 	TextParamValue<BoundInt>* strengthRow, *defenseRow, *intelRow, *willRow, *agilityRow, *expRow;
@@ -157,7 +159,8 @@ void DialogBuilder::buildMainMenuStatus(DialogWindow& dWin, Rect r, Actor& actor
 	statusContent->addPiece(agilityRow);
 	statusContent->addPiece(expRow);
 
-	controlCache.insert(std::make_pair("MM_STATUS", statusContent));
+	setDialogControl(statusContent, dWin, r);
+//	controlCache.insert(std::make_pair("MM_STATUS", statusContent));
 }
 
 void DialogBuilder::buildInventory(DialogWindow& dWin, Rect r)
@@ -168,8 +171,7 @@ void DialogBuilder::buildInventory(DialogWindow& dWin, Rect r)
 	
 	inventory->setItems(rm->inventory);
 
-	dWin.setControl(inventory);
-	dWin.setWindow(TUI::winMgr.newWin(r.height, r.width, r.origin.y, r.origin.x));
+	setDialogControl(inventory, dWin, r);
 }
 
 void DialogBuilder::buildCenteredTextWin(DialogWindow& dWin, Rect r)
@@ -178,6 +180,5 @@ void DialogBuilder::buildCenteredTextWin(DialogWindow& dWin, Rect r)
 	descLbl->setFormat(new CenteredFormat);
 	descLbl->setWindow(TUI::winMgr.newWin(r.height - 2, r.width - 2, r.origin.y + 1, r.origin.x + 1));
 
-	dWin.setControl(descLbl);
-	dWin.setWindow(TUI::winMgr.newWin(r.height, r.width, r.origin.y, r.origin.x));
+	setDialogControl(descLbl, dWin, r);
 }

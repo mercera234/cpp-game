@@ -11,7 +11,7 @@ void gridMenuTest()
 {
 	int rows = 12;
 	int cols = 1;
-	WINDOW* win = newwin(3, 1 * 19, 1, 1);
+	WINDOW* win = TUI::winMgr.newWin(3, 1 * 19, 1, 1);
 
 	GridMenu menu(win, rows, cols);
 
@@ -30,6 +30,9 @@ void gridMenuTest()
 
 	menu.setCurrentItem(0);
 	bool wrap = true;
+
+	LineItem* li = (LineItem*)menu.getItem(4, 0);
+	li->selectable = false;
 	//menu.setRowSepLength(1);
 	menu.setColorPair(COLOR_PAIR(COLOR_GREEN_BOLD) | COLOR_GREEN << 28);
 	menu.post(true);
@@ -86,7 +89,7 @@ void gridMenuTest()
 		break;
 		}
 	}
-	delete win;
+	
 }
 
 void titleMenuTest()

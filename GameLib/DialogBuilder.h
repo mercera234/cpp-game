@@ -9,11 +9,9 @@ class DialogBuilder
 private:
 	ResourceManager* rm;
 	
+	void setDialogControl(Controllable* control, DialogWindow& dWin, Rect& r);
 public:
 	DialogBuilder() {}
-	std::map<std::string, Controllable*> controlCache;
-	
-	//TODO make a ControlBuilder class, and give methods the option of wrapping a dialogwindow around the controls
 
 	void buildMainMenu(DialogWindow& dWin, Rect r);
 	void buildPlayerMenu(DialogWindow& dWin, Rect r);

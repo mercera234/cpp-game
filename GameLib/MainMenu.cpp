@@ -279,9 +279,12 @@ void MainMenu::processItemInput()
 		break;
 	case GameInput::OK_INPUT:
 	{
-		GridMenu* menu = (GridMenu*)playerMenuDialog.getControl();
-		menu->setCurrentItem(0);
-		cm.setFocusedControl(&playerMenuDialog);
+		if (selectedItem != nullptr && selectedItem->item->type == GameItemType::USABLE)
+		{
+			GridMenu* menu = (GridMenu*)playerMenuDialog.getControl();
+			menu->setCurrentItem(0);
+			cm.setFocusedControl(&playerMenuDialog);
+		}
 		return;
 	} break;
 	}

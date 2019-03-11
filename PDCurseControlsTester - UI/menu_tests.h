@@ -9,6 +9,8 @@ void itemMenuTest();
 void palettePrototypeTest();
 void paletteTest();
 
+void gridMenuTest();
+
 //scrollbar on menu test
 void scrollMenuTest();
 

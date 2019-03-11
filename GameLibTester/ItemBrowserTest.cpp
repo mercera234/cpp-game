@@ -27,9 +27,11 @@ namespace GameLibTester
 
 			item.item = &potion;
 			item.quantity.setCurr(1);
+			item.item->type = GameItemType::USABLE;
 
 			item2.item = &knife;
 			item2.quantity.setCurr(1);
+			item2.item->type = GameItemType::EQUIPPABLE;
 		}
 
 		TEST_METHOD(ctorTest)
@@ -58,13 +60,13 @@ namespace GameLibTester
 		TEST_METHOD(inputTest)
 		{
 			std::vector<Possession*> items;
-			items.push_back(&item);
 			items.push_back(&item2);
+			items.push_back(&item);
 			inventory.setItems(items);
 
 			inventory.processInput(GameInput::DOWN_INPUT);
 
-			Assert::AreEqual((int)&item2, (int)inventory.getCurrentItem()->getPossession());
+			Assert::AreEqual((int)&item, (int)inventory.getCurrentItem()->getPossession());
 		}
 
 		TEST_METHOD(drawTest)

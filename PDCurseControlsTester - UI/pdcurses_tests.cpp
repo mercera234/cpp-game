@@ -310,6 +310,13 @@ void attrTest()
 
 	doupdate();
 	getch();
+
+	chtype grey = 0x08000000;
+	attron(grey | A_NORMAL); // COLOR_PAIR(COLOR_GREEN));
+	mvaddstr(3, 0, "DSLDSL");
+
+	doupdate();
+	getch();
 }
 
 void colorPairTest()

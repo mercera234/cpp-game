@@ -38,6 +38,10 @@ void ItemBrowser::setItems(std::vector<Possession*>& items)
 	for each (Possession* item in items)
 	{
 		menu.setItem(new OwnedItemRecord(item, element++));
+		if (item->item->type != GameItemType::USABLE)
+		{
+			menu.AbstractMenu::getItem(element - 1)->selectable = false;
+		}
 	}
 	
 	menu.setCurrentItem(0);

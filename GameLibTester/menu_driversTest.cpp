@@ -31,6 +31,7 @@ namespace GameLibTester
 			{
 				MockMenuItem* item = new MockMenuItem();
 				item->index = i;
+				item->selectable = true;
 				menu.setItem(item);
 			}
 			menu.setCurrentItem(5); //default item will be in middle so we have some movement options

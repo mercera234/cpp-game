@@ -8,10 +8,11 @@ namespace PDCurseControlsTester
 {
 	TEST_CLASS(AbstractMenuTest)
 	{
+		MockMenu menu;
+
+
 		TEST_METHOD(setMaxCapacityTest)
 		{
-			MockMenu menu;
-
 			int value = 10;
 			menu.setMaxCapacity(value);
 
@@ -23,8 +24,6 @@ namespace PDCurseControlsTester
 		*/
 		TEST_METHOD(setMaxCapacityLessThanCurrentCapacityTest)
 		{
-			MockMenu menu;
-
 			int value = 16;
 			menu.setMaxCapacity(value);
 			int newValue = 9;
@@ -35,8 +34,6 @@ namespace PDCurseControlsTester
 
 		TEST_METHOD(setMaxItemsTest)
 		{
-			MockMenu menu;
-
 			int value = 8;
 			menu.setMaxItems(value);
 
@@ -48,8 +45,6 @@ namespace PDCurseControlsTester
 		*/
 		TEST_METHOD(setMaxItemsCapacityCheckTest)
 		{
-			MockMenu menu;
-
 			int value = 15;
 			menu.setMaxItems(value);
 			int newValue = 6;
@@ -60,8 +55,6 @@ namespace PDCurseControlsTester
 
 		TEST_METHOD(changeMaxItemsToLowerValueTest)
 		{
-			MockMenu menu;
-
 			int value = 3;
 			menu.setMaxItems(value);
 			MockMenuItem* mmi = new MockMenuItem();
@@ -76,12 +69,12 @@ namespace PDCurseControlsTester
 
 		TEST_METHOD(setItemTest)
 		{
-			MockMenu menu;
 			menu.setMaxItems(1);
 
 			MockMenuItem* mmi = new MockMenuItem();
 			int index = 0;
 			mmi->index = index;
+			mmi->selectable = true;
 			
 			menu.setItem(mmi);
 			menu.setCurrentItem(index);
@@ -92,15 +85,12 @@ namespace PDCurseControlsTester
 
 		TEST_METHOD(setNoCurrentItemTest)
 		{
-			MockMenu menu;
-			
 			MenuItem* mmi = menu.getCurrentItem();
 			Assert::IsTrue(mmi == nullptr);
 		}
 
 		TEST_METHOD(overwriteAfterSetItemTest)
 		{
-			MockMenu menu;
 			menu.setMaxItems(1);
 
 			MockMenuItem* mmi = new MockMenuItem();
@@ -118,7 +108,6 @@ namespace PDCurseControlsTester
 
 		TEST_METHOD(clearItemTest)
 		{
-			MockMenu menu;
 			menu.setMaxItems(1);
 
 			MockMenuItem* mmi = new MockMenuItem();
@@ -133,7 +122,6 @@ namespace PDCurseControlsTester
 
 		TEST_METHOD(clearItemsTest)
 		{
-			MockMenu menu;
 			menu.setMaxItems(3);
 
 			MockMenuItem* mmi = new MockMenuItem();
@@ -152,7 +140,6 @@ namespace PDCurseControlsTester
 
 		TEST_METHOD(setSelectedTest)
 		{
-			MockMenu menu;
 			menu.setMaxItems(1);
 
 			MockMenuItem* mmi = new MockMenuItem();
@@ -167,7 +154,6 @@ namespace PDCurseControlsTester
 
 		TEST_METHOD(processInputTest)
 		{
-			MockMenu menu;
 			Assert::AreEqual((int)ExitCode::HANDLED, (int)processInput(menu, 5));
 		}
 

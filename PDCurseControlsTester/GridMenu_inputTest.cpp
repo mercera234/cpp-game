@@ -16,12 +16,21 @@ namespace PDCurseControlsTester
 		{
 			stdscrCpy = dupwin(stdscr);
 			menu.setWindow(stdscrCpy);
-			menu.resetItems(2, 2);
 			
-			menu.setItem(new MockMenuItem, 0, 0);
-			menu.setItem(new MockMenuItem, 0, 1);
-			menu.setItem(new MockMenuItem, 1, 0);
-			menu.setItem(new MockMenuItem, 1, 1);
+			int rows = 2;
+			int cols = 2;
+			menu.resetItems(rows, cols);
+			
+			for (int row = 0; row < rows; row++)
+			{
+				for (int col = 0; col < cols; col++)
+				{
+					MockMenuItem* mmi = new MockMenuItem;
+					mmi->selectable = true;
+
+					menu.setItem(mmi, row, col);
+				}
+			}
 
 			menu.post(true);
 		}

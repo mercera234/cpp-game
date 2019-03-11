@@ -15,6 +15,12 @@ void LineItem::draw()
 {
 	MenuItem::draw();
 
+	if (selectable == false)
+	{
+		wattron(win, setTextColor(COLOR_GRAY)| A_DIM);
+	}
+
+
 	//draw item
 	switch (field)
 	{
@@ -27,7 +33,11 @@ void LineItem::draw()
 		break;
 	}
 	
-	
+
+	if (selectable == false)
+	{
+		wattroff(win, setTextColor(COLOR_GRAY) | A_DIM);
+	}
 }
 
 void LineItem::clear()

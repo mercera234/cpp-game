@@ -10,6 +10,7 @@ ConfigMenuItem::~ConfigMenuItem()
 
 ConfigMenuItem::ConfigMenuItem(int keyIn, Input& inputIn)
 {
+	selectable = true;
 	setConfigInput(keyIn, inputIn);
 }
 

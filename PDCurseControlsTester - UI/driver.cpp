@@ -19,7 +19,7 @@ int main()
 	TUI tui;
 	
 	
-	fileDialogWindowTest();
+	gridMenuTest();
 	//dialogueTest();
 	//controlManagerTest();
 	//fileChooserTest(FileDialogType::OPEN_DIALOG);

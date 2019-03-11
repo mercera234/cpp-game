@@ -6,8 +6,9 @@ class OwnedItemRecord : public MenuItem
 {
 private:
 	Possession* possession;
+	void init();
 public:
-	OwnedItemRecord() {}
+	OwnedItemRecord();
 	OwnedItemRecord(Possession* possessionIn, int element);
 
 	void draw();
