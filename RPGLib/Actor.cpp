@@ -70,21 +70,16 @@ GameItem* Actor::getEquipPart(EquipPart part) const
 }
 
 
-bool Actor::ingestConsumable(Possession& posn)
+bool Actor::ingestConsumable(GameItem* item)
 {
-	if (posn.item == nullptr)
-		return false;
-
-	GameItem* item = posn.item;
 	if (item->type != GameItemType::USABLE)
 	{
 		return false;
 	}
-	/*if ((item = dynamic_cast<UsableItem*>(posn.item)) == nullptr)
-		return false;*/
-
+	
+	//the item can only be considered ingested if change occurred(this also prevents player from accidentally wasting items)
 	TargetEffects& t = item->effects;
-	bool anyChange = false;
+	bool anyChange = false; 
 
 	std::for_each(t.statValues.begin(), t.statValues.end(),
 		[this, &anyChange](std::pair<StatType, int> p) {
@@ -94,12 +89,7 @@ bool Actor::ingestConsumable(Possession& posn)
 			anyChange = true;
 	});
 
-	if (anyChange) //item was consumed
-	{
-		posn.quantity.alterCurr(-1);
-	}
-	
-	return true;
+	return anyChange;
 }
 
 

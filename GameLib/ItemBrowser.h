@@ -1,15 +1,13 @@
 #pragma once
 #include "GridMenu.h"
 #include "GameItem.h"
-#include "OwnedItemRecord.h"
+
 
 class ItemBrowser : public Controllable
 {
 private:
 	GridMenu menu;
 	std::vector<Possession*>* inventoryPtr; //a pointer to an inventory
-
-	void refreshList(); //update inventory list if changes have taken place
 public:
 	ItemBrowser(); 
 	void setItems(std::vector<Possession*>& items);
@@ -20,7 +18,14 @@ public:
 	//override
 	void setFocus(bool focusIn);
 	
-	OwnedItemRecord* getCurrentItem();
+	GameItem* getCurrentItem();
+
+	/*remove quantity of 1 from a particular item(remove if necessary)
+	return true if item could be successfully decremented, false otherwise
+	*/
+	bool decrementItem(); 
+
+	const GridMenu& getMenu() { return menu; }
 
 	void draw();
 };

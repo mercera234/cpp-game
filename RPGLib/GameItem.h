@@ -59,29 +59,6 @@ struct GameItem : public Thing
 	//std::bitset<32> CharClass  class of character than can equip this 
 	int lockId; //for keys only
 };
-//
-//struct UsableItem : public GameItem
-//{
-//	
-//};
-//
-//
-//
-//struct EquippableItem : public GameItem
-//{
-//	TargetEffects effects;
-//	
-//
-//	
-//};
-//
-//struct KeyItem : public GameItem
-//{
-//	/*KeyItem() {
-//		type = GameItemType::KEY;
-//	}*/
-//	int lockId;
-//};
 
 
 /*The item and amount of it owned in an inventory. Max is 99 of any type.*/

@@ -258,7 +258,6 @@ void loadStats(boost::property_tree::ptree& tree, GameItem& item)
 void GameData::loadItems(boost::property_tree::ptree& tree)
 {
 	boost::property_tree::ptree& usableData = tree.get_child("usable");
-
 	for each (boost::property_tree::ptree::value_type pair in usableData)
 	{
 		GameItem item;
@@ -300,6 +299,13 @@ void GameData::loadItems(boost::property_tree::ptree& tree)
 		insertThing(item, gameItems);
 	}
 
+	//add money type as well
+	GameItem money;
+	money.type = GameItemType::MONEY;
+	money.cost = 1;
+	money.name = "$";
+
+	insertThing(money, gameItems);
 }
 
 void GameData::loadActors(boost::property_tree::ptree& tree)

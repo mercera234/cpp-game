@@ -21,10 +21,10 @@ protected:
 	
 	//variables for drawing
 	int offY, offX; //position of containing menu relative to screen
-	int topRow;
-	int cursorX;
-	int cursorLen;
-	int itemX;
+	int topRow; //top row of item
+	int cursorX; //left col of cursor position
+	int cursorLen; //length of cursor
+	int itemX; //left col of item (not counter cursor position)
 	WINDOW* win; //window of containing menu. MenuItems don't get their own individual windows.
 
 	void init(unsigned short y, unsigned short x);

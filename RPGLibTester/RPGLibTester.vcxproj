@@ -162,6 +162,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ActorTest.cpp" />
+    <ClCompile Include="AutoMapTest.cpp" />
     <ClCompile Include="BattleAlgorithmTest.cpp" />
     <ClCompile Include="BoundIntTest.cpp" />
     <ClCompile Include="EncounterTrackerTest.cpp" />

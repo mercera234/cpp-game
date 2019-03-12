@@ -256,18 +256,18 @@ bool ExplorationProcessor::processThingCollisions()
 			switch (item->type)
 			{
 			case GameItemType::MONEY:
-				resourceManager->getData().alterIntData(GOLD$, item->cost);
-
+				resourceManager->getData().alterIntData(GOLD$, (item->cost) * objectSprite->quantity);
 				currRoom->sprites.remove(objectSprite);
 				break;
 
 			default:
 			{
-				//TODO needs to be a better way to do this
-				Possession* possession = new Possession;
-				possession->item = item;
-				possession->quantity.setCurr(1);
-				resourceManager->inventory.push_back(possession);
+				resourceManager->acquireItem(item, objectSprite->quantity);
+				////TODO needs to be a better way to do this
+				//Possession* possession = new Possession;
+				//possession->item = item;
+				//possession->quantity.setCurr(1);
+				//resourceManager->inventory.push_back(possession);
 			}
 				
 				break;

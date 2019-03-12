@@ -11,6 +11,7 @@ private:
 	GameData theData;
 	InputManager inputManager;
 
+	std::vector<Possession*>::iterator findInventoryItem(GameItem* item);
 public:
 	ResourceManager();
 	
@@ -18,9 +19,12 @@ public:
 	MegaMap* currMap; //the current map that the player is in
 	Actor* getPlayer1();
 
+
 	std::vector<Possession*> inventory;
-	//TODO add setCurrMap(std::string)
 	
+	bool acquireItem(GameItem* item, int quantity); //add item to inventory
+
+	//TODO add setCurrMap(std::string)
 
 	//setters/getters
 

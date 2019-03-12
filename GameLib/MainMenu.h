@@ -42,7 +42,7 @@ private:
 
 	
 	Actor currPlayer; //a copy of the current player used for displaying info
-	Possession* selectedItem;
+	//std::vector<Possession*>* inventory; //a ptr to the in game inventory
 
 	void init();
 	

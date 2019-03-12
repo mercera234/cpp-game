@@ -134,55 +134,32 @@ namespace RPGLibTester
 		{
 			player.getStat(StatType::HP).setValues(0, 20, 9);
 			
-			Possession possession;
-			buildDefaultPossession(possession);
-			possession.quantity.setCurr(1);
+			item.type = GameItemType::USABLE;
+			item.effects.statValues.insert(std::make_pair(StatType::HP, 10));
 			
-			GameItem* item = possession.item;
-			item->type = GameItemType::USABLE;
-			
-			item->effects.statValues.insert(std::make_pair(StatType::HP, 10));
-			
-			player.ingestConsumable(possession);
+			player.ingestConsumable(&item);
 
 			Assert::AreEqual(19, player.getStat(StatType::HP).getCurr());
-			Assert::AreEqual(0, possession.quantity.getCurr());
 		}
 
 		TEST_METHOD(ingestConsumableMaxOutFailTest) //consumable is not ingested because player has max hp for example
 		{
 			player.getStat(StatType::HP).setValues(0, 20, 20);
 
-			Possession possession;
-			buildDefaultPossession(possession);
-			possession.quantity.setCurr(1);
+			item.type = GameItemType::USABLE;
+			item.effects.statValues.insert(std::make_pair(StatType::HP, 10));
 
-			GameItem* item = possession.item;
-			item->type = GameItemType::USABLE;
-
-			item->effects.statValues.insert(std::make_pair(StatType::HP, 10));
-
-			player.ingestConsumable(possession);
-
-			Assert::AreEqual(1, possession.quantity.getCurr());
+			Assert::IsFalse(player.ingestConsumable(&item));
 		}
 
 		TEST_METHOD(ingestEquippableFailTest)
 		{
 			player.getStat(StatType::HP).setValues(0, 20, 9);
-
-			Possession possession;
-			buildDefaultPossession(possession);
-			possession.item = &sword;
-			possession.quantity.setCurr(1);
-
-			GameItem* item = possession.item;
-			item->type = GameItemType::EQUIPPABLE;
-
-			item->effects.statValues.insert(std::make_pair(StatType::STRENGTH, 10));
-
-			player.ingestConsumable(possession);
-			Assert::AreEqual(1, possession.quantity.getCurr());
+			
+			sword.type = GameItemType::EQUIPPABLE;
+			sword.effects.statValues.insert(std::make_pair(StatType::STRENGTH, 10));
+			
+			Assert::IsFalse(player.ingestConsumable(&sword));
 		}
 
 		TEST_METHOD(equipWeaponTest)

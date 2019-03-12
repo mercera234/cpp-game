@@ -196,8 +196,22 @@ void MainMenu::InventoryState::processPlayerMenuInput(MainMenu* mm)
 	
 	if (selectedPlayer)
 	{
+		DialogWindow* invDialog = (DialogWindow*)mm->cm.getTaggedControl(invDialogName);
+		ItemBrowser* itemBrowser = (ItemBrowser*)invDialog->getControl();
+
+		GameItem* item = itemBrowser->getCurrentItem();
+
 		Actor& a = mm->resourceManager->playerParty[selectedPlayer->index];
-		a.ingestConsumable(*mm->selectedItem);
+		if (a.ingestConsumable(item))
+		{
+			itemBrowser->decrementItem();
+
+			if (itemBrowser->getCurrentItem() == nullptr)
+			{
+				playerMenu->setCurrentItem(NO_CUR_ITEM);
+				mm->cm.setFocusedControl(invDialog);
+			}
+		}
 	}
 }
 
@@ -248,12 +262,12 @@ void MainMenu::setItemDescription(DialogWindow* invDialog, DialogWindow* itemDes
 {
 	ItemBrowser* browser = (ItemBrowser*)invDialog->getControl();
 
-	OwnedItemRecord* record = browser->getCurrentItem();
-
-	selectedItem = record->getPossession();
-
 	TextLabel* lbl = (TextLabel*)itemDescDialog->getControl();
-	lbl->setText(selectedItem->item->description);
+
+	GameItem* selectedItem = browser->getCurrentItem();
+	
+	std::string descText = selectedItem == nullptr ? "" : selectedItem->description;
+	lbl->setText(descText);
 }
 
 
@@ -279,7 +293,11 @@ void MainMenu::processItemInput()
 		break;
 	case GameInput::OK_INPUT:
 	{
-		if (selectedItem != nullptr && selectedItem->item->type == GameItemType::USABLE)
+		DialogWindow* invDialog = (DialogWindow*)cm.getFocusedControl();
+		ItemBrowser* browser = (ItemBrowser*)invDialog->getControl();
+		GameItem* selectedItem = browser->getCurrentItem();
+
+		if (selectedItem != nullptr && selectedItem->type == GameItemType::USABLE)
 		{
 			GridMenu* menu = (GridMenu*)playerMenuDialog.getControl();
 			menu->setCurrentItem(0);

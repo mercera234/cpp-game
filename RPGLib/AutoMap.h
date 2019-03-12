@@ -2,6 +2,13 @@
 #include "MapRepository.h"
 #include <vector>
 #include <list>
+#include "MegaMap.h"
+
+//enum class AutoMapBlock
+//{
+//	KNOWN,
+//	VISITED
+//};
 
 #define UM_KNOWN 0x01 //this should maybe be part of the hilevel map structure
 #define UM_VISITED 0x02
@@ -11,7 +18,7 @@ Will display tiles differently depending on whether they are known or visited.*/
 class AutoMap : public Controllable
 {
 private:
-	Image* display;
+	Image* display; //display region for the current map
 	unsigned short currMap; //the hlm we are standing in
 
 	MapRepository* mapRepo;
@@ -25,7 +32,7 @@ private:
 public:
 	AutoMap(WINDOW* win, int height, int width);
 
-	void setMapRepo(MapRepository* mapRepo) { this->mapRepo = mapRepo; }
+	//void setMapRepo(MapRepository* mapRepo) { this->mapRepo = mapRepo; }
 	void setCurrMap(unsigned short mapId);
 	
 	Image* getDisplay() { return display; };

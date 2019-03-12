@@ -5,7 +5,7 @@
 class OwnedItemRecord : public MenuItem
 {
 private:
-	Possession* possession;
+	Possession* possession = nullptr;
 	void init();
 public:
 	OwnedItemRecord();

@@ -124,7 +124,7 @@ public:
 	bool alterStat(StatType statType, int amount);
 	BoundInt& getStat(StatType statType);
 
-	bool ingestConsumable(Possession& posn);
+	bool ingestConsumable(GameItem* item);
 
 	/*Equip a possession on the actor. When equipped, item is removed from inventory and pointer to item is maintained in Actor object.
 	Once equipped, the actor stats are temporarily altered until item is unequipped or switched to a different item.
