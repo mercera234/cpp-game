@@ -108,9 +108,9 @@ void inventoryTest()
 
 		inventory.processInput(mgr.getInput());
 
-		auto* item = inventory.getCurrentItem();
+		GameItem* item = inventory.getCurrentItem();
 
-		descLbl.setText(item->getPossession()->item->description);
+		descLbl.setText(item->description);
 	}
 
 }
@@ -146,29 +146,29 @@ void mainMenuTest()
 	rm.currMap->setCursor(&pos.y, &pos.x);
 
 	//setup some items
-	Possession item1;
-	item1.item = &data.getItem("Potion");
-	item1.quantity.setCurr(1);
-	item1.item->description = "Restores 50 HP."; 
+	Possession* item1 = new Possession;
+	item1->item = &data.getItem("Potion");
+	item1->quantity.setCurr(3);
+	item1->item->description = "Restores 50 HP."; 
 
-	Possession item2;
-	item2.item = &data.getItem("Knife");
-	item2.quantity.setCurr(1);
-	item2.item->description = "A sharp knife for attacking.";
+	Possession* item2 = new Possession;
+	item2->item = &data.getItem("Knife");
+	item2->quantity.setCurr(1);
+	item2->item->description = "A sharp knife for attacking.";
 
-	Possession item3;
+	Possession* item3 = new Possession;
 	GameItem megalixer;
 	megalixer.name = "Megalixer";
 	megalixer.effects.statValues.insert(std::make_pair(StatType::HP, 9999));
 	megalixer.effects.statValues.insert(std::make_pair(StatType::MP, 9999));
 	megalixer.description = "Heals all";
 
-	item3.item = &megalixer;
-	item3.quantity.setCurr(1);
+	item3->item = &megalixer;
+	item3->quantity.setCurr(1);
 
-	rm.inventory.push_back(&item1);
-	rm.inventory.push_back(&item2);
-	rm.inventory.push_back(&item3);
+	rm.inventory.push_back(item1);
+	rm.inventory.push_back(item2);
+	rm.inventory.push_back(item3);
 
 	MainMenu mm(&rm);
 	mm.setWindow(newwin(gameScreenHeight, gameScreenWidth, 0, 0));

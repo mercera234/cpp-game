@@ -2,6 +2,8 @@
 #include "ItemBrowser.h"
 #include "GameItem.h"
 #include "GameInput.h"
+#include "Actor.h"
+#include "actor_helper.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -13,8 +15,8 @@ namespace GameLibTester
 		ItemBrowser inventory;
 		GameItem potion;
 		GameItem knife;
-		Possession item;
-		Possession item2;
+		Possession* potionItem;
+		Possession* knifeItem;
 
 		TEST_METHOD_INITIALIZE(start)
 		{
@@ -25,13 +27,15 @@ namespace GameLibTester
 			knife.name = "Knife";
 			knife.description = "A weapon for stabbing";
 
-			item.item = &potion;
-			item.quantity.setCurr(1);
-			item.item->type = GameItemType::USABLE;
+			potionItem = new Possession;
+			potionItem->item = &potion;
+			potionItem->quantity.setCurr(1);
+			potionItem->item->type = GameItemType::USABLE;
 
-			item2.item = &knife;
-			item2.quantity.setCurr(1);
-			item2.item->type = GameItemType::EQUIPPABLE;
+			knifeItem = new Possession;
+			knifeItem->item = &knife;
+			knifeItem->quantity.setCurr(1);
+			knifeItem->item->type = GameItemType::EQUIPPABLE;
 		}
 
 		TEST_METHOD(ctorTest)
@@ -50,29 +54,29 @@ namespace GameLibTester
 		TEST_METHOD(setItemsTest)
 		{
 			std::vector<Possession*> items;
-			items.push_back(&item);
-			items.push_back(&item2);
+			items.push_back(potionItem);
+			items.push_back(knifeItem);
 			inventory.setItems(items);
 
-			Assert::AreEqual((int)&item, (int)inventory.getCurrentItem()->getPossession());
+			Assert::AreEqual((int)&potion, (int)inventory.getCurrentItem());
 		}
 
 		TEST_METHOD(inputTest)
 		{
 			std::vector<Possession*> items;
-			items.push_back(&item2);
-			items.push_back(&item);
+			items.push_back(knifeItem);
+			items.push_back(potionItem);
 			inventory.setItems(items);
 
 			inventory.processInput(GameInput::DOWN_INPUT);
 
-			Assert::AreEqual((int)&item, (int)inventory.getCurrentItem()->getPossession());
+			Assert::AreEqual((int)&potion, (int)inventory.getCurrentItem());
 		}
 
 		TEST_METHOD(drawTest)
 		{
 			std::vector<Possession*> items;
-			items.push_back(&item);
+			items.push_back(potionItem);
 			inventory.setItems(items);
 
 			WINDOW* aWin = TUI::winMgr.newWin(2, 10, 1, 1);
@@ -84,6 +88,18 @@ namespace GameLibTester
 
 			Assert::AreEqual("->Po", text);
 		}
+
+		TEST_METHOD(decrementItemTest)
+		{
+			std::vector<Possession*> items;
+			items.push_back(potionItem);
+			inventory.setItems(items);
+
+			inventory.decrementItem();
+
+			Assert::AreEqual(0, (int)items.size()); //the item was removed from the items list
+		}
+
 
 		//TEST_METHOD(refreshTest)
 		//{
