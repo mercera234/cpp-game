@@ -8,12 +8,14 @@
 #include "ItemBrowser.h"
 #include "TextLabel.h"
 #include "CenteredFormat.h"
+#include "ConfigMenu.h"
+#include "AutoMap.h"
 
 
 void DialogBuilder::setDialogControl(Controllable* control, DialogWindow& dWin, Rect& r)
 {
 	dWin.setControl(control);
-	dWin.setWindow(TUI::winMgr.newWin(r.height, r.width, r.origin.y, r.origin.x));
+	dWin.setWindow(TUI::winMgr.newWin(r.height, r.width, r.origin.y, r.origin.x)); //this will set the window of the inner control as well
 }
 
 
@@ -22,9 +24,6 @@ void DialogBuilder::buildMainMenu(DialogWindow& dWin, Rect r)
 	GridMenu* mainMenu = new GridMenu(); //the dialogWindow will delete
 
 	mainMenu->resetItems(4, 2);
-
-
-	mainMenu->setWindow(TUI::winMgr.newWin(r.height - 2, r.width - 2, r.origin.y + 1, r.origin.x + 1));
 
 	mainMenu->setItemWidth(6);
 	mainMenu->setColSepLength(0);
@@ -51,11 +50,7 @@ void DialogBuilder::buildPlayerMenu(DialogWindow& dWin, Rect r)
 {
 	GridMenu* playerMenu = new GridMenu(); //the dialogWindow will delete
 	playerMenu->resetItems(playerCapacity, 1);
-	playerMenu->setWindow(TUI::winMgr.newWin(r.height - 2, r.width - 2, r.origin.y + 1, r.origin.x + 1));
 	playerMenu->setItemHeight(4);
-
-	//std::vector<Actor>* allies = &rm->playerParty;
-	//auto it = rm->playerParty.begin();
 
 	for (int i = 0; i < playerCapacity; i++)
 	{
@@ -78,8 +73,6 @@ void DialogBuilder::buildDesc(DialogWindow& dWin, Rect r)
 {
 	TextBoard* descContent = new TextBoard();
 
-	descContent->setWindow(TUI::winMgr.newWin(r.height - 2, r.width - 2, r.origin.y + 1, r.origin.x + 1));
-
 	MegaMap* currMap = rm->currMap;
 	int id = currMap->getCurrMapRoomId();
 	MapRoom& room = rm->getData().getRoom(id);
@@ -100,9 +93,6 @@ void DialogBuilder::buildDesc(DialogWindow& dWin, Rect r)
 void DialogBuilder::buildMainMenuBody(DialogWindow& dWin, Rect r)
 {
 	TextBoard* bodyContent = new TextBoard();
-
-	bodyContent->setWindow(TUI::winMgr.newWin(r.height - 2, r.width - 2, r.origin.y + 1, r.origin.x + 1));
-	
 
 	TextParamValue<BoundInt>* gold, *steps, *enemiesKilled, *battlesWon;
 
@@ -132,9 +122,6 @@ void DialogBuilder::buildMainMenuBody(DialogWindow& dWin, Rect r)
 void DialogBuilder::buildMainMenuStatus(DialogWindow& dWin, Rect r, Actor& actor)
 {
 	TextBoard* statusContent = new TextBoard();
-
-	statusContent->setWindow(TUI::winMgr.newWin(r.height - 2, r.width - 2, r.origin.y + 1, r.origin.x + 1));
-	
 
 	TextParamCurrMaxValue* hpRow, *mpRow;
 	TextParamValue<BoundInt>* strengthRow, *defenseRow, *intelRow, *willRow, *agilityRow, *expRow;
@@ -167,8 +154,6 @@ void DialogBuilder::buildInventory(DialogWindow& dWin, Rect r)
 {
 	ItemBrowser* inventory = new ItemBrowser;
 
-	inventory->setWindow(TUI::winMgr.newWin(r.height - 2, r.width - 2, r.origin.y + 1, r.origin.x + 1));
-	
 	inventory->setItems(rm->inventory);
 
 	setDialogControl(inventory, dWin, r);
@@ -178,7 +163,21 @@ void DialogBuilder::buildCenteredTextWin(DialogWindow& dWin, Rect r)
 {
 	TextLabel* descLbl = new TextLabel;
 	descLbl->setFormat(new CenteredFormat);
-	descLbl->setWindow(TUI::winMgr.newWin(r.height - 2, r.width - 2, r.origin.y + 1, r.origin.x + 1));
-
+	
 	setDialogControl(descLbl, dWin, r);
+}
+
+void DialogBuilder::buildConfigMenu(DialogWindow& dWin, Rect r)
+{
+	ConfigMenu* configMenu = new ConfigMenu(rm);
+
+	setDialogControl(configMenu, dWin, r);
+}
+
+void DialogBuilder::buildAutoMap(DialogWindow& dWin, Rect r)
+{
+	AutoMap* autoMap = new AutoMap();
+	autoMap->setCurrMap(rm->currMap);
+	
+	setDialogControl(autoMap, dWin, r);
 }

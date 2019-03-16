@@ -114,7 +114,7 @@ namespace GameLibTester
 			createItemJSONtree(itemsNode);
 
 			data.loadItems(itemsNode);
-			Assert::AreEqual(4, (int)data.getItems().size()); //4 = 3 items + 1 null item 
+			Assert::AreEqual(5, (int)data.getItems().size()); //5 = 4 items + 1 null item 
 		}
 
 

@@ -2,8 +2,11 @@
 #include <list>
 #include "MapRoom.h"
 
+
+std::string getFloorLabel(int floorIndexIn);
+
 //consider renaming this class to Map
-class MegaMap : public Thing, public Controllable
+class MegaMap : public Thing //, public Controllable
 {
 private:
 	/*A high level map where each tile is a block of a regular map defined by the unitsHigh unitsWide parameters.
@@ -85,7 +88,7 @@ public:
 
 	/*Get the layer index converted to label*/
 	std::string& getFloorLabel();
-
+	
 	/*Get the int index value of the floor e.g 0 = 1F, 1 = 2F, -1 = B1, -2 = B2 */
 	int getFloorIndex();
 
@@ -97,6 +100,7 @@ public:
 	bool changeLayer(int amount);
 
 	void setGroundFloor(int groundLevelIn) { groundFloorOffset = groundLevelIn; }
+	int getGroundFloor() { return groundFloorOffset; }
 
 
 
@@ -105,9 +109,9 @@ public:
 	std::vector<Image>& getAutoMap() { return autoMap; }
 	
 	//megamap is only drawn when displayed in automap mode
-	void draw();
+	//void draw();
 
-	void setWindow(WINDOW* win); //overridden
+	//void setWindow(WINDOW* win); //overridden
 
 	//bool isDiscovered(Pos unitPos);
 	//void fill(Image& srcImg, Image& destImg, int sourceRow, int sourceCol, chtype fillTile);

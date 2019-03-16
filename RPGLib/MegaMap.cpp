@@ -118,11 +118,9 @@ int MegaMap::getFloorIndex()
 	return layerIndex - groundFloorOffset; 
 }
 
-
-
 std::string& MegaMap::getFloorLabel()
 {
-	std::ostringstream oss;
+	/*std::ostringstream oss;
 	int floor = layerIndex - groundFloorOffset;
 	if (floor >= 0)
 	{
@@ -132,10 +130,26 @@ std::string& MegaMap::getFloorLabel()
 	{
 		oss << 'B' << abs(floor);
 	}
-
-	floorLabel = oss.str();
+	*/
+	floorLabel = ::getFloorLabel(layerIndex - groundFloorOffset);
 	return floorLabel;
 }
+
+std::string getFloorLabel(int floorIndex)
+{
+	std::ostringstream oss;
+	if (floorIndex >= 0)
+	{
+		oss << (floorIndex + 1) << 'F';
+	}
+	else
+	{
+		oss << 'B' << abs(floorIndex);
+	}
+
+	return oss.str();
+}
+
 
 bool MegaMap::setFloor(const std::string& floor)
 {
@@ -180,7 +194,7 @@ void MegaMap::visitArea()
 	Image& mapLayer = mapRoomLayout[layerIndex];
 	Image& autoMapLayer = autoMap[layerIndex];
 
-	if (currUnitMap == ' ') //not visited
+	if (currUnitMap == unknown) //not visited
 	{
 		//make current maproom known(locate upper left corner of curr map room and fill with dark blue
 		Pos walkPos = findMapRoomStart();
@@ -202,30 +216,34 @@ void MegaMap::visitArea()
 		//visit current unit map
 		autoMapLayer.setTile(unitPos.y, unitPos.x, visited);
 	}
+	else if (currUnitMap == known)
+	{
+		autoMapLayer.setTile(unitPos.y, unitPos.x, visited);
+	}
 
 }
 
 
-void MegaMap::draw()
-{
-	//draw only the image being shown
-	Image& autoMapLayer = autoMap[layerIndex];
-	autoMapLayer.draw();
-
-	//draw floor in lower right corner
-	mvwaddstr(win, autoMapLayer.getTotalRows() - 1, autoMapLayer.getTotalCols() - 2, getFloorLabel().c_str());
-}
-
-void MegaMap::setWindow(WINDOW* win)
-{
-	Controllable::setWindow(win);
-
-	std::for_each(autoMap.begin(), autoMap.end(),
-		[win](Image& img) {
-		img.setWindow(win);
-
-	});
-}
+//void MegaMap::draw()
+//{
+//	//draw only the image being shown
+//	Image& autoMapLayer = autoMap[layerIndex];
+//	autoMapLayer.draw();
+//
+//	//draw floor in lower right corner
+//	mvwaddstr(win, autoMapLayer.getTotalRows() - 1, autoMapLayer.getTotalCols() - 2, getFloorLabel().c_str());
+//}
+//
+//void MegaMap::setWindow(WINDOW* win)
+//{
+//	Controllable::setWindow(win);
+//
+//	std::for_each(autoMap.begin(), autoMap.end(),
+//		[win](Image& img) {
+//		img.setWindow(win);
+//
+//	});
+//}
 
 
 

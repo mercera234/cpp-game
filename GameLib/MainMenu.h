@@ -33,6 +33,7 @@ private:
 	Rect playerRect; //lower left panel for player display
 	Rect descRect; //upper right panel for descriptive comments
 	Rect largeRect; //lower right panel for large area display
+	Rect largestRect; //lower panel for map and config menu displays
 
 	DialogBuilder dialogBuilder;
 	DialogWindow mainMenuDialog;
@@ -60,6 +61,9 @@ private:
 	void processItemInput();
 	void setItemDescription(DialogWindow* invDialog, DialogWindow* itemDescDialog);
 	
+	SimpleCommand<MainMenu> autoMapCmd;
+	void processAutoMapInput();
+
 	//inner classes for state
 	struct SelectionState
 	{

@@ -20,3 +20,5 @@ enum GameInput
 	TOGGLE_ENCOUNTERS
 };
 
+bool isInputDirectional(GameInput input);
+int getKeyFromInput(GameInput input);

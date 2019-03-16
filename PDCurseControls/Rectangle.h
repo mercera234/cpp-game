@@ -4,16 +4,16 @@
 struct Rectangle
 {
 	Pos origin; //upper left hand corner of rectangle
-	unsigned int height; 
-	unsigned int width;
+	int height; 
+	int width;
 
 	Rectangle() {};
-	Rectangle(unsigned int height, unsigned int width, Pos pos)
+	Rectangle(int height, int width, Pos pos)
 	{
 		setDimensions(height, width, pos);
 	}
 
-	void setDimensions(unsigned int height, unsigned int width, Pos pos)
+	void setDimensions(int height, int width, Pos pos)
 	{
 		origin = pos;
 		this->height = height;

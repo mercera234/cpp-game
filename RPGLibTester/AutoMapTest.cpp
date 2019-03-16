@@ -12,16 +12,19 @@ namespace RPGLibTester
 
 		TEST_METHOD(ctorTest)
 		{			
-			Assert::IsTrue(autoMap.getDisplay() == nullptr);
+			Assert::IsTrue(autoMap.getCurrMap() == nullptr);
 		}
 
 		TEST_METHOD(setCurrMapTest)
 		{
 			MegaMap aMap;
-		//	autoMap.setCurrMap(&aMap);
+			autoMap.setCurrMap(&aMap);
 
-
-			Assert::IsTrue(autoMap.getDisplay() == nullptr);
+			Assert::IsTrue(autoMap.getCurrMap() == &aMap);
 		}
+
+
+
+
 	};
 }

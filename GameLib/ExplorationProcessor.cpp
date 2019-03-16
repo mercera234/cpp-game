@@ -225,6 +225,7 @@ bool ExplorationProcessor::processMovement()
 	adjustView();
 
 	//populate automap data
+	map->visitArea();
 
 	return true;
 }

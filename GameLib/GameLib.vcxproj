@@ -126,6 +126,7 @@
     <ClCompile Include="ExplorationProcessor.cpp" />
     <ClCompile Include="ExploreState.cpp" />
     <ClCompile Include="GameApp.cpp" />
+    <ClCompile Include="GameInput.cpp" />
     <ClCompile Include="ItemBrowser.cpp" />
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="MainMenuState.cpp" />

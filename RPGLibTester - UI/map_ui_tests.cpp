@@ -539,14 +539,16 @@ void drawMegaMapTest()
 	resize_term(unitsHigh, unitsWide);
 	
 	MegaMap mm;
-	mm.setDimensions(4, 4);
+	mm.setDimensions(4, 4, 2);
 	mm.setUnitHeight(unitsHigh);
 	mm.setUnitWidth(unitsWide);
-	mm.setFloorIndex(0);
+	mm.setGroundFloor(1);
+	mm.setFloor("1F");
+	
 
 	Image img;
 	ITwoDStorage<chtype>& tileMap = img.getTileMap();
-	tileMap.fill(INT_MAX);
+	tileMap.fill(-1);
 
 	img.setDimensions(4, 4);
 	img.setTile(1, 1, 17);
@@ -554,16 +556,37 @@ void drawMegaMapTest()
 	img.setTile(2, 1, 17);
 	img.setTile(2, 2, 17);
 
-	mm.setLayerImage(0, img);
-	mm.setWindow(stdscr);
-	int curY = 0;
-	int curX = 0;
+	Image img2;
+	ITwoDStorage<chtype>& tileMap2 = img2.getTileMap();
+	tileMap2.fill(-1);
+
+	img2.setDimensions(4, 4);
+	img2.setTile(0, 0, 16);
+	img2.setTile(0, 1, 16);
+	img2.setTile(0, 2, 16);
+	img2.setTile(0, 3, 16);
 	
-	Pos cursor(23, 51);
+
+	mm.setLayerImage(0, img);
+	mm.setLayerImage(1, img2);
+
+	
+	
+	Pos cursor(0, 0);
 	mm.setCursor(&cursor.y, &cursor.x);
 	mm.visitArea();
+
+	cursor.x = 51;
+	cursor.y = 23;
+	mm.setFloor("B1");
+	mm.visitArea();
+
+	AutoMap autoMap;
+	autoMap.setCurrMap(&mm);
+	autoMap.setWindow(stdscr);
 		
-	FreeMovementProcessor mp(&mm, &curY, &curX);
+	Pos unitPos = mm.getUnitPos();
+	FreeMovementProcessor mp(&autoMap, &unitPos.y, &unitPos.x);
 	mp.setViewMode(ViewMode::CENTER);
 	bool playing = true;
 
@@ -571,14 +594,7 @@ void drawMegaMapTest()
 	
 	while (playing)
 	{
-		mm.draw();
-	
-		//draw character location
-		Pos curPos = mm.getUnitPos();
-		TUI::printOnBkgd('@' | COLOR_PAIR(COLOR_YELLOW_BOLD), stdscr, curPos.y, curPos.x);
-	
-		wnoutrefresh(stdscr);
-	
+		autoMap.draw();
 		doupdate();
 	
 		//process input
@@ -592,17 +608,9 @@ void drawMegaMapTest()
 		case KEY_LEFT:
 		case KEY_UP:
 		case KEY_DOWN:
-			mp.processMovementInput(input);
+			processInput(autoMap, input);
+			//mp.processMovementInput(input);
 			break;
-		default:
-		{
-		/*	int mapId = input - 48;
-			autoMap.setCurrMap(mapId);
-			autoMap.discover(mapId);
-			autoMap.visit(mapId, 0, 0);*/
-		}
-	
-		break;
 		}
 	}
 }

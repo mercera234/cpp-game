@@ -21,6 +21,8 @@ public:
 	void buildMainMenuStatus(DialogWindow& dWin, Rect r, Actor& actor);
 	void buildInventory(DialogWindow& dWin, Rect r);
 	void buildCenteredTextWin(DialogWindow& dWin, Rect r);
+	void buildConfigMenu(DialogWindow& dWin, Rect r);
+	void buildAutoMap(DialogWindow& dWin, Rect r);
 	//setters/getters
 
 	void setRm(ResourceManager* rmIn) { rm = rmIn; }

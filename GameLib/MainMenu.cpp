@@ -10,6 +10,7 @@
 #include "ConfigMenu.h"
 #include "LineFormat.h"
 #include "TextLabel.h"
+#include "AutoMap.h"
 
 const std::string itemDescName = "Item desc";
 const std::string invDialogName = "Inv Dlg";
@@ -40,6 +41,9 @@ void MainMenu::init()
 	itemCmd.setReceiver(this);
 	itemCmd.setAction(&MainMenu::processItemInput);
 
+	autoMapCmd.setReceiver(this);
+	autoMapCmd.setAction(&MainMenu::processAutoMapInput);
+
 	//register controls
 	cm.registerControl(&mainMenuDialog, KEY_LISTENER, &mainMenuCmd);
 	cm.registerControl(&playerMenuDialog, KEY_LISTENER, &playerMenuCmd);
@@ -66,6 +70,7 @@ void MainMenu::setWindow(WINDOW* win)
 	playerRect.setDimensions(bottomFrameHeight, leftFrameWidth, Pos(topFrameHeight - 1, 0));
 	descRect.setDimensions(topFrameHeight, rightFrameWidth, Pos(0, leftFrameWidth));
 	largeRect.setDimensions(bottomFrameHeight, rightFrameWidth, Pos(topFrameHeight - 1, leftFrameWidth));
+	largestRect.setDimensions(bottomFrameHeight, leftFrameWidth + rightFrameWidth, Pos(topFrameHeight - 1, 0));
 	
 	dialogBuilder.buildMainMenu(mainMenuDialog, mainMenuRect);
 	dialogBuilder.buildPlayerMenu(playerMenuDialog, playerRect);
@@ -141,18 +146,20 @@ void MainMenu::processMainMenuSelection(LineItem* selection)
 	break;
 	case MainMenuOption::CONFIG:
 	{
-		ConfigMenu* configMenu = new ConfigMenu(resourceManager);
+		DialogWindow* configDialog = new DialogWindow();
+		dialogBuilder.buildConfigMenu(*configDialog, largestRect);
 
-		DialogWindow* configWindow = new DialogWindow();
+		cm.registerControl(configDialog, KEY_LISTENER, &configMenuCmd);
+		cm.setFocusedControl(configDialog);
+	}
+	break;
+	case MainMenuOption::MAP:
+	{
+		DialogWindow* autoMapDialog = new DialogWindow();
+		dialogBuilder.buildAutoMap(*autoMapDialog, largestRect);
 
-
-		int controlWidth = getmaxx(win);
-
-		configWindow->setWindow(newwin(bottomFrameHeight, controlWidth, topFrameHeight - 1, 0));
-		configWindow->setControl(configMenu);
-
-		cm.registerControl(configWindow, KEY_LISTENER, &configMenuCmd);
-		cm.setFocusedControl(configWindow);
+		cm.registerControl(autoMapDialog, KEY_LISTENER, &autoMapCmd);
+		cm.setFocusedControl(autoMapDialog);
 	}
 
 	break;
@@ -250,12 +257,47 @@ void MainMenu::processConfigMenuInput()
 	if (input == GameInput::CANCEL_INPUT && menu->getEditState() == false) //don't accept cancel if we're editing a configuration item
 	{
 		cm.popControl();
+
+		//delete dialog windows
+		TUI::winMgr.delWin(menu->getWindow());
+		TUI::winMgr.delWin(configDialog->getWindow());
+		delete configDialog;
+
 		cm.setFocusedControl(&mainMenuDialog);
 		return;
 	}
 
 
 	menu->processInput(input);
+}
+
+void MainMenu::processAutoMapInput()
+{
+	int input = cm.getInput();
+
+	DialogWindow* autoMapDialog = (DialogWindow*)cm.getFocusedControl();
+	AutoMap* autoMap = (AutoMap*)autoMapDialog->getControl();
+
+	if (input == GameInput::CANCEL_INPUT)
+	{
+		cm.popControl();
+
+		//delete dialog windows
+		
+		//autoMapDialog->setControl(nullptr);
+
+		TUI::winMgr.delWin(autoMap->getWindow());
+		TUI::winMgr.delWin(autoMapDialog->getWindow());
+		delete autoMapDialog;
+
+		cm.setFocusedControl(&mainMenuDialog);
+		return;
+	}
+
+	if (isInputDirectional((GameInput)input))
+	{
+		::processInput(*autoMap, getKeyFromInput((GameInput)input));
+	}
 }
 
 void MainMenu::setItemDescription(DialogWindow* invDialog, DialogWindow* itemDescDialog)

@@ -144,6 +144,7 @@ void mainMenuTest()
 
 	Pos pos(32, 54);
 	rm.currMap->setCursor(&pos.y, &pos.x);
+	rm.currMap->visitArea();
 
 	//setup some items
 	Possession* item1 = new Possession;
@@ -344,6 +345,7 @@ void exploreOneMapTest()
 	rm.currMap->setUnitHeight(gameScreenHeight);
 	rm.currMap->setUnitWidth(gameScreenWidth);
 	rm.currMap->setFloorIndex(0);
+	
 	
 	ExplorationProcessor mp;
 	mp.setResourceManager(&rm);
