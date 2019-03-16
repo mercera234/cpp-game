@@ -450,10 +450,10 @@ void GameData::loadMaps(boost::property_tree::ptree& tree)
 
 		boost::property_tree::ptree& roomIds = mapData.get_child("data");
 		boost::property_tree::ptree::iterator it = roomIds.begin();
-		for (int floor = map.getDepth() - 1; floor >= 0; floor--)
+		for (int layerIndex = map.getDepth() - 1; layerIndex >= 0; layerIndex--)
 		{
-			image[floor].setDimensions(map.getUnitRows(), map.getUnitCols());
-			image[floor].getTileMap().fill(nullId);
+			image[layerIndex].setDimensions(map.getUnitRows(), map.getUnitCols());
+			image[layerIndex].getTileMap().fill(nullId);
 
 			for (int row = 0; row < map.getUnitRows(); row++)
 			{
@@ -461,12 +461,13 @@ void GameData::loadMaps(boost::property_tree::ptree& tree)
 				{
 					int c = (*it).second.get_value<int>();
 					int actualId = c < 0 ? c : idCrossRef[c];
-					image[floor].setTile(row, col, actualId);
+					image[layerIndex].setTile(row, col, actualId);
 					it++;
 				}
 			}
 
-			map.setLayerImage(map.getFloorFromIndex(floor), image[floor]);
+			//map.setLayerImage(map.getFloorFromIndex(floor), image[floor]);
+			map.setLayerImage(layerIndex, image[layerIndex]);
 		}
 
 		insertThing(map, gameMaps);

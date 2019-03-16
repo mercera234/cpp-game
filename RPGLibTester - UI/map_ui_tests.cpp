@@ -532,6 +532,81 @@ Only tests viewing a megamap as a high level map
 //
 //}
 
+void drawMegaMapTest()
+{
+	int unitsWide = 51;
+	int unitsHigh = 23;
+	resize_term(unitsHigh, unitsWide);
+	
+	MegaMap mm;
+	mm.setDimensions(4, 4);
+	mm.setUnitHeight(unitsHigh);
+	mm.setUnitWidth(unitsWide);
+	mm.setFloorIndex(0);
+
+	Image img;
+	ITwoDStorage<chtype>& tileMap = img.getTileMap();
+	tileMap.fill(INT_MAX);
+
+	img.setDimensions(4, 4);
+	img.setTile(1, 1, 17);
+	img.setTile(1, 2, 17);
+	img.setTile(2, 1, 17);
+	img.setTile(2, 2, 17);
+
+	mm.setLayerImage(0, img);
+	mm.setWindow(stdscr);
+	int curY = 0;
+	int curX = 0;
+	
+	Pos cursor(23, 51);
+	mm.setCursor(&cursor.y, &cursor.x);
+	mm.visitArea();
+		
+	FreeMovementProcessor mp(&mm, &curY, &curX);
+	mp.setViewMode(ViewMode::CENTER);
+	bool playing = true;
+
+
+	
+	while (playing)
+	{
+		mm.draw();
+	
+		//draw character location
+		Pos curPos = mm.getUnitPos();
+		TUI::printOnBkgd('@' | COLOR_PAIR(COLOR_YELLOW_BOLD), stdscr, curPos.y, curPos.x);
+	
+		wnoutrefresh(stdscr);
+	
+		doupdate();
+	
+		//process input
+		int input = getch();
+		switch (input)
+		{
+		case KEY_ESC: playing = false; break;
+	
+			//move the active map around
+		case KEY_RIGHT:
+		case KEY_LEFT:
+		case KEY_UP:
+		case KEY_DOWN:
+			mp.processMovementInput(input);
+			break;
+		default:
+		{
+		/*	int mapId = input - 48;
+			autoMap.setCurrMap(mapId);
+			autoMap.discover(mapId);
+			autoMap.visit(mapId, 0, 0);*/
+		}
+	
+		break;
+		}
+	}
+}
+
 void highLevelMapTest()
 {
 	Image highLevelMap;
@@ -564,7 +639,7 @@ void megaMapTest()
 	mm.setDimensions(6, 6, 6);
 	mm.setUnitHeight(23);
 	mm.setUnitWidth(51);
-	mm.setFloor(0);
+	mm.setFloorIndex(0);
 
 	Image img[6];
 	ITwoDStorage<chtype>& tileMap = img[0].getTileMap();

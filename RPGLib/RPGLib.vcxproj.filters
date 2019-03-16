@@ -96,9 +96,6 @@
     <ClCompile Include="OwnedItemRecord.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GameItem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor.h">
@@ -177,9 +174,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="KeyComparators.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MapMetadata.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Factory.h">

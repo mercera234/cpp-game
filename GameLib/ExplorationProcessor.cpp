@@ -221,8 +221,10 @@ bool ExplorationProcessor::processMovement()
 
 	}
 
+	//move was completed
 	adjustView();
 
+	//populate automap data
 
 	return true;
 }
@@ -263,11 +265,6 @@ bool ExplorationProcessor::processThingCollisions()
 			default:
 			{
 				resourceManager->acquireItem(item, objectSprite->quantity);
-				////TODO needs to be a better way to do this
-				//Possession* possession = new Possession;
-				//possession->item = item;
-				//possession->quantity.setCurr(1);
-				//resourceManager->inventory.push_back(possession);
 			}
 				
 				break;

@@ -21,14 +21,14 @@ AutoMap::AutoMap(WINDOW* win, int height, int width)
 //update all maps in display
 void AutoMap::updateDisplay()
 {
-	std::map<unsigned short, MapRoom*>* maps = mapRepo->getMaps();
+	//std::map<unsigned short, MapRoom*>* maps = mapRepo->getMaps();
 
-	for (std::map<unsigned short, MapRoom*>::iterator it = maps->begin(); it != maps->end(); it++)
-	{
-		MapRoom* map = it->second;
+	//for (std::map<unsigned short, MapRoom*>::iterator it = maps->begin(); it != maps->end(); it++)
+	//{
+	//	MapRoom* map = it->second;
 
-		updateMapInDisplay(map);
-	}
+	//	updateMapInDisplay(map);
+	//}
 }
 
 
@@ -91,9 +91,9 @@ discover an entire map
 */
 void AutoMap::discover(unsigned short mapId)
 {
-	MapRoom* map = mapRepo->find(mapId);
+	/*MapRoom* map = mapRepo->find(mapId);
 	if (map != NULL)
-		discoverMap(map);
+		discoverMap(map);*/
 }
 
 void AutoMap::discoverMap(MapRoom* map)
@@ -112,9 +112,9 @@ void AutoMap::discoverMap(MapRoom* map)
 
 void AutoMap::visit(unsigned short mapId, int row, int col)
 {
-	MapRoom* map = mapRepo->find(mapId);
-	if (map != NULL)
-		visitMap(map, row, col);
+	//MapRoom* map = mapRepo->find(mapId);
+	//if (map != NULL)
+	//	visitMap(map, row, col);
 }
 
 
@@ -128,12 +128,12 @@ void AutoMap::visitMap(MapRoom* map, int row, int col)
 }
 
 
-void AutoMap::setCurrMap(unsigned short mapId)
-{
-	int oldCurrMap = currMap;
-	currMap = mapId;
-
-	MapRoom* map = mapRepo->find(oldCurrMap);
-	if (map != NULL)
-		updateMapInDisplay(map);
-}
+//void AutoMap::setCurrMap(unsigned short mapId)
+//{
+//	int oldCurrMap = currMap;
+//	currMap = mapId;
+//
+//	MapRoom* map = mapRepo->find(oldCurrMap);
+//	if (map != NULL)
+//		updateMapInDisplay(map);
+//}

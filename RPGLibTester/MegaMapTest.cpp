@@ -100,7 +100,7 @@ namespace RPGLibTester
 			int x = 0;
 
 			map.setCursor(&y, &x);
-			map.setFloor(0);
+			map.setFloorIndex(0);
 			map.changeLayer(1);
 
 			Assert::AreEqual(43, map.getCurrMapRoomId());
@@ -164,7 +164,7 @@ namespace RPGLibTester
 			Assert::AreEqual(depth, map.getDepth());
 		}
 
-		TEST_METHOD(getFloorTest)
+		TEST_METHOD(getFloorIndexTest)
 		{
 			map.setDimensions(1, 1, 2);
 
@@ -172,6 +172,26 @@ namespace RPGLibTester
 			map.setCursor(&cursor.y, &cursor.x);
 
 			Assert::AreEqual(0, map.getFloorIndex());
+		}
+
+		TEST_METHOD(setFloorTest)
+		{
+			map.setDimensions(1, 1, 6);
+			map.setGroundFloor(3);
+
+			map.setFloor("2F");
+
+			Assert::AreEqual(1, map.getFloorIndex());
+		}
+
+		TEST_METHOD(setBelowFloorTest)
+		{
+			map.setDimensions(1, 1, 6);
+			map.setGroundFloor(3);
+
+			map.setFloor("B2");
+
+			Assert::AreEqual(-2, map.getFloorIndex());
 		}
 
 		TEST_METHOD(changeFloorTest)
@@ -191,10 +211,21 @@ namespace RPGLibTester
 			map.setGroundFloor(1);
 			Pos cursor(0, 0); //set to 0,0 B1 since ground level is at 1
 			map.setCursor(&cursor.y, &cursor.x);
-			map.setFloor(0);
+			map.setFloorIndex(0);
 			map.changeLayer(-1);
 
 			Assert::AreEqual(-1, map.getFloorIndex());
+		}
+
+		TEST_METHOD(changeFloorOutOfBoundsTest)
+		{
+			map.setDimensions(1, 1, 2);
+
+			Pos cursor(0, 0); //set to 0,0 1F
+			map.setCursor(&cursor.y, &cursor.x);
+			map.changeLayer(2); //go up 2 floors beyond top of megamap
+
+			Assert::AreEqual(0, map.getFloorIndex()); //still 0 since the layer change fails
 		}
 
 		TEST_METHOD(getPositiveFloorLabel)
@@ -212,7 +243,7 @@ namespace RPGLibTester
 			Pos cursor(0, 0); 
 			map.setCursor(&cursor.y, &cursor.x);
 			map.setGroundFloor(4);
-			map.setFloor(4);
+			map.setFloorIndex(4);
 
 			Assert::IsTrue(map.getFloorLabel().compare("5F") == 0);
 		}
@@ -223,9 +254,91 @@ namespace RPGLibTester
 			Pos cursor(0, 0);
 			map.setCursor(&cursor.y, &cursor.x);
 			map.setGroundFloor(4);
-			map.setFloor(-3);
+			map.setFloorIndex(-3);
 
 			Assert::IsTrue(map.getFloorLabel().compare("B3") == 0);
 		}
+
+		TEST_METHOD(visitTest)
+		{			
+			Image img;
+
+			map.setDimensions(1, 1);
+			img.setDimensions(1, 1);
+			img.setTile(0, 0, 64);
+
+			map.setLayerImage(0, img);
+			Pos cursor(0, 0);
+
+			map.setCursor(&cursor.y, &cursor.x);
+			map.visitArea();
+
+			auto& autoMap = map.getAutoMap();
+			
+			Assert::AreEqual((int)' ' | setBkgdColor(COLOR_CYAN), autoMap[0].getTile(0, 0));
+		}
+
+		TEST_METHOD(visitMapKnownTest)
+		{
+			Image img;
+
+			map.setDimensions(2, 2);
+			img.setDimensions(2, 2);
+			img.setTile(0, 0, 64);
+			img.setTile(1, 0, 64);
+			img.setTile(0, 1, 64);
+			img.setTile(1, 1, 64);
+
+			map.setLayerImage(0, img);
+			Pos cursor(1, 1);
+
+			map.setCursor(&cursor.y, &cursor.x);
+			map.visitArea();
+
+			auto& autoMap = map.getAutoMap();
+
+			chtype known = ' ' | setBkgdColor(COLOR_BLUE);
+			chtype visited = ' ' | setBkgdColor(COLOR_CYAN);
+
+			Assert::AreEqual(known, autoMap[0].getTile(0, 0));
+			Assert::AreEqual(known, autoMap[0].getTile(0, 1));
+			Assert::AreEqual(known, autoMap[0].getTile(1, 0));
+			Assert::AreEqual(visited, autoMap[0].getTile(1, 1));
+		}
+
+		TEST_METHOD(visitIsolatedMapTest)
+		{
+			Image img;
+			int dim = 4;
+			map.setDimensions(dim, dim);
+			img.setDimensions(dim, dim);
+			img.getTileMap().fill(-1);
+
+			for (int row = 1; row < 3; row++)
+			{
+				for (int col = 1; col < 3; col++)
+				{
+					img.setTile(row, col, 64);
+				}
+			}
+
+			map.setLayerImage(0, img);
+			Pos cursor(2, 2);
+
+			map.setCursor(&cursor.y, &cursor.x);
+			map.visitArea();
+
+			auto& autoMap = map.getAutoMap();
+
+			chtype unknown = ' ';
+			chtype known = ' ' | setBkgdColor(COLOR_BLUE);
+			chtype visited = ' ' | setBkgdColor(COLOR_CYAN);
+
+			Assert::AreEqual(unknown, autoMap[0].getTile(0, 0));
+			Assert::AreEqual(known, autoMap[0].getTile(1, 1));
+			Assert::AreEqual(visited, autoMap[0].getTile(2, 2));
+			Assert::AreEqual(unknown, autoMap[0].getTile(3, 3));
+		}
+		
 	};
 }

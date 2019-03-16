@@ -144,7 +144,6 @@
     <ClInclude Include="MapEffectFilterPattern.h" />
     <ClInclude Include="MapExit.h" />
     <ClInclude Include="MapKeyComparators.h" />
-    <ClInclude Include="MapMetadata.h" />
     <ClInclude Include="Reactor.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="MegaMap.h" />
@@ -177,7 +176,6 @@
     <ClCompile Include="Factory.cpp" />
     <ClCompile Include="FreeMovementProcessor.cpp" />
     <ClCompile Include="GameData.cpp" />
-    <ClCompile Include="GameItem.cpp" />
     <ClCompile Include="OwnedItemRecord.cpp" />
     <ClCompile Include="GameStateManager.cpp" />
     <ClCompile Include="KeyComparators.cpp" />

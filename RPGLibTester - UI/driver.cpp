@@ -15,7 +15,7 @@ int main()
 {
 	TUI tui;
 	
-	jsonTest();
+	drawMegaMapTest();
 	
 		
 	return 0;

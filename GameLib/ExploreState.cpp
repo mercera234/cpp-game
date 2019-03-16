@@ -52,7 +52,7 @@ void ExploreState::loadResourceManagerData()
 	MegaMap* currMap = resourceManager->currMap;
 	currMap->setUnitHeight(gameScreenHeight);
 	currMap->setUnitWidth(gameScreenWidth);
-	currMap->setFloor(0);
+	currMap->setFloorIndex(0);
 
 	//load default main character
 	Actor player1 = resourceManager->getData().getActor(player1Name);

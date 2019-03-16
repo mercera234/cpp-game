@@ -7,12 +7,21 @@ namespace RPGLibTester
 {
 	TEST_CLASS(AutoMapTest)
 	{
-		//AutoMap autoMap;
+		TUI tui;
+		AutoMap autoMap;
 
 		TEST_METHOD(ctorTest)
+		{			
+			Assert::IsTrue(autoMap.getDisplay() == nullptr);
+		}
+
+		TEST_METHOD(setCurrMapTest)
 		{
-			
-			Assert::IsTrue(true);
+			MegaMap aMap;
+		//	autoMap.setCurrMap(&aMap);
+
+
+			Assert::IsTrue(autoMap.getDisplay() == nullptr);
 		}
 	};
 }

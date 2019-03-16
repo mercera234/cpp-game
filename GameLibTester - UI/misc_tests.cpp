@@ -343,7 +343,7 @@ void exploreOneMapTest()
 	rm.currMap = &data.getMap("TestRegion");
 	rm.currMap->setUnitHeight(gameScreenHeight);
 	rm.currMap->setUnitWidth(gameScreenWidth);
-	rm.currMap->setFloor(0);
+	rm.currMap->setFloorIndex(0);
 	
 	ExplorationProcessor mp;
 	mp.setResourceManager(&rm);

@@ -8,6 +8,7 @@ void simpleMapTest();
 void realMapTest();
 
 void megaMapTest();
+void drawMegaMapTest();
 void autoMapTest();
 void highLevelMapTest();
 
