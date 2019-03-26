@@ -40,11 +40,11 @@ struct TargetEffects
 enum class EquipPart
 {
 	BLANK, //not an item, just a place holder
-	HEAD,
-	TORSO,
-	FEET,
-	HANDS,
 	WEAPON,
+	HEAD,
+	BODY,
+	HANDS,
+	FEET,
 	ACCESSORY
 };
 

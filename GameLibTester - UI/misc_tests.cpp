@@ -14,6 +14,9 @@
 #include "Barrier.h"
 #include "ItemBrowser.h"
 #include "CenteredFormat.h"
+#include "MultiControl.h"
+#include "menu_drivers.h"
+#include "EquipControl.h"
 
 void titleScreenTest()
 {
@@ -114,6 +117,45 @@ void inventoryTest()
 	}
 
 }
+
+
+void equipTest()
+{
+	Actor player1;
+	initDefaultActor(player1);
+	player1.name = "Test guy9012345";
+	
+	EquipControl equipC(player1);
+	equipC.setWindow(TUI::winMgr.newWin(15, 49, 1, 1));
+
+
+	ResourceManager rm;
+	loadHardCodedInputs(rm.getInputManager().getInputs());
+	setupDefaultGameInputs(rm.getInputManager().getInputs());
+
+
+	bool playing = true;
+	while (playing)
+	{
+		equipC.draw();
+		doupdate();
+
+		int input = rm.getInputManager().getInput();
+
+		switch (input)
+		{
+		case GameInput::QUIT_INPUT:
+			playing = false;
+			break;
+		default:
+		{
+			processInput(equipC, input);
+		}
+			break;	
+		}
+	}
+}
+
 
 void mainMenuTest()
 {

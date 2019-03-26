@@ -10,16 +10,23 @@ Good for bestiaries, battle scenarios, or anywhere else that a character's stats
 class ActorCard : public MenuItem
 {
 private:
-	Actor* actor;
-	bool displayDamage;
-	int damageTaken;
+	Actor* actor = nullptr;
+	bool displayStatChanges;
+	int statChange;
+
+	void init(Actor* actor, int element);
 
 public:
-	ActorCard();
+	ActorCard() {}
+	ActorCard(Actor* actor, int element);
 	ActorCard(Actor* actor, int element, int crossRefNdx);
-	Actor* getActor() { return actor; }
+	
 	void applyDamage(int amount);
-	void setDamage(int amount) { damageTaken = amount; displayDamage = true; }
-	void setDisplayDamage(bool on) { displayDamage = on; }
-	void draw();
+	
+	void draw(); //override
+
+	//setters/getters
+	Actor* getActor() { return actor; }
+	void setStatChange(int amount) { statChange = amount; displayStatChanges = true; }
+	void setDisplayStatChanges(bool on) { displayStatChanges = on; }
 };

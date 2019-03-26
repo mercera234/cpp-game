@@ -4,19 +4,25 @@
 #include "TUI.h"
 #include "actor_helper.h"
 
-ActorCard::ActorCard()
+ActorCard::ActorCard(Actor* actor, int element)
 {
-
+	init(actor, element);
 }
 
 ActorCard::ActorCard(Actor* actor, int element, int crossRefNdx)
 {
+	//this->crossRef = crossRefNdx;
+
+	init(actor, element);
+}
+
+void ActorCard::init(Actor* actor, int element)
+{
 	this->actor = actor;
 	index = element;
-//	this->crossRef = crossRefNdx;
 
-	displayDamage = false; //only true when damage has been taken and must be displayed
-	damageTaken = 0;
+	displayStatChanges = false; //only true when damage has been taken and must be displayed
+	statChange = 0;
 }
 
 void ActorCard::draw()
@@ -35,12 +41,12 @@ void ActorCard::draw()
 	mvwprintw(win, topRow + 2, itemX, "MP %+4u/%+4u", mpStat.getCurr(), mpStat.getCurrMax());
 
 	//display damage taken if any
-	if (displayDamage)
+	if (displayStatChanges)
 	{
 		std::ostringstream oss;
 
-		char sign = damageTaken > 0 ? '-' : '+';
-		oss << sign << damageTaken;
+		char sign = statChange > 0 ? '-' : '+';
+		oss << sign << statChange;
 		
 		chtype dmgColor = COLOR_PAIR(COLOR_RED_BOLD);
 		wattron(win, dmgColor);
@@ -52,8 +58,8 @@ void ActorCard::draw()
 
 void ActorCard::applyDamage(int amount)
 {
-	displayDamage = true;
-	damageTaken = amount;
+	displayStatChanges = true;
+	statChange = amount;
 
-	alterStatValue(actor->getStat(StatType::HP), -damageTaken);
+	alterStatValue(actor->getStat(StatType::HP), -statChange);
 }

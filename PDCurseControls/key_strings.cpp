@@ -7,6 +7,14 @@
 
 const int controlToAsciiDistance = 64;
 
+//key strings
+const std::string S_UP = "UP";
+const std::string S_DOWN = "DOWN";
+const std::string S_LEFT = "LEFT";
+const std::string S_RIGHT = "RIGHT";
+const std::string S_SPACE = "SPACE";
+const std::string S_ENTER = "ENTER";
+
 void getControlKeyString(std::string& keyString, int key, bool verbose)
 {
 	keyString = "";
@@ -58,7 +66,7 @@ std::string getStringFromKey(int key, bool verbose)
 	{
 		if (verbose && key == ' ')
 		{
-			keyString.append("SPACE");
+			keyString.append(S_SPACE);
 		}
 		else
 		{
@@ -70,10 +78,10 @@ std::string getStringFromKey(int key, bool verbose)
 		//get directional string
 		switch (key)
 		{
-		case KEY_DOWN: keyString.append("DOWN"); break;
-		case KEY_UP: keyString.append("UP"); break;
-		case KEY_LEFT: keyString.append("LEFT"); break;
-		case KEY_RIGHT: keyString.append("RIGHT"); break;
+		case KEY_DOWN: keyString.append(S_DOWN); break;
+		case KEY_UP: keyString.append(S_UP); break;
+		case KEY_LEFT: keyString.append(S_LEFT); break;
+		case KEY_RIGHT: keyString.append(S_RIGHT); break;
 		}
 	}
 	//else string requested is not currently supported
@@ -90,12 +98,12 @@ int getKeyFromString(const std::string& text)
 	std::string upperText(text.length(), ' ');
 	std::transform(text.begin(), text.end(), upperText.begin(), toupper);
 	
-	if (upperText.compare(UP) == 0) return KEY_UP;
-	if (upperText.compare(DOWN) == 0) return KEY_DOWN;
-	if (upperText.compare(LEFT) == 0) return KEY_LEFT;
-	if (upperText.compare(RIGHT) == 0) return KEY_RIGHT;
-	if (upperText.compare(SPACE) == 0) return ' ';
-	if (upperText.compare(ENTER) == 0) return '\r';
+	if (upperText.compare(S_UP) == 0) return KEY_UP;
+	if (upperText.compare(S_DOWN) == 0) return KEY_DOWN;
+	if (upperText.compare(S_LEFT) == 0) return KEY_LEFT;
+	if (upperText.compare(S_RIGHT) == 0) return KEY_RIGHT;
+	if (upperText.compare(S_SPACE) == 0) return ' ';
+	if (upperText.compare(S_ENTER) == 0) return '\r';
 
 	return -1; //string could not be converted
 }

@@ -43,8 +43,7 @@ private:
 
 	
 	Actor currPlayer; //a copy of the current player used for displaying info
-	//std::vector<Possession*>* inventory; //a ptr to the in game inventory
-
+	
 	void init();
 	
 	SimpleCommand<MainMenu> mainMenuCmd;
@@ -70,23 +69,9 @@ private:
 		virtual void processPlayerMenuInput(MainMenu*) = 0;
 	};
 
-	class InventoryState : public SelectionState
-	{
-
-	private:
-
-	public:
-		void processPlayerMenuInput(MainMenu*);
-	};
-
-	class StatusState : public SelectionState
-	{
-
-	private:
-
-	public:
-		void processPlayerMenuInput(MainMenu*);
-	};
+	class InventoryState : public SelectionState { public: void processPlayerMenuInput(MainMenu*); };
+	class StatusState : public SelectionState { public: void processPlayerMenuInput(MainMenu*); };
+	class EquipState : public SelectionState { public: void processPlayerMenuInput(MainMenu*); };
 
 	SelectionState* state = nullptr;
 

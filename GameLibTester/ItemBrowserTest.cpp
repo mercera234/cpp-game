@@ -101,16 +101,6 @@ namespace GameLibTester
 		}
 
 
-		//TEST_METHOD(refreshTest)
-		//{
-		//	std::vector<Possession*> items;
-		//	item.quantity.setCurr(0);
-		//	items.push_back(&item);
-		//	items.push_back(&item2);
-		//	inventory.setItems(items);
-
-		//	inventory.draw(); //drawing should refresh the list and will delete the empty item
-		//	Assert::AreEqual(1, (int)items.size());
-		//}
+	
 	};
 }

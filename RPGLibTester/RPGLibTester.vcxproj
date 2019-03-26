@@ -161,6 +161,7 @@
     <ClInclude Include="MockState2.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ActorCardTest.cpp" />
     <ClCompile Include="ActorTest.cpp" />
     <ClCompile Include="AutoMapTest.cpp" />
     <ClCompile Include="BattleAlgorithmTest.cpp" />

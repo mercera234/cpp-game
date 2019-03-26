@@ -3,6 +3,9 @@
 #include "GridMenu.h"
 #include "LineItem.h"
 #include "TextBoard.h"
+#include "MultiControl.h"
+#include "actor_helper.h"
+#include "ItemBrowser.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -13,10 +16,12 @@ namespace GameLibTester
 		TUI tui;
 		DialogBuilder builder;
 		ResourceManager rm;
-
+		Actor a;
+		
 		TEST_METHOD_INITIALIZE(start)
 		{
 			builder.setRm(&rm);
+			initDefaultActor(a);
 		}
 
 
@@ -63,5 +68,24 @@ namespace GameLibTester
 
 			Assert::AreEqual(3, board->getPieceCount());
 		}
+
+		TEST_METHOD(buildInventoryTest)
+		{
+			DialogWindow win;
+			builder.buildInventory(win, Rect(4, 3, Pos(11, 5)));
+
+			Assert::IsTrue(dynamic_cast<ItemBrowser*>(win.getControl()) != nullptr);
+		}
+
+		/*TEST_METHOD(buildEquipDialogTest)
+		{
+			DialogWindow win;
+			builder.buildEquipDialog(win, Rect(0, 0, Pos(10, 10)), a);
+
+			MultiControl* mControl = dynamic_cast<MultiControl*>(win.getControl());
+			GridMenu* menu = (GridMenu*)mControl->getControl("Equip Menu");
+
+			Assert::AreEqual(6, (int)menu->getMaxItems());
+		}*/
 	};
 }

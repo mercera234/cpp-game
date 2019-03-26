@@ -1,6 +1,7 @@
 #pragma once
 #include "GridMenu.h"
 #include "GameItem.h"
+#include "OwnedItemRecord.h"
 
 
 class ItemBrowser : public Controllable
@@ -8,6 +9,8 @@ class ItemBrowser : public Controllable
 private:
 	GridMenu menu;
 	std::vector<Possession*>* inventoryPtr; //a pointer to an inventory
+
+
 public:
 	ItemBrowser(); 
 	void setItems(std::vector<Possession*>& items);
@@ -19,6 +22,9 @@ public:
 	void setFocus(bool focusIn);
 	
 	GameItem* getCurrentItem();
+
+	/*Run a filter to process all the records a particular way (like only show consumable items, or only show equippable swords)*/
+	void runFilter(void(*filter)(OwnedItemRecord* record));
 
 	/*remove quantity of 1 from a particular item(remove if necessary)
 	return true if item could be successfully decremented, false otherwise

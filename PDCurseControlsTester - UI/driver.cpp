@@ -12,6 +12,7 @@
 #include "text_tests.h"
 #include "dialog_window_tests.h"
 #include "twod_storage_tests.h"
+//#include "multicontrol_tests.h"
 
 //PDCURSE CONTROLS UI TESTER
 int main()
@@ -19,7 +20,7 @@ int main()
 	TUI tui;
 	
 	
-	gridMenuTest();
+	//multiControlTest();
 	//dialogueTest();
 	//controlManagerTest();
 	//fileChooserTest(FileDialogType::OPEN_DIALOG);

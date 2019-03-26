@@ -123,6 +123,7 @@
     <ClCompile Include="ConfigMenuItem.cpp" />
     <ClCompile Include="defaults.cpp" />
     <ClCompile Include="DialogBuilder.cpp" />
+    <ClCompile Include="EquipControl.cpp" />
     <ClCompile Include="ExplorationProcessor.cpp" />
     <ClCompile Include="ExploreState.cpp" />
     <ClCompile Include="GameApp.cpp" />
@@ -142,6 +143,7 @@
     <ClInclude Include="ConfigMenuItem.h" />
     <ClInclude Include="defaults.h" />
     <ClInclude Include="DialogBuilder.h" />
+    <ClInclude Include="EquipControl.h" />
     <ClInclude Include="ExplorationProcessor.h" />
     <ClInclude Include="ExploreState.h" />
     <ClInclude Include="GameApp.h" />

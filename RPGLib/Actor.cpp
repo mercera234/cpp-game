@@ -21,6 +21,12 @@ Actor::Actor()
 	getStat(StatType::WILL).setMax(255);
 	getStat(StatType::AGILITY).setMax(255);
 
+	equipment[EquipPart::WEAPON] = nullptr;
+	equipment[EquipPart::HANDS] = nullptr;
+	equipment[EquipPart::HEAD] = nullptr;
+	equipment[EquipPart::BODY] = nullptr;
+	equipment[EquipPart::FEET] = nullptr;
+	equipment[EquipPart::ACCESSORY] = nullptr;
 }
 
 bool Actor::alterStat(StatType statType, int amount)
@@ -53,20 +59,14 @@ BoundInt& Actor::getStat(StatType statType)
 	return *stat;
 }
 
-GameItem* Actor::getEquipPart(EquipPart part) const
+GameItem* Actor::getEquipPart(EquipPart part)
 {
 	GameItem* item = nullptr;
-	switch (part)
-	{
-	case EquipPart::WEAPON: item = weapon; break;
-	case EquipPart::HEAD: item = helmet; break;
-	case EquipPart::HANDS: item = gloves; break;
-	case EquipPart::ACCESSORY: item = accessory; break;
-	case EquipPart::TORSO: item = armor; break;
-	case EquipPart::FEET: item = boots; break;
-	}
 
-	return item;
+	if (equipment.count(part) < 1)
+		return item;
+
+	return equipment[part];
 }
 
 
@@ -103,18 +103,9 @@ bool Actor::equip(Possession& posn)
 		return false;
 
 	bool anyChange = true;
-	switch (item->part)
-	{
-	case EquipPart::WEAPON: weapon = item; break;
-	case EquipPart::HEAD: helmet = item; break;
-	case EquipPart::TORSO: armor = item; break;
-	case EquipPart::HANDS: gloves = item; break;
-	case EquipPart::FEET: boots = item; break;
-	case EquipPart::ACCESSORY: accessory = item; break;
-	default:
-		anyChange = false; //item not equipped
-		break;
-	}
+
+	equipment[item->part] = item;
+	
 
 	if (anyChange) //item should be removed from inventory since it is with actor
 	{
@@ -132,16 +123,8 @@ bool Actor::equip(Possession& posn)
 
 GameItem* Actor::unEquip(EquipPart part)
 {
-	GameItem* removedItem = nullptr;
-	switch (part)
-	{
-	case EquipPart::WEAPON: removedItem = weapon; weapon = nullptr; break;
-	case EquipPart::HEAD: removedItem = helmet; helmet = nullptr; break;
-	case EquipPart::HANDS: removedItem = gloves; gloves = nullptr; break;
-	case EquipPart::FEET: removedItem = boots; boots = nullptr; break;
-	case EquipPart::ACCESSORY: removedItem = accessory; accessory = nullptr; break;
-	case EquipPart::TORSO: removedItem = armor; armor = nullptr; break;
-	}
+	GameItem* removedItem = equipment[part];
+	equipment[part] = nullptr;
 
 	if (removedItem == nullptr) //nothing was unequipped
 		return nullptr;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <map>
 #include "curses.h"
 #include "Thing.h"
 #include "BoundInt.h"
@@ -50,13 +51,9 @@ private:
 	//int ailments; //not sure if this should be with Actor or ActorDef
 	/*void save(std::ofstream& saveFile);
 	void load(std::ifstream& loadFile);*/
-	GameItem* helmet = nullptr;
-	GameItem* armor = nullptr;
-	GameItem* gloves = nullptr;
-	GameItem* boots = nullptr;
-	GameItem* weapon = nullptr;
-	GameItem* accessory = nullptr;
 
+	std::map<EquipPart, GameItem*> equipment;
+	
 	/*
 	The numeric values of an Actor that represent internal non-tangible qualities that determine effectiveness in battle and longterm qualities.
 	Numeric values to define an actor stats.
@@ -141,9 +138,9 @@ public:
 	BoundInt& getMoney() { return money; }
 
 
-	GameItem* getEquipPart(EquipPart part) const;
+	GameItem* getEquipPart(EquipPart part);
+	std::map<EquipPart, GameItem*>& getEquipment() { return equipment; }
 
-	
 };
 
 

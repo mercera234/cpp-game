@@ -19,7 +19,7 @@ namespace PDCurseControlsTester
 	{
 		TUI tui;
 		WindowManager winMgr;
-		//WindowManager& winMgr = WindowManager::getInstance();
+		
 
 		TEST_METHOD(getCountTest)
 		{
@@ -35,6 +35,18 @@ namespace PDCurseControlsTester
 		{
 			WINDOW* win = winMgr.newWin(3, 2, 0, 0);
 			Assert::AreNotEqual((int)nullptr, (int)win);
+		}
+
+		TEST_METHOD(deriveWinTest)
+		{
+			int begY = 1;
+			int begX = 3;
+			WINDOW* win = winMgr.newWin(6, 10, begY, begX);
+			Rect r(3, 2, Pos(0, 0));
+			WINDOW* win2 = winMgr.deriveWin(win, r);
+
+			Assert::AreEqual(begY, getbegy(win2));
+			Assert::AreEqual(begX, getbegx(win2));
 		}
 
 		TEST_METHOD(checkWinTest)
@@ -59,11 +71,5 @@ namespace PDCurseControlsTester
 			Assert::AreEqual(0, winMgr.getCount());
 		}
 
-		/*TEST_METHOD(singletonTest)
-		{
-			WindowManager& winMgr2 = WindowManager::getInstance();
-
-			Assert::AreSame(winMgr2, winMgr);
-		}*/
 	};
 }

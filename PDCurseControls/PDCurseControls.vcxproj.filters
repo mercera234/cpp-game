@@ -213,6 +213,9 @@
     <ClInclude Include="KeyDirection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Divider.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AbstractMenu.cpp">

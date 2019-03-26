@@ -132,6 +132,7 @@
     <ClInclude Include="Factory.h" />
     <ClInclude Include="FreeMovementProcessor.h" />
     <ClInclude Include="GameData.h" />
+    <ClInclude Include="game_strings.h" />
     <ClInclude Include="OwnedItemRecord.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="GameStateManager.h" />
@@ -176,6 +177,7 @@
     <ClCompile Include="Factory.cpp" />
     <ClCompile Include="FreeMovementProcessor.cpp" />
     <ClCompile Include="GameData.cpp" />
+    <ClCompile Include="game_strings.cpp" />
     <ClCompile Include="OwnedItemRecord.cpp" />
     <ClCompile Include="GameStateManager.cpp" />
     <ClCompile Include="KeyComparators.cpp" />

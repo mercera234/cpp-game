@@ -125,6 +125,7 @@
     <ClInclude Include="ControlCommand.h" />
     <ClInclude Include="ControlHandle.h" />
     <ClInclude Include="DialogWindow.h" />
+    <ClInclude Include="Divider.h" />
     <ClInclude Include="FileDialog.h" />
     <ClInclude Include="Format.h" />
     <ClInclude Include="FilePath.h" />

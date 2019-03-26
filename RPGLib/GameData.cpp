@@ -290,7 +290,7 @@ void GameData::loadItems(boost::property_tree::ptree& tree)
 		{
 		case SV_WEAPON: item.part = EquipPart::WEAPON; break;
 		case SV_HEAD: item.part = EquipPart::HEAD; break;
-		case SV_TORSO: item.part = EquipPart::TORSO; break;
+		case SV_TORSO: item.part = EquipPart::BODY; break;
 		default: item.part = EquipPart::BLANK; break;
 		}
 		

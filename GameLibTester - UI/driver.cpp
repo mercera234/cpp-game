@@ -10,8 +10,8 @@ int main()
 
 
 
-
-	mainMenuTest();
+	//battleProcessorTest();
+	equipTest();
 
 	return 0;
 }

@@ -42,3 +42,6 @@ struct StatDistribution
 		stats[StatType::AGILITY] = 0;
 	}*/
 };
+
+
+

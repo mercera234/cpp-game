@@ -433,13 +433,13 @@ void BattleProcessor::clearDisplayDamage()
 	for each (MenuItem* item in humanActors)
 	{
 		ActorCard* card = (ActorCard*)item;
-		card->setDisplayDamage(false);
+		card->setDisplayStatChanges(false);
 	}
 
 	for each (MenuItem* item in cpuActors)
 	{
 		ActorCard* card = (ActorCard*)item;
-		card->setDisplayDamage(false);
+		card->setDisplayStatChanges(false);
 	}
 }
 

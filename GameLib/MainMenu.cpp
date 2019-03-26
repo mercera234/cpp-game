@@ -128,6 +128,18 @@ void MainMenu::processMainMenuSelection(LineItem* selection)
 		setItemDescription(invDialog, itemDescDialog);
 	}
 	break;
+	case MainMenuOption::EQUIP:
+	{
+		state = new EquipState;
+		cm.setFocusedControl(&playerMenuDialog);
+
+		GridMenu* playerMenu = (GridMenu*)playerMenuDialog.getControl();
+		playerMenu->setCurrentItem(0);
+
+		MenuItem* item = playerMenu->getCurrentItem();
+		currPlayer = resourceManager->playerParty[item->index];
+	}
+	break;
 	case MainMenuOption::STATUS:
 	{
 		state = new StatusState;
@@ -247,6 +259,31 @@ void MainMenu::StatusState::processPlayerMenuInput(MainMenu* mm)
 		mm->currPlayer = mm->resourceManager->playerParty[item->index];
 }
 
+void MainMenu::EquipState::processPlayerMenuInput(MainMenu* mm)
+{
+	int input = mm->cm.getInput();
+
+	GridMenu* playerMenu = (GridMenu*)mm->playerMenuDialog.getControl();
+	if (input == GameInput::CANCEL_INPUT)
+	{
+		playerMenu->setCurrentItem(NO_CUR_ITEM);
+		//mm->cm.popControl();
+		mm->cm.setFocusedControl(&mm->mainMenuDialog);
+		return;
+	}
+
+	menuDriver(input, playerMenu);
+	MenuItem* item = playerMenu->getCurrentItem();
+
+	if (item->index >= (int)mm->resourceManager->playerParty.size()) //a little sloppy here, but it works
+	{
+		playerMenu->setCurrentItem(item->index - 1);
+		return;
+	}
+	else
+		mm->currPlayer = mm->resourceManager->playerParty[item->index];
+}
+
 void MainMenu::processConfigMenuInput()
 {
 	int input = cm.getInput();
@@ -283,9 +320,6 @@ void MainMenu::processAutoMapInput()
 		cm.popControl();
 
 		//delete dialog windows
-		
-		//autoMapDialog->setControl(nullptr);
-
 		TUI::winMgr.delWin(autoMap->getWindow());
 		TUI::winMgr.delWin(autoMapDialog->getWindow());
 		delete autoMapDialog;

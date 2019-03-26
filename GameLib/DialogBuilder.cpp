@@ -10,6 +10,10 @@
 #include "CenteredFormat.h"
 #include "ConfigMenu.h"
 #include "AutoMap.h"
+#include "ActorCard.h"
+#include "OwnedItemRecord.h"
+#include "game_strings.h"
+//#include "MultiControl.h"
 
 
 void DialogBuilder::setDialogControl(Controllable* control, DialogWindow& dWin, Rect& r)
@@ -54,11 +58,15 @@ void DialogBuilder::buildPlayerMenu(DialogWindow& dWin, Rect r)
 
 	for (int i = 0; i < playerCapacity; i++)
 	{
-		std::string name = "";
+		//std::string name = "";
 		if (i < (int)rm->playerParty.size())
-			name = rm->playerParty[i].name;
+			playerMenu->setItem(new ActorCard(&rm->playerParty[i], i), i, 0);
+		else
+			playerMenu->setItem(new LineItem("", i, -1), i, 0);
+			//name = rm->playerParty[i].name;
 
-		playerMenu->setItem(new LineItem(name, i, -1), i, 0); //sets blank items to start
+		
+		//playerMenu->setItem(new LineItem(name, i, -1), i, 0); //sets blank items to start
 	}
 
 	playerMenu->setWrapAround(false);
@@ -155,6 +163,19 @@ void DialogBuilder::buildInventory(DialogWindow& dWin, Rect r)
 	ItemBrowser* inventory = new ItemBrowser;
 
 	inventory->setItems(rm->inventory);
+	inventory->runFilter(
+		[](OwnedItemRecord* record) {
+		
+		if (record == nullptr || record->getPossession() == nullptr)
+			return;
+
+		GameItem* item = record->getPossession()->item;
+		if (item->type != GameItemType::USABLE)
+		{
+			record->selectable = false;
+		}
+
+	});
 
 	setDialogControl(inventory, dWin, r);
 }
@@ -181,3 +202,85 @@ void DialogBuilder::buildAutoMap(DialogWindow& dWin, Rect r)
 	
 	setDialogControl(autoMap, dWin, r);
 }
+
+//void DialogBuilder::buildEquipDialog(DialogWindow& dWin, Rect r, Actor& actor)
+//{
+//	MultiControl* equipControl = new MultiControl();
+//
+//	dWin.getFrame().setText(actor.name, 0, 4);
+//	setDialogControl(equipControl, dWin, r);
+//
+//	GridMenu* equipMenu = buildEquipmentMenu(actor);
+//
+//
+//	TextBoard* statusContent = new TextBoard;
+//
+//	TextParamCurrMaxValue* hpRow, *mpRow;
+//	TextParamValue<BoundInt>* strengthRow, *defenseRow, *intelRow, *willRow, *agilityRow;
+//
+//	//values are null, but will be setup later
+//	hpRow = new TextParamCurrMaxValue(new LineFormat(0, Justf::LEFT), HP, &actor.getStat(StatType::HP));
+//	mpRow = new TextParamCurrMaxValue(new LineFormat(1, Justf::LEFT), MP, &actor.getStat(StatType::MP), 4);
+//	strengthRow = new TextParamValue<BoundInt>(new LineFormat(2, Justf::LEFT), STRENGTH.substr(0,3), &actor.getStat(StatType::STRENGTH));
+//	defenseRow = new TextParamValue<BoundInt>(new LineFormat(3, Justf::LEFT), DEFENSE.substr(0, 3), &actor.getStat(StatType::DEFENSE));
+//	intelRow = new TextParamValue<BoundInt>(new LineFormat(4, Justf::LEFT), INTELLIGENCE.substr(0, 3), &actor.getStat(StatType::INTELLIGENCE));
+//	willRow = new TextParamValue<BoundInt>(new LineFormat(5, Justf::LEFT), WILL.substr(0, 3), &actor.getStat(StatType::WILL));
+//	agilityRow = new TextParamValue<BoundInt>(new LineFormat(6, Justf::LEFT), AGILITY.substr(0, 3), &actor.getStat(StatType::AGILITY));
+//	statusContent->addPiece(hpRow); 
+//	statusContent->addPiece(mpRow);
+//	statusContent->addPiece(strengthRow);
+//	statusContent->addPiece(defenseRow);
+//	statusContent->addPiece(intelRow);
+//	statusContent->addPiece(willRow);
+//	statusContent->addPiece(agilityRow);
+//
+//
+//	//TODO make separate EquipControl class
+//
+//	int eMenuHeight = equipMenu->getMaxItems();
+//	int leftWidth = 27;
+//
+//	equipControl->addControl("Equip Menu", equipMenu, Rect(eMenuHeight, leftWidth, Pos(0, 0)));
+//	equipControl->addControl("Stat Board", statusContent, 
+//		Rect(statusContent->getPieceCount(), getmaxx(equipControl->getWindow()) - leftWidth, Pos(eMenuHeight + 1, 4)));
+//	equipControl->addDivider(Pos(eMenuHeight, 0), Axis::HORIZONTAL, leftWidth);
+//	equipControl->addDivider(Pos(0, getmaxx(equipMenu->getWindow())), Axis::VERTICAL);
+//}
+//
+//GridMenu* DialogBuilder::buildEquipmentMenu(Actor& actor)
+//{
+//	GridMenu* equipMenu = new GridMenu();
+//
+//	auto& equipment = actor.getEquipment();
+//	equipMenu->resetItems(equipment.size(), 1);
+//
+//	int i = 0;
+//	std::for_each(equipment.begin(), equipment.end(), 
+//		[&equipMenu, &i](std::pair<EquipPart, GameItem*> p) 
+//	{
+//		std::string lbl = toString(p.first);
+//		lbl = lbl.substr(0, 6); //only 6 will fit
+//
+//		equipMenu->setItem(new LineItem(lbl, i, -1), i, 0);
+//		i++;
+//	});
+//
+//	equipMenu->setWrapAround(false);
+//	//equipMenu->setFocus(true);
+//	equipMenu->post(true);
+//	equipMenu->setCurrentItem(0);
+//
+//	return equipMenu;
+//}
+
+
+
+
+
+
+
+
+
+
+
+

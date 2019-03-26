@@ -1,5 +1,6 @@
 #pragma once
 #include "curses.h"
+#include "Rectangle.h"
 #include <list>
 
 class WindowManager
@@ -14,6 +15,10 @@ public:
 	//static WindowManager& getInstance();
 	
 	WINDOW* newWin(int rows, int cols, int y, int x);
+	WINDOW* newWin(Rect& rect);
+
+	/*Creates a derived window from baseWin*/
+	WINDOW* deriveWin(WINDOW* baseWin, Rect& rect);
 	void delWin(WINDOW* win);
 
 	//setters/getters

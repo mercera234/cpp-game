@@ -196,6 +196,7 @@
     <ClCompile Include="MockInputProcessor.cpp" />
     <ClCompile Include="MockMenu.cpp" />
     <ClCompile Include="MockStorable.cpp" />
+    <ClCompile Include="MultiControlTest.cpp" />
     <ClCompile Include="ObjectLinkedTest.cpp" />
     <ClCompile Include="PaletteTest.cpp" />
     <ClCompile Include="StorableTest.cpp" />

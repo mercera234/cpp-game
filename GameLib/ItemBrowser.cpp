@@ -41,10 +41,17 @@ void ItemBrowser::setItems(std::vector<Possession*>& items)
 	for each (Possession* item in items)
 	{
 		menu.setItem(new OwnedItemRecord(item, element++));
+		/*
+		
+		
+		
 		if (item->item->type != GameItemType::USABLE)
 		{
 			menu.AbstractMenu::getItem(element - 1)->selectable = false;
 		}
+	
+	
+	*/
 	}
 
 	if (invEmpty)
@@ -60,6 +67,15 @@ void ItemBrowser::setItems(std::vector<Possession*>& items)
 void ItemBrowser::draw()
 {
 	menu.draw(); 
+}
+
+void ItemBrowser::runFilter(void(*filter)(OwnedItemRecord* record))
+{
+	for (int i = 0; i < (int)menu.getMaxItems(); i++)
+	{
+		OwnedItemRecord* record = (OwnedItemRecord*)menu.AbstractMenu::getItem(i);
+		filter(record);
+	}
 }
 
 
