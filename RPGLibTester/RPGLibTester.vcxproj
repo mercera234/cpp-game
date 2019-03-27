@@ -171,6 +171,8 @@
     <ClCompile Include="FreeMovementProcessorTest.cpp" />
     <ClCompile Include="GameDataTest.cpp" />
     <ClCompile Include="GameStateManagerTest.cpp" />
+    <ClCompile Include="InventoryTest.cpp" />
+    <ClCompile Include="ItemBrowserTest.cpp" />
     <ClCompile Include="json_tree_creators.cpp" />
     <ClCompile Include="MapRoomTest.cpp" />
     <ClCompile Include="MegaMapTest.cpp" />

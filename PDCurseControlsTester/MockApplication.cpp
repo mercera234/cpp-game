@@ -51,6 +51,6 @@ void MockApplication::setXinMockControl2()
 void MockApplication::transferControl()
 {
 	ControlManager* manager = (ControlManager*)cm->getFocusedControl();
-	manager->handleInput(cm->getInput());
+	processInput(*manager, cm->getInput());
 	cm->setExitCode(manager->getExitCode());
 }

@@ -230,10 +230,8 @@ bool ControlManager::isGlobalInput(int input)
 	return input == cycleKey || input == revCycleKey || (globalShortcuts.count(input) > 0);
 }
 
-void ControlManager::handleInput(int input)
+void ControlManager::processInput()
 {
-	this->input = input;
-	
 	if (controls.empty() == false) //there are controls
 	{
 		if (focusedReg->c->isModal())
@@ -251,6 +249,7 @@ void ControlManager::handleInput(int input)
 			setExitCode(ExitCode::NOT_HANDLED);
 	}
 }
+
 
 void ControlManager::handleControlInput()
 {

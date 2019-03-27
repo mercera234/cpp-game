@@ -85,7 +85,7 @@ bool Actor::ingestConsumable(GameItem* item)
 		[this, &anyChange](std::pair<StatType, int> p) {
 		bool altered = alterStat(p.first, p.second);
 
-		if (anyChange == false && altered)
+		if (altered)
 			anyChange = true;
 	});
 
@@ -93,32 +93,25 @@ bool Actor::ingestConsumable(GameItem* item)
 }
 
 
-bool Actor::equip(Possession& posn)
+bool Actor::equip(GameItem* item)
 {
-	if (posn.item == nullptr)
-		return false;
-
-	GameItem* item = posn.item;
 	if (item->type != GameItemType::EQUIPPABLE)
 		return false;
 
-	bool anyChange = true;
-
-	equipment[item->part] = item;
+	equipment[item->part] = item; //equip item
 	
+	TargetEffects& t = item->effects;
+	bool anyChange = false;
 
-	if (anyChange) //item should be removed from inventory since it is with actor
-	{
-		TargetEffects& t = item->effects;
-		std::for_each(t.statValues.begin(), t.statValues.end(),
-			[this, &anyChange](std::pair<StatType, int> p) {
-			alterStat(p.first, p.second);
-		});
+	std::for_each(t.statValues.begin(), t.statValues.end(),
+		[this, &anyChange](std::pair<StatType, int> p) {
+		bool altered = alterStat(p.first, p.second);
 
-		posn.quantity.alterCurr(-1);
-	}
-
-	return true;
+		if (altered)
+			anyChange = true;
+	});
+	
+	return anyChange;
 }
 
 GameItem* Actor::unEquip(EquipPart part)

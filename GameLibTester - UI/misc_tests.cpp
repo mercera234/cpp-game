@@ -58,11 +58,11 @@ void titleScreenTest()
 
 void inventoryTest()
 {
-	ItemBrowser inventory;
-	inventory.setWindow(newwin(10, 20, 1, 1));
+	ItemBrowser browser;
+	browser.setWindow(newwin(10, 20, 1, 1));
 
-	std::vector<Possession*> items;
-	
+	Inventory inventory;
+
 	GameItem potion;
 	potion.name = "Potion";
 	potion.description = "Restores 50 hp";
@@ -70,20 +70,11 @@ void inventoryTest()
 	GameItem knife;
 	knife.name = "Knife";
 	knife.description = "A weapon for stabbing";
-
-	Possession item;
-	item.item = &potion;
-	item.quantity.setCurr(1);
-
-	Possession item2;
-	item2.item = &knife;
-	item2.quantity.setCurr(1);
-
-	items.push_back(&item);
-	items.push_back(&item2);
 	
-	inventory.setItems(items);
+	inventory.alterItemQuantity(&potion, 1);
+	inventory.alterItemQuantity(&knife, 1);
 
+	browser.setInventory(&inventory);
 
 
 	Frame playerFrame;
@@ -106,16 +97,42 @@ void inventoryTest()
 	while (playing)
 	{
 		descFrame.draw();
-		inventory.draw();
+		browser.draw();
 		doupdate();
 
-		inventory.processInput(mgr.getInput());
+		int cursesKey = getCursesKeyFromInput((GameInput)mgr.getInput());
+		::processInput(browser, cursesKey);
 
-		GameItem* item = inventory.getCurrentItem();
+		GameItem* item = browser.getCurrentItem();
 
-		descLbl.setText(item->description);
+		std::string desc = "";
+		if (item != nullptr)
+			desc = item->description;
+
+		descLbl.setText(desc);
 	}
 
+}
+
+
+GameItem* getUsableItem(const std::string& name, const std::string& desc = "")
+{
+	GameItem* item = new GameItem;
+	item->name = name;
+	item->description = desc;
+	item->type = GameItemType::USABLE;
+
+	return item;
+}
+
+GameItem* getEquippableItem(const std::string& name, EquipPart p)
+{
+	GameItem* item = new GameItem;
+	item->name = name;
+	item->part = p;
+	item->type = GameItemType::EQUIPPABLE;
+
+	return item;
 }
 
 
@@ -125,19 +142,42 @@ void equipTest()
 	initDefaultActor(player1);
 	player1.name = "Test guy9012345";
 	
+	GameItem item;
+	item.name = "Sword";
+	item.part = EquipPart::WEAPON;
+	item.type = GameItemType::EQUIPPABLE;
+
+	Possession psn;
+	psn.item = &item;
+	psn.quantity.setCurr(1);
+	
+	player1.equip(&item);
+	
 	EquipControl equipC(player1);
 	equipC.setWindow(TUI::winMgr.newWin(15, 49, 1, 1));
+	
 
+	/*DialogWindow dWin;
+	dWin.setControl(&equipC);
+	dWin.setWindow(TUI::winMgr.newWin(17, 51, 0, 0));
+	dWin.setFocus(true);*/
 
 	ResourceManager rm;
 	loadHardCodedInputs(rm.getInputManager().getInputs());
 	setupDefaultGameInputs(rm.getInputManager().getInputs());
 
+	Inventory& inv = rm.getInventory();
+	inv.alterItemQuantity(getUsableItem("Potion"), 1);
+	inv.alterItemQuantity(getEquippableItem("Bamboo Stick", EquipPart::WEAPON), 1);
+	inv.alterItemQuantity(getEquippableItem("Utilities", EquipPart::BODY), 1);
+
+	equipC.setInventory(rm.getInventory());
 
 	bool playing = true;
 	while (playing)
 	{
 		equipC.draw();
+		//dWin.draw();
 		doupdate();
 
 		int input = rm.getInputManager().getInput();
@@ -188,36 +228,20 @@ void mainMenuTest()
 	rm.currMap->setCursor(&pos.y, &pos.x);
 	rm.currMap->visitArea();
 
-	//setup some items
-	Possession* item1 = new Possession;
-	item1->item = &data.getItem("Potion");
-	item1->quantity.setCurr(3);
-	item1->item->description = "Restores 50 HP."; 
-
-	Possession* item2 = new Possession;
-	item2->item = &data.getItem("Knife");
-	item2->quantity.setCurr(1);
-	item2->item->description = "A sharp knife for attacking.";
-
-	Possession* item3 = new Possession;
 	GameItem megalixer;
 	megalixer.name = "Megalixer";
 	megalixer.effects.statValues.insert(std::make_pair(StatType::HP, 9999));
 	megalixer.effects.statValues.insert(std::make_pair(StatType::MP, 9999));
 	megalixer.description = "Heals all";
 
-	item3->item = &megalixer;
-	item3->quantity.setCurr(1);
 
-	rm.inventory.push_back(item1);
-	rm.inventory.push_back(item2);
-	rm.inventory.push_back(item3);
+	Inventory& inv = rm.getInventory();
+	inv.alterItemQuantity(&data.getItem("Potion"), 3);
+	inv.alterItemQuantity(&data.getItem("Knife"), 1);
+	inv.alterItemQuantity(&megalixer, 5);
 
 	MainMenu mm(&rm);
-	mm.setWindow(newwin(gameScreenHeight, gameScreenWidth, 0, 0));
-
-	
-	
+	mm.setWindow(TUI::winMgr.newWin(gameScreenHeight, gameScreenWidth, 0, 0));
 
 	
 	bool playing = true;
@@ -245,11 +269,6 @@ void mainMenuTest()
 		break;
 		}
 	}
-
-	
-
-
-
 }
 
 

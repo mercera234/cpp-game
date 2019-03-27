@@ -83,13 +83,13 @@ void MainMenu::processInput()
 {
 	exitCode = ExitCode::HANDLED;
 	cm.setExitCode(exitCode);
-	cm.handleInput(input);
+	::processInput(cm, input);
 }
 
 
 void MainMenu::processMainMenuInput()
 {
-	int input = cm.getInput();
+	GameInput input = (GameInput)cm.getInput();
 	if (input == GameInput::CANCEL_INPUT)
 	{		
 		exitCode = ExitCode::GO_BACK;
@@ -194,7 +194,7 @@ void MainMenu::processPlayerMenuInput()
 
 void MainMenu::InventoryState::processPlayerMenuInput(MainMenu* mm)
 {
-	int input = mm->cm.getInput();
+	GameInput input = (GameInput)mm->cm.getInput();
 
 	GridMenu* playerMenu = (GridMenu*)mm->playerMenuDialog.getControl();
 
@@ -236,7 +236,7 @@ void MainMenu::InventoryState::processPlayerMenuInput(MainMenu* mm)
 
 void MainMenu::StatusState::processPlayerMenuInput(MainMenu* mm)
 {
-	int input = mm->cm.getInput();
+	GameInput input = (GameInput)mm->cm.getInput();
 
 	GridMenu* playerMenu = (GridMenu*)mm->playerMenuDialog.getControl();
 	if (input == GameInput::CANCEL_INPUT)
@@ -261,7 +261,7 @@ void MainMenu::StatusState::processPlayerMenuInput(MainMenu* mm)
 
 void MainMenu::EquipState::processPlayerMenuInput(MainMenu* mm)
 {
-	int input = mm->cm.getInput();
+	GameInput input = (GameInput)mm->cm.getInput();
 
 	GridMenu* playerMenu = (GridMenu*)mm->playerMenuDialog.getControl();
 	if (input == GameInput::CANCEL_INPUT)
@@ -330,7 +330,7 @@ void MainMenu::processAutoMapInput()
 
 	if (isInputDirectional((GameInput)input))
 	{
-		::processInput(*autoMap, getKeyFromInput((GameInput)input));
+		::processInput(*autoMap, getCursesKeyFromInput((GameInput)input));
 	}
 }
 
@@ -349,7 +349,7 @@ void MainMenu::setItemDescription(DialogWindow* invDialog, DialogWindow* itemDes
 
 void MainMenu::processItemInput()
 {
-	int input = cm.getInput();
+	GameInput input = (GameInput)cm.getInput();
 
 	switch (input)
 	{
@@ -387,7 +387,7 @@ void MainMenu::processItemInput()
 	DialogWindow* itemDescDialog = (DialogWindow*)cm.getTaggedControl(itemDescName);
 
 	ItemBrowser* browser = (ItemBrowser*)invDialog->getControl();
-	browser->processInput(input);
+	::processInput(*browser, getCursesKeyFromInput(input));
 
 	setItemDescription(invDialog, itemDescDialog);
 }

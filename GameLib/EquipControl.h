@@ -5,25 +5,36 @@
 #include "ControlManager.h"
 #include "ItemBrowser.h"
 #include "Actor.h"
+#include "SimpleCommand.h"
+#include "Inventory.h"
 
 class EquipControl : public Controllable, public InputProcessor
 {
 private:
 	GridMenu equipMenu;
 	TextBoard statusBoard;
-	ItemBrowser inventory;
+	ItemBrowser browser;
 
 	ControlManager cm;
+	Actor* actor; //The actor being serviced during the equip process
 
 	//dimensional data
 	int leftWidth = 27;
 
-	void buildEquipMenu(Actor& actor);
-	void buildStatusBoard(Actor& actor);
+	SimpleCommand<EquipControl> equipCmd;
+	void processEquipInput();
+
+	SimpleCommand<EquipControl> invCmd;
+	void processInventoryInput();
+
+	void buildEquipMenu();
+	void buildStatusBoard();
 
 public:
 	EquipControl() {}
-	EquipControl(Actor& actor);
+	EquipControl(Actor& actorIn);
+
+	void setInventory(Inventory& inventory);
 	
 	void setWindow(WINDOW* win);
 

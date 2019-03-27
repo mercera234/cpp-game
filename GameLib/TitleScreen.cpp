@@ -16,7 +16,7 @@ TitleScreen::TitleScreen()
 
 int TitleScreen::processInput(int input)
 {
-	MenuItem* item = menuDriver(input, &titleMenu);
+	MenuItem* item = menuDriver((GameInput)input, &titleMenu);
 
 	int exitCode = HANDLED;
 	if (item)

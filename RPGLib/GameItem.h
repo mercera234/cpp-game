@@ -62,9 +62,15 @@ struct GameItem : public Thing
 
 
 /*The item and amount of it owned in an inventory. Max is 99 of any type.*/
+const int oneItemMax = 99;
 struct Possession
 {
-	GameItem* item;
+	GameItem* item = nullptr;
 	BoundInt quantity;
+
+	Possession()
+	{
+		quantity.setValues(0, oneItemMax);
+	}
 };
 

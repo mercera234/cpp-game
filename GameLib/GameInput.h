@@ -21,4 +21,4 @@ enum GameInput
 };
 
 bool isInputDirectional(GameInput input);
-int getKeyFromInput(GameInput input);
+int getCursesKeyFromInput(GameInput input);

@@ -1,4 +1,5 @@
 #pragma once
 #include "MenuItem.h"
+#include "GameInput.h"
 
-MenuItem* menuDriver(int input, AbstractMenu* m);
+MenuItem* menuDriver(GameInput input, AbstractMenu* m);

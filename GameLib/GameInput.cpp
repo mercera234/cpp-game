@@ -1,5 +1,6 @@
 #include "GameInput.h"
 #include "TUI.h"
+#include "AbstractMenu.h"
 
 bool isInputDirectional(GameInput input)
 {
@@ -9,16 +10,18 @@ bool isInputDirectional(GameInput input)
 		input == GameInput::LEFT_INPUT;
 }
 
-int getKeyFromInput(GameInput input)
+int getCursesKeyFromInput(GameInput input)
 {
-	int dirKey = -1;
+	int cursesKey = -1;
 	switch (input)
 	{
 		//These should all be only one move at a time
-	case GameInput::UP_INPUT: dirKey = KEY_UP; break;
-	case GameInput::DOWN_INPUT: dirKey = KEY_DOWN; break;
-	case GameInput::LEFT_INPUT: dirKey = KEY_LEFT; break;
-	case GameInput::RIGHT_INPUT: dirKey = KEY_RIGHT; break;
+	case GameInput::UP_INPUT: cursesKey = KEY_UP; break;
+	case GameInput::DOWN_INPUT: cursesKey = KEY_DOWN; break;
+	case GameInput::LEFT_INPUT: cursesKey = KEY_LEFT; break;
+	case GameInput::RIGHT_INPUT: cursesKey = KEY_RIGHT; break;
+	case GameInput::OK_INPUT: cursesKey = KEY_ENTER; break;
 	}
-	return dirKey;
+	return cursesKey;
 }
+

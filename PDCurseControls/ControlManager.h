@@ -6,7 +6,7 @@
 #include <functional>
 #include "Command.h"
 #include "ControlCommand.h"
-#include "ExitCode.h"
+#include "InputProcessor.h"
 
 const int KEY_LISTENER = 0x01;
 const int MOUSE_LISTENER = 0x02;
@@ -21,7 +21,7 @@ struct Registration
 };
 
 
-class ControlManager : public Controllable
+class ControlManager : public Controllable, public InputProcessor
 {
 protected:
 
@@ -36,9 +36,6 @@ protected:
 	std::map<int, Command*> globalShortcuts; //shortcuts are global input
 	std::map<std::string, Controllable*> tags; //a mapping of string names to controls 
 	
-	//holds the status of the last executed input
-	ExitCode exitCode = ExitCode::HANDLED;
-	
 
 	/*if a control is focused, then this will point to it*/
 	Registration* focusedReg = nullptr;
@@ -47,8 +44,7 @@ protected:
 	short cycleKey; //to cycle focus forward to the next control
 	short revCycleKey; //to cycle focus backwards to the previous control
 
-	int input; //the input delivered to the Control Manager
-
+	
 	void setDefaultCycleKeys();
 	void handleGlobalInput();
 	void handleControlInput();
@@ -97,12 +93,8 @@ public:
 	/*Get the control previously tagged with tagName*/
 	Controllable* getTaggedControl(const std::string& tagName);
 
-	/*
-	TODO have class inherit from Input Processor
-	Handles input routed to control manager via key or mouse. 
-	Returns true if successfully handled, false it nothing could handle it.
-	*/
-	void handleInput(int input);
+	/*process input routed to control manager via key or mouse. */
+	void processInput();
 
 	//getters/setters
 
@@ -110,8 +102,7 @@ public:
 
 
 	void setExitCode(ExitCode exitCodeIn) { exitCode = exitCodeIn; }
-	ExitCode getExitCode() { return exitCode; }
-
+	
 
 	/*
 	Set the key used to cycle forwards through the registered controls.

@@ -129,10 +129,13 @@
     <ClInclude Include="DataPkg.h" />
     <ClInclude Include="EncounterTracker.h" />
     <ClInclude Include="EnemyPool.h" />
+    <ClInclude Include="EquippedItem.h" />
     <ClInclude Include="Factory.h" />
     <ClInclude Include="FreeMovementProcessor.h" />
     <ClInclude Include="GameData.h" />
     <ClInclude Include="game_strings.h" />
+    <ClInclude Include="Inventory.h" />
+    <ClInclude Include="ItemBrowser.h" />
     <ClInclude Include="OwnedItemRecord.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="GameStateManager.h" />
@@ -174,10 +177,13 @@
     <ClCompile Include="DataPkg.cpp" />
     <ClCompile Include="EncounterTracker.cpp" />
     <ClCompile Include="EnemyPool.cpp" />
+    <ClCompile Include="EquippedItem.cpp" />
     <ClCompile Include="Factory.cpp" />
     <ClCompile Include="FreeMovementProcessor.cpp" />
     <ClCompile Include="GameData.cpp" />
     <ClCompile Include="game_strings.cpp" />
+    <ClCompile Include="Inventory.cpp" />
+    <ClCompile Include="ItemBrowser.cpp" />
     <ClCompile Include="OwnedItemRecord.cpp" />
     <ClCompile Include="GameStateManager.cpp" />
     <ClCompile Include="KeyComparators.cpp" />

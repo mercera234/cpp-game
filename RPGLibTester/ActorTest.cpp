@@ -166,20 +166,13 @@ namespace RPGLibTester
 		{
 			player.getStat(StatType::STRENGTH).setValues(0, 255, 15);
 			
-			Possession possession;
-			buildDefaultPossession(possession);
-			possession.item = &sword;
-			possession.quantity.setCurr(1);
-
-			GameItem* item = possession.item;
-			item->type = GameItemType::EQUIPPABLE;
-
-			item->effects.statValues.insert(std::make_pair(StatType::STRENGTH, 30));
-			item->part = EquipPart::WEAPON;
-			player.equip(possession);
+			sword.type = GameItemType::EQUIPPABLE;
+			sword.effects.statValues.insert(std::make_pair(StatType::STRENGTH, 30));
+			sword.part = EquipPart::WEAPON;
+			player.equip(&sword);
 			
 			Assert::AreEqual(45, player.getStat(StatType::STRENGTH).getCurr());
-			Assert::AreEqual((int)item, (int)player.getEquipPart(EquipPart::WEAPON));
+			Assert::AreEqual((int)&sword, (int)player.getEquipPart(EquipPart::WEAPON));
 		}
 
 		TEST_METHOD(unEquipNothingTest)
@@ -198,21 +191,15 @@ namespace RPGLibTester
 			int startStrength = 15;
 			player.getStat(StatType::STRENGTH).setValues(0, 255, startStrength);
 
-			Possession possession;
-			buildDefaultPossession(possession);
-			possession.item = &sword;
-			possession.quantity.setCurr(1);
+			sword.type = GameItemType::EQUIPPABLE;
+			sword.effects.statValues.insert(std::make_pair(StatType::STRENGTH, 30));
+			sword.part = EquipPart::WEAPON;
+			player.equip(&sword);
 
-			GameItem* item = possession.item;
-			item->type = GameItemType::EQUIPPABLE;
-
-			item->effects.statValues.insert(std::make_pair(StatType::STRENGTH, 30));
-			item->part = EquipPart::WEAPON;
-			player.equip(possession);
 			GameItem* removedItem = player.unEquip(EquipPart::WEAPON);
 
 			Assert::AreEqual(startStrength, player.getStat(StatType::STRENGTH).getCurr());
-			Assert::AreEqual((int)item, (int)removedItem);
+			Assert::AreEqual((int)&sword, (int)removedItem);
 			Assert::IsNull(player.getEquipPart(EquipPart::WEAPON));
 		}
 

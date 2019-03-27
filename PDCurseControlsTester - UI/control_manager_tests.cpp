@@ -75,7 +75,8 @@ void controlManagerTest()
 		int c = getch();
 
 		clear();
-		cm.handleInput(c);
+		
+		processInput(cm, c);
 		switch (cm.getExitCode())
 		{
 		case ExitCode::TERMINATE: testing = false; break;

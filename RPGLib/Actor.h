@@ -126,7 +126,7 @@ public:
 	/*Equip a possession on the actor. When equipped, item is removed from inventory and pointer to item is maintained in Actor object.
 	Once equipped, the actor stats are temporarily altered until item is unequipped or switched to a different item.
 	For example a sword with +5 strength increases Actor strength by 5 until it is removed.*/
-	bool equip(Possession& posn);
+	bool equip(GameItem* item);
 	GameItem* unEquip(EquipPart part);
 
 	//setters/getters

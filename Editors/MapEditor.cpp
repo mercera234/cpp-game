@@ -319,14 +319,14 @@ void MapEditor::setupRulers()
 void MapEditor::modeDriver()
 {
 	ControlManager* manager = (ControlManager*)globalCm.getFocusedControl();
-	manager->handleInput(globalCm.getInput());
+	::processInput(*manager, globalCm.getInput());
 	globalCm.setExitCode(manager->getExitCode());
 }
 
 
 int MapEditor::processInput(int input)
 {
-	globalCm.handleInput(input);
+	::processInput(globalCm, input);
 	return globalCm.getExitCode();
 }
 

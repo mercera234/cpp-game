@@ -128,7 +128,6 @@
     <ClCompile Include="ExploreState.cpp" />
     <ClCompile Include="GameApp.cpp" />
     <ClCompile Include="GameInput.cpp" />
-    <ClCompile Include="ItemBrowser.cpp" />
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="MainMenuState.cpp" />
     <ClCompile Include="MenuBuilder.cpp" />
@@ -148,7 +147,6 @@
     <ClInclude Include="ExploreState.h" />
     <ClInclude Include="GameApp.h" />
     <ClInclude Include="GameInput.h" />
-    <ClInclude Include="ItemBrowser.h" />
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="MainMenuOption.h" />
     <ClInclude Include="MainMenuState.h" />

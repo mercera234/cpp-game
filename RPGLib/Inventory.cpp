@@ -1,89 +1,197 @@
+#include <algorithm>
+#include <assert.h>
 #include "Inventory.h"
+#include "DialogWindow.h"
+#include "GridMenu.h"
+#include "LineItem.h"
+#include "ExitCode.h"
+#include "GameItem.h"
+#include "OwnedItemRecord.h"
+#include "TextLabel.h"
 
-const std::string blankName = "               "; //15 spaces
-GameItem* blankItem;
-
-Inventory::Inventory(unsigned int rows, unsigned int cols)
+Inventory::Inventory()
 {
-	items.resetItems(rows, cols);
+	itemList.reserve(capacity);
+	//menu.resetItems(capacity, 1); //using 10 as a starter amount here
 
-	//create one blank item
-	blankItem = new GameItem();
-	blankItem->name = blankName;
-	//blankItem->x = -1;
-	//blankItem->y = -1;
-	blankItem->description = "";
-	blankItem->cost = 0;
-	blankItem->type = GameItemType::BLANK;
+	////fill with nullitems
+	//for (int i = 0; i < capacity; i++)
+	//{
+	//	menu.setItem(new OwnedItemRecord(nullptr, i));
+	//	menu.AbstractMenu::getItem(i)->selectable = false;
+	//}
 
-	//point all items in menu to point to the same blank item
-	for (unsigned int i = 0; i < items.getMaxCapacity(); i++)
+	//menu.setCurrentItem(0);
+	//menu.setWrapAround(false);
+	//menu.post(true);
+}
+
+//void Inventory::draw()
+//{
+//	menu.draw();
+//}
+//
+//void Inventory::setFocus(bool focusIn)
+//{
+//	Controllable::setFocus(focusIn);
+//	menu.setFocus(focusIn);
+//}
+//
+//void Inventory::setWindow(WINDOW* win)
+//{
+//	menu.setWindow(win);
+//}
+//
+//
+//void Inventory::processInput()
+//{
+//	AbstractMenu::basicMenuDriver(input, &menu);
+//}
+
+
+
+//bool Inventory::setCurrentItem(int index)
+//{
+//	return menu.setCurrentItem(index);
+//}
+//
+//GameItem* Inventory::getCurrentItem()
+//{
+//	OwnedItemRecord* record = (OwnedItemRecord*)menu.getCurrentItem();
+//	if (record == nullptr || record->getPossession() == nullptr)
+//		return nullptr;
+//
+//	return record->getPossession()->item;
+//}
+
+std::vector<Possession*>::iterator Inventory::findItem(GameItem* item)
+{
+	auto it = std::find_if(itemList.begin(), itemList.end(),
+		[item](Possession* posn) {
+		if (posn == nullptr || posn->item == nullptr)
+			return false;
+
+		return posn->item == item;
+	});
+
+	return it;
+}
+
+//bool Inventory::decrementItem(GameItem* item, int quantity)
+//{
+//	//get current possession
+//	//OwnedItemRecord* currItem = (OwnedItemRecord*)menu.getCurrentItem();
+//	//if (currItem == nullptr)
+//	//	return false;
+//
+//	//Possession* posn = currItem->getPossession();
+//	//if (posn == nullptr || posn->quantity.getCurr() == 0)
+//	//{
+//	//	return false; //can't decrement
+//	//}
+//
+//	auto it = findInventoryItem(item); //find item first so we can decrement from it
+//
+//	//decrement possession
+//	posn->quantity.alterCurr(-1);
+//
+//	if (posn->quantity.getCurr() == 0)
+//	{
+//		currItem->setPossession(nullptr);
+//
+//		auto it = std::find(inventory.begin(), inventory.end(), posn);
+//		inventory.erase(it);
+//
+//		delete posn; //this relies on all possessions being created new
+//	}
+//
+//	return true;
+//}
+
+
+bool Inventory::incrementItemQuantity(BoundInt& invItemQty, unsigned int amount)
+{
+	if (invItemQty.getCurr() + (int)amount > invItemQty.getMax())
+		return false;
+
+	invItemQty.alterCurr(amount);
+	return true;
+}
+
+template <typename iterator>
+bool Inventory::decrementItemQuantity(iterator it, int quantity)
+{
+	Possession* p = *it;
+	p->quantity.alterCurr(quantity);
+
+	if (p->quantity.isDrained())
 	{
-		OwnedItemRecord* gimr = new OwnedItemRecord();
-		gimr->index = i;
-		gimr->setItem(blankItem);
-		items.setItem(gimr);
+		//remove from vector
+		itemList.erase(it);
+
+		delete p; //this relies on all possessions being created new
+	}
+
+	return true;
+}
+
+Possession* Inventory::alterItemQuantity(GameItem* item, int amount) //add item to inventory
+{
+	assert(amount != 0);// && amount <= 99);
+	if (item == nullptr)
+		return false;
+
+	//attempt to find item in inventory first
+	auto it = findItem(item);
+
+	Possession* posnAltered = nullptr;
+
+	if (it != itemList.end()) //item was found
+	{		
+		Possession* posnFound = *it;
+		bool altered = amount > 0 ? 
+			incrementItemQuantity(posnFound->quantity, amount) :
+			decrementItemQuantity(it, amount);		
+
+		if (altered)
+			posnAltered = posnFound;
+	}
+	else if (amount > 0 && capacity != itemList.size()) //item not found, but we're adding, and have room to add
+	{
+		posnAltered = new Possession;
+		posnAltered->quantity.setCurr(amount);
+		posnAltered->item = item;
+		itemList.push_back(posnAltered);
+
+		//addGameItemToMenu(inventory.size() - 1);
 	}
 	
-	items.setWrapAround(false); //disabling wraparounmd 
+	return posnAltered;
 }
 
+//void Inventory::addGameItemToMenu(int index)
+//{
+//	for (int i = 0; i < capacity; i++)
+//	{
+//		OwnedItemRecord* item = (OwnedItemRecord*)menu.AbstractMenu::getItem(i);
+//		if (item->getPossession() == nullptr)
+//		{
+//			item->setPossession(inventory[index]);
+//			break;
+//		}
+//	}
+//}
 
-void Inventory::setMaxItems(unsigned int max)
+int Inventory::getItemQuantity(GameItem* item)
 {
-	items.setMaxItems(max);
+	auto it = findItem(item);
+	if (it == itemList.end())
+		return 0;
+
+	return (*it)->quantity.getCurr();
 }
 
-bool Inventory::addItem(GameItem* newItem)
+Possession* Inventory::getPossession(int index)
 {
-	bool found = false;
-	//search through inventory from beginning 0,0 and search from left right, top to bottom for next blank item
-	for (unsigned int i = 0; i < items.getMaxCapacity(); i++)
-	{
-		OwnedItemRecord* gimr = (OwnedItemRecord*)items.AbstractMenu::getItem(i);
-		GameItem* item = gimr->getItem();
-		if (item == blankItem)
-		{
-			//assign new Item to this item
-			gimr->setItem(newItem);
-			itemCount++;
-			found = true;
-			break;
-		}
-	}
-
-
-	return found;
-}
-
-GameItem* Inventory::getItemAtIndex(unsigned int index)
-{
-	OwnedItemRecord* gimr = (OwnedItemRecord*)items.AbstractMenu::getItem(index);
-	return gimr->getItem();
-}
-
-GameItem* Inventory::getItem(unsigned int row, unsigned int col)
-{
-	OwnedItemRecord* gimr = (OwnedItemRecord*)items.getItem(row, col);
-	return gimr->getItem();
-}
-
-GameItem* Inventory::discardItem(unsigned int index)
-{
-	//save off the item for returning
-	OwnedItemRecord* gimr = (OwnedItemRecord*)items.AbstractMenu::getItem(index);
-
-	GameItem* item = gimr->getItem();
-
-	//replace slot in item with blankItem
-	gimr->setItem(blankItem);
-	itemCount--;
-
-	return item; 
-}
-
-void Inventory::swapItems(int index1, int index2)
-{
-	items.swapItems(index1, index2);
-	return;
+	return itemList[index];
 }

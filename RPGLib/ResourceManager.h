@@ -4,14 +4,17 @@
 #include "GameData.h"
 #include "MegaMap.h"
 #include "InputManager.h"
+//#include "ItemBrowser.h"
+#include "Inventory.h"
 
 class ResourceManager
 {
 private:
 	GameData theData;
 	InputManager inputManager;
+	//ItemBrowser invBrowser;
+	Inventory inventory;
 
-	std::vector<Possession*>::iterator findInventoryItem(GameItem* item);
 public:
 	ResourceManager();
 	
@@ -20,10 +23,7 @@ public:
 	Actor* getPlayer1();
 
 
-	std::vector<Possession*> inventory;
 	
-	bool acquireItem(GameItem* item, int quantity); //add item to inventory
-
 	//TODO add setCurrMap(std::string)
 
 	//setters/getters
@@ -32,6 +32,9 @@ public:
 	GameData& getData() { return theData; }
 
 	InputManager& getInputManager() { return inputManager; }
+	//ItemBrowser& getinvBrowser() { return invBrowser; }
+
+	Inventory& getInventory() { return inventory; }
 
 };
 

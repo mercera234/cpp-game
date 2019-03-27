@@ -139,7 +139,7 @@ ExitCode ConfigMenu::processInput(int input)
 	}
 	else
 	{
-		ConfigMenuItem* item = (ConfigMenuItem*)menuDriver(input, &menu);
+		ConfigMenuItem* item = (ConfigMenuItem*)menuDriver((GameInput)input, &menu);
 
 		if (item)
 		{

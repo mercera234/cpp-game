@@ -28,33 +28,7 @@ namespace RPGLibTester
 			Assert::IsTrue(ptr->name.compare(a.name) == 0);
 		}
 
-		TEST_METHOD(acquireFreshItemTest)
-		{
-			GameItem potion;
-			potion.name = "Potion";
-
-			Sprite s;
-			s.thing = &potion;
-			s.quantity = 1;
-			
-			rm.acquireItem((GameItem*)s.thing, s.quantity);
-			Assert::AreEqual(1, (int)rm.inventory.size()); //only item in inventory
-		}
-
-		TEST_METHOD(acquireItemAddTest)
-		{
-			GameItem potion;
-			potion.name = "Potion";
-
-			Sprite s;
-			s.thing = &potion;
-			s.quantity = 4;
-
-			rm.acquireItem((GameItem*)s.thing, s.quantity);
-			rm.acquireItem((GameItem*)s.thing, 3);
-			Assert::AreEqual(1, (int)rm.inventory.size()); //only item in inventory
-			Assert::AreEqual(7, rm.inventory.front()->quantity.getCurr()); //only quantity of item
-		}
+		
 		
 	};
 }

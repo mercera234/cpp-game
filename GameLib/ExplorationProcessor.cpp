@@ -178,7 +178,7 @@ void ExplorationProcessor::setCurrRoomId(int id)
 
 int ExplorationProcessor::processInput(int input)
 {
-	cm.handleInput(input);
+	::processInput(cm, input);
 	return cm.getExitCode();
 }
 
@@ -265,7 +265,7 @@ bool ExplorationProcessor::processThingCollisions()
 
 			default:
 			{
-				resourceManager->acquireItem(item, objectSprite->quantity);
+				resourceManager->getInventory().alterItemQuantity(item, objectSprite->quantity);
 			}
 				
 				break;

@@ -183,7 +183,7 @@ namespace PDCurseControlsTester
 
 			cm.registerShortcutKey(value, &cmd); //just a callback we can use to prove that input was handled successfully
 			
-			cm.handleInput(value);
+			processInput(cm, value);
 
 			Assert::IsTrue(ExitCode::HANDLED == cm.getExitCode());
 		}
@@ -192,14 +192,14 @@ namespace PDCurseControlsTester
 		{
 			int value = '\t';
 			cm.setCycleKey(value); //should be default anyway, but just being explicit
-			cm.handleInput(value);
+			processInput(cm, value);
 
 			Assert::IsTrue(cm.getExitCode() == ExitCode::HANDLED);
 		}
 
 		TEST_METHOD(handleNonGlobalInputWithNoControlsTest)
 		{
-			cm.handleInput('5');
+			processInput(cm, '5');
 			Assert::IsFalse(cm.getExitCode() == ExitCode::HANDLED);
 		}
 
@@ -215,7 +215,7 @@ namespace PDCurseControlsTester
 			int value = 89;
 			m.setModal(true); //it is modal by default, but we set it here explicitly to be clear about what is going on
 			cm.setFocusedControl(&m);
-			cm.handleInput(value);
+			processInput(cm, value);
 
 			Assert::IsTrue(cm.getExitCode() == HANDLED);
 		}
@@ -233,8 +233,8 @@ namespace PDCurseControlsTester
 			int value = 9001;
 			m.setModal(false);
 			cm.setFocusedControl(&m);
-
-			cm.handleInput(value);
+			
+			processInput(cm, value);
 			Assert::AreEqual(value, m.getX());
 		}
 
@@ -275,8 +275,7 @@ namespace PDCurseControlsTester
 
 			cm.setFocusedControl(&m1);
 
-			int input = 800;
-			cm.handleInput(input);
+			processInput(cm, 800);
 			Assert::IsTrue(ExitCode::HANDLED == cm.getExitCode());
 
 		}
@@ -305,7 +304,8 @@ namespace PDCurseControlsTester
 			//preset mouse event to simulate mouse input
 			simulateMouseOn(true);
 			setMouseEvent(y, x);
-			cm.handleInput(KEY_MOUSE);
+			
+			processInput(cm, KEY_MOUSE);
 
 			Assert::AreEqual(KEY_MOUSE, m1.getX());
 		}
@@ -333,7 +333,7 @@ namespace PDCurseControlsTester
 			cm.setFocusedControl(&cm2);
 
 			int input = 800;
-			cm.handleInput(input);
+			processInput(cm, input);
 			Assert::AreEqual(input, m1.getX());
 		}
 

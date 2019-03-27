@@ -1,8 +1,5 @@
 #include "CppUnitTest.h"
 #include "Inventory.h"
-#include "GridMenu.h"
-#include "LineItem.h"
-#include "OwnedItemRecord.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -10,93 +7,70 @@ namespace RPGLibTester
 {
 	TEST_CLASS(InventoryTest)
 	{
-		TEST_METHOD(constructorTest)
+		Inventory inventory;
+		GameItem potion;
+		GameItem knife;
+
+		TEST_METHOD_INITIALIZE(start)
 		{
-			Inventory inv(1, 1);
-			Assert::AreEqual(1, (int)inv.getSize());
+			//create 2 items
+			potion.name = "Potion";
+			potion.description = "Restores 50 hp";
+
+			knife.name = "Knife";
+			knife.description = "A weapon for stabbing";
 		}
 
-		TEST_METHOD(addItemToInventory)
+		TEST_METHOD(ctorTest)
 		{
-			Inventory inv(1,1);
-
-			GameItem* cig = new GameItem;
-			cig->name = "Cigarette";
-
-			inv.addItem(cig);
-
-			Assert::IsTrue(inv.getItemAtIndex(0)->name.compare(cig->name) == 0);
-			delete cig;
+			Assert::AreEqual(0, inventory.getItemCount());
 		}
 
-		TEST_METHOD(discardItemTest)
+		TEST_METHOD(addOneItemTest)
 		{
-			Inventory inv(1, 1);
-
-			GameItem* cig = new GameItem;
-			cig->name = "Cigarette";
-
-			inv.addItem(cig);
-
-			inv.discardItem(0);
-
-			Assert::AreEqual(0, (int)inv.getItemCount());
-			delete cig;
-		}
-		
-		TEST_METHOD(addItemToInventoryFirstBlankSpot)
-		{
-			Inventory inv(3, 1);
-
-			GameItem* item1 = new GameItem;
-			item1->name = "Potion";
-
-			GameItem* item2 = new GameItem;
-			item2->name = "Memo";
-
-			GameItem* item3 = new GameItem;
-			item3->name = "Sword";
-
-			inv.addItem(item1);
-			inv.addItem(item2);
-			inv.addItem(item3);
-
-			GameItem* item4 = new GameItem;
-			std::string item4Name = "Meat";
-			item4->name = item4Name;
-
-			inv.discardItem(1); //will delete item2
-
-			inv.addItem(item4); //should add in item2's place
-
-			Assert::IsTrue(inv.getItemAtIndex(1)->name.compare(item4Name) == 0);
-			delete item1;
-			delete item2;
-			delete item3;
-			delete item4;
+			inventory.alterItemQuantity(&potion, 1);
+			Assert::AreEqual(1, inventory.getItemCount());
 		}
 
-		/*TEST_METHOD(swap2Items)
+		TEST_METHOD(addMultipleItemTest)
 		{
-			Inventory inv(2, 1);
+			inventory.alterItemQuantity(&potion, 1);
+			inventory.alterItemQuantity(&knife, 1);
+			Assert::AreEqual(2, inventory.getItemCount());
+		}
 
-			GameItem* item1 = new GameItem;
-			std::string item1Name = "Potion";
-			item1->name = item1Name;
+		TEST_METHOD(addToExistingItemTest)
+		{
+			inventory.alterItemQuantity(&potion, 6);
+			inventory.alterItemQuantity(&potion, 4);
+			Assert::AreEqual(10, inventory.getItemQuantity(&potion));
+		}
 
-			GameItem* item2 = new GameItem;
-			item2->name = "Memo";
+		TEST_METHOD(addOverflowTest)
+		{
+			inventory.alterItemQuantity(&potion, 99);
+			Assert::IsNull(inventory.alterItemQuantity(&potion, 1));
+		}
 
-			inv.addItem(item1);
-			inv.addItem(item2);
-			
-			
-			inv.swapItems(0, 1);
+		TEST_METHOD(removeOneItemTest)
+		{
+			inventory.alterItemQuantity(&potion, 10);
+			inventory.alterItemQuantity(&potion, -1);
+			Assert::AreEqual(9, inventory.getItemQuantity(&potion));
+		}
 
-			Assert::IsTrue(inv.getItemAtIndex(1)->name.compare(item1Name) == 0);
-			delete item1;
-			delete item2;
-		}*/
-		
+		TEST_METHOD(removeOnePossessionTest)
+		{
+			inventory.alterItemQuantity(&potion, 5);
+			inventory.alterItemQuantity(&potion, -5);
+			Assert::AreEqual(0, inventory.getItemQuantity(&potion));
+		}
+
+		TEST_METHOD(removeUnderflowTest)
+		{
+			inventory.alterItemQuantity(&potion, 1);
+			inventory.alterItemQuantity(&potion, -2);
+			Assert::AreEqual(0, inventory.getItemCount());
+		}
 	};
 }

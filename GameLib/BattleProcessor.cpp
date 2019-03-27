@@ -231,7 +231,7 @@ void BattleProcessor::draw()
 
 void BattleProcessor::driver()
 {
-	int input = cm.getInput();
+	GameInput input = (GameInput)cm.getInput();
 	Controllable* control = cm.getFocusedControl();
 	if (control == skillMenuFrame)
 		skillMenuDriver(input);
@@ -247,7 +247,7 @@ void BattleProcessor::driver()
 void BattleProcessor::skillMenuDriver(int input)
 {
 	MenuItem* item = nullptr;
-	item = menuDriver(input, skillMenu);
+	item = menuDriver((GameInput)input, skillMenu);
 	
 	if (item != nullptr)
 	{
@@ -470,7 +470,7 @@ int BattleProcessor::processInput(int input)
 	}
 		
 
-	cm.handleInput(input);
+	::processInput(cm, input);
 	return cm.getExitCode();
 }
 

@@ -1,41 +1,31 @@
 #pragma once
-#include "GridMenu.h"
-#include "OwnedItemRecord.h"
 #include "GameItem.h"
 
-//this class may be useless in favor of the GridMenu
 class Inventory
 {
 private:
-	GridMenu items;
+	std::vector<Possession*> itemList; //a pointer to an inventory
+	int capacity = 10; //the limit to how many items we can have in the inventory
 
-	/*the count of non-blank items (actual items).
-	Quantities of individual items are not considered.*/
-	size_t itemCount = 0; 
-	
+	std::vector<Possession*>::iterator findItem(GameItem* item);
+
+	bool incrementItemQuantity(BoundInt& invItemQty, unsigned int amount);
+
+	template <typename iterator>
+	bool decrementItemQuantity(iterator, int quantity);
 public:
-	Inventory(unsigned int rows, unsigned int cols);
+	Inventory();
 
+	/*Alter quantity of item to inventory. return possession of item*/
+	Possession* alterItemQuantity(GameItem* item, int amount);
+	
+	//get quantity of one type of item
+	int getItemQuantity(GameItem* item); 
 
-	//getters/setters
-	size_t getSize() { return items.getMaxItems(); }
-	void setMaxItems(unsigned int max);
-	unsigned int getItemCount() { return itemCount; }
-	GridMenu* getGridMenu() { GridMenu* ptr = &items; return ptr; }
+	//get count of distinguishable items (disregards quantity)
+	int getItemCount() { return (int)itemList.size(); }
 
-	/*
-	Add item to first available slot. When setting up an inventory all slots will be prefilled with blank items.
-	*/
-	bool addItem(GameItem* newItem);
-	GameItem* getItemAtIndex(unsigned int index);
-	GameItem* getItem(unsigned int row, unsigned int col);
+	int getCapacity() { return capacity; }
 
-	/*
-	Remove item from inventory. It is returned in case we need to do anything with it.
-	*/
-	GameItem* discardItem(unsigned int index);
-	void swapItems(int index1, int index2);
-
-
+	Possession* getPossession(int index);
 };
-
