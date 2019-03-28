@@ -189,6 +189,7 @@
     <ClCompile Include="DataPkgTest.cpp" />
     <ClCompile Include="TargetTest.cpp" />
     <ClCompile Include="TurnTrackerTest.cpp" />
+    <ClCompile Include="ValueChangeTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PDCurseControls\PDCurseControls.vcxproj">

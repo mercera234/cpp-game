@@ -166,6 +166,7 @@
     <ClInclude Include="Thing.h" />
     <ClInclude Include="TileEffect.h" />
     <ClInclude Include="TurnTracker.h" />
+    <ClInclude Include="ValueChange.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Actor.cpp" />
@@ -199,6 +200,7 @@
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="TextParamValue.cpp" />
     <ClCompile Include="TurnTracker.cpp" />
+    <ClCompile Include="ValueChange.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />

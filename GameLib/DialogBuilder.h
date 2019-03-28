@@ -10,7 +10,6 @@ private:
 	ResourceManager* rm;
 	
 	void setDialogControl(Controllable* control, DialogWindow& dWin, Rect& r);
-	GridMenu* buildEquipmentMenu(Actor& actor);
 public:
 	DialogBuilder() {}
 
@@ -24,7 +23,7 @@ public:
 	void buildCenteredTextWin(DialogWindow& dWin, Rect r);
 	void buildConfigMenu(DialogWindow& dWin, Rect r);
 	void buildAutoMap(DialogWindow& dWin, Rect r);
-	//void buildEquipDialog(DialogWindow& dWin, Rect r, Actor& actor);
+	void buildEquipDialog(DialogWindow& dWin, Rect r, Actor& actor);
 	
 	//setters/getters
 

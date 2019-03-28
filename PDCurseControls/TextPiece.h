@@ -2,12 +2,13 @@
 
 #include <iostream>
 #include <list>
-#include "Format.h"
 #include <sstream>
+#include "Format.h"
 #include "curses.h"
+#include "Drawable.h"
 
 /*One piece of solid text to be drawn in a window as part of a larger Controllable.*/
-class TextPiece
+class TextPiece : public DrawablePiece
 {
 protected:
 	std::string text;

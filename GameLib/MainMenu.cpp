@@ -11,6 +11,7 @@
 #include "LineFormat.h"
 #include "TextLabel.h"
 #include "AutoMap.h"
+#include "EquipControl.h"
 
 const std::string itemDescName = "Item desc";
 const std::string invDialogName = "Inv Dlg";
@@ -43,6 +44,9 @@ void MainMenu::init()
 
 	autoMapCmd.setReceiver(this);
 	autoMapCmd.setAction(&MainMenu::processAutoMapInput);
+
+	equipCmd.setReceiver(this);
+	equipCmd.setAction(&MainMenu::processEquipInput);
 
 	//register controls
 	cm.registerControl(&mainMenuDialog, KEY_LISTENER, &mainMenuCmd);
@@ -272,16 +276,40 @@ void MainMenu::EquipState::processPlayerMenuInput(MainMenu* mm)
 		return;
 	}
 
-	menuDriver(input, playerMenu);
-	MenuItem* item = playerMenu->getCurrentItem();
-
-	if (item->index >= (int)mm->resourceManager->playerParty.size()) //a little sloppy here, but it works
+	MenuItem* item = menuDriver(input, playerMenu);
+	
+	if (item) //ok is pressed
 	{
-		playerMenu->setCurrentItem(item->index - 1);
+		//mm->currPlayer = mm->resourceManager->playerParty[item->index];
+		//dialogbuilder build equip menu
+		DialogWindow* equipDialog = new DialogWindow();
+
+		mm->dialogBuilder.buildEquipDialog(*equipDialog, mm->largestRect, mm->resourceManager->playerParty[item->index]);
+
+		mm->cm.registerControl(equipDialog, KEY_LISTENER, &mm->equipCmd);
+		mm->cm.setFocusedControl(equipDialog);
+	}
+
+}
+
+void MainMenu::processEquipInput()
+{
+	DialogWindow* dWin = (DialogWindow*)cm.getFocusedControl();
+	EquipControl* eCon = (EquipControl*)dWin->getControl();
+	::processInput(*eCon, input);
+
+	if (eCon->getExitCode() == ExitCode::GO_BACK)
+	{
+		cm.popControl();
+
+		//delete dialog windows
+		TUI::winMgr.delWin(dWin->getControl()->getWindow());
+		TUI::winMgr.delWin(dWin->getWindow());
+		delete dWin;
+
+		cm.setFocusedControl(&playerMenuDialog);
 		return;
 	}
-	else
-		mm->currPlayer = mm->resourceManager->playerParty[item->index];
 }
 
 void MainMenu::processConfigMenuInput()

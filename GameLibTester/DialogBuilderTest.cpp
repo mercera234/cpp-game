@@ -3,7 +3,6 @@
 #include "GridMenu.h"
 #include "LineItem.h"
 #include "TextBoard.h"
-#include "MultiControl.h"
 #include "actor_helper.h"
 #include "ItemBrowser.h"
 

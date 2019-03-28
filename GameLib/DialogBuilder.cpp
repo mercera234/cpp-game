@@ -13,7 +13,7 @@
 #include "ActorCard.h"
 #include "OwnedItemRecord.h"
 #include "game_strings.h"
-
+#include "EquipControl.h"
 
 void DialogBuilder::setDialogControl(Controllable* control, DialogWindow& dWin, Rect& r)
 {
@@ -203,7 +203,14 @@ void DialogBuilder::buildAutoMap(DialogWindow& dWin, Rect r)
 	setDialogControl(autoMap, dWin, r);
 }
 
+void DialogBuilder::buildEquipDialog(DialogWindow& dWin, Rect r, Actor& actor)
+{
+	EquipControl* eControl = new EquipControl(actor);
+	eControl->setInventory(rm->getInventory());
 
+	setDialogControl(eControl, dWin, r);
+
+}
 
 
 

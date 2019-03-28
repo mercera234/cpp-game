@@ -13,6 +13,13 @@
 EquipControl::EquipControl(Actor& actorIn)
 {
 	actor = &actorIn;
+
+	statChanges.insert(std::make_pair(StatType::STRENGTH, 0));
+	statChanges.insert(std::make_pair(StatType::DEFENSE, 0));
+	statChanges.insert(std::make_pair(StatType::AGILITY, 0));
+	statChanges.insert(std::make_pair(StatType::WILL, 0));
+	statChanges.insert(std::make_pair(StatType::INTELLIGENCE, 0));
+
 	buildEquipMenu();
 	buildStatusBoard();
 
@@ -34,6 +41,7 @@ void EquipControl::processEquipInput()
 	if (input == GameInput::CANCEL_INPUT)
 	{
 		exitCode = ExitCode::GO_BACK;
+		cm.setExitCode(exitCode);
 		return;
 	}
 
@@ -60,6 +68,7 @@ void EquipControl::processEquipInput()
 		cm.setFocusedControl(&browser);
 
 		browser.setCurrentItem(0);
+		updateStatusBoard();
 	}
 
 }
@@ -72,40 +81,85 @@ void EquipControl::processInventoryInput()
 	{
 		cm.unRegisterControl(&browser);
 		cm.setFocusedControl(&equipMenu);
+		clearStatChanges();
 		return;
 	}
 	break;
 	case GameInput::OK_INPUT:
 	{
-		GameItem* selectedItem = browser.getCurrentItem();
-
-		if (selectedItem == nullptr || selectedItem->type != GameItemType::EQUIPPABLE)
-			return;
-		
-		EquippedItem* equippedItem = (EquippedItem*)equipMenu.getCurrentItem();
-		EquipPart ePart = equippedItem->getPart();
-			
-		if (selectedItem->part == ePart)
-		{
-			//unequip old part
-			GameItem* removedItem = actor->unEquip(ePart);
-			actor->equip(selectedItem); //equip new item
-			equippedItem->setItem(selectedItem); //set item in equipmenu as well
-
-			//decrement new item from inventory
-			browser.decrementItem();
-
-			//add removed item back to inventory
-			browser.acquireItem(removedItem, 1);
-
-			cm.unRegisterControl(&browser);
-			cm.setFocusedControl(&equipMenu);
-		}
+		equipItem();
+		return;
 	}
 	break;
 	}
 	
 	::processInput(browser, getCursesKeyFromInput((GameInput)input));
+
+	updateStatusBoard();
+}
+
+void EquipControl::clearStatChanges()
+{
+	for (auto& p : statChanges)
+	{
+		p.second = 0;
+	}
+}
+
+void EquipControl::updateStatusBoard()
+{
+	clearStatChanges();
+
+	GameItem* item = browser.getCurrentItem();
+	if (item == nullptr || item->type != GameItemType::EQUIPPABLE)
+		return;
+
+	auto& equipment = actor->getEquipment();
+
+	TargetEffects& t = item->effects;
+	std::for_each(t.statValues.begin(), t.statValues.end(),
+		[this, &equipment, item]
+		(std::pair<StatType, int> p) 
+	{
+		int newObjStat = p.second;
+		int currObjStat = 0;
+		
+		GameItem* equippedItem = equipment[item->part];
+			
+		if (equippedItem != nullptr)
+			currObjStat = equippedItem->effects.statValues[p.first];
+
+		statChanges[p.first] = newObjStat - currObjStat;
+	});
+}
+
+void EquipControl::equipItem()
+{
+	GameItem* selectedItem = browser.getCurrentItem();
+
+	if (selectedItem == nullptr || selectedItem->type != GameItemType::EQUIPPABLE)
+		return;
+
+	EquippedItem* equippedItem = (EquippedItem*)equipMenu.getCurrentItem();
+	EquipPart ePart = equippedItem->getPart();
+
+	if (selectedItem->part == ePart)
+	{
+		//unequip old part
+		GameItem* removedItem = actor->unEquip(ePart);
+		actor->equip(selectedItem); //equip new item
+		equippedItem->setItem(selectedItem); //set item in equipmenu as well
+
+		//decrement new item from inventory
+		browser.decrementItem();
+
+		//add removed item back to inventory
+		browser.acquireItem(removedItem, 1);
+
+		cm.unRegisterControl(&browser);
+		cm.setFocusedControl(&equipMenu);
+		clearStatChanges();
+	}
 }
 
 void EquipControl::setInventory(Inventory& inventory)
@@ -135,11 +189,9 @@ void EquipControl::buildEquipMenu()
 
 void EquipControl::buildStatusBoard()
 {
-	//build statusContent
 	TextParamCurrMaxValue* hpRow, *mpRow;
 	TextParamValue<BoundInt>* strengthRow, *defenseRow, *intelRow, *willRow, *agilityRow;
 
-	//values are null, but will be setup later
 	hpRow = new TextParamCurrMaxValue(new LineFormat(0, Justf::LEFT), HP, &actor->getStat(StatType::HP));
 	mpRow = new TextParamCurrMaxValue(new LineFormat(1, Justf::LEFT), MP, &actor->getStat(StatType::MP), 4);
 	strengthRow = new TextParamValue<BoundInt>(new LineFormat(2, Justf::LEFT), STRENGTH.substr(0, 3), &actor->getStat(StatType::STRENGTH));
@@ -147,6 +199,19 @@ void EquipControl::buildStatusBoard()
 	intelRow = new TextParamValue<BoundInt>(new LineFormat(4, Justf::LEFT), INTELLIGENCE.substr(0, 3), &actor->getStat(StatType::INTELLIGENCE));
 	willRow = new TextParamValue<BoundInt>(new LineFormat(5, Justf::LEFT), WILL.substr(0, 3), &actor->getStat(StatType::WILL));
 	agilityRow = new TextParamValue<BoundInt>(new LineFormat(6, Justf::LEFT), AGILITY.substr(0, 3), &actor->getStat(StatType::AGILITY));
+
+	ValueChange* strMod = new ValueChange(new PosFormat(2, 9), &statChanges[StatType::STRENGTH]);
+	ValueChange* defMod = new ValueChange(new PosFormat(3, 9), &statChanges[StatType::DEFENSE]);
+	ValueChange* intMod = new ValueChange(new PosFormat(4, 9), &statChanges[StatType::INTELLIGENCE]);
+	ValueChange* wilMod = new ValueChange(new PosFormat(5, 9), &statChanges[StatType::WILL]);
+	ValueChange* agiMod = new ValueChange(new PosFormat(6, 9), &statChanges[StatType::AGILITY]);
+
+	strMod->setDrawZero(false);
+	defMod->setDrawZero(false);
+	intMod->setDrawZero(false);
+	wilMod->setDrawZero(false);
+	agiMod->setDrawZero(false);
+
 	statusBoard.addPiece(hpRow);
 	statusBoard.addPiece(mpRow);
 	statusBoard.addPiece(strengthRow);
@@ -154,6 +219,13 @@ void EquipControl::buildStatusBoard()
 	statusBoard.addPiece(intelRow);
 	statusBoard.addPiece(willRow);
 	statusBoard.addPiece(agilityRow);
+	statusBoard.addPiece(strMod);
+	statusBoard.addPiece(defMod);
+	statusBoard.addPiece(agiMod);
+	statusBoard.addPiece(intMod);
+	statusBoard.addPiece(wilMod);
+
+	statusBoard.setStandout(true);
 }
 
 void EquipControl::setWindow(WINDOW* win)
@@ -161,15 +233,12 @@ void EquipControl::setWindow(WINDOW* win)
 	Controllable::setWindow(win);
 
 	int eMenuHeight = equipMenu.getMaxItems();
-	Rect eMenuRect(eMenuHeight, leftWidth, Pos(0, 0));
+	Rect eMenuRect(eMenuHeight, leftWidth, Pos(1, 0));
 
 	equipMenu.setWindow(TUI::winMgr.deriveWin(win, eMenuRect));
 
-
-	//
-	Rect statRect(statusBoard.getPieceCount(), leftWidth - 4, Pos(eMenuHeight + 1, 4));
+	Rect statRect(7, leftWidth - 4, Pos(eMenuHeight + 2, 4));
 	statusBoard.setWindow(TUI::winMgr.deriveWin(win, statRect));
-
 
 	Rect invRect(getmaxy(win), getmaxx(win) - leftWidth - 1, Pos(0, leftWidth + 1));
 	browser.setWindow(TUI::winMgr.deriveWin(win, invRect));
@@ -182,14 +251,23 @@ void EquipControl::processInput()
 
 void EquipControl::draw()
 {
-	Divider h(Pos(getmaxy(equipMenu.getWindow()), 0), Axis::HORIZONTAL, leftWidth);
+	Divider h(Pos(getmaxy(equipMenu.getWindow()) + 1, 0), Axis::HORIZONTAL, leftWidth);
 	Divider v(Pos(0, leftWidth), Axis::VERTICAL);
 
 	h.draw(win);
 	v.draw(win);
 
+	mvwaddstr(win, 0, 1, actor->name.c_str());
+
 	touchwin(win);
 	wnoutrefresh(win);
 
 	cm.draw();
+}
+
+EquipControl::~EquipControl()
+{
+	TUI::winMgr.delWin(equipMenu.getWindow());
+	TUI::winMgr.delWin(statusBoard.getWindow());
+	TUI::winMgr.delWin(browser.getWindow());
 }

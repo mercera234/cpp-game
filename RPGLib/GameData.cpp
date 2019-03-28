@@ -330,10 +330,18 @@ void GameData::loadActors(boost::property_tree::ptree& tree)
 		actor.getStat(StatType::EXP).setCurr(actorData.get<int>("exp"));
 		actor.getMoney().setCurr(actorData.get<int>("money"));
 
+		std::string typeS = actorData.get<std::string>("type");
+		actor.setType(typeS == "CPU" ? ActorType::CPU : ActorType::HUMAN);
+
 		actor.getStat(StatType::HP).setCurrMax(actorData.get<int>("hp"));
 		actor.getStat(StatType::HP).maxOut();
+		if (actor.getType() == ActorType::HUMAN)
+			actor.getStat(StatType::HP).setMax(9999);
+
 		actor.getStat(StatType::MP).setCurrMax(actorData.get<int>("mp"));
 		actor.getStat(StatType::MP).maxOut();
+		if (actor.getType() == ActorType::HUMAN)
+			actor.getStat(StatType::MP).setMax(999);
 
 		actor.getStat(StatType::STRENGTH).setCurr(actorData.get<int>("strength"));
 		actor.getStat(StatType::DEFENSE).setCurr(actorData.get<int>("defense"));

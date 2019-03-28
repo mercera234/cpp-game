@@ -18,6 +18,7 @@ void createActorJSONtree(boost::property_tree::ptree& actorsNode)
 	actorNode.put("intelligence", 0);
 	actorNode.put("will", 0);
 	actorNode.put("agility", 0);
+	actorNode.put("type", "CPU");
 
 	boost::property_tree::ptree actorNode2;
 	actorNode2.put("name", "Hero");
@@ -33,6 +34,7 @@ void createActorJSONtree(boost::property_tree::ptree& actorsNode)
 	actorNode2.put("intelligence", 0);
 	actorNode2.put("will", 0);
 	actorNode2.put("agility", 0);
+	actorNode2.put("type", "HUMAN");
 
 	actorsNode.push_back(std::make_pair("", actorNode));
 	actorsNode.push_back(std::make_pair("", actorNode2));

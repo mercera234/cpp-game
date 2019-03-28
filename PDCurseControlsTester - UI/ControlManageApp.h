@@ -1,5 +1,6 @@
 #pragma once
 #include "Controllable.h"
+#include "ControlManager.h"
 
 class ControlManageApp
 {

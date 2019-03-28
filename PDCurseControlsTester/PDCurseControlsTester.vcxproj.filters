@@ -170,7 +170,10 @@
     <ClCompile Include="GridMenu_inputTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MultiControlTest.cpp">
+    <ClCompile Include="DrawBoardTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DividerTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -14,7 +14,6 @@
 #include "Barrier.h"
 #include "ItemBrowser.h"
 #include "CenteredFormat.h"
-#include "MultiControl.h"
 #include "menu_drivers.h"
 #include "EquipControl.h"
 
@@ -141,11 +140,17 @@ void equipTest()
 	Actor player1;
 	initDefaultActor(player1);
 	player1.name = "Test guy9012345";
+	player1.alterStat(StatType::STRENGTH, 15);
+	player1.alterStat(StatType::DEFENSE, 30);
+	player1.alterStat(StatType::AGILITY, 25);
+	player1.alterStat(StatType::INTELLIGENCE, 40);
+	player1.alterStat(StatType::WILL, 51);
 	
 	GameItem item;
 	item.name = "Sword";
 	item.part = EquipPart::WEAPON;
 	item.type = GameItemType::EQUIPPABLE;
+	item.effects.statValues.insert(std::make_pair(StatType::STRENGTH, 11));
 
 	Possession psn;
 	psn.item = &item;
@@ -153,31 +158,40 @@ void equipTest()
 	
 	player1.equip(&item);
 	
-	EquipControl equipC(player1);
-	equipC.setWindow(TUI::winMgr.newWin(15, 49, 1, 1));
+	EquipControl* equipC = new EquipControl(player1);
+	equipC->setWindow(TUI::winMgr.newWin(15, 49, 1, 1));
 	
 
-	/*DialogWindow dWin;
-	dWin.setControl(&equipC);
+	DialogWindow dWin;
+	dWin.setControl(equipC);
 	dWin.setWindow(TUI::winMgr.newWin(17, 51, 0, 0));
-	dWin.setFocus(true);*/
+	dWin.setFocus(true);
 
 	ResourceManager rm;
 	loadHardCodedInputs(rm.getInputManager().getInputs());
 	setupDefaultGameInputs(rm.getInputManager().getInputs());
 
 	Inventory& inv = rm.getInventory();
-	inv.alterItemQuantity(getUsableItem("Potion"), 1);
-	inv.alterItemQuantity(getEquippableItem("Bamboo Stick", EquipPart::WEAPON), 1);
-	inv.alterItemQuantity(getEquippableItem("Utilities", EquipPart::BODY), 1);
+	
 
-	equipC.setInventory(rm.getInventory());
+	GameItem* bambooStick = getEquippableItem("Bamboo Stick", EquipPart::WEAPON);
+	bambooStick->effects.statValues.insert(std::make_pair(StatType::STRENGTH, 2));
+	inv.alterItemQuantity(bambooStick, 1);
+
+	inv.alterItemQuantity(getUsableItem("Potion"), 1);
+
+	GameItem* utilities = getEquippableItem("Utilities", EquipPart::BODY);
+	utilities->effects.statValues.insert(std::make_pair(StatType::DEFENSE, 6));
+	utilities->effects.statValues.insert(std::make_pair(StatType::AGILITY, 4));
+	inv.alterItemQuantity(utilities, 1);
+
+	equipC->setInventory(rm.getInventory());
 
 	bool playing = true;
 	while (playing)
 	{
-		equipC.draw();
-		//dWin.draw();
+		//equipC->draw();
+		dWin.draw();
 		doupdate();
 
 		int input = rm.getInputManager().getInput();
@@ -189,7 +203,7 @@ void equipTest()
 			break;
 		default:
 		{
-			processInput(equipC, input);
+			processInput(*equipC, input);
 		}
 			break;	
 		}

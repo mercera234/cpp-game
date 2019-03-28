@@ -63,6 +63,9 @@ private:
 	SimpleCommand<MainMenu> autoMapCmd;
 	void processAutoMapInput();
 
+	SimpleCommand<MainMenu> equipCmd;
+	void processEquipInput();
+
 	//inner classes for state
 	struct SelectionState
 	{

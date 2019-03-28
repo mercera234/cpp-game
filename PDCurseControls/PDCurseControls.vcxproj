@@ -126,6 +126,7 @@
     <ClInclude Include="ControlHandle.h" />
     <ClInclude Include="DialogWindow.h" />
     <ClInclude Include="Divider.h" />
+    <ClInclude Include="DrawBoard.h" />
     <ClInclude Include="FileDialog.h" />
     <ClInclude Include="Format.h" />
     <ClInclude Include="FilePath.h" />
@@ -191,6 +192,7 @@
     <ClCompile Include="ControlHandle.cpp" />
     <ClCompile Include="DialogWindow.cpp" />
     <ClCompile Include="Direction.cpp" />
+    <ClCompile Include="DrawBoard.cpp" />
     <ClCompile Include="FileDialog.cpp" />
     <ClCompile Include="AbstractMenu.cpp" />
     <ClCompile Include="Animation.cpp" />

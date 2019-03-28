@@ -3,7 +3,6 @@
 #include "Drawable.h"
 #include "TUI.h"
 
-class ControlManager; //forward declaration
 class Controllable : public Drawable
 {
 private:
@@ -64,6 +63,8 @@ public:
 	bool getAcceptsMouseInput() { return acceptsMouseInput; }
 	void setBordered(bool bordered) { this->bordered = bordered; }
 	bool isBordered() { return bordered; }
+	void setStandout(bool standoutIn) { standout = standoutIn; }
+	bool getStandout() { return standout; }
 	int getUlY() { return ulY; }
 	int getUlX() { return ulX; }
 	int getTotalRows() { return totalRows; }
