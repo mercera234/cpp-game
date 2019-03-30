@@ -149,6 +149,8 @@ void MainMenu::processMainMenuSelection(LineItem* selection)
 		state = new StatusState;
 		cm.setFocusedControl(&playerMenuDialog);
 		DialogWindow* statusDialog = new DialogWindow();
+
+		currPlayer = resourceManager->playerParty[0];
 		dialogBuilder.buildMainMenuStatus(*statusDialog, largeRect, currPlayer);
 
 		GridMenu* playerMenu = (GridMenu*)playerMenuDialog.getControl();

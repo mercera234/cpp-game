@@ -56,31 +56,6 @@ void ItemBrowser::processInput()
 }
 
 
-//void ItemBrowser::setItems(std::vector<Possession*>& items)
-//{
-//	//inventory = &items; //save reference to items
-//
-//	bool invEmpty = items.size() == 0;
-//
-//	int totalItems = invEmpty ? 1 : items.size();
-//	menu.resetItems(totalItems, 1);
-//
-//	int element = 0;
-//	for each (Possession* item in items)
-//	{
-//		menu.setItem(new OwnedItemRecord(item, element++));
-//	}
-//
-//	if (invEmpty)
-//	{
-//		menu.setItem(new OwnedItemRecord(nullptr, 0)); //set null item 
-//		menu.AbstractMenu::getItem(0)->selectable = false;
-//	}
-//	
-//	menu.setCurrentItem(0);
-//	menu.post(true);
-//}
-
 void ItemBrowser::draw()
 {
 	menu.draw(); 
@@ -128,59 +103,14 @@ bool ItemBrowser::decrementItem()
 	{
 		currItem->setPossession(nullptr);
 	}
-	//decrement possession
-	//posn->quantity.alterCurr(-1);
-
-	//if (posn->quantity.getCurr() == 0)
-	//{
-	//	currItem->setPossession(nullptr);
-
-	//	auto it = std::find(inventory.begin(), inventory.end(), posn);
-	//	inventory.erase(it);
-
-	//	delete posn; //this relies on all possessions being created new
-	//}
+	
 
 	return true;
 }
 
-//std::vector<Possession*>::iterator ItemBrowser::findInventoryItem(GameItem* item)
-//{
-//	auto it = std::find_if(inventory.begin(), inventory.end(),
-//		[item](Possession* posn) {
-//		if (posn == nullptr || posn->item == nullptr)
-//			return false;
-//
-//		return posn->item == item;
-//	});
-//
-//	return it;
-//}
-
 
 bool ItemBrowser::acquireItem(GameItem* item, int amount) //add item to inventory
 {
-	//attempt to find item in inventory first and add to it
-	//auto it = findInventoryItem(item);
-
-	//if (it != inventory.end())
-	//{
-	//	(*it)->quantity.alterCurr(quantity);
-	//}
-	//else //attempt to add to inventory
-	//{
-	//	if (capacity == inventory.size())
-	//	{
-	//		return false; //inventory is full
-	//	}
-
-	//	Possession* posn = new Possession;
-	//	posn->quantity.setCurr(quantity);
-	//	posn->item = item;
-	//	inventory.push_back(posn);
-
-	//	addGameItemToMenu(inventory.size() - 1);
-	//}
 	int startAmt = inventory->getItemCount();
 	Possession* posn = inventory->alterItemQuantity(item, amount);
 
@@ -204,12 +134,3 @@ void ItemBrowser::addPossessionToMenu(Possession* posn)
 		}
 	}
 }
-
-//int ItemBrowser::getItemQuantity(GameItem* item)
-//{
-//	auto it = findInventoryItem(item);
-//	if (it == inventory.end())
-//		return 0;
-//
-//	return (*it)->quantity.getCurr();
-//}

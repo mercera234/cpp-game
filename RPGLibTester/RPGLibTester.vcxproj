@@ -169,6 +169,7 @@
     <ClCompile Include="EncounterTrackerTest.cpp" />
     <ClCompile Include="EnemyPoolTest.cpp" />
     <ClCompile Include="FreeMovementProcessorTest.cpp" />
+    <ClCompile Include="GameAlgorithmTest.cpp" />
     <ClCompile Include="GameDataTest.cpp" />
     <ClCompile Include="GameStateManagerTest.cpp" />
     <ClCompile Include="InventoryTest.cpp" />

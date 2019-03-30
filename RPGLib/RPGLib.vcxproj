@@ -132,6 +132,7 @@
     <ClInclude Include="EquippedItem.h" />
     <ClInclude Include="Factory.h" />
     <ClInclude Include="FreeMovementProcessor.h" />
+    <ClInclude Include="GameAlgorithm.h" />
     <ClInclude Include="GameData.h" />
     <ClInclude Include="game_strings.h" />
     <ClInclude Include="Inventory.h" />
@@ -181,6 +182,7 @@
     <ClCompile Include="EquippedItem.cpp" />
     <ClCompile Include="Factory.cpp" />
     <ClCompile Include="FreeMovementProcessor.cpp" />
+    <ClCompile Include="GameAlgorithm.cpp" />
     <ClCompile Include="GameData.cpp" />
     <ClCompile Include="game_strings.cpp" />
     <ClCompile Include="Inventory.cpp" />

@@ -176,7 +176,7 @@ void equipTest()
 
 	GameItem* bambooStick = getEquippableItem("Bamboo Stick", EquipPart::WEAPON);
 	bambooStick->effects.statValues.insert(std::make_pair(StatType::STRENGTH, 2));
-	inv.alterItemQuantity(bambooStick, 1);
+	inv.alterItemQuantity(bambooStick, 5);
 
 	inv.alterItemQuantity(getUsableItem("Potion"), 1);
 

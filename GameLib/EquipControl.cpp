@@ -51,13 +51,17 @@ void EquipControl::processEquipInput()
 	{
 		browser.runFilter(
 			[&selectedItem](OwnedItemRecord* record) {
-			if (record == nullptr || record->getPossession() == nullptr)
+			if (record == nullptr)
+				return;
+
+			record->selectable = true;
+			if (record->getPossession() == nullptr)  //blank spaces will be selectable in equip inventory
 				return;
 
 			GameItem* item = record->getPossession()->item;
-			record->selectable = true;
 
-			if (item->type != GameItemType::EQUIPPABLE || 
+			//only equippable items matching the part we are equipping will be selectable
+			if (item->type != GameItemType::EQUIPPABLE ||  
 				item->part != selectedItem->getPart())
 			{
 				record->selectable = false;
@@ -137,11 +141,24 @@ void EquipControl::equipItem()
 {
 	GameItem* selectedItem = browser.getCurrentItem();
 
-	if (selectedItem == nullptr || selectedItem->type != GameItemType::EQUIPPABLE)
-		return;
-
 	EquippedItem* equippedItem = (EquippedItem*)equipMenu.getCurrentItem();
 	EquipPart ePart = equippedItem->getPart();
+
+	if (selectedItem == nullptr)
+	{
+		//only unequip item
+		GameItem* removedItem = actor->unEquip(ePart);
+		equippedItem->setItem(selectedItem);
+		
+		browser.acquireItem(removedItem, 1);
+		//clearStatChanges();
+		updateStatusBoard();
+		return;
+	}
+		
+
+	if (selectedItem->type != GameItemType::EQUIPPABLE)
+		return;
 
 	if (selectedItem->part == ePart)
 	{

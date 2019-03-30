@@ -62,6 +62,7 @@ const std::string BATTLES_WON = "Battles Won";
 const std::string STEPS = "Steps";
 
 //actor stats
+const std::string LEVEL = "Level";
 const std::string HP = "HP";
 const std::string MP = "MP";
 const std::string STRENGTH = "Strength";

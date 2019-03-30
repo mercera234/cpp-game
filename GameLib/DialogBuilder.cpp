@@ -14,6 +14,7 @@
 #include "OwnedItemRecord.h"
 #include "game_strings.h"
 #include "EquipControl.h"
+#include "GameAlgorithm.h"
 
 void DialogBuilder::setDialogControl(Controllable* control, DialogWindow& dWin, Rect& r)
 {
@@ -131,20 +132,29 @@ void DialogBuilder::buildMainMenuStatus(DialogWindow& dWin, Rect r, Actor& actor
 	TextBoard* statusContent = new TextBoard();
 
 	TextParamCurrMaxValue* hpRow, *mpRow;
-	TextParamValue<BoundInt>* strengthRow, *defenseRow, *intelRow, *willRow, *agilityRow, *expRow;
+	TextParamValue<BoundInt>* lvRow, *strengthRow, *defenseRow, *intelRow, *willRow, *agilityRow, *expRow;
+	TextPiece* toNextRow;
 
 	
 	//values are null, but will be setup later
-	hpRow = new TextParamCurrMaxValue(new LineFormat(0, Justf::LEFT), HP, &actor.getStat(StatType::HP));
-	mpRow = new TextParamCurrMaxValue(new LineFormat(1, Justf::LEFT), MP, &actor.getStat(StatType::MP), 4);
-	strengthRow = new TextParamValue<BoundInt>(new LineFormat(2, Justf::LEFT), STRENGTH, &actor.getStat(StatType::STRENGTH));
-	defenseRow = new TextParamValue<BoundInt>(new LineFormat(3, Justf::LEFT), DEFENSE, &actor.getStat(StatType::DEFENSE));
-	intelRow = new TextParamValue<BoundInt>(new LineFormat(4, Justf::LEFT), INTELLIGENCE, &actor.getStat(StatType::INTELLIGENCE));
-	willRow = new TextParamValue<BoundInt>(new LineFormat(5, Justf::LEFT), WILL, &actor.getStat(StatType::WILL));
-	agilityRow = new TextParamValue<BoundInt>(new LineFormat(6, Justf::LEFT), AGILITY, &actor.getStat(StatType::AGILITY));
-	expRow = new TextParamValue<BoundInt>(new LineFormat(7, Justf::LEFT), EXP, &actor.getStat(StatType::EXP));
+	lvRow = new TextParamValue<BoundInt>(new LineFormat(0, Justf::LEFT), LEVEL, &actor.getStat(StatType::LEVEL));
+	hpRow = new TextParamCurrMaxValue(new LineFormat(1, Justf::LEFT), HP, &actor.getStat(StatType::HP));
+	mpRow = new TextParamCurrMaxValue(new LineFormat(2, Justf::LEFT), MP, &actor.getStat(StatType::MP), 4);
+	strengthRow = new TextParamValue<BoundInt>(new LineFormat(3, Justf::LEFT), STRENGTH, &actor.getStat(StatType::STRENGTH));
+	defenseRow = new TextParamValue<BoundInt>(new LineFormat(4, Justf::LEFT), DEFENSE, &actor.getStat(StatType::DEFENSE));
+	intelRow = new TextParamValue<BoundInt>(new LineFormat(5, Justf::LEFT), INTELLIGENCE, &actor.getStat(StatType::INTELLIGENCE));
+	willRow = new TextParamValue<BoundInt>(new LineFormat(6, Justf::LEFT), WILL, &actor.getStat(StatType::WILL));
+	agilityRow = new TextParamValue<BoundInt>(new LineFormat(7, Justf::LEFT), AGILITY, &actor.getStat(StatType::AGILITY));
+	expRow = new TextParamValue<BoundInt>(new LineFormat(8, Justf::LEFT), EXP, &actor.getStat(StatType::EXP));
 
-	statusContent->addPiece(hpRow); //the bound int values will need to be setup later
+	int toNext = alg::toNext(actor);
+	std::ostringstream oss;
+	oss << TO_NEXT << ' ' << toNext;
+
+	toNextRow = new TextPiece(new LineFormat(9, Justf::LEFT), oss.str());
+
+	statusContent->addPiece(lvRow);
+	statusContent->addPiece(hpRow); 
 	statusContent->addPiece(mpRow);
 	statusContent->addPiece(strengthRow);
 	statusContent->addPiece(defenseRow);
@@ -152,6 +162,7 @@ void DialogBuilder::buildMainMenuStatus(DialogWindow& dWin, Rect r, Actor& actor
 	statusContent->addPiece(willRow);
 	statusContent->addPiece(agilityRow);
 	statusContent->addPiece(expRow);
+	statusContent->addPiece(toNextRow);
 
 	setDialogControl(statusContent, dWin, r);
 //	controlCache.insert(std::make_pair("MM_STATUS", statusContent));

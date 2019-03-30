@@ -13,7 +13,7 @@ Actor::Actor()
 	getStat(StatType::MP).setMax(999);
 	getStat(StatType::MP).setCurrMax(999);
 
-	getStat(StatType::LEVEL).setMax(MAX_LEVELS);
+	getStat(StatType::LEVEL).setValues(1, MAX_LEVELS, 1);
 	getStat(StatType::EXP).setMax(MAX_EXP);
 	getStat(StatType::STRENGTH).setMax(255);
 	getStat(StatType::DEFENSE).setMax(255);

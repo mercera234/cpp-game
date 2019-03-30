@@ -9,6 +9,7 @@
 #include "defaults.h"
 #include "LineFormat.h"
 #include "menu_drivers.h"
+#include "GameAlgorithm.h"
 
 BattleProcessor::BattleProcessor()
 {
@@ -381,10 +382,10 @@ void BattleProcessor::transferRewards(int totalExp, int totalMoney)
 		ActorCard* card = (ActorCard*)item;
 		Actor* player = card->getActor();
 
-		player->getStat(StatType::EXP).alterCurr(expPerPlayer);
+		//player->getStat(StatType::EXP).alterCurr(expPerPlayer);
 
 		//check for level up here as well (not fully implemented yet)
-		int levelsGained = 0;
+		int levelsGained = alg::gainExp(*player, expPerPlayer);
 
 		//setup message for level ups
 		if (levelsGained > 0)
