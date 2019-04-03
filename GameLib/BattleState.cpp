@@ -65,7 +65,7 @@ void BattleState::unloadState()
 
 void BattleState::processInput(GameStateManager& manager, int input)
 {
-	int exitCode = battleProcessor.processInput(input);
+	int exitCode = ::processInput(battleProcessor, input);
 
 	switch (exitCode)
 	{

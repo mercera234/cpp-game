@@ -11,10 +11,6 @@
 #include "menu_drivers.h"
 #include "GameAlgorithm.h"
 
-BattleProcessor::BattleProcessor()
-{
-
-}
 
 void BattleProcessor::setWindow(WINDOW* win)
 {
@@ -461,18 +457,16 @@ void BattleProcessor::setMessage()
 }
 
 
-int BattleProcessor::processInput(int input)
+void BattleProcessor::processInput()
 {
 	cm.setExitCode(HANDLED);
 	if (inSession == false)
 	{
-		cm.setExitCode(ExitCode::GO_BACK);
-		return cm.getExitCode();
+		exitCode = ExitCode::GO_BACK;
+		return;
 	}
-		
 
-	::processInput(cm, input);
-	return cm.getExitCode();
+	exitCode = ::processInput(cm, input);
 }
 
 void BattleProcessor::processCPUTurn()

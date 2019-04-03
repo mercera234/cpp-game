@@ -36,5 +36,17 @@ namespace RPGLibTester
 
 			Assert::AreEqual(1, levelsGained);
 		}
+
+		TEST_METHOD(gainExpHPcheckTest)
+		{
+			Actor player;
+
+			int amount = 46; //47 would trigger 2 levels gained
+			alg::gainExp(player, amount);
+
+			Assert::AreEqual(28, player.getStat(StatType::HP).getCurrMax());
+		}
+
+		
 	};
 }

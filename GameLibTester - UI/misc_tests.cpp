@@ -347,8 +347,8 @@ void battleProcessorTest()
 
 		
 
-		int playing = NOT_HANDLED;
-		while (playing <= 0)
+		ExitCode playing = NOT_HANDLED;
+		while (playing == ExitCode::HANDLED || playing == ExitCode::NOT_HANDLED)
 		{
 			bp.draw();
 			doupdate();
@@ -358,12 +358,12 @@ void battleProcessorTest()
 			switch (input)
 			{
 			case GameInput::QUIT_INPUT:
-				playing = TERMINATE;
+				playing = ExitCode::TERMINATE;
 				testing = false;
 				break;
 			default:
 			{
-				playing = bp.processInput(input);
+				playing = ::processInput(bp, input);
 			}
 			break;
 			}

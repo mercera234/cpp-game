@@ -13,7 +13,7 @@
 #include "SimpleCommand.h"
 #include "ResourceManager.h"
 
-class BattleProcessor : public Controllable
+class BattleProcessor : public Controllable, public InputProcessor
 {
 private:
 	ControlManager cm;
@@ -66,15 +66,17 @@ public:
 	TurnTracker* turnTracker;
 	PlayerActor* turnHolder;
 
-	BattleProcessor();
+	BattleProcessor() {}
+	BattleProcessor(WINDOW* win, std::list<Actor*>& players, std::list<Actor*>& enemies);
+
 	void setWindow(WINDOW* win);
 	void addParticipants(std::list<Actor*>& players, std::list<Actor*>& enemies);
 	void clearParticipants();
-	BattleProcessor(WINDOW* win, std::list<Actor*>& players, std::list<Actor*>& enemies);
+	
 
 	void begin();
 	void draw();
-	int processInput(int input);
+	void processInput();
 
 	void setResourceManager(ResourceManager* rm) { resourceManager = rm; }
 };

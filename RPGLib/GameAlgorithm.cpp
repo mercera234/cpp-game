@@ -19,13 +19,18 @@ namespace alg {
 	{
 		player.alterStat(StatType::LEVEL, 1);
 
-		//long newHp = getLevelData(player->def.level, "HP");
-		//long hpRaise = newHp - player->def.maxHp;
+		BoundInt& level = player.getStat(StatType::LEVEL);
 
-		//player->def.maxHp = (int)newHp;//update max hp
-		//player->currHp += (int)hpRaise;//give curr hp bonus
-		//if (player->currHp > player->def.maxHp)//current hp should never surpass max hp
-		//	player->currHp = player->def.maxHp;
+		//hp
+		int newHp = getLevelData(level.getCurr(), StatType::HP);
+		BoundInt& hpStat = player.getStat(StatType::HP);
+		int diffHp = newHp - hpStat.getCurrMax();
+		hpStat.setCurrMax(newHp);
+		hpStat.alterCurr(diffHp); //give curr hp bonus
+	
+		//str
+		player.alterStat(StatType::STRENGTH, getLevelData(level.getCurr(), StatType::STRENGTH));
+	
 
 		//player->def.strength = (int)getLevelData(player->def.level, "STRENGTH");
 		//update other stats as well here
@@ -69,8 +74,12 @@ namespace alg {
 			9.717 * curLevel + 
 			-21.066
 			; break;
-		case StatType::HP: break;
-			
+		case StatType::HP: 
+			result = 1.01 * std::pow(curLevel, 2) + 24; //not the best formula for this just yet, but it'll do short term			
+			break;
+		case StatType::STRENGTH:
+			result = 1 + curLevel * 2; //not the best formula for this just yet, but it'll do short term			
+			break;
 		}
 
 		return std::round(result);

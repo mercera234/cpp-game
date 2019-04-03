@@ -9,8 +9,8 @@ int main()
 	resize_term(gameScreenHeight, gameScreenWidth);
 
 
-	mainMenuTest();
-	//battleProcessorTest();
+	//mainMenuTest();
+	battleProcessorTest();
 	//equipTest();
 
 	return 0;
